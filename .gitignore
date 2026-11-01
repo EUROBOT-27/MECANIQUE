@@ -1,2 +1,26 @@
-# graft's local graph cache — regenerable, not committed (run `graft build`).
+# --- Personal (each person keeps their own; never committed) ---
+claude-workspace/memory/
+claude-workspace/tmp/
+claude-workspace/scratch/
+claude-workspace/repo-compare/
+.claude/settings.local.json
+
+# --- Separate repos kept next to the hub (clone them yourself) ---
+eurobot2027/
+
+# --- Build junk and caches ---
+__pycache__/
+*.pyc
+.venv/
+venv*/
+*.o
+*.d
+*.obj
+*.lst
+*.FCBak
+*.SLDPRT.bak
+~$*
+*.log
+
+# graft's local graph cache: regenerable, not committed (run `graft build`).
 /graft/
