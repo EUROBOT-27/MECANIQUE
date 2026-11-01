@@ -96,3 +96,12 @@ Every number the CAD assumes about a bought part. Measure, then update `class G`
 - Assembly: socle → pad + motor → clamp plate → rails down through the plate into the socle → carriage → top tie.
 - Coupler and lead screw 11 mm lower: **lead screw 303 mm** (60 → 363). Motor shaft in the coupler: ~13 mm.
 - Measure the motor body length before printing: the blocks are 38 mm + pad (`MOT_L`, `MOT_PAD`).
+
+## Mounting on the real robot (after the proof of concept)
+- The mechanism is referenced to the **table** (door pads, cups on the middle box at z 165): keep every moving part at
+  the same height above the table; only the bottom changes (socle on the chassis floor, motor on that floor, lead screw
+  length).
+- **Cut the profiles:** today rails + top tie reach **366 mm** (the motion check exempts them). Robot: top tie ≈ 328–350,
+  rails ending ≈ 328. Clear of the carriage (wheels ≈ 275 at full lift; the plate, 320, is in front of the top tie).
+- The **347.7 mm** maximum (head at the top of the 75 mm lift) does not change with the profile length: 2.3 mm margin.
+- The chassis floor must stay below the lowest moving part: door units' bottom, z 27 above the table.
