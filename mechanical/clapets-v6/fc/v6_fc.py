@@ -66,9 +66,11 @@ class G:
     # MG996R from the real model (mechanical/resources/mg996r-servo-3.snapshot.9/mg996R_v2.step): body 40.4 x 20.4 x 38,
     # shaft 10.2 from the shaft-end face, flange (2.4 thick) 28 above the bottom, ear holes Ø4 at ±24.5 from the body
     # centre, y ±5. Cable grommet: shaft-end face, centred, 3.7..8.3 above the bottom, sticks out 5.8.
-    SV_L, SV_W, SV_H, SV_FL, SV_OUT, SV_HORN = 40.4, 20.4, 38.0, 28.0, 10.2, 43.5
+    SV_L, SV_W, SV_H, SV_FL, SV_OUT, SV_HORN = 40.4, 20.4, 38.0, 28.0, 10.2, 45.7   # v6: real horn disc top (was 43.5)
     SV_EAR = 24.5
-    SV_STEP = os.path.join(HERE, "..", "..", "clapets-v5", "resources", "mg996r", "mg996R_v2.step")  # shared with v5
+    SV_DIR = os.path.join(HERE, "..", "..", "resources", "mg996r-servo-3.snapshot.9")   # real GrabCAD model (body + horns)
+    SV_STEP = os.path.join(SV_DIR, "mg996R_v2.step")
+    HORN_STEP = os.path.join(SV_DIR, "mg996_arm_round.step")   # round horn: hub Ø9 x 3, disc Ø20.8 x 2.5, boss Ø9.2 x 0.8
     SV_X1 = PX + SV_OUT
     SV_X0 = SV_X1 - SV_L
     SV_XC = (SV_X0 + SV_X1) / 2
@@ -76,7 +78,8 @@ class G:
     SV_FLZ = SV_BOT + SV_FL
     GZA = SV_BOT + SV_HORN
     GZB = GZA + 8                                           # door gears z 92.5..100.5 (28T reaches y 100.75 < 108)
-    HORN_R, HORN_T = 10.5, 2.0
+    HORN_R, HORN_T = 10.4, 2.5                              # v6: real round horn disc (was Ø21 x 2)
+    HORN_BOSS_R, HORN_BOSS_T, HORN_HOLE_R = 4.6, 0.8, 7.2   # centre boss Ø9.2 on the disc top; screw holes on r 7.2 (axes)
     SV_SLOT = 2
     PAD_X0, PAD_T = 160, 8
     SX0 = PAD_X0 + PAD_T
@@ -110,8 +113,9 @@ class G:
     HS_ANG = 25                                             # head servo axis 25 deg down-left of the head axis
     HS_X = -HGC * math.sin(math.radians(HS_ANG))            # (-22.1, 152.9): clear of the boss, the M3 heads and the ears
     HS_Z = HZ - HGC * math.cos(math.radians(HS_ANG))
-    HS_HORN_Y = HG_Y0                                       # horn top (towards +y) = gear plane rear
-    HS_BODY_Y0 = HS_HORN_Y - SV_HORN                        # body bottom 51.0 (0.7 mm off the plate)
+    HS_BODY_Y0 = 51.0                                       # body bottom 0.5 off the plate (its screw heads stick out 0.3)
+    HS_HORN_Y = HS_BODY_Y0 + SV_HORN                        # v6: real horn top 96.7, inside the gear plane: the 20T is
+                                                            # shorter (96.7..102.5) and sits ON the horn (no collar)
 
 
 # =============================================================================================== geometry
@@ -477,8 +481,9 @@ def roue_porte():
 
 def pignon_porte():
     a = [prism(1, gear(G.PX, G.SVY, G.GM, G.GZ1, 90, 0.15), G.GZA, G.GZB), vcyl(1, G.PX, G.SVY, G.GZA - G.HORN_T, G.GZA, G.HORN_R + 3)]
-    c = [vcyl(1, G.PX, G.SVY, G.GZA - G.HORN_T - 1, G.GZA, G.HORN_R + 0.2), vcyl(1, G.PX, G.SVY, G.GZA - 1, G.GZB + 1, 3.2)]
-    c += [vcyl(1, G.PX + 7.5 * math.cos(math.pi / 2 * k), G.SVY + 7.5 * math.sin(math.pi / 2 * k), G.GZA - 1, G.GZB + 1, 0.8) for k in range(4)]
+    c = [vcyl(1, G.PX, G.SVY, G.GZA - G.HORN_T - 1, G.GZA, G.HORN_R + 0.3), vcyl(1, G.PX, G.SVY, G.GZA - 1, G.GZB + 1, 3.2),
+         vcyl(1, G.PX, G.SVY, G.GZA - 1, G.GZA + G.HORN_BOSS_T + 0.5, G.HORN_BOSS_R + 0.3)]
+    c += [vcyl(1, G.PX + G.HORN_HOLE_R * math.cos(math.pi / 2 * k), G.SVY + G.HORN_HOLE_R * math.sin(math.pi / 2 * k), G.GZA - 1, G.GZB + 1, 0.8) for k in range(4)]
     part("A_PIGNON_PORTE_20T", solid(a, c), 1270, PETG2, "print", "A")
 
 
@@ -561,10 +566,10 @@ def tete_moyeu():       # clamp hub + 30T gear + Ø56 flange in one part. The mi
 
 def tete_pignon():      # 20T on the head MG996R horn (horn in a pocket at the rear)
     ang_to_head = math.degrees(math.atan2(G.HZ - G.HS_Z, -G.HS_X))
-    a = [prism_y(gear(G.HS_X, G.HS_Z, G.GM, G.HGZ1, ang_to_head, 0.15), G.HG_Y0, G.HG_Y1),
-         ycyl(1, G.HS_X, G.HG_Y0 - G.HORN_T, G.HG_Y0, G.HS_Z, G.HORN_R + 3)]
-    c = [ycyl(1, G.HS_X, G.HG_Y0 - G.HORN_T - 1, G.HG_Y0, G.HS_Z, G.HORN_R + 0.2), ycyl(1, G.HS_X, G.HG_Y0 - 1, G.HG_Y1 + 1, G.HS_Z, 3.2)]
-    c += [ycyl(1, G.HS_X + 7.5 * math.cos(math.pi / 2 * k), G.HG_Y0 - 1, G.HG_Y1 + 1, G.HS_Z + 7.5 * math.sin(math.pi / 2 * k), 0.8) for k in range(4)]
+    y0 = G.HS_HORN_Y                                                        # v6: sits on the real horn's disc, centred by its boss
+    a = [prism_y(gear(G.HS_X, G.HS_Z, G.GM, G.HGZ1, ang_to_head, 0.15), y0, G.HG_Y1)]
+    c = [ycyl(1, G.HS_X, y0 - 1, G.HG_Y1 + 1, G.HS_Z, 3.2), ycyl(1, G.HS_X, y0 - 1, y0 + G.HORN_BOSS_T + 0.5, G.HS_Z, G.HORN_BOSS_R + 0.3)]
+    c += [ycyl(1, G.HS_X + G.HORN_HOLE_R * math.cos(math.pi / 2 * k), y0 - 1, G.HG_Y1 + 1, G.HS_Z + G.HORN_HOLE_R * math.sin(math.pi / 2 * k), 0.8) for k in range(4)]
     part("B_PIGNON_TETE_20T", solid(a, c), 1270, PETG2, "print", "B")
 
 
@@ -652,7 +657,9 @@ def refs():
     part("REF_MOUSSE_PORTE", box(1, G.PAD_X0, G.SX0, G.PAD_Y0, G.PAD_Y1, G.PADS_Z[0][0], G.PADS_Z[0][1]), 50, FOAM, "ref", "A")
     # MG996R = the real model (body, shaft, screws, cable grommet; its straight wire stub is replaced by the routed cable)
     sv = Part.read(G.SV_STEP)
-    sv = Part.makeCompound(sv.Solids[:8])
+    horn = Part.read(G.HORN_STEP)
+    horn.translate(Vector(0, 0, G.SV_HORN - G.HORN_T - 28))                 # seated on the spline (hub 0.2 above the body)
+    sv = Part.makeCompound(sv.Solids[:8] + horn.Solids)                     # v6: real horn added
     for s, name in ((1, "REF_MG996R_D"), (-1, "REF_MG996R_G")):
         sh = sv.copy()
         if s < 0:
