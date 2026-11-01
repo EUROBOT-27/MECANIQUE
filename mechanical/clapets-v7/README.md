@@ -61,3 +61,27 @@ Every number the CAD assumes about a bought part. Measure, then update `class G`
 | 608ZZ | Ø × width | 22 × 7 (seats Ø22.2) |
 | Ø8 rods | diameter, straightness | 8.0 |
 | DP-S30 cup | height (cup face = box face) | 18 |
+
+### 2026-11-01: every screw, nut and insert in the CAD
+- Generated in `v7_fc.py` (`fasteners()`), ISO sizes, no threads: parts `FIX_VIS_*` (screws, dark grey), `FIX_ECROU_*`
+  (nuts, silver), `FIX_INSERT_*` (inserts, brass, modelled at the hole size), `FIX_TNUT_*`. They are in the interference
+  check, so a screw too long or a head with no room shows up. **Bill of materials: end of `CAD_FC/report.txt`.**
+- Fixes found by placing them: real **TR8 nut holes at 0/90/180/270°** on r 8 (v5: 45°) → nut-support inserts moved;
+  horn-screw holes in both pinions Ø2.2 (were pilot size) + counterbores in the head pinion (the hub flange is 0.5 mm in
+  front of it); door unit corner screws **M4 × 8** (× 10 reached into the cap); deeper counterbore for the hub clamp
+  screw; wheel bolts on the real wheel axes; eccentric spacer bore centred.
+- Expected contacts (listed apart, not counted): horn screws self-tapping into the horns, motor screws into the motor.
+- Thin spots to know: middle cup station nuts get ~2 mm of thread (M3 × 16 ends in the nut); corner M4 nuts ~2.6 mm.
+- Still nuts (pockets) rather than inserts: arm and gear split clamps, door sheet screws, head servo, hub clamp, stations.
+  The door-unit nut pockets are gone (inserts).
+- Checks: rest pose 0 interferences, 0 reserve violations. Full cycle not run yet.
+
+| Qty | Fastener (whole module) |
+|---|---|
+| 16 | M3 heat-set insert (hole Ø4.6 × 6.5) · 2 M4 insert (hole Ø5.6 × 7) |
+| 10 | M3 × 8 button head · 10 M3 × 12 button head · 17 M3 × 16 button head |
+| 12 | M3 × 10 socket head · 1 M3 × 12 socket head |
+| 30 | M3 nut |
+| 6 | M4 × 8 button head · 4 M4 nut · 4 M4 × (6 + chassis) to the robot base |
+| 4 | M5 × 35 socket head (wheel bolts) · 4 M5 nyloc · 4 M5 × 8 button head + 4 M5 T-nuts (rails) |
+| 12 | M2 self-tapping pan head for the horns: 8 × 10 mm (door pinions), 4 × 6 mm (head pinion) |

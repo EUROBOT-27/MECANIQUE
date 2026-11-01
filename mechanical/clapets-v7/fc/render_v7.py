@@ -15,6 +15,8 @@ os.makedirs(IMG, exist_ok=True)
 HUB_SIM = os.environ.get("CLAPETS_COPY_DIR", "")              # optional: also copy videos/reports/images there
 
 COLOURS = [   # (label prefix, rgb, transparency %)
+    ("FIX_VIS", (0.18, 0.18, 0.20), 0), ("FIX_ECROU", (0.78, 0.79, 0.82), 0), ("FIX_TNUT", (0.78, 0.79, 0.82), 0),
+    ("FIX_INSERT", (0.85, 0.65, 0.15), 0),
     ("RES_TETE_ROTATION", (0.55, 0.30, 0.85), 88), ("RES_", (0.55, 0.30, 0.85), 75),
     ("A_AILE", (0.20, 0.45, 0.85), 0), ("A_CAPOT", (0.20, 0.45, 0.85), 0),("A_ROUE", (0.20, 0.45, 0.85), 0), ("A_PIGNON", (0.20, 0.45, 0.85), 0),
     ("A_TOLE", (0.72, 0.58, 0.40), 0), ("A_", (0.95, 0.45, 0.10), 0),
