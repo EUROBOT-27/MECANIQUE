@@ -114,6 +114,7 @@ class G:
     HS_X = -HGC * math.sin(math.radians(HS_ANG))            # (-22.1, 152.9): clear of the boss, the M3 heads and the ears
     HS_Z = HZ - HGC * math.cos(math.radians(HS_ANG))
     HS_BODY_Y0 = 51.0                                       # body bottom 0.5 off the plate (its screw heads stick out 0.3)
+    HCAB_X, HCAB_Z1 = 21.0, 215.0                           # v6: head servo cable rises at x ~21 (clear of the Ø34 tube) to z 215
     HS_HORN_Y = HS_BODY_Y0 + SV_HORN                        # v6: real horn top 96.7, inside the gear plane: the 20T is
                                                             # shorter (96.7..102.5) and sits ON the horn (no collar)
 
@@ -419,11 +420,10 @@ def aile(s, name):
     # the outer post. Channel in the post's inner face (open to the front, so the grommet slides in with the servo),
     # down into the 13 mm under the servo, out through a 10 x 10 slot in the bottom plate (the Dupont connector passes);
     # a zip tie through the 2 holes beside it holds the cable under the plate.
+    # v6: the cable goes STRAIGHT OUT horizontally (real GrabCAD wires), through the post and the outer wall; the channel
+    # stays open to the front so the servo + cable (and its Dupont connector) slide in. Routing beyond: Seif.
     xe = G.SV_X1
-    c.append(box(s, xe - 0.5, xe + G.CAB_OUT + 0.6, G.SVY - 5, G.SVY + 12, G.LOW + G.PT - 0.1, G.SV_BOT + G.CAB_Z1 + 1.5))
-    c.append(chbox(s, xe - 6, xe + G.CAB_OUT - 0.3, G.SVY - 5, G.SVY + 5, zb - 1, G.LOW + G.PT + 1, 1.5))
-    for d in (-1, 1):
-        c.append(box(s, xe - 15, xe - 10.5, min(G.SVY + d * 5, G.SVY + d * 7.6), max(G.SVY + d * 5, G.SVY + d * 7.6), zb - 1, G.LOW + G.PT + 1))
+    c.append(box(s, xe - 0.5, G.BASE_X + 1, G.SVY - 5, G.SVY + 12, G.LOW + G.PT - 0.1, G.SV_BOT + G.CAB_Z1 + 1.5))
     # the flange ear. The strap (A_BRIDE_SERVO) screws on them and presses the servo down onto its flange screws.
     ztop = G.SV_BOT + G.SV_H
     for side in (-1, 1):
@@ -524,10 +524,10 @@ def tete_support():     # bracket: 4x M5 (the wheel bolts, longer) on the plate;
          # head servo cable: it leaves the shaft-end face (+x end, x -3.2), centred, at the bottom = next to the plate.
          # The servo window is extended past that end, then an L slot runs down to the bracket's bottom edge (lay the
          # cable in from the front); 2 zip-tie holes beside it open into the plate's centre notch.
-         box(1, G.HS_SVX1 - 0.5, G.HS_SVX1 + 14, G.PL_Y1 - 1, G.PL_Y1 + 7, G.HS_Z - 5.5, G.HS_Z + 5.5),
-         box(1, G.HS_SVX1 + 6, G.HS_SVX1 + 14, G.PL_Y1 - 1, G.PL_Y1 + 7, 99, G.HS_Z),
-         box(1, G.HS_SVX1 + 2, G.HS_SVX1 + 4.6, G.PL_Y1 - 1, G.PL_Y1 + 7, 104, 108.5),
-         box(1, G.HS_SVX1 + 16, G.HS_SVX1 + 18.6, G.PL_Y1 - 1, G.PL_Y1 + 7, 104, 108.5),
+         box(1, G.HS_SVX1 - 0.5, G.HS_SVX1 + 14, G.PL_Y1 - 1, G.PL_Y1 + 10, G.HS_Z - 5.5, G.HS_Z + 5.5),
+         # v6: cable straight out (+x), then UP in a groove in the bracket front, to the tube passage (z 200+)
+         box(1, G.HS_SVX1 + 13, G.HCAB_X + 3, G.PL_Y1 + 4, G.PL_Y1 + 8, G.HS_Z - 3.5, G.HS_Z + 3.5),
+         box(1, G.HCAB_X - 3, G.HCAB_X + 3, G.PL_Y1 + 4, G.PL_Y1 + 8, G.HS_Z - 3.5, 201),
          ycyl(1, 0, G.HB_Y0 - 1, G.HB_Y1 + 1, hz, 5.0)]
     c.append(box(1, G.HS_SVX0 - 1.5, G.HS_SVX1 + 0.6, G.PL_Y1 - 1, G.PL_Y1 + 7, G.HS_Z - G.SV_W / 2 - 1, G.HS_Z + G.SV_W / 2 + 1))   # window: servo body
     for bz in (G.PL_ZC - G.CLAMP_V, G.PL_ZC + G.CLAMP_V):                                              # pockets: module A's M4 button heads
@@ -656,23 +656,38 @@ def refs():
     part("REF_AXE_TETE_D8", ycyl(1, 0, G.HBR_Y0 + 0.5, G.HF_Y0 + 1.5, G.HZ, 4), 7850, STEEL, "ref", "B")
     part("REF_MOUSSE_PORTE", box(1, G.PAD_X0, G.SX0, G.PAD_Y0, G.PAD_Y1, G.PADS_Z[0][0], G.PADS_Z[0][1]), 50, FOAM, "ref", "A")
     # MG996R = the real model (body, shaft, screws, cable grommet; its straight wire stub is replaced by the routed cable)
-    sv = Part.read(G.SV_STEP)
+    raw = Part.read(G.SV_STEP)
     horn = Part.read(G.HORN_STEP)
     horn.translate(Vector(0, 0, G.SV_HORN - G.HORN_T - 28))                 # seated on the spline (hub 0.2 above the body)
-    sv = Part.makeCompound(sv.Solids[:8] + horn.Solids)                     # v6: real horn added
-    for s, name in ((1, "REF_MG996R_D"), (-1, "REF_MG996R_G")):
-        sh = sv.copy()
-        if s < 0:
-            sh.rotate(Vector(0, 0, 0), Vector(0, 0, 1), 180)
-        sh.translate(Vector(s * G.PX, G.SVY, G.SV_BOT + 28))
-        cab = box(s, G.PX + 12, G.PX + 14.5, G.SVY - 3, G.SVY + 3, G.LOW - 15, G.SV_BOT + 7.5)       # cable: down through the slot
-        part(name, Part.makeCompound(sh.Solids + [cab]), 1200, SERVO, "ref", "A")
-    sh = sv.copy()                                                                                   # head servo: top -> +y
-    sh.rotate(Vector(0, 0, 0), Vector(1, 0, 0), -90)
-    sh.translate(Vector(G.HS_X, G.HS_BODY_Y0 + 28, G.HS_Z))
-    cab = [box(1, G.HS_X + 14, G.HS_X + 20, G.HS_BODY_Y0 + 4.5, G.HS_BODY_Y0 + 7.5, G.HS_Z - 2.5, G.HS_Z + 2.5),
-           box(1, G.HS_X + 17, G.HS_X + 20, G.HS_BODY_Y0 + 4.5, G.HS_BODY_Y0 + 7.5, 95, G.HS_Z + 2.5)]
-    part("REF_MG996R_TETE", Part.makeCompound(sh.Solids + cab), 1200, SERVO, "ref", "B")
+    sv = Part.makeCompound(raw.Solids[:8] + horn.Solids)                    # v6: real horn added
+    # v6: the real GrabCAD wires (3 x Ø1.4, straight out of the grommet), trimmed at the grommet face (x 16) so they
+    # don't overlap it; one part per wire so each gets its colour
+    trim = Part.makeBox(20, 20, 20, Vector(16.0, -10, -32))
+    wires = [("BRUN", raw.Solids[10].common(trim)), ("ROUGE", raw.Solids[8].common(trim)), ("ORANGE", raw.Solids[9].common(trim))]
+    for s, tag in ((1, "D"), (-1, "G")):
+        def place(shape):
+            sh = shape.copy()
+            if s < 0:
+                sh.rotate(Vector(0, 0, 0), Vector(0, 0, 1), 180)
+            sh.translate(Vector(s * G.PX, G.SVY, G.SV_BOT + 28))
+            return Part.makeCompound(sh.Solids)                             # bake the placement into the solids
+        part("REF_MG996R_" + tag, place(sv), 1200, SERVO, "ref", "A")
+        for col, w in wires:
+            part("REF_FIL_%s_%s" % (col, tag), place(w), 1500, SERVO, "ref", "A")
+    def place_h(shape):                                                     # head servo: top -> +y
+        sh = shape.copy()
+        sh.rotate(Vector(0, 0, 0), Vector(1, 0, 0), -90)
+        sh.translate(Vector(G.HS_X, G.HS_BODY_Y0 + 28, G.HS_Z))
+        return Part.makeCompound(sh.Solids)
+    part("REF_MG996R_TETE", place_h(sv), 1200, SERVO, "ref", "B")
+    wy = G.HS_BODY_Y0 + 28 - 22.0                                           # wire axis y (servo z -22)
+    for (col, w), dz in zip(wires, (1.4, 0.0, -1.4)):                       # servo y -> world -z
+        stub = place_h(w)
+        x0, z = G.HS_X + 22.6, G.HS_Z + dz
+        xc = G.HCAB_X - dz                                                  # top wire turns first: no crossing
+        run = [Part.makeCylinder(0.7, xc - x0, Vector(x0, wy, z), Vector(1, 0, 0)), Part.makeSphere(0.7, Vector(xc, wy, z)),
+               Part.makeCylinder(0.7, G.HCAB_Z1 - z, Vector(xc, wy, z), Vector(0, 0, 1))]
+        part("REF_FIL_%s_TETE" % col, Part.makeCompound(stub.Solids + run), 1500, SERVO, "ref", "B")
     part("REF_VENTOUSE_DPS30", solid([ycyl(1, 0, G.CUP_Y0, G.YF, 0, 15), ycyl(1, 0, G.TH_Y0 + 1, G.CUP_Y0, 0, 2.5)]), 1100, RUBBER, "ref", "B")
     part("REF_PILE_3_PIERRES", Part.makeCompound([box(1, -160, 160, G.BOX_Y0, G.BOX_Y0 + 110, 110 * i + 0.5, 110 * (i + 1) - 0.5) for i in range(3)]),
          100, BOXC, "ref", "-")
@@ -698,7 +713,11 @@ def placements():
          ("REF_608ZZ_TETE", 0, G.HB_Y1 - 7 - G.HBR_Y0, 0, "carriage"), ("B_ENTRETOISE_TETE", 0, 0, 0, "carriage"),
          ("A_BRIDE_SERVO_D", 0, 0, 0, "carriage"), ("A_BRIDE_SERVO_G", 0, 0, 0, "carriage"),
          ("A_CAPOT_AILE_D", 0, 0, 0, "carriage"), ("A_CAPOT_AILE_G", 0, 0, 0, "carriage"),
-         ("REF_MG996R_TETE", 0, 0, 0, "carriage"), ("B_PIGNON_TETE_20T", 0, 0, 0, "hpinion"),
+         ("REF_MG996R_TETE", 0, 0, 0, "carriage"), ("REF_FIL_BRUN_TETE", 0, 0, 0, "carriage"),
+         ("REF_FIL_ROUGE_TETE", 0, 0, 0, "carriage"), ("REF_FIL_ORANGE_TETE", 0, 0, 0, "carriage"),
+         ("REF_FIL_BRUN_D", 0, 0, 0, "carriage"), ("REF_FIL_ROUGE_D", 0, 0, 0, "carriage"), ("REF_FIL_ORANGE_D", 0, 0, 0, "carriage"),
+         ("REF_FIL_BRUN_G", 0, 0, 0, "carriage"), ("REF_FIL_ROUGE_G", 0, 0, 0, "carriage"), ("REF_FIL_ORANGE_G", 0, 0, 0, "carriage"),
+         ("B_PIGNON_TETE_20T", 0, 0, 0, "hpinion"),
          ("B_MOYEU_TETE_30T", 0, 0, 0, "head"), ("REF_AXE_TETE_D8", 0, 0, 0, "head"), ("B_PLATEAU_TETE", 0, 0, 0, "head"),
          ("REF_PILE_3_PIERRES", 0, 0, 0, "stack"),
          ("RES_TETE_ROTATION", 0, 0, 0, "reserve"), ("RES_TETE_FIXE", 0, 0, 0, "reserve"), ("RES_TETE_CABLES", 0, 0, 0, "reserve"),

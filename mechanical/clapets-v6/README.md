@@ -24,4 +24,15 @@ and test it on real stones. Owner while in progress: **Seif**.
 - **Head pinion:** the servo body can't move back (plate), so the real horn now sits inside the gear plane. The 20T is
   shorter (y 96.7 → 102.5, **5.8 mm face** instead of 8) and sits directly on the horn disc, centred by the boss; no
   collar (it would hit the 30T). The 30T keeps its full 8 mm. Horn disc to 30T tips ≈ 0.85 mm.
-- Checks: rest pose 0 interferences, 0 reserve violations.
+- Checks: rest pose 0 interferences, 0 reserve violations; full cycle 0 collisions, 1200 / ≤ 1367 mm, ≤ 347.7 mm.
+
+### 2026-11-01: real servo wires, new cable exits
+- The **real GrabCAD wires** (3 × Ø1.4, brown / red / orange) are in the assembly as separate parts `REF_FIL_<colour>_<D|G|TETE>`,
+  coloured by `render_v6.py`. They start at the grommet face.
+- **Door servos D/G:** the cable goes **straight out horizontally**, like the GrabCAD model, through a channel in the outer
+  post and outer wall (open to the front: the servo, cable and Dupont connector slide in). The old route down through
+  the bottom plate (slot + zip-tie holes) is removed. The straight wires reach x 153.8, **3.8 mm outside the 300 mm base**
+  (start perimeter + ~0.2 mm). Routing beyond the wall: Seif, by hand.
+- **Head servo:** straight out (+x), then **up** at x ≈ 21 (clear of the Ø34 bearing tube) in a groove in the bracket
+  front, to z 215 in the tube passage, where it joins the vacuum tubes. The old L slot down the bracket is removed; the
+  grommet window is 1.5 mm deeper.
