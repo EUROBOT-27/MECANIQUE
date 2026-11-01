@@ -23,7 +23,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
   4. Printability check of every part; refine what needs it
   5. Caliper measurements (list at the end of the v7 README), update `class G`
   6. Print, assemble, test in real life
-- [ ] Run the full-cycle check `fc/motion_v7.py` (not run since the door unit / fasteners / motor changes) — Seif
+- [ ] Re-run `fc/motion_v7.py` **in the GUI** (`freecad.exe`) to get the video; expect 0 unexpected collisions, max 347.7 mm — Seif
 - [ ] Add the GrabCAD link of the Two Trees Bluer V2 model to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` — Seif
 - [ ] Robot layout: chassis floor height vs the module (z 0 = table in the clapets CAD; floor must stay < z 27; cut profiles, top tie ≤ 350) — Seif
 - [ ] Prototype and test stone gripper concepts A (side clamp) and B (suction) → `mechanical/concepts/stone-gripper.md` — Seif, Ayoub, Baha — due 2026-11-22
@@ -59,6 +59,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Full-cycle check of clapets v7: no real collision, deployed ≤ 1367.3 mm — 2026-11-01
 - [x] Clapets v6 (real horn + wires) and v7 (door units reworked, real Two Trees parts, all fasteners + BOM, motor on the floor) → `mechanical/clapets-v6/`, `mechanical/clapets-v7/` (D-019, D-020) — 2026-11-01
 - [x] Real Two Trees Bluer V2 parts extracted → `mechanical/resources/two-trees-bluer-v2-parts/` — 2026-11-01
 - [x] Claude removed from GitHub contributors; attribution off in `.claude/settings.json` — 2026-11-01

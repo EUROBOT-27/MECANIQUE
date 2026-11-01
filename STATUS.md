@@ -15,7 +15,7 @@ _Last updated: 2026-11-01, evening (Seif)_
   In parallel, Maatoug designed **clapets v5** (`mechanical/clapets-v5/`, D-014 → D-017): doors + lift + a suction head
   that turns the 3-box stack. **Seif is turning it into the first prototype: clapets v7** (`mechanical/clapets-v7/`,
   D-019, D-020): real horn/servo/printer parts, door units reworked with M3 inserts, every fastener + BOM, motor on the
-  floor. Rest pose clean; full cycle not re-run. Next: fastener tolerances, door sheet + foam, suction carrier with real
+  floor. Rest pose and full cycle clean (no real collision, deployed ≤ 1367.3 mm). Next: fastener tolerances, door sheet + foam, suction carrier with real
   tubes, printability, caliper check, print + test. A/B/C not dropped; the test decides.
 - Parts library from the disassembled Ender 3 V2, lines still unverified (D-012).
 - Software: simulation repo (ROS 2 Jazzy + Gazebo), clone separately into `eurobot2027/`. `software/` area exists.
@@ -30,7 +30,7 @@ _Last updated: 2026-11-01, evening (Seif)_
 
 ## Waiting on
 - Seif: order stones + foam balls, robot and roof layout sketches, refined timeline, confirmation of the D-008 location,
-  full-cycle check of clapets v7.
+  clapets v7 fastener tolerances + caliper check.
 - Maatoug: back up personal files before the next pull; push the generators that only exist on his PC.
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.
 - FAQ answers (Q1–Q9 not sent yet).
