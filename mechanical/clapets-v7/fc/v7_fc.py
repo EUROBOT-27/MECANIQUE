@@ -45,8 +45,10 @@ class G:
     SPRING_U = SPRING_V = 85                                # corner holes (M4) -> door units
     CLAMP_V = 10                                            # centre holes Ø4.3 (M4) -> nut support
     PIN_X = 25.8                                            # 3rd plate hole Ø4.2 at (25.8, 0): locating pin of the nut support
-    MOT_Z1, SHELF_T = 46, 6
-    CPL_Z0, CPL_Z1, SCREW_Z0, SCREW_Z1 = 58, 83, 71, 363
+    MOT_PAD, MOT_L, SHELF_T = 1.0, 38.0, 6                   # v7: motor ON THE FLOOR on a 1 mm rubber/cork pad; body ~38
+    MOT_Z1 = MOT_PAD + MOT_L                                # motor top face = underside of the clamp plate (39)
+    BLK_Y1, BLK_YI = 58.5 + LIFT_DY - 0.5 + 10 + 12, 58.5 + LIFT_DY - 0.5 + 10 + 6   # rail blocks to y 55; inserts at y 49
+    CPL_Z0, CPL_Z1, SCREW_Z0, SCREW_Z1 = 47, 72, 60, 363    # v7: coupler 2 mm over the clamp plate; lead screw 303 mm
     NUT_Z = 110
     TOP_Z0, TOP_Z1 = 344, 366                              # 608 from below, 2.8 mm roof over it
     LIFT_CARRY, LIFT_TURN = 15, 75                          # turn: axis 165 + 75 = 240 >= 229.8 (stack half-diagonal) + 10
@@ -341,15 +343,29 @@ YC = G.RAIL_YC
 
 # ---------------------------------------------------------------- MODULE A: lift
 def socle():
-    a = [box(1, -62, 62, YC - 24.5, YC + 27.5, 0, G.RAIL_Z0), box(1, -26.5, 26.5, YC - 22.5, YC + 22.5, G.MOT_Z1, G.MOT_Z1 + G.SHELF_T)]
-    c = []
+    # v7: the motor stands on the floor (on its pad) in a notch of the base, open at the back for its connector. The rail
+    # blocks are bigger: 2 M3 inserts each on top, for the motor clamp plate. Floor screws (M4) outside the blocks.
+    a = [box(1, -68, 68, YC - 24.5, YC + 27.5, 0, G.RAIL_Z0)]
+    c = [box(1, -21.65, 21.65, YC - 31, YC + 21.65, -1, G.RAIL_Z0 + 1)]                                # motor notch
     for s in (1, -1):
-        a.append(box(s, G.RAIL_DX - 14, G.RAIL_DX + 14, RY0 - 4, RY1 + 4, G.RAIL_Z0, G.MOT_Z1 + G.SHELF_T))
+        a.append(box(s, G.RAIL_DX - 14, G.RAIL_DX + 16, RY0 - 4, G.BLK_Y1, G.RAIL_Z0, G.MOT_Z1))
         c += [box(s, G.RAIL_DX - 10.2, G.RAIL_DX + 10.2, RY0 - 0.2, RY1 + 0.2, G.RAIL_Z0, 100),
-              ycyl(s, G.RAIL_DX, RY0 - 5, RY0 + 1, 30, 2.75)] + [vcyl(s, 55, y, -1, G.RAIL_Z0 + 1, 2.2) for y in (YC - 18.5, YC + 21.5)]
-    c.append(vcyl(1, 0, YC, G.MOT_Z1 - 1, G.MOT_Z1 + G.SHELF_T + 1, 11.5))
-    c += [vcyl(1, dx, YC + dy, G.MOT_Z1 - 1, G.MOT_Z1 + G.SHELF_T + 1, 1.7) for dx in (-15.5, 15.5) for dy in (-15.5, 15.5)]
+              ycyl(s, G.RAIL_DX, RY0 - 5, RY0 + 1, 30, 2.75)]
+        c += [vcyl(s, x, G.BLK_YI, G.MOT_Z1 - G.INS3_D, G.MOT_Z1 + 1, G.INS3_R) for x in (G.RAIL_DX - 7, G.RAIL_DX + 7)]
+        c += [vcyl(s, 63, y, -1, G.RAIL_Z0 + 1, 2.2) for y in (YC - 15, YC + 20)]                    # M4 to the robot floor
     part("A_SOCLE", solid(a, c), 1270, PETG, "print", "A")
+
+
+def platine_moteur():   # v7: clamp plate on the motor's top face AND both rail blocks; the rails pass through it
+    z0, z1 = G.MOT_Z1, G.MOT_Z1 + G.SHELF_T
+    a = [chbox(1, -(G.RAIL_DX + 16), G.RAIL_DX + 16, YC - 22.5, G.BLK_Y1, z0, z1, 3)]
+    c = [vcyl(1, 0, YC, z0 - 1, z1 + 1, 11.5)]                                                       # boss Ø22 + shaft
+    c += [vcyl(1, dx, YC + dy, z0 - 1, z1 + 1, 1.7) for dx in (-15.5, 15.5) for dy in (-15.5, 15.5)]  # 4x M3 into the motor
+    for s in (1, -1):
+        c.append(box(s, G.RAIL_DX - 10.2, G.RAIL_DX + 10.2, RY0 - 0.2, RY1 + 0.2, z0 - 1, z1 + 1))   # the rail passes through
+        c += [vcyl(s, x, G.BLK_YI, z0 - 1, z1 + 1, 1.7) for x in (G.RAIL_DX - 7, G.RAIL_DX + 7)]      # 4x M3 into the blocks
+    part("A_PLATINE_MOTEUR", solid(a, c), 1270, PETG, "print", "A")
+    part("REF_PATIN_MOTEUR", box(1, -21, 21, YC - 21, YC + 21, 0, G.MOT_PAD), 1200, DARK, "ref", "A")   # rubber / cork pad
 
 
 def haut():
@@ -679,8 +695,8 @@ def refs():
     part("REF_608ZZ", solid([vcyl(1, G.PX, G.PY, G.LOW + G.PT - 7, G.LOW + G.PT, 11)], [vcyl(1, G.PX, G.PY, 0, 400, 4)]), 7850, STEEL, "ref", "A")
     part("REF_608ZZ_TETE", solid([ycyl(1, 0, G.HBR_Y0, G.HBR_Y0 + 7, G.HZ, 11)], [ycyl(1, 0, 0, 200, G.HZ, 4)]), 7850, STEEL, "ref", "B")
     mot = tt("nema17")                                                       # v7: real motor, body top on the shelf
-    top = max(f.BoundBox.ZMax for f in mot.Faces if f.Area > 1000 and f.BoundBox.ZLength < 1e-6)
-    mot.translate(Vector(-G.TT_ZAX[0], YC - G.TT_ZAX[1], G.MOT_Z1 - top))
+    bot = min(f.BoundBox.ZMin for f in mot.Faces if f.Area > 1000 and f.BoundBox.ZLength < 1e-6)
+    mot.translate(Vector(-G.TT_ZAX[0], YC - G.TT_ZAX[1], G.MOT_PAD - bot))                  # v7: standing on its pad
     part("REF_NEMA17", Part.makeCompound(mot.Solids), 3500, DARK, "ref", "A")
     cpl = tt("coupler_5x8")
     cpl.translate(Vector(-G.TT_ZAX[0], YC - G.TT_ZAX[1], G.CPL_Z0 - G.TT_CPL_Z0))
@@ -848,6 +864,9 @@ def fasteners():
     # ---- motor on the socle shelf (4x M3 x 10), rails in the socle and the top tie (M5 x 8 into T-nuts)
     fix("FIX_VIS_MOTEUR", [f_screw("SH", 3, 10, (dx, YC + dy, G.MOT_Z1 + G.SHELF_T), (0, 0, -1)) for dx in (-15.5, 15.5) for dy in (-15.5, 15.5)],
         {s3 % 10: 4}, [(0, 0, 0, "fixed")], "A")
+    pb = [(sx * (G.RAIL_DX + dx), G.BLK_YI) for sx in (1, -1) for dx in (-7, 7)]
+    fix("FIX_VIS_PLATINE", [f_screw("BH", 3, 12, (x, y, G.MOT_Z1 + G.SHELF_T), (0, 0, -1)) for x, y in pb], {b3 % 12: 4}, [(0, 0, 0, "fixed")], "A")
+    fix("FIX_INSERT_SOCLE", [f_insert(3, (x, y, G.MOT_Z1), (0, 0, -1)) for x, y in pb], {I3: 4}, [(0, 0, 0, "fixed")], "A")
     rz = [(sx, z) for sx in (1, -1) for z in (30, G.TOP_Z0 + 6)]
     fix("FIX_VIS_RAILS", [f_screw("BH", 5, 8, (sx * G.RAIL_DX, RY0 - 4, z), (0, 1, 0)) for sx, z in rz],
         {"M5 x 8 " + HNAME["BH"]: 4}, [(0, 0, 0, "fixed")], "A")
@@ -891,7 +910,7 @@ def bom_lines():
 
 def placements():
     L = -2 * G.PX
-    p = [("A_SOCLE", 0, 0, 0, "fixed"), ("A_TRAVERSE_HAUT", 0, 0, 0, "fixed"), ("REF_NEMA17", 0, 0, 0, "fixed"),
+    p = [("A_SOCLE", 0, 0, 0, "fixed"), ("A_PLATINE_MOTEUR", 0, 0, 0, "fixed"), ("REF_PATIN_MOTEUR", 0, 0, 0, "fixed"), ("A_TRAVERSE_HAUT", 0, 0, 0, "fixed"), ("REF_NEMA17", 0, 0, 0, "fixed"),
          ("REF_COUPLEUR_5x8", 0, 0, 0, "fixed"), ("REF_VIS_T8", 0, 0, 0, "fixed"),
          ("REF_608ZZ", -G.PX, YC - G.PY, G.RAIL_Z0 + G.RAIL_L - (G.LOW + G.PT - 7), "fixed"),
          ("REF_RAILS_2020", 0, 0, 0, "fixed"), ("REF_ROUES_V", 0, 0, 0, "carriage"), ("REF_ENTRETOISES_M5", 0, 0, 0, "carriage"),
@@ -925,7 +944,7 @@ def placements():
 
 
 def build_all():
-    socle(); haut(); support_ecrou(); aile(1, "A_AILE_D"); aile(-1, "A_AILE_G")
+    socle(); platine_moteur(); haut(); support_ecrou(); aile(1, "A_AILE_D"); aile(-1, "A_AILE_G")
     for s, tag in ((1, "D"), (-1, "G")):
         bras(s, "A_BRAS_PORTE_%s_BAS" % tag, G.ARM1, G.FL1)
         bras(s, "A_BRAS_PORTE_%s_HAUT" % tag, G.ARM2, G.FL2)

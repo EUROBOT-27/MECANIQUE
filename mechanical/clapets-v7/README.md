@@ -85,3 +85,14 @@ Every number the CAD assumes about a bought part. Measure, then update `class G`
 | 6 | M4 × 8 button head · 4 M4 nut · 4 M4 × (6 + chassis) to the robot base |
 | 4 | M5 × 35 socket head (wheel bolts) · 4 M5 nyloc · 4 M5 × 8 button head + 4 M5 T-nuts (rails) |
 | 12 | M2 self-tapping pan head for the horns: 8 × 10 mm (door pinions), 4 × 6 mm (head pinion) |
+
+### 2026-11-01: motor on the floor (the v5 socle could not be assembled)
+- v5/v6: the motor hung under a shelf that was part of the socle, with its shaft through the shelf: **impossible to put
+  in** (shelf above, base below, shaft in the hole).
+- v7: the **motor stands on the floor** on a **1 mm rubber/cork pad** (`REF_PATIN_MOTEUR`, damping + length tolerance) in
+  a notch of the socle base (open at the back for the connector). A separate **clamp plate `A_PLATINE_MOTEUR`** sits on
+  the motor's top face (4× M3 × 10 into the motor) and on both rail blocks (4× M3 × 12 into inserts); the rails pass
+  through it, so it also braces them. Rail blocks bigger (inserts), floor screws moved outside the blocks.
+- Assembly: socle → pad + motor → clamp plate → rails down through the plate into the socle → carriage → top tie.
+- Coupler and lead screw 11 mm lower: **lead screw 303 mm** (60 → 363). Motor shaft in the coupler: ~13 mm.
+- Measure the motor body length before printing: the blocks are 38 mm + pad (`MOT_L`, `MOT_PAD`).
