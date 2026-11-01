@@ -299,3 +299,24 @@ Template:
 - Alternatives considered: editing v5 in place (would overwrite Maatoug's reference outputs); prototyping A/B first.
 - Why: v5 is the most complete design (CAD-checked full cycle); a real print + test answers more than more concept work.
 - Consequences: D-014 → D-017 stay active as the base of v6. Maatoug is told that Seif owns `clapets-v6/` for now.
+
+## D-020 — Clapets v7 is the version we print and test
+- Date: 2026-11-01
+- Area: mechanical
+- Decided by: Seif
+- Status: active (updates D-019: v7 replaces v6 as the print target; v5 and v6 stay as references)
+- Decision: The proof of concept is printed from `mechanical/clapets-v7/`. Choices made in it:
+  - **M3 heat-set inserts, hole Ø4.6 × 6.5** (sized from a part that fits Seif's inserts) instead of nut pockets in the
+    door units; **nuts are kept** in split clamps, door sheet screws, head servo, hub clamp and cup stations.
+  - **Door unit reworked:** full-height outer wall + closed box above the gears, servo held by 3 screws into inserts
+    (no strap), one continuous bottom plate.
+  - **Real parts in the CAD:** MG996R horn + wires (GrabCAD), Two Trees Bluer V2 profiles, wheels, spacers, NEMA 17,
+    coupler, TR8 nut (`mechanical/resources/two-trees-bluer-v2-parts/`); every screw, nut and insert modelled, with a BOM.
+  - **Motor on the floor** on a 1 mm rubber/cork pad, clamped by a separate plate on the motor and the rail blocks (the
+    v5 socle could not be assembled).
+  - **Lift travel stays 75 mm** (needed to turn the stack). **Profiles not cut** for the proof of concept; they will be
+    cut when mounted on the real chassis (top tie ≤ 350 mm).
+- Alternatives considered: printing v6 (nut pockets, open door unit frame, impossible motor mount).
+- Why: make the first print match the real parts in hand, with nothing left to guess.
+- Consequences: before printing: tolerance check of every fastener, door sheet + foam redesign, suction carrier with real
+  tube sizes, printability check, caliper measurements (`mechanical/clapets-v7/README.md`). Full-cycle check not run yet.

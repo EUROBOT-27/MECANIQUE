@@ -11,6 +11,8 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add the generators that live only on your PC (`C:\Projects\EUROBOT\Mecanique\`: clapets v1/v2/v4/PoC, SolidWorks C# `sw/` scripts, `ANALYSE_mecanisme_*.md`) to the repo under `mechanical/`, with relative paths — Maatoug
 - [ ] Check `tools/` (your helpers from `tmp/`, kept as examples) and `mechanical/resources/parts-photos/` (your `tmp/parts-img`) — Maatoug
 - [ ] Review the clapets v5 status with Seif: stone gripper choice, D-016/D-017 (see `todo/seif.md`) — Maatoug, Seif
+- [ ] Note: Seif owns `mechanical/clapets-v6/` and `clapets-v7/` for now (v5 untouched). v7 = the version we print (D-020); have a look at its README (fasteners, real printer parts, motor on the floor) — Maatoug
+- [ ] Where did you download the Two Trees Bluer V2 model? Add the link to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` if Seif hasn't — Maatoug
 
 ## Now (current focus)
 - [ ] Add my own current tasks (software + CAD) to this list — Maatoug

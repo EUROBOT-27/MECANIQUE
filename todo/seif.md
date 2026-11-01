@@ -16,6 +16,16 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
+- [ ] **Clapets v7 before printing** (`mechanical/clapets-v7/`, D-020), in this order: — Seif
+  1. Tolerance check of every nut / screw / insert
+  2. Redesign the door sheet (tôle porte) + foam pads
+  3. Rework the suction cup carrier with the real tube sizes and measurements
+  4. Printability check of every part; refine what needs it
+  5. Caliper measurements (list at the end of the v7 README), update `class G`
+  6. Print, assemble, test in real life
+- [ ] Run the full-cycle check `fc/motion_v7.py` (not run since the door unit / fasteners / motor changes) — Seif
+- [ ] Add the GrabCAD link of the Two Trees Bluer V2 model to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` — Seif
+- [ ] Robot layout: chassis floor height vs the module (z 0 = table in the clapets CAD; floor must stay < z 27; cut profiles, top tie ≤ 350) — Seif
 - [ ] Prototype and test stone gripper concepts A (side clamp) and B (suction) → `mechanical/concepts/stone-gripper.md` — Seif, Ayoub, Baha — due 2026-11-22
 - [ ] Robot layout sketch: drive base vs. ~380 mm open jaws (concept A), pockets, perimeter at start / deployed, **shared gate slot on face A or B** (D-011, `mechanical/concepts/gate-lintel.md`) — Seif
 - [ ] Concepts for the second face: single-stone pick + flip (towers, gate uprights) — Seif, Ayoub, Baha
@@ -35,7 +45,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Decide ArUco tags on our SIMAs (IDs > 90 suggested) — Seif, Hamza Sammoud
 
 ## Follow-ups with others
-- [ ] **Review Maatoug's clapets work (D-014 → D-017, `mechanical/clapets-v5/`)**: v5 is a full stack gripper (doors + lift + turning suction head). Accept it as our stone gripper, or keep it `proposed` next to concepts A/B/C (`mechanical/concepts/stone-gripper.md`) — Seif, Maatoug — before 2026-11-22
+- [ ] **Review Maatoug's clapets work (D-014 → D-017)**: v5 is being printed and tested as v7 (D-019, D-020); A/B/C not dropped, the real test decides. Close this after the test — Seif, Maatoug — before 2026-11-22
 - [ ] Confirm D-012 (parts library, logged as "Decided by: Seif" on 2026-10-27) — Seif
 - [ ] Tell Maatoug about the shared hub (D-018) and the steps before his next pull (see `todo/maatoug.md`) — Seif — 2026-11-01
 - [ ] Send the open FAQ questions (Q1–Q9 in `project/rules-digest.md`) to the Eurobot FAQ / referees. Q1 (perimeter) first — Seif
@@ -49,6 +59,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Clapets v6 (real horn + wires) and v7 (door units reworked, real Two Trees parts, all fasteners + BOM, motor on the floor) → `mechanical/clapets-v6/`, `mechanical/clapets-v7/` (D-019, D-020) — 2026-11-01
+- [x] Real Two Trees Bluer V2 parts extracted → `mechanical/resources/two-trees-bluer-v2-parts/` — 2026-11-01
+- [x] Claude removed from GitHub contributors; attribution off in `.claude/settings.json` — 2026-11-01
 - [x] Shared hub: merged Seif's and Maatoug's copies into the git repo EUROBOT-27/MECANIQUE, Git LFS for CAD/images, per-person TODO and logs (D-018) — 2026-11-01
 - [x] Gate space reservation + concepts → `mechanical/concepts/gate-lintel.md`; gate shares a driving face (D-011) — 2026-10-26
 - [x] Table zones measured from `table.svg` (shot distance, PAMI paths, quarries) → `project/strategy.md` — 2026-10-26

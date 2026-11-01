@@ -30,7 +30,7 @@ the testing method, …) (D-006).
 subfolder per study, listed in `simulations/INDEX.md`), even when the script that makes it lives elsewhere.
 
 ## Clapets (Maatoug's stack gripper, D-014 → D-017)
-- **Clapets v5 = Maatoug's reference design (D-017), not yet reviewed by Seif against concepts A/B/C (D-018).**
+- **Clapets v5 = Maatoug's reference design (D-017); Seif is prototyping it as v7 (D-019, D-020), concepts A/B/C kept until the test.**
   Self-contained folder `mechanical/clapets-v5/`: FreeCAD generator scripts in `fc/` (relative paths), real servo model,
   CAD outputs in `CAD_FC/` (STEP, STL, DXF, FCStd), docs (build sheet, design history, decisions, rules, open points).
   Edit the design there.
@@ -38,6 +38,7 @@ subfolder per study, listed in `simulations/INDEX.md`), even when the script tha
   `module_clapets_v2`, `module_clapets_v4`, `module_clapets_poc`, SolidWorks C# API scripts in each `sw/` folder,
   `ANALYSE_mecanisme_*.md`, `simulation/`, `mecanisme1/`). To be added to the repo (`todo/maatoug.md`).
 - `module_clapets_v3`, `base omniwheel 4/CAD/V2_280` (omni base): set aside (Maatoug, 2026-10-27).
+- **Clapets v6 / v7 (Seif, D-019, D-020):** `mechanical/clapets-v6/` (v5 + real horn and servo wires), `mechanical/clapets-v7/` (**the version we print**: door units with M3 inserts Ø4.6 × 6.5, real Two Trees parts, every fastener + BOM, motor on the floor). Same workflow as v5 (`fc/v7_fc.py`, README). Real printer parts: `mechanical/resources/two-trees-bluer-v2-parts/` (the 2 GB download is local only, gitignored).
 - Prompt-to-CAD helpers: `tools/` (FreeCAD + SolidWorks API).
 
 ## Sourcing (Tunisia)
