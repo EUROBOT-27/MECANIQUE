@@ -412,14 +412,14 @@ def aile(s, name):
     zp = G.LOW + G.PT                                                                                 # bottom plate top (36)
     bz = G.GZB + 1.3                                                                                  # box floor, above the gears (104)
     yo0, yo1 = G.SVY - 11, G.SVY + 11                                                                 # outer wall y 41..63
-    a.append(prism(s, chamfer_loop(unit_plate_loop(), 2), zb, zp))
-    a.append(chbox(s, 99, 150, yo0, yo1, zb, zp, 3))                                                  # servo area (bottom plate)
-    a.append(vcyl(s, G.PX, G.PY, zb, zp, G.BOSS_R))
-    a.append(chbox(s, G.W_X0, G.W_X1, G.PL_Y1, G.WEB_Y0, zb, G.PL_ZC + G.SPRING_V + 9, 2))             # back wall on the plate
+    # v7 clean-up: ONE bottom plate, inner wall -> outer wall, around the rod boss (+ the servo area behind the plate line)
+    base = hull([(G.W_X0, G.PL_Y1), (G.BASE_X, G.PL_Y1), (G.BASE_X, yo1), (G.W_X0, G.PL_Y1 + 22)] + circle(G.PX, G.PY, G.BOSS_R, 40))
+    a.append(prism(s, chamfer_loop(base, 2), zb, zp))
+    a.append(chbox(s, 96, G.BASE_X, yo0, yo1, zb, zp, 2))                                             # servo area (x >= 96: clear of the plate)
+    a.append(box(s, G.W_X0, G.W_X1, G.PL_Y1, G.WEB_Y0, zb, G.PL_ZC + G.SPRING_V + 9))                 # back wall on the plate
     a.append(chbox(s, G.W_X0, G.W_X0 + 8, G.PL_Y1, G.PL_Y1 + 22, zb, G.UP, 2))                         # inner side wall
-    a.append(prism_xz(s, [(G.W_X0 + 8, zp), (G.W_X0 + 16, zp), (G.W_X0 + 8, zp + 8)], G.WEB_Y0, G.PL_Y1 + 22))
+    a.append(prism_xz(s, [(G.W_X0 + 8, zp), (G.W_X0 + 16, zp), (G.W_X0 + 8, zp + 8)], G.PL_Y1, G.PL_Y1 + 22))   # fillet, full wall length
     a.append(prism(s, [(G.W_X0 + 8, G.WEB_Y1), (G.W_X0 + 14, G.WEB_Y1), (G.W_X0 + 8, G.WEB_Y1 + 6)], G.WEB_Z0, G.UP))
-    a.append(prism_yz(s, [(G.WEB_Y0, zp), (G.WEB_Y0 + 7, zp), (G.WEB_Y0, zp + 7)], G.W_X0 + 8, 92))
     # ---- v7 box
     a.append(chbox(s, G.OW_X0, G.BASE_X, yo0, yo1, zp - 0.1, G.UP, 1.0))                              # outer wall, full height
     fx0, fx1 = G.W_X0 + 7.9, G.OW_X0 + 0.1
