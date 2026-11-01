@@ -1,8 +1,5 @@
 # --- Personal (each person keeps their own; never committed) ---
-claude-workspace/memory/
-claude-workspace/tmp/
-claude-workspace/scratch/
-claude-workspace/repo-compare/
+claude-workspace/
 .claude/settings.local.json
 
 # --- Separate repos kept next to the hub (clone them yourself) ---

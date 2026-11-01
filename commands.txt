@@ -4,25 +4,39 @@ EUROBOT 2027 - COMMANDS CHEAT SHEET
 DAILY ROUTINE
 -------------
 /start      Type this when you open a session.
-            Claude reads STATUS.md, TODO.md, the last log and the timeline, then
-            gives a short briefing: days left, last session, what's open,
-            suggested focus for today.
+            Claude runs `git pull` (gets the other lead's work), reads STATUS.md,
+            your todo/<name>.md, the last logs and the timeline, then gives a short
+            briefing: what was pulled, days left, what's open, suggested focus.
 
 /wrap       Type this BEFORE you close the session.
-            Claude writes today's log (logs/YYYY-MM-DD.md), updates TODO.md and
-            STATUS.md, and checks every decision made today is in the decision log.
-            -> If you forget it, the day's discussion is lost (only files survive).
+            Claude pulls, writes today's log (logs/YYYY-MM-DD-<name>.md), updates
+            your todo/<name>.md and STATUS.md, checks every decision is logged,
+            then COMMITS AND PUSHES.
+            -> If you forget it, the day's discussion is lost and the other lead
+               doesn't get your work.
 
 
 THINGS YOU CAN JUST SAY (plain words, no command needed)
 --------------------------------------------------------
 "log this decision"            -> adds an entry to project/decisions.md
-"add to todo: ..."             -> adds a task to TODO.md
+"add to todo: ..."             -> adds a task to your todo/<name>.md
 "ask the rules-checker: ..."   -> sends a rules question to the rules-checker agent
                                   (it reads the official rules and cites sections)
 "add this to the FAQ list"     -> adds an unclear rule to the questions for the referees
 "index the new resources"      -> Claude skims new files in resources/ once and adds them to resources/INDEX.md
 "how did other teams do X?"    -> Claude checks resources/INDEX.md and opens only the relevant ones
+
+
+GIT (the hub is shared with git, repo EUROBOT-27/MECANIQUE, branch main)
+--------------------------------------------------------------------------
+! git status                  what changed since the last commit
+! git pull                    get the other lead's work
+! git log --oneline -10       last 10 commits
+! git lfs lock <file>         lock a CAD file before editing it (binary, can't be merged)
+! git lfs unlock <file>       release it
+"commit and push"             -> Claude commits your changes with a clear message and pushes
+Rules: pull before you start, push at wrap, never force-push, one owner per CAD file.
+Not committed (personal): claude-workspace/ (Claude memory, scratch), eurobot2027/ (separate repo).
 
 
 USEFUL BUILT-IN CLAUDE CODE COMMANDS
@@ -43,7 +57,7 @@ Shift+Tab   Switch permission mode (normal / auto-accept / plan)
 WHERE THINGS ARE
 ----------------
 STATUS.md                  where we are right now
-TODO.md                    task list
+todo/seif.md, todo/maatoug.md   each lead's task list
 project/rules-digest.md    all rule constraints + open FAQ questions
 project/decisions.md       decision log
 project/strategy.md        strategy brainstorming
@@ -52,5 +66,6 @@ mechanical/ software/ vision/ simas/   area work folders
 mechanical/parts-library.md       parts we have in hand (check designs against it)
 mechanical/design-principles.md   our design + testing standard
 resources/                 previous teams' material -> drop files in mechanical/ or software/
-logs/                      one file per session day
+logs/                      one file per person per day (YYYY-MM-DD-<name>.md)
+tools/                     prompt-to-CAD helper scripts (FreeCAD, SolidWorks API)
 Docs/                      official PDFs (never edited)

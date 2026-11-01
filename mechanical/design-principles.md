@@ -4,7 +4,7 @@ Our reference standard: **review every concept and every CAD against this list.*
 Main source: Aerobotix INSAT's 2026 robot (2nd at the European final). Details in
 `resources/_notes/aerobotix-2026-robot.md`.
 
-✅ = Seif explicitly wants this · ◻ = proposed by Claude from the study; Maatoug keeps or drops it (with Seif)
+✅ = Seif explicitly wants this · ◻ = proposed by Claude from the study; Seif keeps or drops it
 
 ## Architecture
 - ✅ **Symmetry.** Aerobotix had identical picking faces front and back, so the robot never turns around to pick.

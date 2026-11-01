@@ -179,7 +179,7 @@ Template:
 - Date: 2026-10-27
 - Area: project
 - Decided by: Maatoug
-- Status: active
+- Status: superseded by D-018 (the hub is shared, not handed over; "software in scope" stands)
 - Decision: This copy of the hub belongs to Mohamed Ali Maatoug (software lead + fabrication CAD). Software is in
   scope (`software/`). Seif's old session logs were deleted; his decisions above stay as the team record.
 - Alternatives considered: keep software out of scope (the 2026-10-25 choice, made for Seif's hub).
@@ -266,3 +266,23 @@ Template:
   servo reference in the CAD (flange 28 above the bottom, body 40.4 × 20.4 × 38). Cable channels redone on that face
   (doors: through the outer post and down through the bottom plate; head: window extended + L slot down the bracket);
   posts clear the ear rib, strap pocketed for the label pad. Re-checked: 0 interferences, full cycle 0 collisions.
+
+## D-018 — One shared hub in git for Seif and Maatoug
+- Date: 2026-11-01
+- Area: project
+- Decided by: Seif
+- Status: active (supersedes D-013; updates D-001)
+- Decision: Seif's hub and Maatoug's copy are merged into **one hub**, versioned in the git repo **EUROBOT-27/MECANIQUE**
+  (name kept for now). Both leads work in their own clone, on `main`: `/start` pulls, `/wrap` commits and pushes.
+  `CLAUDE.md` describes both users; each person's identity and Claude memory stay personal (`claude-workspace/`, not
+  committed). Per-person files: `todo/<name>.md`, `logs/YYYY-MM-DD-<name>.md`; `STATUS.md` and `project/decisions.md`
+  are shared. **Everything in `resources/` is committed** (other teams' repos as plain snapshots, no nested `.git`, no
+  build output). Git LFS for our own binaries (CAD, images, videos, zip); `resources/` stays in normal git.
+  Area leads confirm decisions in their area (mechanical + vision: Seif; software: Maatoug); decisions made in
+  someone else's area are logged `proposed` until confirmed.
+- Alternatives considered: two separate hubs synced by hand (they drift; D-numbers clash: D-012 to D-017 were made in
+  Maatoug's copy only); one shared `TODO.md` (conflicts at every wrap); resources kept out of git (Seif wants them kept).
+- Why: one decision log and one status for the team, without losing either lead's work.
+- Consequences: D-014 to D-017 (clapets, Maatoug) were logged before this rule and still need Seif's review as
+  mechanical lead. Binary CAD files have one owner at a time (`git lfs lock` if needed). Committed files use paths
+  relative to the hub only.

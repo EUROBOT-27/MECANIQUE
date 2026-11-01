@@ -11,7 +11,7 @@
 | TBD | Technical poster deadline | find out |
 | TBD | European finals (if qualified) | — |
 
-## Proposed internal milestones (DRAFT by Claude — to be refined)
+## Proposed internal milestones (DRAFT by Claude — Seif is refining this)
 
 Remember import lead times: anything imported must be ordered well before CAD freeze if it's needed for
 assembly by 2026-12-31.
