@@ -1,0 +1,522 @@
+          Eurobot and
+Eurobot Junior 2027 Rules
+
+                      34rd edition of the robotic contest - Eurobot
+                                 OFFICIAL 1.0 version
+. Contents
+
+A. NOTICE                                                     2
+
+B. CONTEST PRESENTATION                                       3
+
+C. THEME PRESENTATION                                         4
+
+D. PLAYING AREA                                               5
+
+D.1. IMPORTANT INFORMATION . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+
+D.2. PLAYING AREA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+D.3. STARTING AREAS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+
+D.4. DESCRIPTION AND LAYOUT OF THE PLAYING ELEMENTS . . . . . . . . . . . . . . . . . . . 8
+
+E. ACTIONS                                                    10
+
+E.1. CONSTRUCTION OF THE GLORIOUS CAMELOT! . . . . . . . . . . . . . . . . . . . . . . . . . 10
+
+E.2. I HAVE THE REAL ONE! . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+
+E.3. THE RETURN OF THE KING . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+
+E.4. TO THE ATTACK! . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+
+F. POINTS                                                     15
+
+G. APPENDIX                                                   16
+
+G.1. GENERAL DRAWINGS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+
+G.2. MATERIAL REFERENCES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+
+G.3. COLOUR REFERENCES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+
+34rd EDITION OF ROBOTIC CONTESTS                              1
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+ A. NOTICE
+
+The rules have been split up in severals documents. Most parts remain the same for the Eurobot Open and
+Eurobot Open Junior contests, but to avoid confusion, each contest has its own rules as a single document.
+Thus the particular cases specific to one of the competitions appears only in the document concerning it.
+You will find the Eurobot Open and the Eurobot Open Junior rules and other information on the Eurobot Open
+website (www.eurobot.org/)
+
+ Please note that the version of this release is noted down at the end of this page. For any inquiry, only
+ an OFFICIAL version should be considered.
+
+Changes or clarifications of the rules may be made during the year. We therefore strongly encourage all par-
+ticipants to check our website regularly (www.eurobot.org/) as well as your NOC’s own website for news. You
+can also follow discussions, ask questions or get further assistance on our faq (www.eurobot.org/faq/).
+Any changes to the specifications will, if necessary, be set out in a supplementary document which will be
+available on the website of your national organising committee1 and Eurobot (https://www.eurobot.org/).
+The FAQ responses from a referee are official responses taken into account for match refereeing and homolo-
+gation stages.
+In case of doubt regarding any point of the rules or the homologation of robots, the referee committee may also
+be contacted at referee@planete-sciences.org.
+
+Have a good reading!
+
+ As is the case every year, a number of parameters in these rules have been modified. As a result,
+ please reread in detail all the parts of these rules, even those that seem familiar to you.
+
+ ATTENTION : all images and example in this document are provided as a guide to illustrate the various
+ paragraphs. In no case can they serve as an exhaustive reference.. Only writed rules and the dimen-
+ sions, colors and materials indicated in the appendix shall be taken into consideration.
+
+    1For example: for France https://www.coupederobotique.fr/, for Belgium https://sparkoh.be/projet-robotixs/, for Switzer-
+land https://swisseurobot.ch/
+
+34rd EDITION OF ROBOTIC CONTESTS                              2
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+ B. CONTEST PRESENTATION
+
+EurobotOpen and EurobotOpen Junior are two international amateur robotics competitions for young people or-
+ganised in clubs, groups of friends or schools. Their common aim is to enable young people to take charge of
+their own learning and put their knowledge, technical and social skills into practice, by taking part in a fun and
+friendly event. The technical challenge involves building one or more robots.
+
+EurobotOpen and EurobotOpen Junior have for only ambitions those described above. As an actor of the popular
+education mouvement and as a youth movement, inclusiveness is a strong value for Planète Sciences and its
+European partners. The organizers do not (and will never) impose a team model; whether you participate to
+discover robotics, to practice your skills, as part of teaching or for competition, you are (and always will be)
+welcome.
+
+The EurobotOpen and EurobotOpen Junior meetings are prepared passionately throughout the year by volunteers
+of all nationalities who believe in the educational values of this experience and are themselves, often, former
+participants.
+
+The rules for both contest, EurobotOpen and EurobotOpen Junior, are based on the same concept. As or-
+ganisers, we intend to provide a common platform for the EurobotOpen event. This platform is dedicated to
+autonomous robots for EurobotOpen while for EurobotOpen Junior, the robots are remote controlled. In this way,
+the EurobotOpen organiser can easily set up the Eurobot Junior contest and vice versa.
+
+                                                   You’re currently reading version
+
+     EurobotOpen and EurobotOpen Junior OFFICIAL 1.0 of 2027 rules.
+
+  This document is supplemented by the general Eurobot and Eurobot
+                   Junior rules in version 1 (latest sub-version)
+
+34rd EDITION OF ROBOTIC CONTESTS                              3
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+ C. THEME PRESENTATION
+
+Hear ye, hear ye, good people, ladies and gentlemen! Let me tell you the story of the great King Arthur, the
+quest for the Grail, and the legendary Camelot.
+Once upon a time, in the land of robots who fancied themselves knights, there lived a robot named Arthur who
+set off on a quest for the Holy Grail. This wasn’t as difficult as all that, according to an old robot he met in a
+tavern, who had over-recharged his batteries and was carrying a bag full of Grails.
+But the king also learned that another robot was claiming to be King Arthur and wanted to steal his precious
+Grail, so there was no time to lose; he had to be safely secured behind the walls of Camelot!
+
+Your feats of arms will be:
+
+       Build the glorious Camelot.
+       I have the real one!
+       The return of the king.
+       To the attack!
+
+ Please note: All actions are independent from one another and no specific sequence is imposed what-
+ soever. No single action is mandatory. Give careful thoughts to your strategy. It is strongly recom-
+ mended to design simple and reliable systems with a limited number of actions.
+
+                                  Figure 1: Overview of the playing area
+
+34rd EDITION OF ROBOTIC CONTESTS                                          4
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+ D. PLAYING AREA
+
+  D.1. IMPORTANT INFORMATION
+The organizers are committed to build the playing area with as much accuracy as possible. Nevertheless,
+minor tolerances may be observed depending on manufacturing constraints.
+
+                    No complaints regarding dimensional deviations will be taken into account.
+
+Teams are warned that the surface condition may differ from one playing area to another and may also degrade
+over time.
+Graphics displayed in this document represent the EurobotOpen playing area and not the EurobotOpen Junior
+one. Thus figures show elements not useful in this version of the rules such as fixed beacon supports and
+remote computing device.
+
+34rd EDITION OF ROBOTIC CONTESTS                              5
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+  D.2. PLAYING AREA
+
+The playing area is a horizontal rectangular plane of 3000 mm by 2000 mm with 70 mm heigh, 22 mm thick
+borders on each outer side. Depending on the construction process, it may consist of one or several parts
+(eg 3 parts of 1000 mm per 2000 mm). Please note that the joints may have imperfections, and it will not be
+possible to contest these imperfections during the competition. The organization reserves the right to set up
+devices for recording (camera) on the unused edges of the playing area.
+
+Figure 2: Detailed view of the playing area, audience point of view
+
+1. The throne room (Robot starting areas)  4. Ramparts
+2. Castle courtyard                        5. Moat
+3. Stables (SIMA Starting Areas)           6. Stone quarry
+
+Full specifications of the playing area and game elements (dimensions, positions at the beginning of
+the match, colors and other references) are listed in the appendix.
+In the remainder of this document, horizontal and vertical directions are stated relative to the playing
+area. Notions of “left”, “right”, “front” and “back” are stated with respect to the spectator’s point of
+view.
+
+34rd EDITION OF ROBOTIC CONTESTS                                     6
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+  D.3. STARTING AREAS
+
+D.3.a. DESCRIPTION
+
+Each team has one starting and finishing area.
+The "throne rooms" are the team’s starting and finishing areas. They are the surfaces of 50 cm by 50 cm
+delimited by a line on the table, which is itself included in this area and of the team’s color; they are placed at
+the side of the table.
+
+(a) Team blue starting and finishing area  (b) Team yellow starting and finishing area
+
+Figure 3: Detailed view of the blue and yellow teams areas
+
+D.3.b. CONSTRAINTS
+At the end of the setup time, the vertical projection of the robots must not exceed the limits of their starting area.
+
+Make sure your robot can fully enter its starting area.
+The colored lines and the border of the table next to the area are also included in the starting area.
+
+34rd EDITION OF ROBOTIC CONTESTS                                                        7
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+  D.4. DESCRIPTION AND LAYOUT OF THE PLAYING ELEMENTS
+
+ The stone: The stones are cardboard boxes measuring 320 mm x 110 mm x 110 mm.
+There are 30 of them, and they are placed in the stone quarries.
+An Aruco tag with a value of 13 is present on each of the 4 large faces of the stone, oriented as shown in the
+photo in the description.
+
+ Stone quarries: Zones distributed across the table. They contain 3 stones in a horizontal position, stacked
+one on top of the other.
+
+  Rampart: Construction zones are distributed on each side of the table and reserved for each team (see
+distribution on the table plan), delimited by a line which is itself included within these zones. There are 2 types
+of rampart: walls with a rectangular surface of 200 mm by 400 mm, and towers with a circular surface and a
+diameter of 200 mm.
+
+ Castle courtyard: Areas placed on the sides of the table and surrounded by ramparts, it’s includ the throne
+room.
+
+  Moat: Areas spread across the table and surrounding the ramparts, delimited by a line which is itself
+included within these areas.
+
+ The knights: Built by the team, a knight is a small independent mobile actuator (SIMA) activated during
+the match. It will initially be placed in the SIMA starting areas (stable) with a rectangular surface of 200 mm
+by 300 mm. For ease of identification, a harmonization of design and colors between the SIMA and the robot
+is desired.
+
+  The Grail: Made by the team, the Grail is an element placed on the throne room of the team before the
+match.
+
+  The cannonballs: Each team has 10 lightweight foam balls, each ball being 45mm in diameter and are
+compressible.
+
+(a) Team blue cannonball          (b) Team yellow cannonball
+
+Figure 4: Detailed view of the blue and yellow teams areas
+
+34rd EDITION OF ROBOTIC CONTESTS                              8
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+                                  Figure 5: Stones
+
+34rd EDITION OF ROBOTIC CONTESTS                              9
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+ E. ACTIONS
+
+  E.1. CONSTRUCTION OF THE GLORIOUS CAMELOT!
+
+To keep the Grail safe, we must build an impregnable castle, the legendary Camelot. But be warned, for the
+building to withstand the test of time, we must strictly adhere to the plans of the chief architect.
+
+E.1.a. DESCRIPTION AND LAYOUT OF THE PLAYING ELEMENTS
+This action involves the stones and the ramparts.
+
+E.1.b. ACTIONS AND CONSTRAINTS
+ Actions:
+
+       The goal is to collect the stones and place them within the ramparts, carefully following the castle’s layout,
+       between the walls, towers, and castle gate.
+
+ Constraints:
+
+       A stone is considered placed in a zone if all or part of its vertical projection is in this zone, or on top of a
+       stone already valid for that zone.
+       A wall is made up of 3 stones arranged horizontally and stacked one on top of the other. A wall must be
+       built within a rectangular wall area.
+       A tower is composed of 1 stone placed vertically. A tower must be built within a circular area.
+       A gate consists of 2 stones placed vertically and topped with a third stone placed horizontally. A gate
+       must be built within a rectangular area of the wall.
+       Game elements are permitted to exceed the allowed height limit but only within construction zones and
+       the castle boundaries. Please note that the actuators must respect the height limit at all times during the
+       match.
+       Each zone can only contain one building of the type permitted for that zone, and a castle can only have
+       one gate. Additional constructions will not award points related to the construction, however, points for
+       stones placed will still be counted.
+       A stone cannot be counted for multiple constructions at the same time.
+       An element still under control by a robot at the end of the match will not be counted.
+       During the match, it will be possible to store up to 3 stones in the castle courtyard.
+       During the match, it will be possible to steal stones from the opposing castle to build your castle, but
+       only if all the stone quarries are empty, and without only crash the opposing castle. A minimum 50-point
+       penalty for unfair play will be applied where appropriate.
+
+E.1.c. POINTS
+       1 point per stone placed in a construction zone.
+       5 points per wall built.
+       5 points per tower built
+       20 points per built door
+
+34rd EDITION OF ROBOTIC CONTESTS                              10
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+Figure 6: Detailed of the castle layout, view from the center of the table
+
+(a) Wall                                         (b) Tower                   (c) Gate
+                                  Figure 7: Different types of construction
+
+34rd EDITION OF ROBOTIC CONTESTS                                                       11
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+  E.2. I HAVE THE REAL ONE!
+
+We have the Grail! And to show that we have the real one, we’re going to show it to the whole world, so that
+everyone can see that it shines brightly!
+
+E.2.a. DESCRIPTION AND LAYOUT OF THE PLAYING ELEMENTS
+This action involves the Grail and the castle.
+
+E.2.b. ACTIONS AND CONSTRAINTS
+ Actions:
+
+       The team has to put its Grail on its throne rome during the preparation time.
+       During the match, the team must raise their Grail as high as possible so that everyone can see it.
+
+ Constraints:
+
+       During the preparation, the Grail must be placed in the throne room floor, remaining entirely within the
+       designated area and without being under the robot’s control.
+       The Grail must comply with the same construction constraints as a SIMA, except for the minimum size,
+       the Grail must be larger than a 60 mm side cube.
+       During the match, the robot must pick up the Grail and place it on a support (stone, construction or robot).
+       The number of points awarded depends on the altitude of the lowest point of the Grail at the end of the
+       match.
+
+           • Level 1 corresponds to one stone horizontally
+           • Level 2 to two stones horizontally
+           • Level 3 to three stones horizontally or one vertically
+           • Level 4 is a drop on the robot’s roof (>30cm) , but free of any actuators and any fixing system
+       The Grail is allowed to exceed the allowed height limit but only within construction zones and the castle
+       boundaries, and without blocking any opposing beacons (for seniors). Please note that the actuators
+       must respect the height limit at all times during the match.
+       During all the match, the Grail must stay fully inside the castle area. It will be removed from the table the
+       opposite case.
+       It is forbidden to move the opposing team’s Grail.
+       A Grail that is still controlled by an actuator at the end of the match will not be counted.
+
+E.2.c. POINTS
+       5 points if the Grail is present in the castle.
+       5 points per Grail elevation level.
+
+34rd EDITION OF ROBOTIC CONTESTS                              12
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+  E.3. THE RETURN OF THE KING
+Once the construction of his castle was finished, the king returned to court to feast with his valiant knights.
+
+E.3.a. DESCRIPTION AND LAYOUT OF THE PLAYING ELEMENTS
+This action involves the robots and the castle courtyard (SIMA are excluded from this action).
+
+E.3.b. ACTIONS AND CONSTRAINTS
+ Actions:
+       At the end of the match the robots must be stopped in their throne room.
+
+ Constraints:
+       To be considered partially in the zone, the main robot must have a part of its vertical projection in the
+       arrival area.
+       To be considered completely in the zone, the main robot must have all of its vertical projection in the
+       arrival area.
+
+E.3.c. POINTS
+       5 points if the team’s main robot is partially in its own valid area.
+       10 points if the team’s main robot is completely in its own valid area.
+
+34rd EDITION OF ROBOTIC CONTESTS                              13
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+  E.4. TO THE ATTACK!
+
+You’ve learned that another robot claims to be King Arthur, and worse still, it claims to possess the "real" Grail,
+they’re surely French! You can’t let this go on; it’s time to teach it a lesson... but be careful, you mustn’t use
+anything meaner than a grown rabbit!
+
+E.4.a. DESCRIPTION AND LAYOUT OF THE PLAYING ELEMENTS
+
+This action involves the robot, the SIMAs, the cannonballs, and the opposing castle.
+
+E.4.b. ACTIONS AND CONSTRAINTS
+
+ Actions:
+
+       The team can release one or more SIMAS, and ensure that they reach the moat of the opposing castle
+       during the attack phase.
+       SIMAS can also attack opposing SIMAS during the attack phase.
+       The team can also bombard the opposing castle during the attack phase.
+
+ Constraints:
+
+       During preparation, the SIMAs will be placed in the starting area on the table (the stable) and must remain
+       within the boundaries of the area. The colored lines on the vinyl and the edge of the table (on its 22mm
+       thickness) adjacent to the area are part of the starting area.
+       During preparation, the cannonballs will be loaded into the robot and the SIMA with a limit of 1 cannonball
+       per SIMA.
+       The attack phase is active between the 85th second and the end of the match; any subsequent actions
+       performed outside of this phase will not be counted.
+       If a SIMA moves out of the starting zone before the attack phase, it will be removed from the table and
+       will no longer be considered to be in the match.
+       A SIMA is validated as being in the zone if all or part of its vertical projection is within a moat of the
+       opposing castle at the end of the match.
+       A SIMA is considered to be attacking an opposing SIMA if one of its actuators touches an opposing SIMA
+       at the end of the match. Caution! This actuator must have a distinct color from the rest of the SIMA, must
+       not damage the opposing SIMA, and only this actuator is allowed to touch the opposing SIMA.
+       The robot and the SIMA can launch the cannonballs into the opposing castle. A cannonball is considered
+       to be in the zone if all or part of its vertical projection is within the opposing castle’s courtyard at the end of
+       the match. It is forbidden to intentionally influence the position or trajectory of the opposing cannonballs.
+       The balls are not subject to a height limitation during their flights.
+
+E.4.c. POINTS
+
+       5 points per moat occupied by the team
+       5 points if at least one SIMA attacks an opposing SIMA.
+       5 points if one cannonball present in the opposing castle.
+       15 additionnal points if at least 3 cannonball are present in the opposing castle.
+
+34rd EDITION OF ROBOTIC CONTESTS                              14
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+F. POINTS
+
+The scoring always favors the team.
+
+CONSTRUCTION OF THE GLORIOUS CAMELOT!
+     1 point per stone placed in a construction zone.
+     5 points per wall built.
+     5 points per tower built
+     20 points per built door
+
+I HAVE THE REAL ONE!
+     5 points if the Grail is present in the castle.
+     5 points per Grail elevation level.
+
+THE RETURN OF THE KING
+     5 points if the team’s main robot is partially in its own valid area.
+     10 points if the team’s main robot is completely in its own valid area.
+
+TO THE ATTACK!
+     5 points per moat occupied by the team
+     5 points if at least one SIMA attacks an opposing SIMA.
+     5 points if one cannonball present in the opposing castle.
+     15 additionnal points if at least 3 cannonball are present in the opposing castle.
+
+34rd EDITION OF ROBOTIC CONTESTS                                                         15
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+G. APPENDIX
+
+G.1. GENERAL DRAWINGS
+
+xy   1900  1800           1600  1500  1400  1300           1100  1000  900  800  B  700  600  500  400  300  A  200  100  xy
+
+             D                                C                                                                         2900
+                                                                                                                        2800
+                    1700                             1200                                                               2700
+2900                                                                          2900                                      2600
+62800                                                                         28006                                     25006
+2700                                                                          2700                                      2400
+52600                                                                         26005                                     23005
+2500                                                                          2500                                      2200
+42400                                                                         24004                                     21004
+2300                                                                          2300                                      2000
+2200 1900  1800           1600  1500                                          220014001300110010009008007006005004003002001001900
+2100                                                                          2100                                      1800
+2000         D                                                                2000CB                         A          1700
+1900                1700                                                      19001200                                  1600
+1800                                                                          1800                                      1500
+31700                                                                         17003                                     14003
+1600                                                                          1600                                      1300
+21500                                                                         15002                                     12002
+1400                                                                          1400                                      1100
+11300                                                                         13001                                     10001
+1200                                                                          1200
+1100 1900  1800           1600  1500  1400                                    1100130011001000                           900
+1000                                                                          1000                                       800
+900          D                                                                900C                                       700
+800                                                                           800                                        600
+700                 1700                                                      7001200                                    500
+600                                                                           600                                        400
+500                                                                           500                                        300
+400                                                                           400                                        200
+300                                                                           300                                        100
+200                                                                           200
+100                                                                           100                                                      16
+
+x                                     Figure 8: Top view of the playing area.900800B700  600  500  400  300  A  200  100  y
+  y                                                                                                                         0x
+
+34rd EDITION OF ROBOTIC CONTESTS
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+G.2. MATERIAL REFERENCES
+
+ Elements                         Material or reference                 Comments
+Stone
+Cannonball                        Carton box, 320 mm x 110 mm x 110     model BLFA01 of producer RAJA, or
+Game floor                        mm. Their weight is approximately 90  equivalent in size.
+                                  g.
+
+                                  Sponge ball, 45mm in diameter         Magician’s ball, compressible
+
+                                  Printed monomeric gripping vinyl      Ordering information will be provided
+                                                                        by Planète Sciences
+
+The material’s density can change from one country to another. It is highly recommended that the
+teams try different types of materials since the weight may differ significantly.
+
+G.3. COLOUR REFERENCES
+
+Colors                            References              CMYK                     RGB
+                                                         100% , 60% , 0% , 10%    0, 91, 140
+Team blue                         RAL 5017 Mat           0% , 25% , 100% , 0%     247, 181, 0
+
+Team yellow                       RAL 1023 Mat           15% , 10% , 25% , 20%    181, 176, 161
+
+Borders and non-colored ele-      RAL 7032 Mat
+ments
+
+RAL hues can vary from a printed soil mat to another.
+
+34rd EDITION OF ROBOTIC CONTESTS                                                                       17
+
+OFFICIAL 1.0 VERSION OF THE EUROBOT AND EUROBOT JUNIOR RULES
+

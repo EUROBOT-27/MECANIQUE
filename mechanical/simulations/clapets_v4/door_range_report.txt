@@ -1,0 +1,10 @@
+Door range, no stack (carriage down, head vertical), 1 deg steps:
+  open (outwards)  free to  -67.0 deg
+      first contact at  -68.0: AILE_D-1 / BRAS_PORTE_D_HAUT-1 (0.3 mm3)
+      first contact at  -68.0: AILE_G-1 / BRAS_PORTE_G_HAUT-1 (0.3 mm3)
+  fold (inwards)   free to +117.0 deg
+      first contact at +118.0: AILE_G-1 / MOUSSE_PORTE-5 (17.4 mm3)
+      first contact at +118.0: AILE_G-1 / MOUSSE_PORTE-4 (17.4 mm3)
+      first contact at +118.0: AILE_D-1 / MOUSSE_PORTE-1 (17.4 mm3)
+      first contact at +118.0: AILE_D-1 / MOUSSE_PORTE-2 (17.4 mm3)
+  Needed: fold +90, clamp +3, open -48. Servo window (180 deg / x1.2) = 150 deg of door travel.

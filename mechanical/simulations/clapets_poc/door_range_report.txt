@@ -1,0 +1,17 @@
+Door range of motion, stack removed (1 deg steps; door angle +ve = inwards, pinion = -2x door angle).
+
+open (outwards)   free up to  -47.0 deg
+    first contact at  -48.0 deg: AILE_G-1 / BRAS_PORTE_G-2 (0.6 mm3)
+    first contact at  -48.0 deg: AILE_D-1 / BRAS_PORTE_D-2 (0.6 mm3)
+fold (inwards)    free up to  +94.0 deg
+    first contact at  +95.0 deg: RESERVE_TETE_VENTOUSES-1 / MOUSSE_60x48x10-5 (735.4 mm3)
+    first contact at  +95.0 deg: RESERVE_TETE_VENTOUSES-1 / MOUSSE_60x48x10-6 (735.4 mm3)
+    first contact at  +95.0 deg: RESERVE_TETE_VENTOUSES-1 / MOUSSE_60x48x10-2 (735.4 mm3)
+    first contact at  +95.0 deg: RESERVE_TETE_VENTOUSES-1 / MOUSSE_60x48x10-3 (735.4 mm3)
+
+Physical range: -47.0 .. +94.0 deg = 141.0 deg of door travel.
+Servo limit: 180 deg servo / x2 gears = 90 deg of door travel.
+-> the servo, not the mechanism, limits the door: choose a 90 deg window inside the physical range, e.g. -47 .. +43 deg (keeps open -21 and clamp +2.8).
+
+Note: the fold limit (+94 deg) is the pads reaching the RESERVED space of the future suction head, not a part;
+the open limit (-47 deg) is the upper door arm touching its own door unit.

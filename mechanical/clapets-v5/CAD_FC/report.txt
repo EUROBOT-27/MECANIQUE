@@ -1,0 +1,52 @@
+A_SOCLE                  print   A solids 1  mass   106.1 g  size  124.0 x   52.0 x   52.0  valid
+A_TRAVERSE_HAUT          print   A solids 1  mass    62.8 g  size  108.9 x   28.0 x   22.0  valid
+A_SUPPORT_ECROU          print   A solids 1  mass    53.7 g  size   54.5 x   29.6 x   60.0  valid
+A_AILE_D                 print   A solids 1  mass   174.7 g  size   84.0 x   55.5 x  217.0  valid
+A_AILE_G                 print   A solids 1  mass   174.7 g  size   84.0 x   55.5 x  217.0  valid
+A_BRAS_PORTE_D_BAS       print   A solids 1  mass    16.5 g  size   48.0 x   68.5 x   16.0  valid
+A_BRAS_PORTE_D_HAUT      print   A solids 1  mass    16.8 g  size   48.0 x   68.5 x   18.0  valid
+A_BRAS_PORTE_G_BAS       print   A solids 1  mass    16.5 g  size   48.0 x   68.5 x   16.0  valid
+A_BRAS_PORTE_G_HAUT      print   A solids 1  mass    16.8 g  size   48.0 x   68.5 x   18.0  valid
+A_ROUE_PORTE_28T         print   A solids 1  mass    13.9 g  size   37.3 x   37.3 x   22.0  valid
+A_PIGNON_PORTE_20T       print   A solids 1  mass     5.0 g  size   27.5 x   27.5 x   10.0  valid
+A_TOLE_PORTE             mdf     A solids 1  mass    24.0 g  size    3.0 x   55.0 x  245.0  valid
+A_BRIDE_SERVO_D          print   A solids 1  mass     1.9 g  size   56.2 x   21.0 x    3.0  valid
+A_BRIDE_SERVO_G          print   A solids 1  mass     1.9 g  size   56.2 x   21.0 x    3.0  valid
+A_CAPOT_AILE_D           print   A solids 1  mass    22.7 g  size   82.0 x   39.3 x    9.0  valid
+A_CAPOT_AILE_G           print   A solids 1  mass    22.7 g  size   82.0 x   39.3 x    9.0  valid
+A_ENTRETOISE_608_BAS     print   A solids 1  mass     0.2 g  size   12.0 x   12.0 x    3.0  valid
+A_ENTRETOISE_608_HAUT    print   A solids 1  mass     0.3 g  size   12.0 x   12.0 x    4.0  valid
+B_ENTRETOISE_TETE        print   B solids 1  mass     3.5 g  size   22.0 x   18.0 x   22.0  valid
+B_SUPPORT_TETE           print   B solids 1  mass   108.2 g  size  131.0 x   35.5 x  100.0  valid
+B_MOYEU_TETE_30T         print   B solids 1  mass    30.6 g  size   56.0 x   23.0 x   56.0  valid
+B_PIGNON_TETE_20T        print   B solids 1  mass     5.0 g  size   27.4 x   10.0 x   27.4  valid
+B_PLATEAU_TETE           mdf     B solids 1  mass    33.5 g  size   56.0 x    6.0 x  216.0  valid
+B_STATION_TPU            tpu     B solids 1  mass     6.6 g  size   50.0 x   10.0 x   50.0  valid
+B_BAGUE_STATION          print   B solids 1  mass     4.5 g  size   56.0 x    3.0 x   56.0  valid
+REF_RAIL_2020            ref     A solids 1  mass   378.0 g  size   20.0 x   20.0 x  350.0  valid
+REF_PLAQUE_PAPILLON      ref     A solids 1  mass   154.2 g  size  190.0 x    3.0 x  190.0  valid
+REF_ROUE_V               ref     A solids 1  mass     4.1 g  size   19.1 x   10.2 x   19.1  valid
+REF_608ZZ                ref     A solids 1  mass    18.1 g  size   22.0 x   22.0 x    7.0  valid
+REF_608ZZ_TETE           ref     B solids 1  mass    18.1 g  size   22.0 x    7.0 x   22.0  valid
+REF_NEMA17               ref     A solids 1  mass   254.7 g  size   42.3 x   42.3 x   64.0  valid
+REF_COUPLEUR_5x8         ref     A solids 1  mass    16.9 g  size   19.0 x   19.0 x   25.0  valid
+REF_VIS_T8               ref     A solids 1  mass   115.2 g  size    8.0 x    8.0 x  292.0  valid
+REF_ECROU_T8             ref     A solids 1  mass    12.9 g  size   22.0 x   22.0 x   15.0  valid
+REF_TIGE_PORTE_D8        ref     A solids 1  mass    80.1 g  size    8.0 x    8.0 x  203.0  valid
+REF_AXE_TETE_D8          ref     B solids 1  mass    19.7 g  size    8.0 x   50.0 x    8.0  valid
+REF_MOUSSE_PORTE         ref     A solids 1  mass     0.6 g  size    8.0 x   37.0 x   40.0  valid
+REF_MG996R_D             ref     A solids 9  mass    38.5 g  size   54.0 x   20.5 x   77.8  valid
+REF_MG996R_G             ref     A solids 9  mass    38.5 g  size   54.0 x   20.5 x   77.8  valid
+REF_MG996R_TETE          ref     B solids 10  mass    38.3 g  size   57.0 x   44.0 x   51.9  valid
+REF_VENTOUSE_DPS30       ref     B solids 1  mass    14.2 g  size   30.0 x   27.0 x   30.0  valid
+REF_PILE_3_PIERRES       ref     - solids 3  mass  1151.0 g  size  320.0 x  110.0 x  329.0  valid
+RES_TETE_ROTATION        reserve - solids 1  mass     2.0 g  size  280.0 x   32.0 x  280.0  valid
+RES_TETE_FIXE            reserve - solids 1  mass     0.7 g  size  124.0 x   57.5 x  100.0  valid
+RES_TETE_CABLES          reserve - solids 1  mass     0.2 g  size  124.0 x   57.5 x   30.0  valid
+RES_TETE_REPOS           reserve - solids 1  mass     0.4 g  size   60.0 x   32.0 x  216.0  valid
+
+Rest pose (carriage down, doors at contact, head vertical, stack in place): real parts
+interferences: 0
+
+Module A (fixed parts) inside the space reserved for module B:
+reserve violations: 0

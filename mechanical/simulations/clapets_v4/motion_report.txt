@@ -1,0 +1,37 @@
+Clapets v4 motion study: 78 frames, 15.5 s, 5 fps. Base 300 x 300 (x ±150, y -160..140). Stack not counted (FAQ Q1).
+
+step                                        perimeter outside base       highest part (z)
+start: doors folded inside the base          1200.0 mm       0.0 mm    268.0  PLATEAU_TETE-1
+doors open (approach)                        1331.6 mm      53.8 mm    268.0  PLATEAU_TETE-1
+doors clamp the stack                        1332.9 mm      48.0 mm    268.0  PLATEAU_TETE-1
+carry: lift 15 mm                            1311.3 mm      37.9 mm    283.0  PLATEAU_TETE-1
+carry                                        1311.3 mm      37.9 mm    283.0  PLATEAU_TETE-1
+in the castle: lower                         1311.3 mm      37.9 mm    281.5  PLATEAU_TETE-1
+cups hold, doors open -48 deg                1332.8 mm      62.3 mm    268.0  PLATEAU_TETE-1
+lift 72 mm with the stack                    1315.4 mm      64.6 mm    336.4  PLATEAU_TETE-1
+turn the stack 90 deg                        1315.4 mm      64.6 mm    339.8  PLATEAU_TETE-1
+lower (towers 15 mm above the table)         1315.4 mm      64.6 mm    332.2  TOLE_PORTE-1
+release: cups vent                           1315.4 mm      64.6 mm    265.0  TOLE_PORTE-2
+head back                                    1315.4 mm      64.6 mm    268.0  PLATEAU_TETE-1
+doors fold                                   1331.8 mm      53.4 mm    268.0  PLATEAU_TETE-1
+
+Limits: start perimeter <= 1200 and nothing outside the base; deployed <= 1400; height <= 350 (rails, top tie, screw exempt).
+
+Expected contacts (pads squeezing the stack, cups on the box face):
+  MOUSSE_PORTE-1 / REF_PILE_3_PIERRES-1              max   9600.0 mm3 at t 1.2 s (doors open (approach))
+  MOUSSE_PORTE-2 / REF_PILE_3_PIERRES-1              max   9600.0 mm3 at t 1.2 s (doors open (approach))
+  MOUSSE_PORTE-3 / REF_PILE_3_PIERRES-1              max   9600.0 mm3 at t 1.2 s (doors open (approach))
+  MOUSSE_PORTE-4 / REF_PILE_3_PIERRES-1              max   9600.0 mm3 at t 15.2 s (doors fold)
+  MOUSSE_PORTE-5 / REF_PILE_3_PIERRES-1              max   9600.0 mm3 at t 15.2 s (doors fold)
+  MOUSSE_PORTE-6 / REF_PILE_3_PIERRES-1              max   9600.0 mm3 at t 15.2 s (doors fold)
+
+UNEXPECTED collisions: 9
+  REF_PILE_3_PIERRES-1 / TOLE_PORTE-1                max  26942.0 mm3 at t 15.4 s (doors fold)
+  REF_PILE_3_PIERRES-1 / TOLE_PORTE-2                max  26942.0 mm3 at t 15.0 s (doors fold)
+  BRAS_PORTE_D_HAUT-1 / REF_PILE_3_PIERRES-1         max   2233.6 mm3 at t 15.0 s (doors fold)
+  BRAS_PORTE_G_HAUT-1 / REF_PILE_3_PIERRES-1         max   2233.6 mm3 at t 15.0 s (doors fold)
+  BRAS_PORTE_D_BAS-1 / REF_PILE_3_PIERRES-1          max   1975.0 mm3 at t 15.0 s (doors fold)
+  BRAS_PORTE_G_BAS-1 / REF_PILE_3_PIERRES-1          max   1975.0 mm3 at t 15.0 s (doors fold)
+  PLATEAU_TETE-1 / ROUE_PORTE_24T-2                  max    323.3 mm3 at t 10.8 s (lower (towers 15 mm above the table))
+  ROUE_PORTE_24T-2 / STATION_TPU-1                   max     13.6 mm3 at t 12.0 s (lower (towers 15 mm above the table))
+  BAGUE_STATION-1 / ROUE_PORTE_24T-2                 max      6.2 mm3 at t 11.2 s (lower (towers 15 mm above the table))

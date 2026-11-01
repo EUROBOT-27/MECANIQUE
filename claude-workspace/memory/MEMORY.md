@@ -1,0 +1,2 @@
+- [Keep files in project](keep-files-in-project.md) — all Claude output goes in claude-workspace/, never system temp
+- [User profile](user-profile.md) — Maatoug: software lead + fabrication CAD; owns this hub copy since 2026-10-27

@@ -1,0 +1,1044 @@
+      Eurobot contest general Rules
+              OFFICIAL 1.4 version
+
+NOTE: all images in this document are provided as a guide to illustrate the various paragraphs. In
+no case they can serve as a reference. Only the dimensions, colors and materials indicated in the
+appendix shall be taken into consideration.
+. Contents
+
+A. . NOTICE                                        3
+
+B. . CONTEST PRESENTATION, OBJECTIVES AND VALUES   4
+
+B.1. . OBJECTIVE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+
+B.2. . VALUES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+
+C. . RULE STRUCTURE                                5
+
+D. . MAIN REGISTRATION REQUIREMENTS                6
+
+D.1. . TEAM MEMBERS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+D.2. . PARTICIPANT MEMBERS AND SUPERVISORS . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+D.3. . AGE LIMITATION OF THE PARTICIPANTS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+D.4. . TEAM REGISTRATION . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+D.5. . TEAM NATIONALITY . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+D.6. . SAFETY AND DECENCY . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+
+E. . PROJECT PRESENTATION                          8
+
+F. . THE ROBOTS                                    9
+
+F.1. . FOREWORDS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+
+F.2. . USE OF COMMERCIAL COMPONENTS FOR THE ROBOTS . . . . . . . . . . . . . . . . . . . 9
+
+F.3. . DIMENSIONS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+
+F.4. . SECURITY CONSTRAINTS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+
+F.5. . COMMUNICATION SIGNALS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+
+F.6. . OTHER DESIGN CONSTRAINTS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+
+F.7. . SMALL INDEPENDENT MOBILE ACTUATOR (SIMA) . . . . . . . . . . . . . . . . . . . . . . . 15
+
+G. . BEACON TRACKING SYSTEM                        16
+
+G.1. .GENERAL POINTS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+
+G.2. .EMBEDDED/ ON-BOARD BEACONS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+
+G.3. .FIXED BEACONS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+
+G.4. .REMOTE COMPUTING AND OBSERVATION DEVICE . . . . . . . . . . . . . . . . . . . . . . . 17
+
+G.5. .OTHER CONSTRAINT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+
+G.6. .ROBOT IDENTIFICATION . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+
+H. . MATCHES                                       20
+
+H.1. . PREPARATION TIME . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+
+H.2. . THE MATCH . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+
+H.3. . END OF MATCH . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+
+H.4. . THE PENALTIES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+
+I. . THE CONTESTS                                  23
+
+I.1. . GENERAL INFORMATION . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+
+I.2. . MEETINGS AND PARTICIPATING COUNTRIES . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+
+I.3. . APPROVAL . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+
+I.4. . QUALIFICATION PHASE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+
+I.5. . THE PLAY-OFF PHASE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+
+I.6. . THE FINAL PHASE . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+I.7. . QUALIFICATION FOR THE NATIONAL MEETING . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+I.8. . QUALIFICATION FOR THE EUROPEAN MEETING . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  1
+J. . APPENDIX                                      27
+
+J.1. . MATERIAL REFERENCES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+
+J.2. . MANUFACTURING TOLERANCES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+
+J.3. . COLOUR REFERENCES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  2
+ A. NOTICE
+
+Changes or clarifications of the rules may be made during the year. We therefore strongly encourage all par-
+ticipants to check our website regularly (www.eurobot.org/) as well as your National Organization Committee
+(NOC)1 own website for news. You can also follow discussions, ask questions or get further assistance on our
+faq (www.eurobot.org/faq/).
+
+Possible changes of the technical specifications will be announced on the Eurobot website, (www.eurobot.
+org/contacts/) or on the website of the National Organization Committee (NOC) in your country.
+
+The FAQ responses from a referee are official responses taken into account for match refereeing and homolo-
+gation stages.
+
+In case of doubt regarding any point of the rules or the approval of robots, the referee committee may also be
+contacted at referee@eurobot.org.
+
+ Please note that the version of this release is noted down at the end of this page. For any inquiry, only
+ an OFFICIAL version should be considered.
+
+ Common parameters of the rules can change from one year to another. Accordingly, please read the
+ rules carefully even if the chapters may seem familiar to you.
+
+Have a good reading!
+
+1Contacts and website of the National Organization Committee can be found on www.eurobot.org/noc
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES                                                 3
+ B. CONTEST PRESENTATION, OBJECTIVES AND VALUES
+
+The Eurobot and Eurobot Junior robotics contest are two international amateur robotics competitions, which
+take place in Europe, and which are open to all young people in the world gathered within a club, a group of
+friends or a school setting. The technical challenge for the Eurobot contest consists of building an autonomous
+robot. The robots of the different teams are required to participate in matches during different meetings orga-
+nized from January to June.
+
+The rules for both contest, Eurobot and Eurobot Junior, are based on the same concept. As organisers, we
+intend to provide a common platform for the Eurobot event. This platform is dedicated to autonomous robots
+for Eurobot while for Eurobot Junior, the robots are remote controlled. In this way, a Eurobot organiser can
+easily set up a Eurobot Junior contest and vice versa.
+
+  B.1. OBJECTIVE
+
+The shared aim of the Eurobot and Eurobot Junior robotics competitions is to give young people the opportu-
+nity to engage in their own learning and put their theoretical and practical knowledge into practice, by taking
+part in a fun and friendly event.
+
+  B.2. VALUES
+
+Born in Europe, the Eurobot and Eurobot Junior robotics competitions share as fundamental values the Euro-
+pean values of human rights, and respect for human dignity, equality for all and freedom of people and ideas.
+
+The Eurobot and Eurobot Junior robotics competitions seek to act, at their humble level, through sharing and
+interculturality, to help young people grow, enrich themselves culturally and be protagonists of their own futures.
+
+As an actor in popular education and as a youth movement, the competitions and their volunteers are con-
+vinced that bringing people together through scientific, technical and fun projects is a way of expanding our
+limits in a friendly atmosphere where everyone is and always will be welcome.
+
+The Eurobot and Eurobot Junior meetings are prepared passionately throughout the year by volunteers of all
+nationalities who believe in the educational values of this experience and are themselves, often, former partic-
+ipants. The Eurobot and Eurobot Junior robotics contest promote the involvement of young people in scientific
+and technical projects as well as in international projects.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  4
+ C. RULE STRUCTURE
+
+The Eurobot and Eurobot Junior robotics contest are subject to a set of rules which are set out in various
+supplementary documents:
+
+       The general rules of the Eurobot contest, which are specific to each competition and define the
+       general regulatory framework applicable to all official meetings;
+       The annual rules of the game, which are common to both competitions, Eurobot and Eurobot Junior,
+       and describe the specific rules for each edition.
+For any meeting, general conditions of participation may be added by the meetings organizing committee.
+Those conditions may add additional rules, or clarify the existing rules, to ensure a smooth running of that
+meeting.
+
+                                                   You’re currently reading version
+
+                      Eurobot OFFICIAL 1.4 of general rules.
+
+                                       (this version concerns fully autonomous robots)
+
+These regulations define the general operation of the competitions, their procedures, the constraints applicable
+to the different technical components and the running of the matches.
+
+   This document must be supplemented by reading the annual game
+                                               rules.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  5
+ D. MAIN REGISTRATION REQUIREMENTS
+
+  D.1. TEAM MEMBERS
+
+A team is a group of at least 2 young people who have built a robot as well as the associated components for
+one of the meetings organized as part of one of the Eurobot or Eurobot Junior contests.
+A young person can only be part of one team2 within a competition3
+
+  D.2. PARTICIPANT MEMBERS AND SUPERVISORS
+
+A team and its project can be supervised by individuals (teacher, parent, facilitator, etc.). The role of these
+supervisors is to support, advise and transmit skills. Supervisors are not considered as participating members
+of the team, but as supervising members.
+
+All elements of the robot(s), and associated components, must be imagined, designed and assembled by the
+participating members of the team.
+
+During a meeting, the supervising members do not have the right to directly modify the robot.
+
+The participating members of a team must be able to explain how the robot and their project work without the
+presence of the supervising members.
+
+ The organizers of a meeting reserve the right to refuse a team’s participation at any time if one of
+ its robots has visibly been imagined, and/or designed and/or assembled by one of the supervising
+ members and not by the participating members.
+
+  D.3. AGE LIMITATION OF THE PARTICIPANTS
+
+The age limit for participants in the Eurobot competition is 30 years old included during the year of the final
+meeting. This age limit does not apply to supervisors.
+
+Teams not meeting this age limit will not be able to participate in the Eurobot European final.
+
+  D.4. TEAM REGISTRATION
+
+A single organization (club, school, etc.) can supervise and register several teams.
+
+Team registration must be done in accordance with the registration procedures provided by your national or-
+ganizing committee. The national organizing committee reserves the right to accept or refuse the registration
+of a team.
+
+  D.5. TEAM NATIONALITY
+
+The nationality of a team is defined by the address of the organization which supports the team (club, school,
+etc.). A team can be composed of members of different nationalities.
+
+    2However, we encourage the exchange of experiences between teams.
+    3Note that a young person can be part of a team in each of the Eurobot and Eurobot Junior contests if they meets all the conditions
+applicable to participants in these contests
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  6
+  D.6. SAFETY AND DECENCY
+
+The Eurobot robotics contests take place with attendance of the general public and families. Consequently,
+teams must respect the rules of decency and safety (electrical, noise level, etiquette, etc.) applicable in the
+country of the meeting.
+
+These rules apply equally to participating and supervising team members as well as to supporters of the team
+and the equipment they bring.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  7
+ E. PROJECT PRESENTATION
+
+The meetings organized as part of the Eurobot and Eurobot Junior competitions are first and foremost an
+opportunity to play with science. The main objectives of these meetings are to support and promote your work
+and projects over the year.
+To achieve this, a poster is required, and the organizers may also ask you to create a technical documentation.
+The robots must be aesthetically pleasing and, if possible, in keeping with the theme of the rules. Showing
+creativity and originality will enhance your work as much as having an efficient robot during its matches.
+The communication of your project and the visual rendering of your robots will be highly valued, both for the
+visitors who come to meet you and for your own satisfaction at having achieved something aesthetically and
+functionally accomplished.
+
+ TECHNICAL POSTER
+
+Each team is required to submit a technical poster to the refereeing committee during the year; the date is
+specified in the conditions of participation.
+This poster presents information relating to the design of the robot (drawings, technical information, design
+details, strategy elements, etc.). It must be at least A1 format (594 x 841 mm) and must be brought with you on
+the day of the event. The technical poster is intended to promote exchange and communication between teams.
+
+A special effort should be made to make the poster understandable to a non-technical audience. Ideally the
+poster should include images and/or diagrams to help explain concepts.
+
+The poster must also include:
+
+       the name of the team.
+
+       the complete names of team members.
+
+       the country of the team.
+
+       the country flag of the team.
+
+This poster will be placed on the booth of each team during the competition. For the international Finals, an
+English version is required. The chosen resolution must guarantee the legibility of all texts. The resulting PDF
+file must not exceed 25 MB. The PDF version of the poster may be sent to the organization prior to the meeting
+via your National Organizing Committee.
+
+In general, the organization encourages teams to communicate about their projects on the Internet, social
+media, forums, etc.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  8
+ F. THE ROBOTS
+
+  F.1. FOREWORDS
+
+Each team must homologate a main robot and can homologate other additional and optional components.
+Each of these components has specific dimensional constraints, but it must be possible to distinguish its com-
+ponents from those of other teams from the public.
+
+All additional components can only compete with the main robot with which they have been designed and
+homologated. It cannot be re-homologated with another main robot.
+
+The main robot and additional components must be made up of elements that are connected to each other (so
+robots cannot leave parts or components on the playing area), with the exception of play elements.
+
+Each team must design a unique and original set of robots, specific to their team. This set includes:
+       an autonomous main robot.
+       one or more autonomous SIMA (optional).
+       a remote computing and observation device (optional).
+       an embedded/ on-board beacons (optional).
+       fixed beacons (optional).
+
+A team can, if it wishes and has the time, design several main robots. But these will have to be homologated
+individually; and for each match, only one robot can be taken backstage and placed on the table.
+
+Be imaginative! For example, as an innovation but also to offer the public and the media an attractive show,
+your robot can use sounds, display expressions, etc.!
+
+ The construction of optional components is not mandatory. The aim is to allow teams with many
+ members to work on a second project. It is recommended for beginning teams to concentrate on
+ building a single functional robot. One well-functioning robot is better than several that don’t move.
+
+  F.2. USE OF COMMERCIAL COMPONENTS FOR THE ROBOTS
+
+The teams must get involved in a scientific and technical project of their own and which consists of the design
+of a robot. They can use commercial components as long as they properly integrated into their project.
+
+In this context, robots made from a rolling base purchased commercially will be accepted for use by the teams
+if, and only if, the chassis and systems of this rolling base are significantly modified by the participants to
+meet the competition constraints and fit in with their own scientific and technical project.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  9
+  F.3. DIMENSIONS
+
+ Information: the dimensions of Eurobot robots are identical to those of Eurobot Junior. This means
+ that Eurobot Junior participants will have easier access to Eurobot meetings. The Eurobot Junior robot
+ will only need to be modified to make it autonomous.
+
+The perimeter of a robot is the perimeter of the convex shell of its vertical projection on the ground. It is
+measured by surrounding it as shown in the illustrations below:
+
+                                                         Dimensions of a robot:
+
+Not deployed                                        Deployed
+<= 1200mm                                          <= 1400mm
+
+The perimeter of a robot must not exceed 1200 mm at the departure time. The perimeter of the fully deployed
+robot must not exceed 1400 mm during the match. It is allowed to change the convex hull shape during the
+game, as long as the perimeter of this one always respects the maximum perimeter constraint.
+
+At any time during the match the height of each robot and manipulated object must not exceed 350 mm. How-
+ever, it can be tolerated that the emergency stop button exceeds this height limit to reach 375 mm.
+
+This height excludes the beacon support mast, any sensors and electronic circuits integrated under the beacon
+support mast.
+
+  F.4. SECURITY CONSTRAINTS
+F.4.a.. GENERAL ASPECTS
+
+ All systems (robots, beacons and accessories) must comply with all applicable regulations in Europe
+ and in the countries hosting the events.
+
+They must comply with safety regulations and under no circumstances endanger participants, organisers or
+the public, either during matches or behind the scenes or in the stands. They must not have any protruding or
+sharp parts that could be dangerous or cause damage.
+
+The use of liquid, corrosive, fuel, pyrotechnic, cryotechnic, radioactive, living beings or zombies is prohibited.
+
+In general, any system deemed as dangerous by the referees’ committee will not be homologated, and must
+be removed, in order to be accepted in the competition.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES             10
+F.4.b.. ENERGY SOURCES
+
+The only sources of stored energy authorized in robots and auxillary systems are chemical batteries, CE-
+certified commercial batteries, springs and elastics, compressed air, gravitational energy. All other energy
+sources are prohibited.
+
+If you have any doubt about unconventional energy sources, ask the referees’ committee as soon as possible,
+providing the corresponding datasheets.
+
+All robots must comply with standard "low voltage" regulations. As a result, the on-board voltages must not
+exceed 48 V DC and 48 V peak to peak AC .
+
+Potential differences greater than 48 V may exist, but only within closed commercial devices (eg lasers, LCD
+backlights, etc.) and only if these devices have not been modified and comply with national and European
+regulations.
+
+Batteries:
+If the team chooses a battery power supply, remember that only unmodified batteries can be used.
+
+Teams must be able to play three games in a row. Note that this includes the time required to set up, during
+which the robot will be powered and awaiting the start (this can take several minutes for some events).
+
+Therefore, we strongly recommend that teams bring several sets of batteries and provide easy access to them
+in the robot for their replacement. Teams are reminded that it is essential to have a set of spare batteries, fully
+charged and available at all times.
+
+Note on the use of Lithium-based batteries:
+Lithium batteries are known for their lack of stability and can easily ignite when certain precautions are not
+taken.
+This type of battery is therefore authorized under the following conditions:
+
+       Suitable battery charger, which must be submitted for homologation.
+
+       Batteries permanently kept in certified and unmodified fireproof bags.
+
+       A system for detecting under voltage is highly recommended.
+
+       Exception in the case of the following batteries, authorized without the conditions listed above:
+
+           • Lithium-based batteries including a BMS (Battery Management System) integrated by the manufac-
+              turer and solid case (LEGO Mindstorm / laptop / mobile phone / power tools / USB charging battery),
+              not dismantled and used for the intended purpose of the manufacturer.
+
+           • Lithium-Iron batteries (LiFePo4)
+
+Organizers might reserve the right to request datasheets for not clearly marked batteries used by a team.
+Batteries which are not acceptable will lead to dishomologation.
+In the case where a team is in possession of an unstable Lithium battery, the team is fully responsible of all
+potential damage caused by the defective battery. Thus, the team must :
+
+   1. Secure it immediately.
+
+   2. Inform the organization of the meeting without delay.
+
+   3. Recycle it, by your own means, before the end of the meeting.
+
+F.4.c.. EMERGENCY STOP BUTTON
+
+All robots have to be equipped with a red emergency stop button, as must all other systems with moving parts
+(motor, actuator, ...) or potentially dangerous components (laser, powerful light, ...). The only exceptions to this
+rule are beacons embedded on the beacon mast of enemy robots, which are exempt from the emergency stop
+button, as well as closed and unmodified commercial systems.).
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  11
+The button may exceed the system’s height by 25 mm and have at least a diameter of 20 mm. It must be
+placed on the top of the robot or on an easily accessible side for the other systems, in a visible position on a
+free surface and in a non-hazardous area to be immediately accessible by the referees at any time during the
+match. The emergency stop button must be operated by a simple and quick movement (for example, by hitting
+it with the fist).
+
+Pressing this button should cause the system to stop immediately. For robots, failure to shut down the control,
+display and avoidance systems is tolerated.
+If the emergency stop button is pressed by the referee = end of the match
+If the emergency stop button is pressed by the team = forfait
+If emergency stop button is pressed by the team at the request of the referees = end of match.
+
+In order to avoid any risk of fire, attention should be paid to the diameters of the wires, depending on the
+intensity of the currents flowing through them. It is also strongly advised to protect the electrical installation
+with a fuse, wired close to the batteries.
+
+F.4.d.. LASERS
+
+Only laser systems and classes defined according to the IEC60825 international standards are accepted.
+Teams using lasers must provide the manufacturer’s document mentioning the class of the device (this infor-
+mation is normally always available on the system itself).
+
+On the basis of this classification, class lasers:
+
+       1 and 1M are accepted without restriction
+
+       2 are tolerated only in case the laser beam do not exceed the play area, and if it is switched off when
+       the robot does not touch the play area.
+
+       2M, 3R, 3B and 4 are strictly forbidden.
+
+ WARNING: Disassembling or modifying devices using laser sources often results in a change of class.
+ Laser devices must not be altered and only be used in the state of their commercialization (laser device
+ = source + optics + electronics).
+
+F.4.e.. HIGH POWER LIGHT SOURCES
+When using a high intensity light source, the light intensity must not be dangerous to the human eye in case of
+direct contact. Note that some types of LEDs have warnings. Be responsible, as your machines are operating
+in front of an uninformed public!
+
+In the case of slightest doubt, the organization reserves the right to request the manufacturer’s specifications
+to verify the non-dangerous nature of the lighting system used. If it turns out that the system is potentially
+dangerous, it may be refused approval in the same way as lasers of class 2M and above.
+
+F.4.f.. HIGH POWER SOUND SOURCES
+When using a high intensity sound source, the sound intensity must not be exceed 80 dBA at a distance of 1
+meter from the robot.
+
+This value can be checked during the homologation. If it turns out that the system is potentially dangerous, it
+may be refused
+
+F.4.g.. COMPRESSED AIR SYSTEMS
+Compressed air systems must not exceed 4 bars, except in pre-assembled commercial products, and only if:
+
+   1. these devices have not been modified.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  12
+   2. They are compliant with european safety regulations.
+   3. they do not present any danger.
+The use of pressurised gas cartridges such as CO2 cartridges is prohibited
+
+  F.5. COMMUNICATION SIGNALS
+
+To avoid interference between teams, it is recommended to encode the communication signals. We strongly
+recommend teams using infrared devices, to take into account the strong ambient light used during the en-
+counters. Moreover, this luminosity may vary in time and according to the placement of the playground in the
+hall.
+
+No disputes regarding interference issues will be entertained. All systems must be able to accommodate am-
+bient conditions that may change depending on the time and location during the competition.
+
+We also remind teams that the organizing staff uses high-frequency radio devices and under no circumstances
+can they be held responsible for the malfunctions encountered by the robots.
+
+CAUTION: Beyond the edges of the playing area, there may be elements that may interfere with color detection
+or communications signals such as:
+
+       decor, lights and objects of the playing area
+       people (referees, teams, etc.)
+       electronic systems (microphones, cameras, etc.)
+It is strictly forbidden to ask people to go away or move away objects/decors around the playing area.
+
+ Wifi networks:
+ At multiple contest locations, the number of active Wifi devices can disturb the robots implementing
+ this technology for communication. To answer this issue, it’s recommended (but not mandatory) to
+ use the 5 GHz frequency rather than the 2.4 GHz one.
+
+ F.6. OTHER DESIGN CONSTRAINTS
+
+All systems (robots, beacons, remote computing device and accessories) must be present on the table
+and are not allowed to communicate with systems outside the table during the matchs.
+
+ Visibility : A rectangular, entire and non-deformable space of 100 x 70 mm per robot must be left free on
+one of the side faces. The teams will receive stickers printed by the organization (team number, sponsors etc),
+which they have to place on these open spaces.
+
+It is also highly recommended (but not mandatory) to close empty spaces inside the robots to facilitate their
+detection by other robots.
+A robot must not intentionally confuse the opposing robot, nor use objects or graphics resembling elements of
+the playing area in order to deceive the opposing robot.
+
+ Starting cord of autonomous robots: At least one present element of the team on the table (except the
+embedded beacons) need to be equipped with a starting device easily accessible. This device has to be
+triggered by pulling the end of a cord at least 500 mm long by a team mate. This cord must not stay attached
+to the element after departure. After the device was triggered, the autonomous robots can start.
+No other starting system (remote control, manual rocker switch, etc.) will be homologated.
+List of elements that can be had with the starting device :
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  13
+   1. The robot
+
+   2. The SIMAs
+
+   3. The fixed beacons
+
+   4. The remote computing device
+
+ Avoidance system : All teams are required to equip its robot with a system for detecting opposing team’s
+robots and SIMA. This system is intended to prevent collisions between robots, during a match. This point will
+be systematically checked during homologation.
+
+ Embedded/ on-board beacon support system : In order to facilitate robot identification in the field, robots
+must integrate an embedded beacon support system to receive the beacon of the opposing team. This support
+system must respect the following points:
+
+       have a convex hullx shape over the entire height between the top of the robot and the beacon support,
+       with a minimal size of a 70 mm diameter circle and with a maximum size of a 100 mm square;
+
+       be solid and opaque (a material able to intercept the light at least in the infrared spectrum; and opaque
+       for the visible spectrum too, except in case of a justification needed);
+
+       have its upper surface flat, horizontal and positioned at a height of 430 ± 5 mm, as horizontal as possible,
+       above the playing area to allow the beacon of the opposing team to be placed in good conditions, it is
+       recommended that this height is made adjustable;
+
+       the top of surface of the platform will be fully covered of VelcroT M (hook side);
+
+       the vertical projection of the on-board beacon support must be located as centrally as possible and within
+       a circle of 20 cm diameter around the center of the robot;
+
+       the embedded beacon support can only accommodate sensor and telecommunication systems.
+
+       the beacon support must be as full as possible between the height of 350 mm and the top of the beacon
+       support. For teams using rotating devices, make sure that the portion of support removed has a height
+       of less than 2 cm (except for the minimum size of the convex envelope), and that it is not possible to see
+       through the support by this opening.
+
+       the on-board beacon support must be stable, motionless regarding the robot structure and must be able
+       to support a minimum weight of 400 g (the opposing team’s beacon and the aruco tag), without flexing or
+       compressing.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  14
+  F.7. SMALL INDEPENDENT MOBILE ACTUATOR (SIMA)
+
+The small independent mobile actuator (or SIMA) must respect the same building and safety constraints as
+robots (Emergency stop, avoidance, laser, bag for lipo battery,...). Like robots, a SIMA must be able to play a
+match wahtever of the color of its team.
+
+They can be launched at the start of the match by a starter cord of 50 cm, or during the match by the robots
+themselves. A robot has the right to touch or communicate with a SIMA of its team throughout the duration of
+the match, but the SIMA must be able to move by itself.
+
+The homologation of a SIMA is neither obligatory nor sufficient to homologate a team, the main robot being
+the only one with this obligation. However, homologation of the SIMA is mandatory for it to participate in the
+match, and if the main robot is not available then the SIMA can participate alone in the matches subject to
+approval of the team and the SIMA.
+
+SIMA must respect the following dimensional constraints:
+
+       At the match start, the SIMA must stand on the table exclusively.
+       A SIMA must be larger than a 80 mm diameter cylinder and a height minimum of 150 mm.
+       The perimeter of a SIMA must not exceed 600 mm at the departure time.
+       A SIMA can be deployed within the limit of 700 mm in its perimeter.
+       A SIMA can be deployed within the limit at a height of 175 mm.
+       A SIMA must have a area of 30 x 30 mm for the stand number sticker.
+       The weight of each SIMA must not exceed 1.5 kg.
+       The SIMA cannot be activated by an external element outside of the table (team crew, remote control,
+       ...).
+
+                                                         Dimensions of a SIMA:
+
+Not deployed                                       Deployed
+ <= 600mm                                          <= 700mm
+
+As SIMAs have a height restriction, they dont have:
+       The beacon mast.
+       Beacon support (and therefore do not carry an ArUco marker).
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES                    15
+ G. BEACON TRACKING SYSTEM
+
+  G.1. GENERAL POINTS
+
+Teams can develop a complete beacon localisation system; in this extent, there are specific zones on the
+playing area where these beacons can be fixed.
+All beacons (fixed beacons, embedded beacons and the remote computing device) must remain in place on
+their supports throughout the duration of the match. All robot safety instructions equally apply to beacons. The
+beacons can only accommodate sensor and telecommunication systems.
+
+Fixed beacons, the remote computing device, beacons, embedded beacons and their respective supports are
+described below.
+
+                                           Figure 11 - Example of beacons positioning
+Caption:
+
+   1. fixed beacons (maximum dimensions W x W x H: 100 x 100 x 1000 mm)
+   2. embedded beacon (maximum dimensions L x W x H: 100 x 100 x 80 mm)
+   3. beacon support (cf. subsection F.6. )
+
+  G.2. EMBEDDED/ ON-BOARD BEACONS
+
+A beacon can be placed on the adverse robot, in order to locate it. It must be placed on a dedicated mast, at a
+height of 430 ± 5 mm above the playing area. The maximum size for an on-board location beacon is a square
+based parallelepiped of 100 mm side and 80 mm height.
+
+The upper side of the on-board beacon must be flat and covered with VelcroT M on the hook side and the
+underside of the beacons must be covered with velvet VelcroT M .
+
+It is recommended that the color of the beacons be mainly white or very clear, so as to favor their detection on
+a dark background.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  16
+In the name of fair play, the components used for this beacon must have real utility. Any "useless" or weighted
+beacon will be refused by the organization.
+
+ An embedded beacon must not exceed 300 g
+
+  G.3. FIXED BEACONS
+
+Each team can place up to three fixed beacons on fixed supports. These fixed supports are allocated to the
+team upon demand and will be placed around the playing area.
+
+Action-cams not useful for the course of the game are prohibited in fixed beacons.
+
+G.3.a.. DIMENSIONS
+The fixed beacons shall be integrally contained in a square rectangular parallelepiped of 100 mm side and
+1000 mm height.
+
+A fixed beacon must not exceed 1.5 kg.
+
+G.3.b.. BEACON SUPPORT
+The fixed beacon supports are square surfaces of 100 mm sides and placed at the ground level of the table,
+and at 44 mm from the edge of the playing surface (see layout on the table plan).
+
+They have a 10 mm wide groove from their center to the side oriented towards the outside of the table. The side
+oriented towards the outside of the table must remain open, the other sides of the support are not necessarily
+open.
+
+G.3.c.. FIXATION
+Given the potential height of the fixed beacons, they must have a solid fixing system.
+
+The groove must be used to secure the fixed beacons using an 8 mm diameter threaded rod and a wing nut.
+
+The screw size is not counted into the dimensional constraints of the fixed beacons.
+The absence of this fixing system will forbid the approval of the fixed beacons.
+
+ In order to allow the manufacture of fixed beacon supports by 3D printing, two models (A and B) are
+ proposed in the appendix J.0.c.. These models are not contractual, the organizations reserve the right
+ to have their own models in accordance with the characteristics defined above.
+
+  G.4. REMOTE COMPUTING AND OBSERVATION DEVICE
+
+In order for the robots to have access to greater computing power and to spot robots in top view, a shared
+platform located on the central axis of symmetry of the bottom of the terrain (see plan) is placed on the edge
+of the table (70mm above table floor).
+
+The remote computing and observation device must be placed on the part of the platform in the color of the
+team. It must not rise beyond a horizontal plane situated 1,6 m above the upper surface of the platform, and
+must not descend below the lower surface of the platform of 22 mm, i.e. an area of 450 mm by 320 mm. On
+the sides, only an offset of 100 mm at the rear of the platform is authorized. Its mass must be less than 5 kg.
+
+It is forbidden to overpass on the opponent’s area.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  17
+Please note that the remote computing and observation device may be subject to vibrations, due to the move-
+ments of the robots.
+
+Fixation :
+The thickness of the fixing platform for the remote computing device is 22 mm.
+
+The mounting platform has a 10 mm wide groove from the center of the beacon support to the middle of the
+side. This groove must be used to secure the remote computing device using at least an 8 mm diameter
+threaded rod and a wing nut. All the components included in the remote computing device must be correctly
+fixed together so that no element can come out of the volume or fall from the table.
+
+The absence of this fastening system will prevent the approval of the remote computing device.
+
+Figure 13 - How to install a remote computing device
+
+  G.5. OTHER CONSTRAINT
+
+The fixed beacons and the remote computing device can be connected by a wired link. This connection must
+under no circumstances disturb the match. The installation of the whole system must be carried out before the
+match, during the preparation time. It should not disturb the opposing team’s preparation.
+
+During the preparation time, a temporary wired link may be pulled in between the robot and one or several
+beacons. This scenario is accepted only if it doesn’t cause any inconvenience for the opposing team.
+
+The components of the tracking system and remote computing device must not act on game elements (re-
+minder: the robots and the SIMA are not game elements).
+
+  G.6. ROBOT IDENTIFICATION
+
+During each match, the robots will be assigned a marker (provided by the organizer) placed at the top of the
+beacon holder, or at the top of the on-board beacon (if present)(Figure 1). This marker has two purposes:
+
+       allow the public to identify the team to which a robot belongs;
+       allow a vision system on the calculation system to identify and locate each robot.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES     18
+The marker is a square 10cm wide, 2cm thick (± 2mm) and with a mass less than or equal to 100g. Its upper
+side is covered with a vinyl with a 7cm ArUco 4x4 tag (centered). A 1cm wide white outline is drawn around
+the ArUco tag to facilitate its detection. A 0.5cm wide contour in the same colour as the team is drawn at the
+edge of the upper surface. The team’s color also occupies the edge of the marker.(Figure 1)
+
+       Team blue robots will receive ArUco 4x4 tags between 1 and 5.
+       Team yellow robots will receive ArUco 4x4 tags between 6 and 10.
+       All robots will receive distinct markers. It will not be possible to choose them, nor to choose on which
+       robot they will be placed.
+       ArUco 4x4 tags from 11 to 50 are reserved for the playing area, but not all of them are necessarily used.
+
+WARNING : to avoid visual disturbances, the teams are not allowed to use ArUco 4x4 tags from 0 to 50.
+
+       ArUco 4x4 tags between 51 and 70 are reserved for team blue .
+       ArUco 4x4 tags between 71 and 90 are reserved for team yellow .
+
+However, other tag numbers over 90 and other dimensions than 4x4 are allowed.
+
+(a) Robot Identification Marker (Tag no1)          (b) A marker on the on-board beacon support.
+
+Figure 1: An identification marker and their positioning on an on-board beacon
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES                                                19
+ H. MATCHES
+
+Only two persons per team are permitted to go backstage and on stage to play the matches.
+
+To ensure that the contest runs smoothly, at least one member of the teams must be present on their booth
+with the robot(s) and ready to go 30 minutes before the start of each series and until that the game is played.
+
+In case of a problem, it is tolerated by the organization to ask for a delay to go to the match but this delay can
+never exceed the end of the current series.
+
+  H.1. PREPARATION TIME
+
+At the start of a match, the elements of the playing area and the playing area itself are installed as indicated in
+the diagrams in the appendix.
+
+Upon arrival on the playing area, each team has a maximum of three minutes to proceed with the placement of
+the robots, the beacons and other equipment. At the end of the preparation time, the robot are not allowed to
+move until the start of the match, and the teams are no longer allowed to touch the table or the game elements.
+
+A robot which is not ready at the end of this period exposes the team to a forfeit for the match.
+
+Besides, the other team’s robots will still play their own game on the playing area. The team will have to score
+points to be declared the winner.
+
+When both teams have finished setting up, or when the preparation time is over, the referee asks the partici-
+pants if they are ready, and they place the starting area tag. From this moment, teams are no longer allowed
+to touch their robots. It will be tolerated that the emergency stop button is pressed by the teams after the
+preparation time in order to preserve the batteries and actuators while waiting for the beginning of the match.
+No dispute can be made on the disposition of the elements of play after the beginning of the match.
+
+  H.2. THE MATCH
+
+At the signal of the referee, each robot is switched on and it has 100 secondes to do these actions.
+
+No one except the referee can touch the robots and the playing elements unless expressly indicated by the
+referees. Any intervention of a team’s member during the match will result in a forfeit of the team.
+
+No elements taken out of the playing area can be put back on the table before the end of the match and the
+validation of the scores.
+Once the match has started, team members must stand at the back of the table, so as not to interfere with
+the referees’ work.
+
+  H.3. END OF MATCH
+
+At the end of the 100 seconds, the robots must stop and turn off all their actuators. It is allowed to keep on any
+dynamic displays.
+
+No one except the referee can touch the robots and the playing elements unless expressly indicated by the
+referees. The referees count the points; they give the result of the match, including the points to the teams.
+If they both agree, they validate the match sheet, can take back their robot(s) and join their booth. If the
+teams do not agree, they refer calmly to the referees. The robots remain in place until the dispute is resolved.
+Refereeing decisions are final.
+In the event of a situation that is difficult to judge, the referees reserve the right to decide whether or not to
+replay the match.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  20
+The referees are allowed to pronounce the end of a game in advance, before the end of the regular time if both
+teams agree (if the robots are blocked for example).
+
+  H.4. THE PENALTIES
+
+Several actions during the match may result in penalties.
+The following actions will result in a warning or a point loss on the final score if a warning has already been
+issued for the team (the warning rule is only valid during the series):
+
+       loss of part or element of a robot on the playground: loss of 20 points.
+       degradation of the table or a game element: loss of 30 points.
+       non-functional avoidance system: loss of 30 points.
+       false start: loss of 50 points.
+       robot keeps moving when time runs out: loss of 50 points.
+       excessive preparation time: loss of 50 points.
+       robot change its start zone after 3 minute of preparation : loss of 50 points.
+       unfair or unsportsmanlike conduct: loss of 50 to 100 points.
+       on arbitration decisions: loss of 50 to 100 points.
+       on decisions of the organization: loss of 50 to 100 points.
+
+The following actions will result in a team forfeit:
+
+       no robot and no SIMA exit from its starting area.
+       removal of point from an opposing protected element or protected area.
+       entry of the robot into an opposing area with exclusive access.
+       repeated excessive preparation time.
+       dimensional limitations not respected.
+       repeated false start.
+       intentionally shoot at people in the vicinity.
+       voluntary fixate, vibrate the table.
+       intervention of a team member on the table, game elements or robots, after the preparation time (with
+       the exception of the emergency stop button).
+       intervention of a team member on the table, the game elements or the robots, during the match.
+       the team is unable to play the game before the end of the series.
+       following arbitration decisions.
+       following decisions of the organization committee.
+
+The following actions will result in disqualification of the team from the competition:
+
+       voluntary deactivation of robot avoidance systems.
+       design robots that are noticeably similar to robots from other teams (for example: rolling bases or identical
+       actuators). If during the year you see a team building a robot similar to yours, report it to the organization
+       as soon as possible.
+       intentional degradation of robot belonging to other teams.
+       following decisions of the organization committee.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  21
+During the same match, only one penalty may be applied. If several penalties can be applied, then the highest
+will be taken into account.
+
+The so-called “additional” points are only counted if the previous points of the action are validated.
+
+The score of a forfeited team or a negative score will be reduced to 0.
+
+Only the referees are authorized to intervene on the table or the robots after the preparation time and during
+the match. In case of concern, ask the referee to intervene to avoid the forfeit.
+
+Video refereeing is prohibited.
+
+A general definition of anti-game: "If the goal is to harm without building, then it’s anti-game".
+
+The appreciation of the penalties and the anti-game remains at the referee’s judgement. They cannot be dis-
+puted after the match.
+
+ RECALL:
+ The penalties are intended to compensate for damage caused by a possible incident during the course
+ of the game. A penalty situation is considered as non-respect of the rules of the game, this type of
+ situation must remain exceptional! In some rare situation, a penalty may result in the team’s forfeit.
+ The referees’ committee will also be attentive to the penalties distributed between several levels of
+ meeting (regional/national/European).
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  22
+ I. THE CONTESTS
+
+  I.1. GENERAL INFORMATION
+
+The Eurobot meetings can be organized on three levels:
+
+       regional: when they exist (e.g. in France, Eurobot Junior), qualify a number of teams for the national
+       meeting,
+       national: it allows to qualify the teams for the European meeting,
+       European: this last stage brings together, in the same friendly spirit, teams from different countries in
+       Europe and elsewhere.
+
+Each meeting has several successive steps:
+
+       The static and dynamic approvals of all the robots;
+       A qualification phase, with at least 3 series;
+       An optional play-off phase;
+       A final phase.
+
+The organizers of each meeting can distribute awards, if they want, to the teams in order to reward an aspect
+of the participation of the team or its robot.
+
+  I.2. MEETINGS AND PARTICIPATING COUNTRIES
+
+Eurobot and Eurobot Junior European finals gather teams selected after national qualifications if they were
+organized. European finals take place in Europe, but all countries can participate. Countries with more than
+three registered teams, are required to organize a national qualification to select which teams will compete the
+European finals.
+
+  I.3. APPROVAL
+
+I.3.a.. STATIC APPROVAL
+
+Before the start of the matches, robots are subject to the supervision of a referee who checks their compliance
+with the rules. Robots must be able to easily show all their mechanisms.
+The ancillary systems (accessories, beacons, calculation device, etc.) will also be subject to static control
+(size, mass, presence of mandatory elements, etc.).
+
+I.3.b.. DYNAMIC APPROVAL
+
+The robots are put in a game situation but without the presence of an opposing team. Within 100 seconds, The
+robots and the SIMAs must leave the departure zone, and the robot must validate at least one action. Certain
+specific features provided for in the regulation will also be checked (timer, avoidance of opponents, etc.).
+If the assembly consisting of the main robot and the SIMA fulfills these conditions, it is declared approved.
+
+I.3.c.. SIGNIFICANT TECHNICAL MODIFICATIONS AFTER THE APPROVAL
+
+It is essential to inform the referees of any significant modifications (functional, structural, dimensional ...)
+brought to the robot(s) or any other element after approval. The referees will then check the modifications
+made and re-approve the robot if they deem it necessary. In the event of a breach, the team may be declared
+disqualified from the contest.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  23
+  I.4. QUALIFICATION PHASE
+
+During the qualification phase, the registered teams will have the possibility to play at least three games (often
+more, depending on the local organizers).
+A ranking is established according to the accumulated points in order to select the qualified teams for the next
+phase.
+At the end of the qualifying phase, the first teams (according to the matches) are qualified for the next phase.
+
+Number of participating teams Minimum team selected
+
+N<=16                                              4
+
+16<N<=50                                           8
+
+50<N                                               16
+
+  I.5. THE PLAY-OFF PHASE
+
+An additional play-off phase may set up in the event that a meeting hosts two contests, the first of which
+qualifies for the second. For example:
+
+       a regional meeting (A) and its national meeting (B)
+
+       or a national meeting (A) and the European meeting (B)
+
+The organizer may carry out the qualifying phase of both matches (A) and (B) either in parallel fashion or in a
+mixed fashion. In this case, a play-off phase may be organised in order to allow teams from the match (A) to
+qualify for the match (B), exempting them from having to catch up on all the matches from the qualifying phase
+of (B) in favour of this play-off phase.
+The teams participating in this play-off phase are:
+
+       the teams of the match (A), in a number corresponding to its qualification quota, and chosen in the order
+       of ranking at the end of the final phase of (A) or through an award during the regional meeting.
+
+       the teams of the match (B), in a number equivalent to the participants in this phase from (A), chosen from
+       among the last teams normally qualified for the final phase of the match (B).
+
+Example for a national meeting qualifying three teams for its European final whose European final
+phase has 16 teams. The teams participating in the play-off phase are:
+
+       the first three teams of the national meeting at the end of the final phase of the national meeting;
+
+       and the teams ranked 16th, 15th and 14th in the qualifying phase of the European meeting.
+
+In this play-off phase, one match will be played for each participating team. The participating teams from the
+match (A) qualified through the ranking will play, in order of their ranking, with the teams from the match (B)
+with the lowest ranking. And the team(s) of (A) qualified for this play-off phase through an award will play
+against the top-ranked teams of (B) in a random order.
+
+Each team that wins its play-off match will be included in the main draw of the final phase of the match (B). At
+the end of the play-off phase, the tree of the final phase of the match (B) presented in Figure 2 may be revised
+to more accurately represent the level of each team.
+In the event of a tie, the tie will be decided by comparing the scores without taking into account bonus points.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES      24
+  I.6. THE FINAL PHASE
+
+At the end of the previous phase, the qualified teams form the table of the matches of the final phase.
+Depending to the meeting, only the teams composed of members less than 30 years of age will be able to
+enter the final stages.
+
+                                                   Figure 2: Tree of the final phase
+
+The matches of the final phase are with knockout, unless otherwise organized on some meetings.
+In the event of double forfeit, double defeat or perfect tie, the match is replayed immediately; if this second
+match is still a case of double forfeit, double defeat or equality, the winner is determined according to the points
+acquired at the end of the qualifying phase.
+The final can be played in one winning game, two winning games or two game with score cumulation, depend-
+ing on the organisation of the event. The teams switch sides after each match.
+
+ Be careful to provide enough batteries to play all the matches in the final phase.
+
+  I.7. QUALIFICATION FOR THE NATIONAL MEETING
+
+When there are regional meetings, the number of teams qualified per regional meeting is proportional to the
+total number of teams registered at the national level.
+
+The best teams in the ranking established at the end of the qualifying phase of each regional meeting, as well
+as at least one team chosen by the organizers from the special prizes (e.g. creativity, fair play, presentation,
+etc.).
+
+  I.8. QUALIFICATION FOR THE EUROPEAN MEETING
+
+Each country participating in Eurobot organizes a national meeting to determine the qualified teams for the
+international meeting.
+
+The 3 finalist teams will qualify to take part in the European meeting.
+
+OFFICIAL 1.4 VERSION OF THE EUROBOT GENERAL RULES  25
+

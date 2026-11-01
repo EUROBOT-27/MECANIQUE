@@ -1,0 +1,438 @@
+====================================================================================================
+actuator-parts/suction-cup-prototype.FCStd  (195 objects)
+Body122                      PartDesign::Body           Adaptator-suction-cup-M5-VM              vol       994  box 12.0 x 13.7 x 21.4 @ (-6.0,-6.9,-5.4)
+Body123                      PartDesign::Body           Tube-connector-M5-ID5mm                  vol       191  box 14.5 x 7.0 x 6.2 @ (2.2,-3.5,0.9)
+Body124                      PartDesign::Body           Rondelle                                 vol        21  box 0.7 x 8.0 x 8.0 @ (6.0,-4.0,-0.0)
+Chamfer059                   PartDesign::Chamfer        Chamfer059                               vol      1282  box 12.0 x 13.9 x 21.4 @ (-6.0,-6.9,-5.4)  [Angle=45.00]
+Chamfer060                   PartDesign::Chamfer        Chamfer060                               vol       995  box 12.0 x 13.9 x 21.4 @ (-6.0,-6.9,-5.4)  [Angle=45.00]
+Chamfer061                   PartDesign::Chamfer        Chamfer061                               vol       192  box 14.5 x 7.2 x 6.2 @ (-4.5,-3.6,-3.1)  [Angle=45.00]
+Chamfer062                   PartDesign::Chamfer        Chamfer062                               vol       192  box 14.5 x 7.2 x 6.2 @ (-4.5,-3.6,-3.1)  [Angle=45.00]
+Fillet052                    PartDesign::Fillet         Fillet052                                vol       994  box 12.0 x 13.7 x 21.4 @ (-6.0,-6.9,-5.4)  [Radius=0.40]
+Fillet053                    PartDesign::Fillet         Fillet053                                vol       191  box 14.5 x 7.0 x 6.2 @ (-4.5,-3.5,-3.1)  [Radius=0.40]
+Origin226                    App::Origin                Origin226                               
+Origin227                    App::Origin                Origin227                               
+Origin229                    App::Origin                Origin229                               
+Origin255                    App::Point                 Origine-point                           
+Origin256                    App::Point                 Origine-point001                        
+Origin257                    App::Point                 Origine-point002                        
+Pad104                       PartDesign::Pad            Pad104                                   vol       998  box 12.0 x 13.9 x 8.0 @ (-6.0,-6.9,0.0)  [Length=8.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Pad105                       PartDesign::Pad            Pad105                                   vol        66  box 2.5 x 7.2 x 6.2 @ (-0.0,-3.6,-3.1)  [Length=2.50, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Pad106                       PartDesign::Pad            Pad106                                   vol        21  box 0.7 x 8.0 x 8.0 @ (-0.0,-4.0,-4.0)  [Length=0.70, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Pocket087                    PartDesign::Pocket         Pocket087                                vol      1197  box 12.0 x 13.9 x 21.4 @ (-6.0,-6.9,-5.4)  [Length=12.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Pocket088                    PartDesign::Pocket         Pocket088                                vol       996  box 12.0 x 13.9 x 21.4 @ (-6.0,-6.9,-5.4)  [Length=5.00, Length2=10.00, Offset=0.00, Type=ThroughAll, Reversed=0.00, Midplane=0.00]
+Revolution024                PartDesign::Revolution     Revolution024                            vol      1149  box 12.0 x 13.9 x 13.4 @ (-6.0,-6.9,-5.4)  [Angle=360.00, Type=Angle, Reversed=1.00, Midplane=0.00]
+Revolution025                PartDesign::Revolution     Revolution025                            vol      1286  box 12.0 x 13.9 x 21.4 @ (-6.0,-6.9,-5.4)  [Angle=360.00, Type=Angle, Reversed=1.00, Midplane=0.00]
+Revolution026                PartDesign::Revolution     Revolution026                            vol       146  box 10.0 x 7.2 x 6.2 @ (-0.0,-3.6,-3.1)  [Angle=360.00, Type=Angle, Reversed=1.00, Midplane=0.00]
+Revolution027                PartDesign::Revolution     Revolution027                            vol       192  box 14.5 x 7.2 x 6.2 @ (-4.5,-3.6,-3.1)  [Angle=360.00, Type=Angle, Reversed=0.00, Midplane=0.00]
+Sketch256                    Sketcher::SketchObject     Sketch256                               
+      sketch dims: DistanceX=12.00
+Sketch257                    Sketcher::SketchObject     Sketch257                               
+      sketch dims: DistanceX=2.50, DistanceX=3.50, DistanceY=3.00, DistanceY=5.40
+Sketch258                    Sketcher::SketchObject     Sketch258                               
+      sketch dims: DistanceX=2.50, DistanceX=1.75, DistanceY=8.00, DistanceY=6.00
+Sketch259                    Sketcher::SketchObject     Sketch259                               
+      sketch dims: Diameter=3.00
+Sketch260                    Sketcher::SketchObject     Sketch260                               
+      sketch dims: Diameter=5.00, DistanceY=4.00
+Sketch261                    Sketcher::SketchObject     Sketch261                               
+      sketch dims: DistanceY=6.20, Diameter=3.00
+Sketch262                    Sketcher::SketchObject     Sketch262                               
+      sketch dims: DistanceX=10.00, DistanceY=-2.25, DistanceY=1.50, DistanceX=3.00, DistanceY=2.50, DistanceX=0.80
+Sketch263                    Sketcher::SketchObject     Sketch263                               
+      sketch dims: DistanceY=2.50, DistanceY=1.50, DistanceY=2.00, DistanceX=3.00, DistanceX=4.50
+Sketch264                    Sketcher::SketchObject     Sketch264                               
+      sketch dims: Diameter=5.00, Diameter=8.00
+XY_Plane148                  App::Plane                 XY-plane031                             
+XY_Plane149                  App::Plane                 XY-plane032                             
+XY_Plane150                  App::Plane                 XY-plane033                             
+XZ_Plane148                  App::Plane                 XZ-plane031                             
+XZ_Plane149                  App::Plane                 XZ-plane032                             
+XZ_Plane150                  App::Plane                 XZ-plane033                             
+X_Axis148                    App::Line                  X-axis031                               
+X_Axis149                    App::Line                  X-axis032                               
+X_Axis150                    App::Line                  X-axis033                               
+YZ_Plane148                  App::Plane                 YZ-plane031                             
+YZ_Plane149                  App::Plane                 YZ-plane032                             
+YZ_Plane150                  App::Plane                 YZ-plane033                             
+Y_Axis148                    App::Line                  Y-axis031                               
+Y_Axis149                    App::Line                  Y-axis032                               
+Y_Axis150                    App::Line                  Y-axis033                               
+Z_Axis148                    App::Line                  Z-axis031                               
+Z_Axis149                    App::Line                  Z-axis032                               
+Z_Axis150                    App::Line                  Z-axis033                               
+Body                         PartDesign::Body           Corps                                    vol      4680  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)
+Origin                       App::Origin                Origine                                 
+X_Axis                       App::Line                  Axe X                                   
+Y_Axis                       App::Line                  Axe Y                                   
+Z_Axis                       App::Line                  Axe Z                                   
+XY_Plane                     App::Plane                 Plan XY                                 
+XZ_Plane                     App::Plane                 Plan XZ                                 
+YZ_Plane                     App::Plane                 Plan YZ                                 
+Origin258                    App::Point                 Origine-point003                        
+Sketch                       Sketcher::SketchObject     Sketch                                  
+      sketch dims: Distance=2.50, Distance=8.00, DistanceY=8.00, DistanceX=3.00, Distance=3.00, Distance=2.00, Distance=30.00, Distance=8.00
+Revolution                   PartDesign::Revolution     Revolution                               vol      8850  box 60.0 x 60.0 x 8.0 @ (-30.0,-30.0,8.0)  [Angle=360.00, Type=Angle, Reversed=1.00, Midplane=0.00]
+Sketch265                    Sketcher::SketchObject     Sketch265                               
+      sketch dims: Distance=2.00, Distance=2.00
+Pocket                       PartDesign::Pocket         Pocket                                   vol      5231  box 60.0 x 60.0 x 8.0 @ (-30.0,-30.0,8.0)  [Length=5.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch266                    Sketcher::SketchObject     Sketch266                               
+      sketch dims: DistanceY=6.00, Angle=70.00
+Pad                          PartDesign::Pad            Pad                                      vol      5554  box 60.0 x 60.0 x 8.0 @ (-30.0,-30.0,8.0)  [Length=10.00, Length2=10.00, Offset=0.00, Type=UpToFace, Reversed=1.00, Midplane=0.00]
+Fillet                       PartDesign::Fillet         Fillet                                   vol      5555  box 60.0 x 60.0 x 8.1 @ (-30.0,-30.0,8.0)  [Radius=10.00]
+Fillet054                    PartDesign::Fillet         Fillet054                                vol      5558  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)  [Radius=1.00]
+Fillet055                    PartDesign::Fillet         Fillet055                                vol      5568  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)  [Radius=1.00]
+PolarPattern                 PartDesign::PolarPattern   PolarPattern                             vol      6581  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)  [Angle=360.00, Offset=120.00, Reversed=0.00, Occurrences=4.00]
+Sketch267                    Sketcher::SketchObject     Sketch267                               
+      sketch dims: Distance=8.00
+Pocket089                    PartDesign::Pocket         Pocket089                                vol      6402  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)  [Length=5.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Chamfer                      PartDesign::Chamfer        Chamfer                                  vol      6385  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)  [Angle=45.00]
+Body125                      PartDesign::Body           Corps001                                 vol     42396  box 73.3 x 70.6 x 28.0 @ (-40.1,-35.3,-12.0)
+Origin259                    App::Origin                Origine001                              
+X_Axis151                    App::Line                  Axe X001                                
+Y_Axis151                    App::Line                  Axe Y001                                
+Z_Axis151                    App::Line                  Axe Z001                                
+XY_Plane151                  App::Plane                 Plan XY001                              
+XZ_Plane151                  App::Plane                 Plan XZ001                              
+YZ_Plane151                  App::Plane                 Plan YZ001                              
+Origin260                    App::Point                 Origine-point004                        
+Sketch268                    Sketcher::SketchObject     Sketch268                               
+      sketch dims: Distance=0.10, Distance=0.10, Distance=0.10, Distance=0.10, Distance=0.10, DistanceX=3.00, Distance=12.00
+Revolution028                PartDesign::Revolution     Revolution028                            vol     42566  box 66.2 x 66.2 x 28.0 @ (-33.1,-33.1,-12.0)  [Angle=360.00, Type=Angle, Reversed=1.00, Midplane=0.00]
+Binder                       PartDesign::SubShapeBinder Binder                                   vol      4680  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)  [Offset=0.00]
+Sketch269                    Sketcher::SketchObject     Sketch269                               
+      sketch dims: Diameter=4.10, Distance=1.00, Angle=30.00, Radius=4.00
+Pad107                       PartDesign::Pad            Pad107                                   vol     43058  box 73.2 x 66.2 x 28.0 @ (-40.1,-33.1,-12.0)  [Length=10.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Fillet056                    PartDesign::Fillet         Fillet056                                vol     43069  box 73.2 x 66.2 x 28.0 @ (-40.1,-33.1,-12.0)  [Radius=5.00]
+PolarPattern001              PartDesign::PolarPattern   PolarPattern001                          vol     44076  box 73.2 x 70.6 x 28.0 @ (-40.1,-35.3,-12.0)  [Angle=360.00, Offset=120.00, Reversed=0.00, Occurrences=3.00]
+Body126                      PartDesign::Body           Corps002                                 vol      5331  box 73.2 x 70.6 x 3.0 @ (-40.1,-35.3,16.0)
+Origin261                    App::Origin                Origine002                              
+X_Axis152                    App::Line                  Axe X002                                
+Y_Axis152                    App::Line                  Axe Y002                                
+Z_Axis152                    App::Line                  Axe Z002                                
+XY_Plane152                  App::Plane                 Plan XY002                              
+XZ_Plane152                  App::Plane                 Plan XZ002                              
+YZ_Plane152                  App::Plane                 Plan YZ002                              
+Origin262                    App::Point                 Origine-point005                        
+CopyPolarPattern001          PartDesign::ShapeBinder    CopyPolarPattern001                     
+Pad108                       PartDesign::Pad            Pad108                                   vol      2240  box 73.2 x 70.6 x 3.0 @ (-40.1,-35.3,16.0)  [Length=3.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch270                    Sketcher::SketchObject     Sketch270                               
+      sketch dims: Diameter=48.00, Diameter=3.20
+Pad109                       PartDesign::Pad            Pad109                                   vol      5397  box 73.2 x 70.6 x 3.0 @ (-40.1,-35.3,16.0)  [Length=3.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Chamfer063                   PartDesign::Chamfer        Chamfer063                               vol      5331  box 73.2 x 70.6 x 3.0 @ (-40.1,-35.3,16.0)  [Angle=45.00]
+Chamfer064                   PartDesign::Chamfer        Chamfer064                               vol     43897  box 73.2 x 70.6 x 28.0 @ (-40.1,-35.3,-12.0)  [Angle=45.00]
+Sketch271                    Sketcher::SketchObject     Sketch271                               
+      sketch dims: Distance=9.00
+Pocket090                    PartDesign::Pocket         Pocket090                                vol     42451  box 73.2 x 70.6 x 28.0 @ (-40.1,-35.3,-12.0)  [Length=5.00, Length2=5.00, Offset=0.00, Type=ThroughAll, Reversed=1.00, Midplane=0.00]
+Chamfer065                   PartDesign::Chamfer        Chamfer065                               vol     42439  box 73.2 x 70.6 x 28.0 @ (-40.1,-35.3,-12.0)  [Angle=45.00]
+Chamfer066                   PartDesign::Chamfer        Chamfer066                               vol     42396  box 73.3 x 70.6 x 28.0 @ (-40.1,-35.3,-12.0)  [Angle=45.00]
+Sketch272                    Sketcher::SketchObject     Sketch272                               
+Pocket091                    PartDesign::Pocket         Pocket091                                vol      4680  box 60.0 x 60.0 x 8.2 @ (-30.0,-30.0,8.0)  [Length=2.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Body127                      PartDesign::Body           Arm                                      vol    125000  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)
+Origin263                    App::Origin                Origine003                              
+X_Axis153                    App::Line                  Axe X003                                
+Y_Axis153                    App::Line                  Axe Y003                                
+Z_Axis153                    App::Line                  Axe Z003                                
+XY_Plane153                  App::Plane                 Plan XY003                              
+XZ_Plane153                  App::Plane                 Plan XZ003                              
+YZ_Plane153                  App::Plane                 Plan YZ003                              
+Origin264                    App::Point                 Origine-point006                        
+Binder001                    PartDesign::SubShapeBinder Binder001                                vol      5397  box 73.2 x 70.6 x 3.0 @ (-40.1,-35.3,16.0)  [Offset=0.00]
+Sketch273                    Sketcher::SketchObject     Sketch273                               
+      sketch dims: Angle=15.00, Distance=110.00, Distance(Long)=113.88
+Sketch274                    Sketcher::SketchObject     Sketch274                               
+      sketch dims: Distance=3.00
+Pad110                       PartDesign::Pad            Pad110                                   vol    185196  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)  [Length=8.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Sketch275                    Sketcher::SketchObject     Sketch275                               
+Pocket092                    PartDesign::Pocket         Pocket092                                vol    170527  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)  [Length=8.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Pocket093                    PartDesign::Pocket         Pocket093                                vol    165130  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)  [Length=3.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+LinearPattern                PartDesign::LinearPattern  LinearPattern                            vol    145063  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)  [Length=113.88, Length2=100.00, Offset=113.88, Reversed=0.00, Occurrences=2.00]
+LinearPattern001             PartDesign::LinearPattern  LinearPattern001                         vol    124997  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)  [Length=113.88, Length2=100.00, Offset=113.88, Reversed=0.00, Occurrences=2.00]
+Fillet057                    PartDesign::Fillet         Fillet057                                vol    125495  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)  [Radius=15.00]
+Chamfer067                   PartDesign::Chamfer        Chamfer067                               vol    125000  box 115.8 x 306.3 x 8.0 @ (-72.6,-153.1,16.0)  [Angle=45.00]
+Body128                      PartDesign::Body           Corps003                                 vol     22591  box 86.3 x 98.2 x 18.0 @ (-72.6,66.9,9.0)
+Origin265                    App::Origin                Origine004                              
+X_Axis154                    App::Line                  Axe X004                                
+Y_Axis154                    App::Line                  Axe Y004                                
+Z_Axis154                    App::Line                  Axe Z004                                
+XY_Plane154                  App::Plane                 Plan XY004                              
+XZ_Plane154                  App::Plane                 Plan XZ004                              
+YZ_Plane154                  App::Plane                 Plan YZ004                              
+Origin266                    App::Point                 Origine-point007                        
+ShapeBinder                  PartDesign::ShapeBinder    ShapeBinder                             
+Sketch276                    Sketcher::SketchObject     Sketch276                               
+      sketch dims: DistanceX=40.00, Distance=55.00
+Pad111                       PartDesign::Pad            Pad111                                   vol     14374  box 86.3 x 98.1 x 3.0 @ (-72.6,66.9,24.0)  [Length=3.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch277                    Sketcher::SketchObject     Sketch277                               
+      sketch dims: Radius=44.00
+Pad112                       PartDesign::Pad            Pad112                                   vol     24942  box 86.3 x 98.1 x 18.0 @ (-72.6,66.9,9.0)  [Length=15.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Fillet058                    PartDesign::Fillet         Fillet058                                vol     24488  box 86.3 x 98.1 x 18.0 @ (-72.6,66.9,9.0)  [Radius=2.00]
+Sketch278                    Sketcher::SketchObject     Sketch278                               
+      sketch dims: Distance=4.00, DistanceX=30.00
+Pocket094                    PartDesign::Pocket         Pocket094                                vol     22808  box 86.3 x 98.2 x 18.0 @ (-72.6,66.9,9.0)  [Length=14.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch279                    Sketcher::SketchObject     Sketch279                               
+      sketch dims: Diameter=4.15
+Pocket095                    PartDesign::Pocket         Pocket095                                vol     22713  box 86.3 x 98.2 x 18.0 @ (-72.6,66.9,9.0)  [Length=13.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Chamfer068                   PartDesign::Chamfer        Chamfer068                               vol     22713  box 86.3 x 98.2 x 18.0 @ (-72.6,66.9,9.0)  [Angle=45.00]
+Fillet059                    PartDesign::Fillet         Fillet059                                vol     22678  box 86.3 x 98.2 x 18.0 @ (-72.6,66.9,9.0)  [Radius=4.00]
+Chamfer069                   PartDesign::Chamfer        Chamfer069                               vol     22591  box 86.3 x 98.2 x 18.0 @ (-72.6,66.9,9.0)  [Angle=45.00]
+Body129                      PartDesign::Body           Corps004                                 vol     15570  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)
+Origin267                    App::Origin                Origine005                              
+X_Axis155                    App::Line                  Axe X005                                
+Y_Axis155                    App::Line                  Axe Y005                                
+Z_Axis155                    App::Line                  Axe Z005                                
+XY_Plane155                  App::Plane                 Plan XY005                              
+XZ_Plane155                  App::Plane                 Plan XZ005                              
+YZ_Plane155                  App::Plane                 Plan YZ005                              
+Origin268                    App::Point                 Origine-point008                        
+ShapeBinder001               PartDesign::ShapeBinder    ShapeBinder001                          
+Pad113                       PartDesign::Pad            Pad113                                   vol      1626  box 34.0 x 4.0 x 14.0 @ (-46.5,161.0,9.0)  [Length=4.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch280                    Sketcher::SketchObject     Sketch280                               
+      sketch dims: DistanceX=35.00, Distance=11.00
+Pad114                       PartDesign::Pad            Pad114                                   vol      7791  box 35.0 x 14.0 x 18.0 @ (-47.0,161.0,9.0)  [Length=10.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Fillet060                    PartDesign::Fillet         Fillet060                                vol      7722  box 35.0 x 14.0 x 18.0 @ (-47.0,161.0,9.0)  [Radius=4.00]
+Sketch281                    Sketcher::SketchObject     Sketch281                               
+      sketch dims: Angle=8.00, DistanceY=70.00
+Pad115                       PartDesign::Pad            Pad115                                   vol     18259  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Length=5.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Fillet061                    PartDesign::Fillet         Fillet061                                vol     17997  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Radius=12.00]
+DatumPlane                   Part::DatumPlane           DatumPlane                              
+Sketch282                    Sketcher::SketchObject     Sketch282                               
+      sketch dims: Diameter=6.00, DistanceY=5.00
+Pocket096                    PartDesign::Pocket         Pocket096                                vol     17512  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Length=5.00, Length2=5.00, Offset=0.00, Type=ThroughAll, Reversed=0.00, Midplane=0.00]
+Fillet062                    PartDesign::Fillet         Fillet062                                vol     17502  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Radius=1.00]
+LinearPattern002             PartDesign::LinearPattern  LinearPattern002                         vol     15685  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Length=32.00, Length2=100.00, Offset=8.00, Reversed=1.00, Occurrences=5.00]
+Sketch283                    Sketcher::SketchObject     Sketch283                               
+      sketch dims: Diameter=3.20
+Pocket097                    PartDesign::Pocket         Pocket097                                vol     15645  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Length=9.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Chamfer070                   PartDesign::Chamfer        Chamfer070                               vol     15617  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Angle=45.00]
+Body130                      PartDesign::Body           Corps005                                 vol      3712  box 28.7 x 6.0 x 30.1 @ (-43.8,164.0,-62.0)
+Origin269                    App::Origin                Origine006                              
+X_Axis156                    App::Line                  Axe X006                                
+Y_Axis156                    App::Line                  Axe Y006                                
+Z_Axis156                    App::Line                  Axe Z006                                
+XY_Plane156                  App::Plane                 Plan XY006                              
+XZ_Plane156                  App::Plane                 Plan XZ006                              
+YZ_Plane156                  App::Plane                 Plan YZ006                              
+Origin270                    App::Point                 Origine-point009                        
+CopyChamfer070               PartDesign::ShapeBinder    CopyChamfer070                          
+Pad116                       PartDesign::Pad            Pad116                                   vol      4399  box 29.3 x 6.0 x 29.1 @ (-44.1,164.0,-61.0)  [Length=6.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Fillet063                    PartDesign::Fillet         Fillet063                                vol      4251  box 28.3 x 6.0 x 29.1 @ (-43.6,164.0,-61.0)  [Radius=7.00]
+Fillet064                    PartDesign::Fillet         Fillet064                                vol      3767  box 28.7 x 6.0 x 30.1 @ (-43.8,164.0,-62.0)  [Radius=5.00]
+Chamfer071                   PartDesign::Chamfer        Chamfer071                               vol     15571  box 35.0 x 14.0 x 88.0 @ (-47.0,161.0,-61.0)  [Angle=45.00]
+Sketch284                    Sketcher::SketchObject     Sketch284                               
+      sketch dims: Diameter=4.15
+Pocket098                    PartDesign::Pocket         Pocket098                                vol      3735  box 28.7 x 6.0 x 30.1 @ (-43.8,164.0,-62.0)  [Length=5.00, Length2=5.00, Offset=0.00, Type=ThroughAll, Reversed=0.00, Midplane=0.00]
+Chamfer072                   PartDesign::Chamfer        Chamfer072                               vol      3719  box 28.7 x 6.0 x 30.1 @ (-43.8,164.0,-62.0)  [Angle=45.00]
+Chamfer073                   PartDesign::Chamfer        Chamfer073                               vol      3712  box 28.7 x 6.0 x 30.1 @ (-43.8,164.0,-62.0)  [Angle=45.00]
+====================================================================================================
+actuator-parts/box-manipulator.FCStd  (107 objects)
+Body                         PartDesign::Body           servo-support                            vol     14950  box 56.0 x 33.0 x 28.0 @ (-38.0,-10.0,-47.5)
+Origin                       App::Origin                Origine                                 
+X_Axis                       App::Line                  Axe X                                   
+Y_Axis                       App::Line                  Axe Y                                   
+Z_Axis                       App::Line                  Axe Z                                   
+XY_Plane                     App::Plane                 Plan XY                                 
+XZ_Plane                     App::Plane                 Plan XZ                                 
+YZ_Plane                     App::Plane                 Plan YZ                                 
+Origin001                    App::Point                 Origine-point                           
+Part015                      App::Part                  arm-manipulator                          vol     81973  box 148.8 x 133.0 x 35.0 @ (-38.0,-85.0,-12.0)  [Type=]
+Origin061                    App::Origin                Origin061                               
+Body041                      PartDesign::Body           ServoBody                                vol     32029  box 54.0 x 20.0 x 41.0 @ (-37.0,-10.0,-48.0)
+Body043                      PartDesign::Body           ServoAxis                                vol       281  box 6.0 x 6.0 x 10.0 @ (-3.0,-3.0,-12.0)
+X_Axis122                    App::Line                  X_Axis122                               
+Y_Axis122                    App::Line                  Y_Axis122                               
+Z_Axis122                    App::Line                  Z_Axis122                               
+XY_Plane122                  App::Plane                 XY_Plane122                             
+XZ_Plane122                  App::Plane                 XZ_Plane122                             
+YZ_Plane122                  App::Plane                 YZ_Plane122                             
+Origin282                    App::Point                 Origine-point001                        
+Fillet                       PartDesign::Fillet         Fillet                                   vol     32029  box 54.0 x 20.0 x 41.0 @ (-37.0,-10.0,-47.0)  [Radius=1.00]
+Origin062                    App::Origin                Origin062                               
+Sketch086                    Sketcher::SketchObject     Sketch086                               
+      sketch dims: DistanceX=10.00, DistanceX=54.00, DistanceX=40.00, DistanceY=47.00, DistanceY=8.00, DistanceY=2.50, DistanceY=18.50
+Pad050                       PartDesign::Pad            Pad050                                   vol     31900  box 54.0 x 20.0 x 39.0 @ (-37.0,-10.0,-47.0)  [Length=20.00, Length2=100.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch087                    Sketcher::SketchObject     Sketch087                               
+      sketch dims: Diameter=4.00, DistanceY=10.00, DistanceX=49.00, DistanceX=14.50
+Pocket033                    PartDesign::Pocket         Pocket033                                vol     31774  box 54.0 x 20.0 x 39.0 @ (-37.0,-10.0,-47.0)  [Length=5.00, Length2=100.00, Offset=0.00, Type=ThroughAll, Reversed=0.00, Midplane=0.00]
+Fillet024                    PartDesign::Fillet         Fillet024                                vol     31772  box 54.0 x 20.0 x 39.0 @ (-37.0,-10.0,-47.0)  [Radius=1.00]
+Sketch235                    Sketcher::SketchObject     Sketch235                               
+      sketch dims: Diameter=13.00
+Pad096                       PartDesign::Pad            Pad096                                   vol     32038  box 54.0 x 20.0 x 41.0 @ (-37.0,-10.0,-47.0)  [Length=2.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Chamfer029                   PartDesign::Chamfer        Chamfer029                               vol       281  box 6.0 x 6.0 x 10.0 @ (-3.0,-3.0,-12.0)  [Angle=45.00]
+Origin064                    App::Origin                Origin064                               
+Sketch090                    Sketcher::SketchObject     Sketch090                               
+      sketch dims: Diameter=6.00
+Pad053                       PartDesign::Pad            Pad053                                   vol       283  box 6.0 x 6.0 x 10.0 @ (-3.0,-3.0,-12.0)  [Length=10.00, Length2=100.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+X_Axis049                    App::Line                  X_Axis049                               
+Y_Axis049                    App::Line                  Y_Axis049                               
+Z_Axis049                    App::Line                  Z_Axis049                               
+XY_Plane049                  App::Plane                 XY_Plane049                             
+XZ_Plane049                  App::Plane                 XZ_Plane049                             
+YZ_Plane049                  App::Plane                 YZ_Plane049                             
+Origin283                    App::Point                 Origine-point002                        
+X_Axis051                    App::Line                  X_Axis051                               
+Y_Axis051                    App::Line                  Y_Axis051                               
+Z_Axis051                    App::Line                  Z_Axis051                               
+XY_Plane051                  App::Plane                 XY_Plane051                             
+XZ_Plane051                  App::Plane                 XZ_Plane051                             
+YZ_Plane051                  App::Plane                 YZ_Plane051                             
+Origin284                    App::Point                 Origine-point003                        
+Binder                       PartDesign::SubShapeBinder Binder                                    [Offset=0.00]
+DatumPlane                   Part::DatumPlane           DatumPlane                              
+Sketch                       Sketcher::SketchObject     Sketch                                  
+      sketch dims: Diameter=4.20, DistanceX=8.00, Distance=13.00
+Pad                          PartDesign::Pad            Pad                                      vol     19852  box 56.0 x 33.0 x 20.0 @ (-38.0,-10.0,-39.5)  [Length=20.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch236                    Sketcher::SketchObject     Sketch236                               
+      sketch dims: DistanceY=10.00
+Pocket                       PartDesign::Pocket         Pocket                                   vol     16452  box 56.0 x 33.0 x 20.0 @ (-38.0,-10.0,-39.5)  [Length=17.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch237                    Sketcher::SketchObject     Sketch237                               
+      sketch dims: DistanceY=3.00
+Pad097                       PartDesign::Pad            Pad097                                   vol     17796  box 56.0 x 33.0 x 28.0 @ (-38.0,-10.0,-47.5)  [Length=8.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch238                    Sketcher::SketchObject     Sketch238                               
+      sketch dims: Diameter=3.50
+Pocket034                    PartDesign::Pocket         Pocket034                                vol     17738  box 56.0 x 33.0 x 28.0 @ (-38.0,-10.0,-47.5)  [Length=5.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Chamfer                      PartDesign::Chamfer        Chamfer                                  vol     15038  box 56.0 x 33.0 x 28.0 @ (-38.0,-10.0,-47.5)  [Angle=45.00]
+Chamfer030                   PartDesign::Chamfer        Chamfer030                               vol     15014  box 56.0 x 33.0 x 28.0 @ (-38.0,-10.0,-47.5)  [Angle=45.00]
+Fillet025                    PartDesign::Fillet         Fillet025                                vol     14950  box 56.0 x 33.0 x 28.0 @ (-38.0,-10.0,-47.5)  [Radius=2.00]
+Body042                      PartDesign::Body           RoundServoHorn                           vol       697  box 20.0 x 20.0 x 5.4 @ (-10.0,-10.0,-5.4)
+Pad051                       PartDesign::Pad            Pad051                                   vol       697  box 20.0 x 20.0 x 5.4 @ (-10.0,-10.0,-5.4)  [Length=5.40, Length2=100.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Origin063                    App::Origin                Origin063                               
+Sketch088                    Sketcher::SketchObject     Sketch088                               
+      sketch dims: Diameter=20.00, Diameter=3.00, DistanceX=14.00
+Pad052                       PartDesign::Pad            Pad052                                   vol       558  box 20.0 x 20.0 x 2.0 @ (-10.0,-10.0,-2.0)  [Length=2.00, Length2=100.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Sketch089                    Sketcher::SketchObject     Sketch089                               
+      sketch dims: Diameter=9.40, Diameter=6.00
+X_Axis050                    App::Line                  X_Axis050                               
+Y_Axis050                    App::Line                  Y_Axis050                               
+Z_Axis050                    App::Line                  Z_Axis050                               
+XY_Plane050                  App::Plane                 XY_Plane050                             
+XZ_Plane050                  App::Plane                 XZ_Plane050                             
+YZ_Plane050                  App::Plane                 YZ_Plane050                             
+Origin290                    App::Point                 Origine-point004                        
+Body044                      PartDesign::Body           arm                                      vol      9403  box 122.0 x 24.0 x 5.0 @ (-12.0,-12.0,-0.0)
+Origin291                    App::Origin                Origine001                              
+X_Axis123                    App::Line                  Axe X001                                
+Y_Axis123                    App::Line                  Axe Y001                                
+Z_Axis123                    App::Line                  Axe Z001                                
+XY_Plane123                  App::Plane                 Plan XY001                              
+XZ_Plane123                  App::Plane                 Plan XZ001                              
+YZ_Plane123                  App::Plane                 Plan YZ001                              
+Origin292                    App::Point                 Origine-point005                        
+Binder001                    PartDesign::SubShapeBinder Binder001                                 [Offset=0.00]
+Sketch239                    Sketcher::SketchObject     Sketch239                               
+      sketch dims: Diameter=3.20, Radius=12.00, Diameter=3.50, DistanceX=100.00, DistanceY=18.00, DistanceY=12.00, Radius=10.00
+Pad098                       PartDesign::Pad            Pad098                                   vol      9553  box 122.0 x 24.0 x 5.0 @ (-12.0,-12.0,-0.0)  [Length=5.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Fillet026                    PartDesign::Fillet         Fillet026                                vol      9617  box 122.0 x 24.0 x 5.0 @ (-12.0,-12.0,-0.0)  [Radius=20.00]
+Body045                      PartDesign::Body           arm-gripper                              vol     24612  box 21.6 x 21.6 x 80.0 @ (89.2,-10.8,5.0)
+Origin293                    App::Origin                Origine002                              
+X_Axis124                    App::Line                  Axe X002                                
+Y_Axis124                    App::Line                  Axe Y002                                
+Z_Axis124                    App::Line                  Axe Z002                                
+XY_Plane124                  App::Plane                 Plan XY002                              
+XZ_Plane124                  App::Plane                 Plan XZ002                              
+YZ_Plane124                  App::Plane                 Plan YZ002                              
+Origin294                    App::Point                 Origine-point006                        
+Binder002                    PartDesign::SubShapeBinder Binder002                                 [Offset=0.00]
+Sketch240                    Sketcher::SketchObject     Sketch240                               
+Pad099                       PartDesign::Pad            Pad099                                   vol     25133  box 20.0 x 20.0 x 80.0 @ (90.0,-10.0,5.0)  [Length=80.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Sketch241                    Sketcher::SketchObject     Sketch241                               
+      sketch dims: Diameter=4.20
+Pocket035                    PartDesign::Pocket         Pocket035                                vol     24925  box 20.0 x 20.0 x 80.0 @ (90.0,-10.0,5.0)  [Length=15.00, Length2=5.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Fillet027                    PartDesign::Fillet         Fillet027                                vol     24625  box 21.6 x 21.6 x 80.0 @ (89.2,-10.8,5.0)  [Radius=5.00]
+Chamfer031                   PartDesign::Chamfer        Chamfer031                               vol     24612  box 21.6 x 21.6 x 80.0 @ (89.2,-10.8,5.0)  [Angle=45.00]
+Page                         TechDraw::DrawPage         laser-cut-5mm                           
+Template                     TechDraw::DrawSVGTemplate  Modèle                                    [Width=297.00, Height=210.00]
+View                         TechDraw::DrawProjGroupIte View                                      [Type=Front]
+Chamfer032                   PartDesign::Chamfer        Chamfer032                               vol      9513  box 122.0 x 24.0 x 5.0 @ (-12.0,-12.0,-0.0)  [Angle=45.00]
+Chamfer033                   PartDesign::Chamfer        Chamfer033                               vol      9403  box 122.0 x 24.0 x 5.0 @ (-12.0,-12.0,-0.0)  [Angle=45.00]
+====================================================================================================
+mechanical-parts/molding_parts.FCStd  (77 objects)
+Body                         PartDesign::Body           Contour_01                               vol      3434  box 61.6 x 61.6 x 20.0 @ (-30.8,-30.8,-0.0)
+Origin                       App::Origin                Origin                                  
+X_Axis                       App::Line                  X-axis                                  
+Y_Axis                       App::Line                  Y-axis                                  
+Z_Axis                       App::Line                  Z-axis                                  
+XY_Plane                     App::Plane                 XY-plane                                
+XZ_Plane                     App::Plane                 XZ-plane                                
+YZ_Plane                     App::Plane                 YZ-plane                                
+Sketch                       Sketcher::SketchObject     Sketch                                  
+      sketch dims: Diameter=58.00, Diameter=59.60
+Pad                          PartDesign::Pad            Pad                                      vol      2956  box 59.6 x 59.6 x 20.0 @ (-29.8,-29.8,0.0)  [Length=20.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Body001                      PartDesign::Body           Base_01                                  vol      9575  box 64.0 x 64.0 x 3.0 @ (-32.0,-32.0,-3.2)
+Origin001                    App::Origin                Origin001                               
+X_Axis001                    App::Line                  X-axis001                               
+Y_Axis001                    App::Line                  Y-axis001                               
+Z_Axis001                    App::Line                  Z-axis001                               
+XY_Plane001                  App::Plane                 XY-plane001                             
+XZ_Plane001                  App::Plane                 XZ-plane001                             
+YZ_Plane001                  App::Plane                 YZ-plane001                             
+Sketch002                    Sketcher::SketchObject     Sketch002                               
+      sketch dims: Diameter=5.30, Diameter=64.00
+Pad001                       PartDesign::Pad            Pad001                                   vol      9585  box 64.0 x 64.0 x 3.0 @ (-32.0,-32.0,-3.2)  [Length=3.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Sketch003                    Sketcher::SketchObject     Sketch003                               
+      sketch dims: DistanceX=0.01, DistanceY=30.00
+Pocket                       PartDesign::Pocket         Pocket                                   vol      2955  box 59.6 x 59.6 x 20.0 @ (-29.8,-29.8,0.0)  [Length=19.60, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Group                        App::DocumentObjectGroup   ExternalMold_1                           vol     13847  box 64.0 x 64.0 x 23.5 @ (-32.0,-32.0,-3.2)
+Group001                     App::DocumentObjectGroup   ExternalMold_2                          
+Body002                      PartDesign::Body           Contour_02                               vol      3397  box 59.6 x 59.6 x 23.0 @ (-29.8,-29.8,-3.0)
+Origin002                    App::Origin                Origin002                               
+X_Axis002                    App::Line                  X-axis002                               
+Y_Axis002                    App::Line                  Y-axis002                               
+Z_Axis002                    App::Line                  Z-axis002                               
+XY_Plane002                  App::Plane                 XY-plane002                             
+XZ_Plane002                  App::Plane                 XZ-plane002                             
+YZ_Plane002                  App::Plane                 YZ-plane002                             
+Sketch004                    Sketcher::SketchObject     Sketch004                               
+      sketch dims: Diameter=58.00, Diameter=59.60
+Pad002                       PartDesign::Pad            Pad002                                   vol      3399  box 59.6 x 59.6 x 23.0 @ (-29.8,-29.8,-3.0)  [Length=3.00, Length2=20.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Body003                      PartDesign::Body           Base_02                                  vol      7840  box 57.9 x 57.9 x 3.0 @ (-28.9,-28.9,-3.0)
+Origin003                    App::Origin                Origin003                               
+X_Axis003                    App::Line                  X-axis003                               
+Y_Axis003                    App::Line                  Y-axis003                               
+Z_Axis003                    App::Line                  Z-axis003                               
+XY_Plane003                  App::Plane                 XY-plane003                             
+XZ_Plane003                  App::Plane                 XZ-plane003                             
+YZ_Plane003                  App::Plane                 YZ-plane003                             
+Sketch005                    Sketcher::SketchObject     Sketch005                               
+      sketch dims: Diameter=5.00, Diameter=57.90
+Pad003                       PartDesign::Pad            Pad003                                   vol      7840  box 57.9 x 57.9 x 3.0 @ (-28.9,-28.9,-3.0)  [Length=3.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Sketch006                    Sketcher::SketchObject     Sketch006                               
+      sketch dims: DistanceX=1.00, DistanceY=1.00
+Pad004                       PartDesign::Pad            Pad004                                   vol      2976  box 59.6 x 60.6 x 20.0 @ (-29.8,-29.8,0.0)  [Length=10.00, Length2=10.00, Offset=0.00, Type=UpToFace, Reversed=0.00, Midplane=0.00]
+Sketch007                    Sketcher::SketchObject     Sketch007                               
+      sketch dims: DistanceX=0.10
+Pocket001                    PartDesign::Pocket         Pocket001                                vol      3397  box 59.6 x 59.6 x 23.0 @ (-29.8,-29.8,-3.0)  [Length=19.60, Length2=5.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Chamfer                      PartDesign::Chamfer        Chamfer                                  vol      9575  box 64.0 x 64.0 x 3.0 @ (-32.0,-32.0,-3.2)  [Angle=45.00]
+Chamfer001                   PartDesign::Chamfer        Chamfer001                               vol      2974  box 59.6 x 60.6 x 20.0 @ (-29.8,-29.8,0.0)  [Angle=45.00]
+Sketch008                    Sketcher::SketchObject     Sketch008                               
+      sketch dims: DistanceY=5.00
+Revolution                   PartDesign::Revolution     Revolution                               vol      3436  box 61.6 x 61.6 x 20.0 @ (-30.8,-30.8,-0.0)  [Angle=359.00, Type=Angle, Reversed=1.00, Midplane=0.00]
+Body004                      PartDesign::Body           Body004                                  vol      4272  box 63.6 x 63.6 x 20.5 @ (-31.8,-31.8,-0.2)
+Origin004                    App::Origin                Origin004                               
+X_Axis004                    App::Line                  X-axis004                               
+Y_Axis004                    App::Line                  Y-axis004                               
+Z_Axis004                    App::Line                  Z-axis004                               
+XY_Plane004                  App::Plane                 XY-plane004                             
+XZ_Plane004                  App::Plane                 XZ-plane004                             
+YZ_Plane004                  App::Plane                 YZ-plane004                             
+Sketch009                    Sketcher::SketchObject     Sketch009                               
+      sketch dims: DistanceX=29.00, DistanceX=29.80, Angle=60.00, Angle=60.00, DistanceY=20.00, DistanceX=1.00, DistanceX=2.00, DistanceY=5.00
+Revolution001                PartDesign::Revolution     Revolution001                            vol      4225  box 63.6 x 63.6 x 20.0 @ (-31.8,-31.8,0.0)  [Angle=360.00, Type=Angle, Reversed=0.00, Midplane=0.00]
+Sketch010                    Sketcher::SketchObject     Sketch010                               
+      sketch dims: DistanceX=0.01, DistanceY=40.00
+Pocket002                    PartDesign::Pocket         Pocket002                                vol      4224  box 63.6 x 63.6 x 20.0 @ (-31.8,-31.8,-0.0)  [Length=21.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Chamfer002                   PartDesign::Chamfer        Chamfer002                               vol      4223  box 63.6 x 63.6 x 20.5 @ (-31.8,-31.8,-0.2)  [Angle=45.00]
+Sketch011                    Sketcher::SketchObject     Sketch011                               
+      sketch dims: DistanceY=1.50, DistanceX=2.00, DistanceY=0.40
+Pad005                       PartDesign::Pad            Pad005                                   vol      4274  box 63.6 x 63.6 x 20.5 @ (-31.8,-31.8,-0.2)  [Length=20.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=0.00, Midplane=0.00]
+Chamfer003                   PartDesign::Chamfer        Chamfer003                               vol      4274  box 63.6 x 63.6 x 20.5 @ (-31.8,-31.8,-0.2)  [Angle=45.00]
+Sketch012                    Sketcher::SketchObject     Sketch012                               
+      sketch dims: Diameter=1.80, DistanceY=13.50
+Pocket003                    PartDesign::Pocket         Pocket003                                vol      3434  box 61.6 x 61.6 x 20.0 @ (-30.8,-30.8,-0.0)  [Length=40.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Sketch013                    Sketcher::SketchObject     Sketch013                               
+      sketch dims: Diameter=2.00, DistanceY=13.50
+Pocket004                    PartDesign::Pocket         Pocket004                                vol      4272  box 63.6 x 63.6 x 20.5 @ (-31.8,-31.8,-0.2)  [Length=57.00, Length2=10.00, Offset=0.00, Type=Length, Reversed=1.00, Midplane=0.00]
+Origin005                    App::Point                 Origine-point                           
+Origin006                    App::Point                 Origine-point                           
+Origin007                    App::Point                 Origine-point                           
+Origin008                    App::Point                 Origine-point                           
+Origin009                    App::Point                 Origine-point                           

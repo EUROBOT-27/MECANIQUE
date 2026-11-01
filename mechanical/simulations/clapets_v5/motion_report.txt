@@ -1,0 +1,30 @@
+Clapets v5 motion study: 88 frames, 17.5 s, 5 fps. Base 300 x 300 (x ±150, y -160..140). Stack not counted (FAQ Q1).
+
+step                                        perimeter outside base       highest part (z)
+start: doors folded inside the base          1200.0 mm       0.0 mm    273.0  B_PLATEAU_TETE-1
+doors open                                   1367.3 mm      66.1 mm    273.0  B_PLATEAU_TETE-1
+approach: stack at the face                  1367.3 mm      66.1 mm    273.0  B_PLATEAU_TETE-1
+doors clamp the stack                        1364.8 mm      57.8 mm    273.0  B_PLATEAU_TETE-1
+carry: lift 15 mm                            1322.6 mm      45.0 mm    288.0  B_PLATEAU_TETE-1
+carry                                        1322.6 mm      45.0 mm    288.0  B_PLATEAU_TETE-1
+in the castle: lower                         1322.6 mm      45.0 mm    286.5  B_PLATEAU_TETE-1
+cups hold, doors open -38 deg                1367.0 mm      70.5 mm    273.0  B_PLATEAU_TETE-1
+lift 75 mm with the stack                    1365.4 mm      74.7 mm    344.2  B_PLATEAU_TETE-1
+turn the stack 90 deg                        1365.4 mm      74.7 mm    347.7  B_PLATEAU_TETE-1
+lower (towers 5 mm above the table)          1365.4 mm      74.7 mm    335.0  A_TOLE_PORTE-1
+release: cups vent                           1365.4 mm      74.7 mm    265.0  A_TOLE_PORTE-1
+robot backs away                             1365.4 mm      74.7 mm    265.0  A_TOLE_PORTE-1
+head back                                    1365.4 mm      74.7 mm    273.0  B_PLATEAU_TETE-1
+doors fold                                   1363.0 mm      54.4 mm    273.0  B_PLATEAU_TETE-1
+
+Limits: start perimeter <= 1200 and nothing outside the base; deployed <= 1400; height <= 350 (rails, top tie, screw exempt).
+
+Expected contacts (pads squeezing the stack, cups on the box face):
+  REF_MOUSSE_PORTE-1 / REF_PILE_3_PIERRES-1          max   6380.3 mm3 at t 4.0 s (doors clamp the stack)
+  REF_MOUSSE_PORTE-2 / REF_PILE_3_PIERRES-1          max   6380.3 mm3 at t 4.0 s (doors clamp the stack)
+  REF_MOUSSE_PORTE-3 / REF_PILE_3_PIERRES-1          max   6380.3 mm3 at t 4.0 s (doors clamp the stack)
+  REF_MOUSSE_PORTE-4 / REF_PILE_3_PIERRES-1          max   6380.3 mm3 at t 4.0 s (doors clamp the stack)
+  REF_MOUSSE_PORTE-5 / REF_PILE_3_PIERRES-1          max   6380.3 mm3 at t 4.0 s (doors clamp the stack)
+  REF_MOUSSE_PORTE-6 / REF_PILE_3_PIERRES-1          max   6380.3 mm3 at t 4.0 s (doors clamp the stack)
+
+UNEXPECTED collisions (incl. module A inside the head's turning disc while it turns): 0

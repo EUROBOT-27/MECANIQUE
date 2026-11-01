@@ -1,0 +1,12 @@
+Motion study: 91 frames, 9.0 s, 10 fps. Door angle +ve = inwards (clamp), lift in mm.
+Timeline: rest: doors at contact (0.5 s) | doors open (approach) (1.0 s) | approach (0.5 s) | doors close: clamp the stack (1.0 s) | lift 15 mm with the stack (1.5 s) | carry (1.0 s) | lower (1.5 s) | release: doors open (1.0 s) | back to rest (1.0 s)
+
+Expected contacts (foam pads squeezing the stack while clamped):
+  MOUSSE_60x48x10-1 / REF_PILE_3_PIERRES-1      max  11811.5 mm3 at t 3.1 s (door +2.8 deg, lift 1.0)
+  MOUSSE_60x48x10-2 / REF_PILE_3_PIERRES-1      max  11811.5 mm3 at t 3.1 s (door +2.8 deg, lift 1.0)
+  MOUSSE_60x48x10-3 / REF_PILE_3_PIERRES-1      max  11811.5 mm3 at t 3.1 s (door +2.8 deg, lift 1.0)
+  MOUSSE_60x48x10-4 / REF_PILE_3_PIERRES-1      max  11811.5 mm3 at t 3.0 s (door +2.8 deg, lift 0.0)
+  MOUSSE_60x48x10-5 / REF_PILE_3_PIERRES-1      max  11811.5 mm3 at t 3.0 s (door +2.8 deg, lift 0.0)
+  MOUSSE_60x48x10-6 / REF_PILE_3_PIERRES-1      max  11811.5 mm3 at t 3.0 s (door +2.8 deg, lift 0.0)
+
+UNEXPECTED collisions during the motion: 0
