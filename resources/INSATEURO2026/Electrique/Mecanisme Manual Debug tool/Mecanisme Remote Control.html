@@ -1,0 +1,1272 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ESP32 Maestro BLE</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+    :root{
+      --bg:#0e1116;
+      --bg-2:#0b1b1f;
+      --bg-splash-1:#1d3b3a;
+      --bg-splash-2:#2b2135;
+      --card:#121821;
+      --card-2:#0f141c;
+      --ink:#e9eef7;
+      --muted:#a6b1c2;
+      --line:#223043;
+      --accent:#2dd4bf;
+      --accent-2:#f97316;
+      --danger:#fb7185;
+      --ok:#22c55e;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    html{color-scheme:light dark}
+    html[data-theme="light"]{
+      --bg:#f4f7fb;
+      --bg-2:#e9eef5;
+      --bg-splash-1:#c7ebe6;
+      --bg-splash-2:#e3d7ef;
+      --card:#ffffff;
+      --card-2:#f7f9fc;
+      --ink:#0f172a;
+      --muted:#5b6b7f;
+      --line:#d5dce6;
+      --shadow:0 12px 30px rgba(15,23,42,.15);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Space Grotesk","Sora",system-ui,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 85% -10%, var(--bg-splash-1) 0%, transparent 60%),
+        radial-gradient(900px 500px at -10% 0%, var(--bg-splash-2) 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      min-height:100vh;
+      transition:background-color .25s ease, color .25s ease;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .title{font-size:24px;letter-spacing:.4px;margin:0}
+    .subtitle{color:var(--muted);margin-top:4px;font-size:13px}
+    .top-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .grid-2{display:grid;gap:12px;grid-template-columns:1.15fr .85fr}
+    .grid-1{display:grid;gap:12px;grid-template-columns:1fr}
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+      animation:rise .35s ease both;
+    }
+    @keyframes rise{from{opacity:.7;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .row.space{justify-content:space-between}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      background:#0e1520;color:var(--muted);font-size:12px;letter-spacing:.3px
+    }
+    html[data-theme="light"] .pill{background:#f1f4fa}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 3px rgba(251,113,133,.15)}
+    .status-dot.ok{background:var(--ok);box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+    button,input,select,textarea{
+      border-radius:12px;border:1px solid var(--line);background:#0f1621;color:var(--ink);
+      padding:10px 12px;font-size:14px
+    }
+    html[data-theme="light"] button,html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:#f7f9fc}
+    textarea{min-height:120px;resize:vertical}
+    button{cursor:pointer;transition:transform .08s ease, box-shadow .2s ease, border-color .2s ease}
+    button:active{transform:translateY(1px)}
+    button.primary{background:linear-gradient(135deg, var(--accent) 0%, #14b8a6 100%);color:#07131a;border-color:transparent;box-shadow:0 8px 18px rgba(45,212,191,.25);font-weight:600}
+    button.ghost{background:#0c121b}
+    html[data-theme="light"] button.ghost{background:#edf2f7}
+    button.warn{background:linear-gradient(135deg, var(--accent-2) 0%, #f59e0b 100%);color:#1a0d00;border-color:transparent;font-weight:600}
+    button.small{padding:8px 10px;font-size:12px}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .mono{font-family:ui-monospace,Consolas,Menlo,monospace}
+    .log{background:#0c1119;border:1px dashed #21314a;border-radius:12px;padding:10px;min-height:56px;color:#9fb0c5;font-size:12px;white-space:pre-line}
+    html[data-theme="light"] .log{background:#f6f8fb;border-color:#ccd6e6;color:#516176}
+    .kpi{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px}
+    .slider{width:100%;accent-color:var(--accent)}
+    .section-title{margin:0 0 8px;font-size:13px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+    .keyline{height:1px;background:var(--line);margin:10px 0}
+    .row-inline{display:inline-flex;align-items:center;gap:8px}
+    .muted{color:var(--muted)}
+    input[type=checkbox]{width:auto}
+    .channels-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+    .channel-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(12,18,27,.5)}
+    html[data-theme="light"] .channel-card{background:#f4f6fb}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;background:#0d141f;color:var(--muted)}
+    html[data-theme="light"] .chip{background:#eef2f8}
+    .chip button{border-radius:999px;padding:4px 8px;font-size:11px}
+    .chip .chip-main{background:transparent;border:0;color:inherit;padding:0 4px}
+    .channel-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(44px,1fr));gap:6px}
+    .channel-pick label{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;padding:8px 0;font-size:12px;background:#0f1621}
+    html[data-theme="light"] .channel-pick label{background:#f5f7fb}
+    .channel-pick input{display:none}
+    .channel-pick input:checked + span{color:#07131a;background:var(--accent);border-radius:8px;padding:4px 8px}
+    .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .adv-panel{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(12,18,27,.45)}
+    html[data-theme="light"] .adv-panel{background:#f4f6fb}
+    .adv-panel.hidden{display:none}
+    .seq-steps{display:grid;gap:8px}
+    .step-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#0f1621}
+    html[data-theme="light"] .step-row{background:#f5f7fb}
+    .step-type{font-size:12px;color:var(--muted);min-width:60px}
+    .step-index{font-size:12px;color:var(--muted);min-width:28px}
+    .subsection-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 6px}
+    .seq-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}
+    .seq-panel{display:grid;gap:8px;align-content:start}
+    .pose-preview{border:1px dashed var(--line);border-radius:12px;padding:8px;font-size:12px;background:rgba(12,18,27,.35);color:var(--muted)}
+    html[data-theme="light"] .pose-preview{background:#f4f6fb;color:#516176}
+
+    @media (max-width:880px){
+      .grid-2{grid-template-columns:1fr}
+      .seq-grid{grid-template-columns:1fr}
+      header{flex-direction:column}
+    }
+    @media (max-width:520px){
+      .wrap{padding:16px 12px 28px}
+      button,input,select,textarea{width:100%}
+      .row{gap:8px}
+      .top-actions{width:100%}
+      .top-actions select,.top-actions .pill{width:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1 class="title">ESP32 Maestro BLE Console</h1>
+        <div class="subtitle">Manual control for Pololu Mini Maestro over BLE UART</div>
+      </div>
+      <div class="top-actions">
+        <select id="themeSelect">
+          <option value="auto">Theme: Auto</option>
+          <option value="dark">Theme: Dark</option>
+          <option value="light">Theme: Light</option>
+        </select>
+        <div class="pill mono"><span id="dot" class="status-dot"></span><span id="st">disconnected</span></div>
+      </div>
+    </header>
+
+    <div class="grid-2">
+      <section class="card">
+        <div class="section-title">Connection</div>
+        <div class="row">
+          <button id="btnConnect" class="primary">Connect</button>
+          <button id="btnDisconnect" class="ghost" disabled>Disconnect</button>
+          <button id="btnReset" class="ghost small">Reset Maestro</button>
+          <button id="btnCopyLog" class="ghost small">Copy log</button>
+          <button id="btnClearLog" class="ghost small">Clear log</button>
+        </div>
+        <div class="keyline"></div>
+        <div class="row">
+          <label>Device name
+            <input id="devNameInput" type="text" value="ESP32-Maestro">
+          </label>
+          <div class="pill mono" id="bleSupport">BLE: checking...</div>
+        </div>
+        <div class="keyline"></div>
+        <div class="section-title">Last status</div>
+        <div class="log mono" id="log">waiting for device...</div>
+        <div class="muted" style="margin-top:6px;font-size:12px" id="logHint">No errors yet.</div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">Quick actions</div>
+        <div class="row">
+          <button id="btnPump" class="warn">Pump: OFF</button>
+          <button id="btnLift">Soulevement</button>
+          <button id="btnRot">Rotation</button>
+          <button id="btnExt">Extension</button>
+        </div>
+        <div class="keyline"></div>
+        <div class="mono" style="font-size:12px;color:var(--muted)">
+          Commands: pump toggle | pose lift | pose rot | seq ext (lift -> rot -> ext)
+        </div>
+        <div class="keyline"></div>
+        <div class="section-title">Quality controls</div>
+        <div class="settings-grid">
+          <label class="row-inline">
+            <input id="autoSend" type="checkbox" checked>
+            Auto send while sliding
+          </label>
+          <label class="row-inline">
+            <input id="haptics" type="checkbox">
+            Haptics on send
+          </label>
+          <label class="row-inline">
+            Step deg
+            <input id="degStep" type="number" value="1" min="1" max="15" style="width:90px">
+          </label>
+          <label class="row-inline">
+            Send delay ms
+            <input id="sendDelay" type="number" value="25" min="0" max="200" style="width:90px">
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:12px">
+      <div class="section-title">Channels to show</div>
+      <div id="channelPick" class="channel-pick"></div>
+      <div class="muted" style="margin-top:8px;font-size:12px">Select which servo controls appear below.</div>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <div class="section-title">Servo controls</div>
+      <div id="channels" class="channels-grid"></div>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <div class="section-title">Sequences</div>
+      <div class="row">
+        <label>Saved
+          <select id="seqSelect"></select>
+        </label>
+        <label>Name
+          <input id="seqName" type="text" placeholder="Pickup">
+        </label>
+        <button id="btnSeqNew" class="ghost">New sequence</button>
+        <button id="btnSeqSave" class="primary">Save sequence</button>
+        <button id="btnSeqDelete" class="ghost">Delete sequence</button>
+        <button id="btnSeqExport" class="ghost small">Export</button>
+        <button id="btnSeqImport" class="ghost small">Import</button>
+        <input id="seqImportFile" type="file" accept=".json,application/json" style="display:none">
+      </div>
+      <div class="keyline"></div>
+      <div class="seq-grid">
+        <div class="seq-panel">
+          <div class="subsection-title">Pose library</div>
+          <div class="row">
+            <label>Saved pose
+              <select id="poseSelect"></select>
+            </label>
+            <button id="btnPoseAddToSeq" class="ghost">Add saved pose</button>
+          </div>
+          <div class="row">
+            <label>Name
+              <input id="poseName" type="text" placeholder="Pickup pose">
+            </label>
+            <button id="btnPoseSave" class="primary">Save current pose</button>
+            <button id="btnPoseApply" class="ghost">Apply to sliders</button>
+            <button id="btnPoseDelete" class="ghost">Delete pose</button>
+          </div>
+          <div id="posePreview" class="pose-preview mono">No pose selected.</div>
+          <div class="keyline"></div>
+          <div class="subsection-title">Add steps</div>
+          <div class="row">
+            <label>Pose duration ms
+              <input id="poseDuration" type="number" value="600" min="0" max="10000" style="width:120px">
+            </label>
+            <button id="btnSeqCapture" class="primary">Add current pose</button>
+          </div>
+          <div class="row">
+            <label>Delay ms
+              <input id="delayDuration" type="number" value="400" min="0" max="10000" style="width:120px">
+            </label>
+            <button id="btnSeqAddDelay" class="ghost">Add delay</button>
+          </div>
+          <div class="row">
+            <label>Command
+              <select id="cmdSelect">
+                <option value="pose lift">pose lift</option>
+                <option value="pose rot">pose rot</option>
+                <option value="pose ext">pose ext</option>
+                <option value="seq ext">seq ext</option>
+                <option value="pump on">pump on</option>
+                <option value="pump off">pump off</option>
+                <option value="pump toggle">pump toggle</option>
+              </select>
+            </label>
+            <button id="btnSeqAddCmd" class="ghost">Add command</button>
+          </div>
+        </div>
+        <div class="seq-panel">
+          <div class="subsection-title">Sequence steps</div>
+          <div id="seqSteps" class="seq-steps"></div>
+          <div class="row" style="margin-top:10px">
+            <button id="btnSeqRun" class="primary">Play sequence</button>
+            <button id="btnSeqStop" class="ghost">Stop</button>
+          </div>
+          <div class="muted" style="margin-top:6px;font-size:12px">Captures only the currently selected channels.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+(() => {
+  const SERVICE_UUID = "7c2f4b10-8a6d-4c0f-9d2c-3efb5e7d1a01";
+  const CONTROL_UUID = "7c2f4b11-8a6d-4c0f-9d2c-3efb5e7d1a01";
+  const STATUS_UUID  = "7c2f4b12-8a6d-4c0f-9d2c-3efb5e7d1a01";
+
+  const $ = id => document.getElementById(id);
+  const root = document.documentElement;
+  const st = $("st");
+  const dot = $("dot");
+  const log = $("log");
+  const logHint = $("logHint");
+  const btnConnect = $("btnConnect");
+  const btnDisconnect = $("btnDisconnect");
+  const btnCopyLog = $("btnCopyLog");
+  const btnClearLog = $("btnClearLog");
+  const btnReset = $("btnReset");
+  const btnPump = $("btnPump");
+  const btnLift = $("btnLift");
+  const btnRot = $("btnRot");
+  const btnExt = $("btnExt");
+  const autoSend = $("autoSend");
+  const haptics = $("haptics");
+  const degStep = $("degStep");
+  const sendDelay = $("sendDelay");
+  const bleSupport = $("bleSupport");
+  const devNameInput = $("devNameInput");
+  const channelPick = $("channelPick");
+  const channelsWrap = $("channels");
+  const seqSelect = $("seqSelect");
+  const seqName = $("seqName");
+  const btnSeqNew = $("btnSeqNew");
+  const btnSeqSave = $("btnSeqSave");
+  const btnSeqCapture = $("btnSeqCapture");
+  const btnSeqAddDelay = $("btnSeqAddDelay");
+  const btnSeqAddCmd = $("btnSeqAddCmd");
+  const btnSeqDelete = $("btnSeqDelete");
+  const btnSeqExport = $("btnSeqExport");
+  const btnSeqImport = $("btnSeqImport");
+  const seqImportFile = $("seqImportFile");
+  const btnSeqRun = $("btnSeqRun");
+  const btnSeqStop = $("btnSeqStop");
+  const poseSelect = $("poseSelect");
+  const poseName = $("poseName");
+  const posePreview = $("posePreview");
+  const btnPoseSave = $("btnPoseSave");
+  const btnPoseApply = $("btnPoseApply");
+  const btnPoseDelete = $("btnPoseDelete");
+  const btnPoseAddToSeq = $("btnPoseAddToSeq");
+  const poseDuration = $("poseDuration");
+  const delayDuration = $("delayDuration");
+  const cmdSelect = $("cmdSelect");
+  const seqSteps = $("seqSteps");
+  const themeSelect = $("themeSelect");
+
+  const storeKey = "maestro-ui";
+  const logLines = [];
+  let device = null;
+  let controlChar = null;
+  let statusChar = null;
+  let pumpOn = false;
+  let currentSeqId = null;
+  let stopSeq = false;
+  let sendQueue = Promise.resolve();
+
+  const defaultChannel = () => ({
+    minUs: 64,
+    maxUs: 4080,
+    angle: 90,
+    us: 1500,
+    speed: 50,
+    accel: 50
+  });
+
+  const defaultState = {
+    deviceName: "ESP32-Maestro",
+    autoSend: true,
+    haptics: true,
+    degStep: 1,
+    sendDelay: 25,
+    theme: "auto",
+    selectedChannels: [0,1,2],
+    channels: {},
+    savedPoses: [],
+    sequences: []
+  };
+
+  function initChannels(state){
+    for (let i = 0; i < 12; i++){
+      if (!state.channels[i]){
+        state.channels[i] = defaultChannel();
+        continue;
+      }
+      const d = defaultChannel();
+      Object.keys(d).forEach(k => {
+        if (state.channels[i][k] === undefined) state.channels[i][k] = d[k];
+      });
+    }
+  }
+
+  function loadState(){
+    let state = JSON.parse(JSON.stringify(defaultState));
+    try{
+      const raw = localStorage.getItem(storeKey);
+      if (raw){
+        const data = JSON.parse(raw);
+        state = Object.assign(state, data);
+        state.channels = Object.assign({}, defaultState.channels, data.channels || {});
+      }
+    }catch(e){}
+    if (!Array.isArray(state.savedPoses)) state.savedPoses = [];
+    if (!Array.isArray(state.sequences)) state.sequences = [];
+    state.sequences = state.sequences.map(s => {
+      if (!s) return null;
+      if (Array.isArray(s.steps)) return s;
+      if (s.pose){
+        return {
+          id: s.id || Date.now().toString(36) + Math.random().toString(36).slice(2),
+          name: s.name || "Sequence",
+          steps: [{ type: "pose", pose: s.pose, duration: 600 }]
+        };
+      }
+      return null;
+    }).filter(Boolean);
+    if (!Array.isArray(state.selectedChannels) || state.selectedChannels.length === 0){
+      state.selectedChannels = [0];
+    }
+    initChannels(state);
+    return state;
+  }
+
+  let state = loadState();
+
+  function saveState(){
+    try{ localStorage.setItem(storeKey, JSON.stringify(state)); }catch(e){}
+  }
+
+  function setStatus(t, ok){
+    st.textContent = t;
+    dot.className = "status-dot" + (ok ? " ok" : "");
+  }
+
+  function setHint(text){
+    logHint.textContent = text;
+  }
+
+  function decodeStatus(msg){
+    if (!msg) return "No errors yet.";
+    if (msg.indexOf("Not connected") >= 0) return "Connect to the device first.";
+    if (msg.indexOf("ERR:pose") >= 0) return "Pose error: use pose lift | pose rot | pose ext.";
+    if (msg.indexOf("ERR:seq") >= 0) return "Sequence error: only seq ext is supported.";
+    if (msg.indexOf("ERR:cmd") >= 0) return "Unknown command. Check spelling or format ch,us.";
+    if (msg.indexOf("ERR:sp") >= 0) return "Speed error: use sp <ch> <val>.";
+    if (msg.indexOf("ERR:ac") >= 0) return "Accel error: use ac <ch> <val>.";
+    if (msg.indexOf("ERR:queue") >= 0) return "Command queue is full. Slow down sending.";
+    if (msg.indexOf("ERR:busy") >= 0) return "Sequence running. Stop sequence to send manual values.";
+    if (msg.indexOf("OK:sp") >= 0) return "Speed updated.";
+    if (msg.indexOf("OK:ac") >= 0) return "Accel updated.";
+    if (msg.indexOf("PUMP=ON") >= 0) return "Pump is ON.";
+    if (msg.indexOf("PUMP=OFF") >= 0) return "Pump is OFF.";
+    if (msg.indexOf("SEQ=DONE") >= 0) return "Sequence finished.";
+    if (msg.indexOf("SEQ=START") >= 0) return "Sequence started.";
+    if (msg.indexOf("SEQ=STOP") >= 0) return "Sequence stopped.";
+    return "Status received.";
+  }
+
+  function pushLog(t){
+    const ts = new Date().toLocaleTimeString([], {hour12:false});
+    logLines.unshift(`[${ts}] ${t}`);
+    if (logLines.length > 8) logLines.pop();
+    log.textContent = logLines.join("\n");
+    setHint(decodeStatus(t));
+  }
+
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  function enqueueSend(fn){
+    sendQueue = sendQueue.then(fn).catch(() => {});
+    return sendQueue;
+  }
+
+  async function sendText(cmd){
+    if (!controlChar){
+      pushLog("Not connected");
+      return;
+    }
+    return enqueueSend(async () => {
+      await controlChar.writeValueWithoutResponse(new TextEncoder().encode(cmd));
+      if (state.haptics && navigator.vibrate) navigator.vibrate(10);
+      const delay = Math.max(0, Number(state.sendDelay) || 0);
+      if (delay) await sleep(delay);
+    });
+  }
+
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+
+  function angleToUs(ch, angle){
+    const c = state.channels[ch];
+    let mn = Number(c.minUs);
+    let mx = Number(c.maxUs);
+    if (mn > mx){ const t = mn; mn = mx; mx = t; }
+    const t = clamp(Number(angle), 0, 180) / 180;
+    return Math.round(mn + (mx - mn) * t);
+  }
+
+  function usToAngle(ch, us){
+    const c = state.channels[ch];
+    let mn = Number(c.minUs);
+    let mx = Number(c.maxUs);
+    if (mn > mx){ const t = mn; mn = mx; mx = t; }
+    if (mn === mx) return 0;
+    const t = clamp((Number(us) - mn) / (mx - mn), 0, 1);
+    return Math.round(t * 180);
+  }
+
+  function applyTheme(){
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    let theme = state.theme;
+    if (theme === "auto") theme = prefersDark ? "dark" : "light";
+    root.setAttribute("data-theme", theme);
+    themeSelect.value = state.theme;
+  }
+
+  function renderChannelPicker(){
+    channelPick.innerHTML = "";
+    for (let i = 0; i < 12; i++){
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = i;
+      input.checked = state.selectedChannels.indexOf(i) >= 0;
+      input.addEventListener("change", () => {
+        const val = Number(input.value);
+        if (input.checked){
+          if (state.selectedChannels.indexOf(val) < 0) state.selectedChannels.push(val);
+        }else{
+          state.selectedChannels = state.selectedChannels.filter(v => v !== val);
+        }
+        if (state.selectedChannels.length === 0){
+          state.selectedChannels = [val];
+          input.checked = true;
+        }
+        saveState();
+        renderChannelPicker();
+        renderChannels();
+      });
+      const span = document.createElement("span");
+      span.textContent = i;
+      label.appendChild(input);
+      label.appendChild(span);
+      channelPick.appendChild(label);
+    }
+  }
+
+  function updateChannelDisplay(ch, card){
+    const c = state.channels[ch];
+    const kpi = card.querySelector("[data-field='kpi']");
+    const angleEl = card.querySelector("[data-field='angle']");
+    const usEl = card.querySelector("[data-field='us']");
+    const minEl = card.querySelector("[data-field='min']");
+    const maxEl = card.querySelector("[data-field='max']");
+    const speedEl = card.querySelector("[data-field='speed']");
+    const speedNum = card.querySelector("[data-field='speedNum']");
+    const accelEl = card.querySelector("[data-field='accel']");
+    const accelNum = card.querySelector("[data-field='accelNum']");
+    kpi.textContent = `${c.angle} deg | ${c.us} us`;
+    angleEl.value = c.angle;
+    angleEl.step = String(Math.max(1, Number(state.degStep) || 1));
+    usEl.value = c.us;
+    minEl.value = c.minUs;
+    maxEl.value = c.maxUs;
+    if (speedEl) speedEl.value = c.speed;
+    if (speedNum) speedNum.value = c.speed;
+    if (accelEl) accelEl.value = c.accel;
+    if (accelNum) accelNum.value = c.accel;
+  }
+
+  function renderChannels(){
+    channelsWrap.innerHTML = "";
+    state.selectedChannels.forEach(ch => {
+      const c = state.channels[ch];
+      const card = document.createElement("div");
+      card.className = "channel-card";
+      card.dataset.ch = String(ch);
+      card.innerHTML = `
+        <div class="row space">
+          <div class="chip">CH ${ch}</div>
+          <button class="ghost small" data-action="toggle-adv">+</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label>Min us
+            <input data-field="min" type="number" value="${c.minUs}" min="0" max="5000">
+          </label>
+          <label>Max us
+            <input data-field="max" type="number" value="${c.maxUs}" min="0" max="5000">
+          </label>
+        </div>
+        <div style="margin-top:10px">
+          <div class="kpi">
+            <span>Angle</span>
+            <span class="mono" data-field="kpi">${c.angle} deg | ${c.us} us</span>
+          </div>
+          <input data-field="angle" class="slider" type="range" min="0" max="180" value="${c.angle}">
+        </div>
+        <div class="row" style="margin-top:10px">
+          <input data-field="us" type="number" value="${c.us}" min="0" max="65535" style="width:160px">
+        </div>
+        <div class="adv-panel hidden" data-adv>
+          <div class="row">
+            <label>Speed
+              <input data-field="speed" type="range" min="0" max="255" value="${c.speed}">
+            </label>
+            <input data-field="speedNum" type="number" value="${c.speed}" min="0" max="255" style="width:90px">
+          </div>
+          <div class="row" style="margin-top:8px">
+            <label>Accel
+              <input data-field="accel" type="range" min="0" max="255" value="${c.accel}">
+            </label>
+            <input data-field="accelNum" type="number" value="${c.accel}" min="0" max="255" style="width:90px">
+            <button class="ghost small" data-action="send-limits">Send limits</button>
+          </div>
+        </div>
+      `;
+      channelsWrap.appendChild(card);
+      updateChannelDisplay(ch, card);
+    });
+  }
+
+  channelsWrap.addEventListener("input", async (e) => {
+    const card = e.target.closest(".channel-card");
+    if (!card) return;
+    const ch = Number(card.dataset.ch);
+    const field = e.target.getAttribute("data-field");
+    const c = state.channels[ch];
+    if (field === "angle"){
+      c.angle = Number(e.target.value);
+      c.us = angleToUs(ch, c.angle);
+      updateChannelDisplay(ch, card);
+      saveState();
+      if (state.autoSend) await sendText(`${ch},${c.us}`);
+    }else if (field === "us"){
+      c.us = Number(e.target.value);
+      c.angle = usToAngle(ch, c.us);
+      updateChannelDisplay(ch, card);
+      saveState();
+    }else if (field === "speed" || field === "speedNum"){
+      c.speed = Number(e.target.value);
+      updateChannelDisplay(ch, card);
+      saveState();
+    }else if (field === "accel" || field === "accelNum"){
+      c.accel = Number(e.target.value);
+      updateChannelDisplay(ch, card);
+      saveState();
+    }
+  });
+
+  channelsWrap.addEventListener("change", (e) => {
+    const card = e.target.closest(".channel-card");
+    if (!card) return;
+    const ch = Number(card.dataset.ch);
+    const field = e.target.getAttribute("data-field");
+    const c = state.channels[ch];
+    if (field === "min" || field === "max"){
+      c.minUs = Number(card.querySelector("[data-field='min']").value);
+      c.maxUs = Number(card.querySelector("[data-field='max']").value);
+      c.us = angleToUs(ch, c.angle);
+      updateChannelDisplay(ch, card);
+      saveState();
+    }
+  });
+
+  channelsWrap.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const card = e.target.closest(".channel-card");
+    if (!card) return;
+    const ch = Number(card.dataset.ch);
+    const action = btn.getAttribute("data-action");
+    const c = state.channels[ch];
+    if (action === "toggle-adv"){
+      const panel = card.querySelector("[data-adv]");
+      if (panel) panel.classList.toggle("hidden");
+    }else if (action === "send-limits"){
+      await sendText(`sp ${ch} ${c.speed}`);
+      await sendText(`ac ${ch} ${c.accel}`);
+    }
+  });
+
+  const PRESET_COMMANDS = [
+    "pose lift",
+    "pose rot",
+    "pose ext",
+    "seq ext",
+    "pump on",
+    "pump off",
+    "pump toggle"
+  ];
+
+  function renderSequences(){
+    seqSelect.innerHTML = "";
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Select";
+    seqSelect.appendChild(blank);
+    state.sequences.forEach(s => {
+      const o = document.createElement("option");
+      o.value = s.id;
+      o.textContent = s.name;
+      seqSelect.appendChild(o);
+    });
+    if (currentSeqId){
+      seqSelect.value = currentSeqId;
+    }
+  }
+
+  function nextSequenceName(){
+    const base = "Sequence";
+    const used = new Set(state.sequences.map(s => s.name));
+    let i = state.sequences.length + 1;
+    let name = `${base} ${i}`;
+    while (used.has(name)){
+      i += 1;
+      name = `${base} ${i}`;
+    }
+    return name;
+  }
+
+  function getCurrentSequence(){
+    return state.sequences.find(s => s.id === currentSeqId);
+  }
+
+  function ensureSequence(){
+    if (currentSeqId) return getCurrentSequence();
+    const name = (seqName.value || "").trim() || nextSequenceName();
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    const seq = { id, name, steps: [] };
+    state.sequences.push(seq);
+    currentSeqId = id;
+    saveState();
+    renderSequences();
+    return seq;
+  }
+
+  function loadSequence(id){
+    const s = state.sequences.find(x => x.id === id);
+    if (!s) return;
+    currentSeqId = s.id;
+    seqName.value = s.name;
+    renderSequences();
+    renderSequenceSteps();
+  }
+
+  function capturePose(){
+    const pose = {};
+    state.selectedChannels.forEach(ch => {
+      pose[ch] = state.channels[ch].us;
+    });
+    return pose;
+  }
+
+  function applyPose(pose){
+    Object.keys(pose).forEach(k => {
+      const ch = Number(k);
+      if (ch < 0 || ch > 11) return;
+      const c = state.channels[ch];
+      c.us = Number(pose[k]);
+      c.angle = usToAngle(ch, c.us);
+    });
+    saveState();
+    renderChannels();
+  }
+
+  function renderSavedPoses(){
+    const selectedId = poseSelect.value;
+    poseSelect.innerHTML = "";
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Select";
+    poseSelect.appendChild(blank);
+    state.savedPoses.forEach(p => {
+      const o = document.createElement("option");
+      o.value = p.id;
+      o.textContent = p.name;
+      poseSelect.appendChild(o);
+    });
+    if (selectedId){
+      poseSelect.value = selectedId;
+    }
+  }
+
+  function getSelectedPose(){
+    const id = poseSelect.value;
+    if (!id) return null;
+    return state.savedPoses.find(p => p.id === id) || null;
+  }
+
+  function summarizePose(pose){
+    const keys = Object.keys(pose || {}).map(Number).sort((a,b) => a - b);
+    if (keys.length === 0) return "Empty pose.";
+    return keys.map(ch => `CH ${ch} ${usToAngle(ch, pose[ch])}deg`).join(", ");
+  }
+
+  function renderPosePreview(){
+    if (!posePreview) return;
+    const pose = getSelectedPose();
+    if (!pose){
+      posePreview.textContent = "No pose selected.";
+      return;
+    }
+    posePreview.textContent = summarizePose(pose.pose || {});
+  }
+
+  function renderSequenceSteps(){
+    seqSteps.innerHTML = "";
+    const seq = getCurrentSequence();
+    if (!seq){
+      const span = document.createElement("span");
+      span.className = "muted";
+      span.textContent = "No sequence selected.";
+      seqSteps.appendChild(span);
+      return;
+    }
+    if (seq.steps.length === 0){
+      const span = document.createElement("span");
+      span.className = "muted";
+      span.textContent = "No steps yet.";
+      seqSteps.appendChild(span);
+      return;
+    }
+    seq.steps.forEach((step, idx) => {
+    const row = document.createElement("div");
+    row.className = "step-row";
+    row.dataset.idx = String(idx);
+
+    const index = document.createElement("div");
+    index.className = "step-index";
+    index.textContent = `#${idx+1}`;
+    row.appendChild(index);
+
+    const type = document.createElement("div");
+    type.className = "step-type";
+    type.textContent = step.type.toUpperCase();
+    row.appendChild(type);
+
+      if (step.type === "pose"){
+        const poseKeys = Object.keys(step.pose || {}).map(Number).sort((a,b) => a-b);
+        const summary = poseKeys.map(ch => `CH ${ch} ${usToAngle(ch, step.pose[ch])}deg`).join(", ");
+        const summaryEl = (summary.length ? summary : "Empty pose");
+        const desc = document.createElement("div");
+        desc.className = "mono";
+        desc.textContent = summaryEl;
+        row.appendChild(desc);
+
+        const durLabel = document.createElement("label");
+        durLabel.textContent = "Duration ms";
+        const durInput = document.createElement("input");
+        durInput.type = "number";
+        durInput.min = "0";
+        durInput.max = "10000";
+        durInput.value = Number(step.duration || 0);
+        durInput.style.width = "110px";
+        durInput.addEventListener("change", () => {
+          step.duration = Number(durInput.value || 0);
+          saveState();
+        });
+        durLabel.appendChild(durInput);
+        row.appendChild(durLabel);
+      }else if (step.type === "delay"){
+        const delayLabel = document.createElement("label");
+        delayLabel.textContent = "Delay ms";
+        const delayInput = document.createElement("input");
+        delayInput.type = "number";
+        delayInput.min = "0";
+        delayInput.max = "10000";
+        delayInput.value = Number(step.ms || 0);
+        delayInput.style.width = "110px";
+        delayInput.addEventListener("change", () => {
+          step.ms = Number(delayInput.value || 0);
+          saveState();
+        });
+        delayLabel.appendChild(delayInput);
+        row.appendChild(delayLabel);
+      }else if (step.type === "command"){
+        const cmdLabel = document.createElement("label");
+        cmdLabel.textContent = "Command";
+        const cmdSel = document.createElement("select");
+        PRESET_COMMANDS.forEach(cmd => {
+          const o = document.createElement("option");
+          o.value = cmd;
+          o.textContent = cmd;
+          cmdSel.appendChild(o);
+        });
+        cmdSel.value = step.cmd || PRESET_COMMANDS[0];
+        cmdSel.addEventListener("change", () => {
+          step.cmd = cmdSel.value;
+          saveState();
+        });
+        cmdLabel.appendChild(cmdSel);
+        row.appendChild(cmdLabel);
+      }
+
+      const actions = document.createElement("div");
+      actions.className = "row";
+      const up = document.createElement("button");
+      up.className = "ghost small";
+      up.textContent = "Up";
+      up.addEventListener("click", () => moveStep(idx, -1));
+      const down = document.createElement("button");
+      down.className = "ghost small";
+      down.textContent = "Down";
+      down.addEventListener("click", () => moveStep(idx, 1));
+      const del = document.createElement("button");
+      del.className = "ghost small";
+      del.textContent = "Delete";
+      del.addEventListener("click", () => deleteStep(idx));
+      actions.appendChild(up);
+      actions.appendChild(down);
+      actions.appendChild(del);
+      row.appendChild(actions);
+
+      seqSteps.appendChild(row);
+    });
+  }
+
+  function moveStep(idx, dir){
+    const seq = getCurrentSequence();
+    if (!seq) return;
+    const next = idx + dir;
+    if (next < 0 || next >= seq.steps.length) return;
+    const tmp = seq.steps[idx];
+    seq.steps[idx] = seq.steps[next];
+    seq.steps[next] = tmp;
+    saveState();
+    renderSequenceSteps();
+  }
+
+  function deleteStep(idx){
+    const seq = getCurrentSequence();
+    if (!seq) return;
+    seq.steps.splice(idx, 1);
+    saveState();
+    renderSequenceSteps();
+  }
+
+  async function runSequence(){
+    const seq = getCurrentSequence();
+    if (!seq || seq.steps.length === 0){
+      pushLog("Sequence is empty");
+      return;
+    }
+    stopSeq = false;
+    btnSeqRun.disabled = true;
+    btnSeqStop.disabled = false;
+    for (const step of seq.steps){
+      if (stopSeq) break;
+      if (step.type === "pose"){
+        const pose = step.pose || {};
+        for (const k of Object.keys(pose)){
+          await sendText(`${k},${pose[k]}`);
+        }
+        const dur = Number(step.duration || 0);
+        if (dur) await sleep(dur);
+      }else if (step.type === "delay"){
+        await sleep(Number(step.ms || 0));
+      }else if (step.type === "command"){
+        await sendText(step.cmd || PRESET_COMMANDS[0]);
+      }
+    }
+    btnSeqRun.disabled = false;
+    btnSeqStop.disabled = true;
+  }
+
+  function applyStateToUI(){
+    devNameInput.value = state.deviceName;
+    autoSend.checked = !!state.autoSend;
+    haptics.checked = !!state.haptics;
+    degStep.value = state.degStep;
+    sendDelay.value = state.sendDelay;
+  }
+
+  function setControlsEnabled(connected){
+    const disabled = !connected;
+    btnDisconnect.disabled = !connected;
+    btnConnect.disabled = connected;
+    btnPump.disabled = false;
+    btnLift.disabled = false;
+    btnRot.disabled = false;
+    btnExt.disabled = false;
+  }
+
+  btnCopyLog.onclick = async () => {
+    try{
+      await navigator.clipboard.writeText(logLines.join("\n"));
+      pushLog("Log copied");
+    }catch(e){
+      pushLog("Copy failed");
+    }
+  };
+
+  btnClearLog.onclick = () => {
+    logLines.length = 0;
+    log.textContent = "cleared";
+    setHint("No errors yet.");
+  };
+
+  btnReset.onclick = () => sendText("rst");
+
+  btnPump.onclick = async () => {
+    await sendText("pump toggle");
+    pumpOn = !pumpOn;
+    btnPump.textContent = `Pump: ${pumpOn ? "ON" : "OFF"}`;
+  };
+  btnLift.onclick = async () => sendText("pose lift");
+  btnRot.onclick  = async () => sendText("pose rot");
+  btnExt.onclick  = async () => sendText("seq ext");
+
+  autoSend.addEventListener("change", () => { state.autoSend = autoSend.checked; saveState(); });
+  haptics.addEventListener("change", () => { state.haptics = haptics.checked; saveState(); });
+  degStep.addEventListener("change", () => { state.degStep = Number(degStep.value || 1); saveState(); renderChannels(); });
+  sendDelay.addEventListener("change", () => { state.sendDelay = Number(sendDelay.value || 0); saveState(); });
+  devNameInput.addEventListener("change", () => { state.deviceName = devNameInput.value.trim() || "ESP32-Maestro"; saveState(); });
+  themeSelect.addEventListener("change", () => { state.theme = themeSelect.value; saveState(); applyTheme(); });
+
+  seqSelect.addEventListener("change", () => {
+    const id = seqSelect.value;
+    if (!id){
+      currentSeqId = null;
+      seqName.value = "";
+      renderSequenceSteps();
+      return;
+    }
+    loadSequence(id);
+  });
+
+  poseSelect.addEventListener("change", () => {
+    const pose = getSelectedPose();
+    if (!pose){
+      poseName.value = "";
+      renderPosePreview();
+      return;
+    }
+    poseName.value = pose.name;
+    renderPosePreview();
+  });
+
+  btnPoseSave.onclick = () => {
+    const name = (poseName.value || "").trim() || "Pose";
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    state.savedPoses.push({ id, name, pose: capturePose() });
+    saveState();
+    renderSavedPoses();
+    poseSelect.value = id;
+    renderPosePreview();
+  };
+
+  btnPoseApply.onclick = () => {
+    const pose = getSelectedPose();
+    if (!pose){
+      pushLog("Select a saved pose");
+      return;
+    }
+    applyPose(pose.pose || {});
+  };
+
+  btnPoseDelete.onclick = () => {
+    const pose = getSelectedPose();
+    if (!pose){
+      pushLog("Select a saved pose");
+      return;
+    }
+    state.savedPoses = state.savedPoses.filter(p => p.id !== pose.id);
+    saveState();
+    renderSavedPoses();
+    renderPosePreview();
+    poseName.value = "";
+  };
+
+  btnPoseAddToSeq.onclick = () => {
+    const pose = getSelectedPose();
+    if (!pose){
+      pushLog("Select a saved pose");
+      return;
+    }
+    const seq = ensureSequence();
+    if (!seq) return;
+    const duration = Number(poseDuration.value || 0);
+    seq.steps.push({ type: "pose", pose: pose.pose, duration });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqNew.onclick = () => {
+    currentSeqId = null;
+    seqName.value = "";
+    renderSequences();
+    renderSequenceSteps();
+  };
+
+  btnSeqSave.onclick = () => {
+    const seq = ensureSequence();
+    if (!seq) return;
+    seq.name = (seqName.value || "").trim() || seq.name;
+    saveState();
+    renderSequences();
+  };
+
+  btnSeqCapture.onclick = () => {
+    const seq = ensureSequence();
+    if (!seq) return;
+    const duration = Number(poseDuration.value || 0);
+    seq.steps.push({ type: "pose", pose: capturePose(), duration });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqAddDelay.onclick = () => {
+    const seq = ensureSequence();
+    if (!seq) return;
+    const ms = Number(delayDuration.value || 0);
+    seq.steps.push({ type: "delay", ms });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqAddCmd.onclick = () => {
+    const seq = ensureSequence();
+    if (!seq) return;
+    const cmd = cmdSelect.value || PRESET_COMMANDS[0];
+    seq.steps.push({ type: "command", cmd });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqDelete.onclick = () => {
+    if (!currentSeqId) return;
+    state.sequences = state.sequences.filter(x => x.id !== currentSeqId);
+    currentSeqId = null;
+    seqName.value = "";
+    saveState();
+    renderSequences();
+    renderSequenceSteps();
+  };
+
+  btnSeqExport.onclick = () => {
+    const payload = {
+      version: 1,
+      savedPoses: state.savedPoses,
+      sequences: state.sequences
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "maestro_sequences.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  btnSeqImport.onclick = () => seqImportFile.click();
+  seqImportFile.addEventListener("change", () => {
+    const file = seqImportFile.files && seqImportFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const data = JSON.parse(String(reader.result || ""));
+        if (Array.isArray(data.savedPoses)) state.savedPoses = data.savedPoses;
+        if (Array.isArray(data.sequences)) state.sequences = data.sequences;
+        saveState();
+        renderSavedPoses();
+        renderPosePreview();
+        renderSequences();
+        renderSequenceSteps();
+        pushLog("Sequences imported");
+      }catch(e){
+        pushLog("Import failed");
+      }
+      seqImportFile.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  btnSeqRun.onclick = () => runSequence();
+  btnSeqStop.onclick = () => { stopSeq = true; };
+
+  if (!("bluetooth" in navigator)){
+    bleSupport.textContent = "BLE: unsupported";
+    bleSupport.style.color = "var(--danger)";
+  }else{
+    bleSupport.textContent = "BLE: ready";
+  }
+  btnConnect.onclick = async () => {
+    try{
+      setStatus("requesting...", false);
+      device = await navigator.bluetooth.requestDevice({
+        filters:[{name: state.deviceName || "ESP32-Maestro"}],
+        optionalServices:[SERVICE_UUID]
+      });
+
+      device.addEventListener("gattserverdisconnected", () => {
+        controlChar = null;
+        statusChar = null;
+        setStatus("disconnected", false);
+        setControlsEnabled(false);
+        pushLog("Disconnected");
+      });
+
+      setStatus("connecting...", false);
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService(SERVICE_UUID);
+      controlChar = await service.getCharacteristic(CONTROL_UUID);
+
+      try{
+        statusChar = await service.getCharacteristic(STATUS_UUID);
+        await statusChar.startNotifications();
+        statusChar.addEventListener("characteristicvaluechanged", (ev) => {
+          const msg = new TextDecoder().decode(ev.target.value);
+          pushLog(msg);
+          if (msg.indexOf("PUMP=ON") >= 0){
+            pumpOn = true;
+            btnPump.textContent = "Pump: ON";
+          }else if (msg.indexOf("PUMP=OFF") >= 0){
+            pumpOn = false;
+            btnPump.textContent = "Pump: OFF";
+          }
+        });
+      }catch(e){}
+
+      setStatus("connected", true);
+      setControlsEnabled(true);
+      pushLog("Connected");
+    }catch(e){
+      setStatus("error", false);
+      pushLog(String(e));
+    }
+  };
+
+  btnDisconnect.onclick = () => {
+    if (device && device.gatt && device.gatt.connected) device.gatt.disconnect();
+  };
+
+  applyStateToUI();
+  applyTheme();
+  renderChannelPicker();
+  renderChannels();
+  renderSavedPoses();
+  renderPosePreview();
+  renderSequences();
+  setControlsEnabled(false);
+  renderSequenceSteps();
+  btnSeqStop.disabled = true;
+
+  if (window.matchMedia){
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", () => { if (state.theme === "auto") applyTheme(); });
+  }
+})();
+</script>
+</body>
+</html>

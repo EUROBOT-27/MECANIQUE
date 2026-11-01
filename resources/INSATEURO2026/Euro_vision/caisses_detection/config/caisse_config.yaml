@@ -1,0 +1,124 @@
+# Caisses de Noisettes Configuration
+# Physical and detection parameters for hazelnut boxes
+
+box_specifications:
+  # Physical dimensions in millimeters
+  dimensions:
+    length_mm: 150
+    width_mm: 50
+    height_mm: 30
+  
+  # Total number of boxes on field
+  total_count: 48
+  
+  # Special box: caisse de noisette pourri (rotten box)
+  special_box:
+    type: "caisse_pourrie"
+    color: "black"
+    aruco_id: 41
+    marker_size_mm: 50
+    description: "Black rotten hazelnut box with special ArUco marker"
+
+vinyl_band:
+  # Vinyl band wrapping the box
+  description: "Centered vinyl band around box"
+  zones: 2
+  blue_zone:
+    aruco_id: 36
+    marker_size_mm: 50
+  yellow_zone:
+    aruco_id: 47
+    marker_size_mm: 50
+  black_zone:
+    aruco_id: 41
+    marker_size_mm: 50
+    description: "Special rotten box marker"
+
+aruco_detection:
+  dictionary: "DICT_4X4_50"
+  marker_ids: [36, 47, 41]
+  marker_size_mm: 50  # 5cm outer dimension (3cm black inner area)
+  
+  detection_parameters:
+    adaptiveThreshConstant: 7
+    adaptiveThreshWinSizeMin: 3
+    adaptiveThreshWinSizeMax: 23
+    adaptiveThreshWinSizeStep: 10
+    minMarkerPerimeterRate: 0.03
+    maxMarkerPerimeterRate: 4.0
+    polygonalApproxAccuracyRate: 0.03
+    minCornerDistanceRate: 0.05
+    minDistanceToBorder: 3
+    cornerRefinementMethod: 0
+    cornerRefinementWinSize: 5
+    cornerRefinementMaxIterations: 30
+    cornerRefinementMinAccuracy: 0.1
+
+color_detection:
+  # HSV color ranges for team identification
+  blue_team:
+    h_min: 100
+    h_max: 130
+    s_min: 100
+    s_max: 255
+    v_min: 50
+    v_max: 255
+  
+  yellow_team:
+    h_min: 20
+    h_max: 40
+    s_min: 100
+    s_max: 255
+    v_min: 100
+    v_max: 255
+  
+  black_box:
+    h_min: 0
+    h_max: 180
+    s_min: 0
+    s_max: 50
+    v_min: 0
+    v_max: 50
+    description: "Black rotten box detection"
+  
+  # Minimum area for color detection (pixels²)
+  min_color_area: 500
+  
+  # Color confidence threshold
+  confidence_threshold: 0.7
+
+tracking:
+  # Maximum distance for box association between frames (meters)
+  max_distance_threshold: 0.1
+  
+  # Maximum frames without detection before considering lost
+  max_missing_frames: 10
+  
+  # Kalman filter parameters
+  kalman:
+    process_noise: 0.01
+    measurement_noise: 0.1
+  
+  # Smoothing window for position
+  smoothing_window: 5
+
+world_coordinates:
+  # Output units
+  units: "meters"
+  
+  # Precision for position reporting
+  precision_decimals: 3
+  
+  # Z-offset for box center (height/2)
+  z_offset_mm: 15
+
+validation:
+  # Expected total boxes to detect
+  expected_count: 48
+  
+  # Alert if less than this many boxes detected
+  min_detected_threshold: 40
+  
+  # Physical constraints
+  min_box_distance_mm: 20  # Minimum separation between boxes
+  max_box_distance_from_origin_m: 3.0  # Maximum distance from field origin

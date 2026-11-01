@@ -1,0 +1,108 @@
+/*
+ * IMU.c
+ *
+ *  Created on: Oct 21, 2025
+ *      Author: khalsi, lee mankhalsch
+ */
+#include "IMU.h"
+#include <string.h>
+
+static I2C_HandleTypeDef *bno_i2c;
+static uint8_t bno_addr;
+
+static void delay_ms(uint16_t t) {
+    HAL_Delay(t);
+}
+
+uint8_t bno055_read8(uint8_t reg)
+{
+    uint8_t val;
+    HAL_I2C_Mem_Read(bno_i2c, bno_addr, reg, 1, &val, 1, 100);
+    return val;
+}
+
+void bno055_write8(uint8_t reg, uint8_t value)
+{
+    HAL_I2C_Mem_Write(bno_i2c, bno_addr, reg, 1, &value, 1, 100);
+}
+
+static int16_t read16(uint8_t reg)
+{
+    uint8_t buf[2];
+    HAL_I2C_Mem_Read(bno_i2c, bno_addr, reg, 1, buf, 2, 100);
+    return (int16_t)((buf[1] << 8) | buf[0]);
+}
+
+void bno055_setMode(uint8_t mode)
+{
+    bno055_write8(BNO055_OPR_MODE, mode);
+    delay_ms(30);
+}
+
+void bno055_init(I2C_HandleTypeDef *hi2c, uint8_t address)
+{
+    bno_i2c = hi2c;
+    bno_addr = address;
+
+    delay_ms(900);  // required after power-up
+
+    // CONFIG MODE
+    bno055_setMode(OPERATION_MODE_CONFIG);
+
+    // reset
+    bno055_write8(BNO055_SYS_TRIGGER, 0x20);
+    delay_ms(900);
+
+    // enter config mode again
+    bno055_setMode(OPERATION_MODE_CONFIG);
+
+    // page 0
+    bno055_write8(BNO055_PAGE_ID, 0x00);
+
+    // external crystal
+    bno055_write8(BNO055_SYS_TRIGGER, 0x80);
+    delay_ms(10);
+
+    // set units (deg/sec, degrees)
+    bno055_write8(BNO055_UNIT_SEL, 0x00);
+
+    // NORMAL FUSION MODE
+    bno055_setMode(OPERATION_MODE_NDOF);
+    delay_ms(50);
+}
+
+bno055_vector_t bno055_readGyro(void) // returns angular velocity around each axis in degrees/s
+{
+    bno055_vector_t v;
+    v.x = (float)read16(0x14) / 16.0f;
+    v.y = (float)read16(0x16) / 16.0f;
+    v.z = (float)read16(0x18) / 16.0f;
+    return v;
+}
+
+bno055_vector_t bno055_readAccel(void) // returns linear acceleration with respect to each axis in m/s²
+{
+    bno055_vector_t v;
+    v.x = (float)read16(0x08) / 100.0f;
+    v.y = (float)read16(0x0A) / 100.0f;
+    v.z = (float)read16(0x0C) / 100.0f;
+    return v;
+}
+
+bno055_vector_t bno055_readMag(void) // returns absolute orientation with respect to the earth's magnetic field
+{
+    bno055_vector_t v;
+    v.x = (float)read16(0x0E) / 16.0f;
+    v.y = (float)read16(0x10) / 16.0f;
+    v.z = (float)read16(0x12) / 16.0f;
+    return v;
+}
+
+bno055_vector_t bno055_readEuler(void) // returns integrated roll pitch and yaw values in degrees dhaherli
+{
+    bno055_vector_t v;
+    v.x = (float)read16(0x1A) / 16.0f;
+    v.y = (float)read16(0x1C) / 16.0f;
+    v.z = (float)read16(0x1E) / 16.0f;
+    return v;
+}

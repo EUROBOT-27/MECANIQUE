@@ -1,0 +1,944 @@
+#!/usr/bin/env python3
+
+import rclpy
+from rclpy.node import Node
+from service.srv import NaviStm
+import time
+class STM32Controller(Node):
+    """
+    ROS2 Node for controlling STM32 micro-ROS robot
+    Provides high-level functions for robot control
+    """
+    
+    def __init__(self, node_name='robot_stm32'):
+        super().__init__(node_name)
+        
+        # Service client for STM32 navigation
+        self.navi_client = self.create_client(
+            NaviStm, 
+            '/stm/navi_stm'  # Service name to be updated later
+        )
+        
+        # Variables to store last robot_locate request (if needed)
+        self.last_request = None
+        self.get_logger().info('STM32 Controller initialized')
+
+    def _wait_for_future(self, future, timeout):
+        """
+        Wait for a future to complete without using spin_until_future_complete.
+        This avoids the 'wait set index too big' error when the node is already in an executor.
+        
+        Args:
+            future: The future to wait for
+            timeout: Timeout in seconds
+            
+        Returns:
+            bool: True if future completed, False if timeout
+        """
+        start_time = time.time()
+        while not future.done():
+            if time.time() - start_time > timeout:
+                return False
+            time.sleep(0.01)  # Small sleep to prevent busy-waiting
+        return True
+
+
+    def move_forward(self, distance, speed, is_smooth=0.0, timeout=10.0):
+        """Send a request to move forward a certain distance at a specific speed"""
+        if not self.navi_client.wait_for_service(timeout_sec=10.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 1.0  # Indicates move_forward command
+        request.arg2 = distance
+        request.arg3 = speed
+        request.arg4 = is_smooth
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending move_forward: Distance={distance}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Move_forward service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"move_forward response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Move_forward service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+
+    def move_backward(self, distance, speed, is_smooth=0.0, timeout=10.0):
+        """Send a request to move backward a certain distance at a specific speed"""
+        if not self.navi_client.wait_for_service(timeout_sec=10.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 2.0  # Indicates move_backward command
+        request.arg2 = distance
+        request.arg3 = speed
+        request.arg4 = is_smooth
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending move_backward: Distance={distance}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"move_backward response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Move_backward service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+
+    def rotate(self, angle, is_radian, is_smooth=0.0, timeout=2.0):
+        """Send a request to rotate by a certain angle"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 3.0  # Indicates rotate command
+        request.arg2 = angle
+        request.arg3 = is_radian
+        request.arg4 = is_smooth
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending rotate: Angle={angle}, IsRadian={is_radian}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error("Service call timeout")
+                return False, "Service call timeout"
+            
+            response = future.result()
+            self.get_logger().info(f"Rotate response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Rotate service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+
+    def orientate(self, orientation, is_radian, is_smooth=0.0, timeout=2.0):
+        """Send a request to orientate to a specific orientation"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 4.0  # Indicates orientate command
+        request.arg2 = orientation
+        request.arg3 = is_radian
+        request.arg4 = is_smooth
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending orientate: Orientation={orientation}, IsRadian={is_radian}")
+        
+        try:
+            # Phase 1: Send command and wait for acceptance
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Orientate response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Orientate service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+
+    def go_to(self, x, y, speed, is_smooth=0.0, timeout=2.0):
+        """Send a request to go to a specific position (x, y) at given speed"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 5.0  # Indicates go_to command
+        request.arg2 = x
+        request.arg3 = y
+        request.arg4 = speed
+        request.arg5 = is_smooth
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending go_to: X={x}, Y={y}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"go_to response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Go_to service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def go_to_backwards(self, x, y, speed,is_smooth=0.0, timeout=2.0):
+        """Send a request to go to backwards a specific position (x, y) at given speed"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 12.0  # Indicates go_to command
+        request.arg2 = x
+        request.arg3 = y
+        request.arg4 = speed
+        request.arg5 = is_smooth
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending go_to_backwards: X={x}, Y={y}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"go_to_backwards response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Go_to_backwards service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def bezier_curve(self, x1, y1, x2, y2, x3, y3, speed, is_smooth=0.0,timeout=2.0):
+        """Send a request to do a bezier curve at given speed"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        request = NaviStm.Request()
+        request.arg1 = 13.0
+        request.arg2 = x1
+        request.arg3 = y1
+        request.arg4 = x2
+        request.arg5 = y2
+        request.arg6 = x3
+        request.arg7 = y3
+        request.arg8 = speed
+        request.arg9 = is_smooth
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending bezier_curve: X1={x1}, Y1={y1}, X2={x2}, Y2={y2}, X3={x3}, Y3={y3}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Bezier_curve response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Bezier_curve service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def bezier_curve_backwards(self, x1, y1, x2, y2, x3, y3, speed,is_smooth=0.0, timeout=2.0 ):
+        """Send a request to do a bezier curve backwards at given speed"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 14.0
+        request.arg2 = x1
+        request.arg3 = y1
+        request.arg4 = x2
+        request.arg5 = y2
+        request.arg6 = x3
+        request.arg7 = y3
+        request.arg8 = speed
+        request.arg9 = is_smooth
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending bezier_curve_backwards: X1={x1}, Y1={y1}, X2={x2}, Y2={y2}, X3={x3}, Y3={y3}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Bezier_curve_backwards response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Bezier_curve_backwards service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def move_forward_with_left_deviation(self, distance, deviation, speed, is_smooth=0.0, timeout=2.0):
+        """Send a request to move forward with left deviation"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 8.0  # Indicates move_forward_with_left_deviation command
+        request.arg2 = distance
+        request.arg3 = deviation
+        request.arg4 = speed
+        request.arg5 = is_smooth
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending move_forward_with_left_deviation: Distance={distance}, Deviation={deviation}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"move_forward_with_left_deviation response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Move_forward_with_left_deviation service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def circle_curve(self, x, y, angle,speed, timeout=2.0, is_smooth=0.0):
+        """Send a request to rotate by a certain angle"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 9.0  # Indicates circle_curve command
+        request.arg2 = x
+        request.arg3 = y
+        request.arg4 = angle
+        request.arg5 = speed
+        request.arg6 = is_smooth
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending circle curve: X={x}, Y={y}, Angle={angle}, Speed={speed}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"circle curve response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'circle curve  service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def set_position(self,x,y,angle, timeout=2.0):
+        """Send a request to set position (synchronous)"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+            
+        request = NaviStm.Request()
+        request.arg1 = 15.0  # Indicates LED blink command
+        request.arg2 = x
+        request.arg3 = y
+        request.arg4 = angle
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Envoi de set position")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Set position response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Set position service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def led_blink(self, timeout=2.0):
+        """Send a request to blink LED (synchronous)"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+            
+        request = NaviStm.Request()
+        request.arg1 = 0.0  # Indicates LED blink command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Envoi de led blink")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"LED blink response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'LED blink service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def fail_safe(self,  timeout=2.0):
+        """Send a request to failsafe command """
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 18.0  # Indicates failsafe  command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending fail_safe command")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"fail_safe response: {response.result}")
+            is_completed = bool(response.result)
+            return True, is_completed
+        except Exception as e:
+            self.get_logger().error(f'Fail_safe service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def IDLE(self, timeout=2.0):
+        """
+        Check if the current navigation command has completed
+        
+        Returns:
+            tuple: (success, is_completed, response)
+                   success: bool - if the service call was successful
+                   is_completed: bool - if the movement command has finished
+                   response: service response or error message
+        """
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available for status check')
+            return False, False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 11.0  # Indicates status command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Status check timeout')
+                return False, False, 'Status check timeout'
+            
+            response = future.result()
+            # Assuming response.result is True when movement is completed, False when still moving
+            is_completed = bool(response.result)
+            return True, is_completed, response
+        except Exception as e:
+            self.get_logger().error(f'Status check error: {str(e)}')
+            return False, False, f'Status check error: {str(e)}'
+    def IDLE_FOR_SYSTEMS(self, timeout=10.0):
+        """
+        Check if the current navigation command has completed
+        
+        Returns:
+            tuple: (success, is_completed, response)
+                   success: bool - if the service call was successful
+                   is_completed: bool - if the movement command has finished
+                   response: service response or error message
+        """
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available for status check')
+            return False, False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 16.0  # Indicates status for systems (pick up put down) command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Status check timeout')
+                return False, False, 'Status check timeout'
+            
+            response = future.result()
+            # Assuming response.result is True when movement is completed, False when still moving
+            is_completed = bool(response.result)
+            return True, is_completed, response
+        except Exception as e:
+            self.get_logger().error(f'Status check error: {str(e)}')
+            return False, False, f'Status check error: {str(e)}'
+    def wait_for_completion(self, max_wait_time=30.0, check_interval=0.1):
+        """
+        Wait for the current navigation command to complete using continuous status polling
+        
+        Args:
+            max_wait_time (float): Maximum time to wait in seconds
+            check_interval (float): Time between status checks in seconds
+        
+        Returns:
+            tuple: (success, final_response)
+        """
+        start_time = time.time()
+        check_count = 0
+        
+        self.get_logger().info("Waiting for movement to complete...")
+        
+        while rclpy.ok():
+            # Check if we've exceeded maximum wait time
+            elapsed_time = time.time() - start_time
+            if elapsed_time > max_wait_time:
+                self.get_logger().warning(f"Movement timeout after {max_wait_time} seconds")
+                return False, "Movement timeout"
+            
+            # Check status
+            success, is_completed, response = self.check_status()
+            check_count += 1
+            #emergency break in 6 checks (0.6s)
+            # if(check_count == 6):
+            #     self.stop()
+            #     return False, "Emergency stop triggered"
+            #     time.sleep(10)
+            if not success:
+                self.get_logger().error(f"Failed to check movement status (attempt {check_count})")
+                return False, response
+            
+            if is_completed:
+                self.get_logger().info(f"Movement completed successfully! (checked {check_count} times)")
+                return True, response
+            
+            # Log progress every second (10 checks at 0.1s interval)
+            if check_count % 10 == 0:
+                self.get_logger().info(f"Still waiting for movement completion... (elapsed: {elapsed_time:.1f}s)")
+            
+            # Wait before next check
+            time.sleep(check_interval)
+        
+        return False, "ROS shutdown during wait"
+
+    def stop(self, timeout=2.0):
+        """Send an emergency stop command to the STM32"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available for stop command')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 10.0  # Indicates stop command (adjust this value based on your STM32 implementation)
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info("Sending EMERGENCY STOP command")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Stop command timeout')
+                return False, 'Stop timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Emergency stop response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Stop command error: {str(e)}')
+            return False, f'Stop error: {str(e)}'
+
+    def fix_position(self, front1_back2, x, y, timeout=2.0):
+        """Send an fixing position command to the STM32"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available for stop command')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 17.0  # Indicates stop command (adjust this value based on your STM32 implementation)
+        request.arg2 = front1_back2
+        request.arg3 = x
+        request.arg4 = y
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending FIX POSITION command front1 back 2; {front1_back2} x: {x} y {y}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Stop command timeout')
+                return False, 'Stop timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"fix position response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'fix position command error: {str(e)}')
+            return False, f'fix position error: {str(e)}'
+    def creep_to(self, x, y, timeout=2.0):
+        """Send a request to creep to a specific position (x, y)"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 20.0  # Indicates creep_to command
+        request.arg2 = x
+        request.arg3 = y
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending creep_to: X={x}, Y={y}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"creep_to response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Creep_to service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def creep_to_backwards(self, x, y, timeout=2.0):
+        """Send a request to creep to a specific position backwards (x, y)"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 21.0  # Indicates creep_to_backwards command
+        request.arg2 = x
+        request.arg3 = y
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending creep_to_backwards: X={x}, Y={y}")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"creep_to_backwards response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Creep_to_backwards service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def soft_stop(self, timeout=2.0):
+        """Send a request to soft stop command"""
+        if not self.navi_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        request = NaviStm.Request()
+        request.arg1 = 22.0  # Indicates soft_stop command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Sending soft_stop")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"soft_stop response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Soft_stop service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def send_navi_command(self, request_msg, timeout=10.0):
+        """
+        Send navigation command to STM32 via NaviStm service
+        
+        Args:
+            request_msg (NaviStm.Request): Request message for NaviStm service
+            timeout (float): Service call timeout in seconds
+        Returns:
+            tuple: (success, response or error message)
+        """
+        if not self.navi_client.wait_for_service(timeout_sec=10.0):
+            self.get_logger().error('NaviStm service not available')
+            return False, 'NaviStm service not available'
+        
+        try:
+            future = self.navi_client.call_async(request_msg)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error("Service call timeout")
+                return False, "Service call timeout"
+            
+            if future.result() is not None:
+                response = future.result()
+                self.get_logger().info(f'NaviStm service response: {response}')
+                return True, response
+            else:
+                self.get_logger().error('NaviStm service call failed')
+                return False, 'Service call failed'
+        except Exception as e:
+            self.get_logger().error(f'NaviStm service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def reset(self, timeout=10.0):
+        """Send a reset command to the STM32 (synchronous)"""
+        # Keep trying to connect to service until timeout
+        if not self.navi_client.wait_for_service(timeout_sec=10):
+            self.get_logger().error(f'NaviStm service not available after 10 seconds')
+            return False, f'NaviStm service not available after 10 seconds'
+
+        #self.get_logger().info('NaviStm service is now available!')
+        request = NaviStm.Request()
+        request.arg1 = 6.0  # Indicates reset command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info("Envoi de reset command")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Reset service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Reset response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Reset service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def shutdown(self, timeout=10.0):
+        """Send a shutdown command to the STM32 (synchronous)"""
+        # Keep trying to connect to service until timeout
+        if not self.navi_client.wait_for_service(timeout_sec=10):
+            self.get_logger().error(f'NaviStm service not available after 10 seconds')
+            return False, f'NaviStm service not available after 10 seconds'
+
+        #self.get_logger().info('NaviStm service is now available!')
+        request = NaviStm.Request()
+        request.arg1 = 19.0  # Indicates shutdown command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info("Envoi de shutdown command")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Shutdown service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Shutdown response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Shutdown service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def creep(self, distance, timeout=10.0):
+        """Send a creep command to the STM32 (synchronous) with distance in arg2."""
+        # Keep trying to connect to service until timeout
+        if not self.navi_client.wait_for_service(timeout_sec=10):
+            self.get_logger().error(f'NaviStm service not available after 10 seconds')
+            return False, f'NaviStm service not available after 10 seconds'
+
+        #self.get_logger().info('NaviStm service is now available!')
+        request = NaviStm.Request()
+        request.arg1 = 20.0  # Indicates creep command
+        request.arg2 = distance
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Envoi de creep command (distance={distance})")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Creep service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Creep response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Creep service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def soft_stop(self, timeout=10.0):
+        """Send a soft stop command to the STM32 (synchronous)"""
+        # Keep trying to connect to service until timeout
+        if not self.navi_client.wait_for_service(timeout_sec=10):
+            self.get_logger().error(f'NaviStm service not available after 10 seconds')
+            return False, f'NaviStm service not available after 10 seconds'
+
+        #self.get_logger().info('NaviStm service is now available!')
+        request = NaviStm.Request()
+        request.arg1 = 21.0  # Indicates soft stop command
+        request.arg2 = 0.0
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info("Envoi de soft stop command")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Soft stop service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Soft stop response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Soft stop service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+    def creep_backwards(self, distance, timeout=10.0):
+        """Send a creep backwards command to the STM32 (synchronous) with distance in arg2."""
+        # Keep trying to connect to service until timeout
+        if not self.navi_client.wait_for_service(timeout_sec=10):
+            self.get_logger().error(f'NaviStm service not available after 10 seconds')
+            return False, f'NaviStm service not available after 10 seconds'
+
+        #self.get_logger().info('NaviStm service is now available!')
+        request = NaviStm.Request()
+        request.arg1 = 21.0  # Indicates creep backwards command
+        request.arg2 = distance
+        request.arg3 = 0.0
+        request.arg4 = 0.0
+        request.arg5 = 0.0
+        request.arg6 = 0.0
+        request.arg7 = 0.0
+        request.arg8 = 0.0
+        request.arg9 = 0.0
+        request.arg10 = 0.0
+        self.get_logger().info(f"Envoi de creep backwards command (distance={distance})")
+        
+        try:
+            future = self.navi_client.call_async(request)
+            if not self._wait_for_future(future, timeout):
+                self.get_logger().error('Creep backwards service call timeout')
+                return False, 'Service call timeout'
+            
+            response = future.result()
+            self.get_logger().info(f"Creep backwards response: {response.result}")
+            return True, response
+        except Exception as e:
+            self.get_logger().error(f'Creep backwards service error: {str(e)}')
+            return False, f'Service error: {str(e)}'
+def main(args=None):
+    rclpy.init(args=args)
+    controller = STM32Controller()
+
+    try:
+        rclpy.spin(controller)
+    except KeyboardInterrupt:
+        controller.get_logger().info('STM32 Controller shutting down...')
+    finally:
+        controller.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

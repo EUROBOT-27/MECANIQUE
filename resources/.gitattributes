@@ -1,0 +1,6 @@
+# resources/ = fixed snapshots of other teams' work: stored byte-for-byte in normal git, NOT in LFS
+# (saves the org's LFS quota; these files never change).
+* -text !filter !diff !merge
+# our own notes and index stay normal text files
+INDEX.md text
+_notes/** text

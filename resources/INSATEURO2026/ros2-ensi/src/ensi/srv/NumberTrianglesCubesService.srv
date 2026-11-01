@@ -1,0 +1,5 @@
+# Shape Detection Service (Triangles and Cubes)
+# Request (empty - no input parameters needed)
+---
+# Response
+int32 response_number_triangles_cubes    # Total count of triangles and cubes detected

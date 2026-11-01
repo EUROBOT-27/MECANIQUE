@@ -1,0 +1,13 @@
+﻿{
+  "mcpServers": {
+    "kicad": {
+      "command": "node",
+      "args": ["C:\\Users\\ramit\\OneDrive\\Bureau\\Github\\Electrique-Eurobot-IEEE-INSAT-2026\\Carte Finale JLCPCB\\Robot Principal\\KiCAD-MCP-Server\\dist\\index.js"],
+      "env": {
+        "PYTHONPATH": "C:\\Program Files\\KiCad\\9.0\\lib\\python3\\dist-packages",
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+[console_scripts]
+can_init = ros_can_interface.can_init:main
+can_receiveMessage = ros_can_interface.can_receiveMessage:main
+can_sendAck = ros_can_interface.can_sendAcknowledgeSignal:main
+can_sendMessage = ros_can_interface.can_sendMessage:main
+can_sendResetSignal = ros_can_interface.can_sendResetSignal:main
+can_sendStopSignal = ros_can_interface.can_sendStopSignal:main
+master_sender_interactive = ros_can_interface.master_sender_interactive:main
+

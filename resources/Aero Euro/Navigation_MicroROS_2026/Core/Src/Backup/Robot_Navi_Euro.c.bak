@@ -1,0 +1,673 @@
+#include <stdlib.h>
+#include <stdbool.h>
+#include "Robot_Navi_Euro20.h"
+
+
+
+
+extern volatile long millis,t;
+unsigned long long int delta,t0;
+
+
+
+
+
+//Motors realted variables
+extern int PWM_R,PWM_L;
+extern int PWM_Max;
+extern int PWM_R_Min,PWM_L_Min;
+extern int PWM_R_Min_Rot,PWM_L_Min_Rot;
+extern int PWM_R_sign_counter,PWM_L_sign_counter;
+
+//Odometry related variables
+extern volatile float total_right,total_left, total_centre;
+extern volatile float current_x,current_y,current_phi_deg,current_phi_rad;
+extern float ref_x, ref_y;
+extern  float spacing_encoder,spacing_wheel,dec;
+extern volatile double right_speed, left_speed;
+extern volatile bool evitementFlag;
+//Robot Navi Related Variables
+float goal_distance, target_angle;
+float accel_dist, decel_dist;
+int PWM_LB,PWM_RB;
+int coef_correct_angle=50; //50 Correction rotate
+int right_correction=0;
+int left_correction=0;
+int coef_correct_dist=0;
+int i = 0 ;
+//Speed Regulation
+int saturation = 0 , sgn_error , sgn_output ;
+float speed_ref, ramp =500,rampR=300,rampC=500;//max 1500
+int sens;
+double right_error=0,i_right_error=0;
+double left_error=0,i_left_error=0;
+float kp , ki;
+float kpL = 15, kiL = 0.25;
+float kpR = 15 , kiR = 0.3;
+float kpRM = 11.75 , kiRM = 0.225;
+float kpLM = 18.75 , kiLM = 0.225 ;
+
+int RL = 0;
+int RL_b_sens = 1;
+float suuuuuu;
+
+// curv
+float remain_distC=0,goalC=0;
+float speed_refR=0,speed_refL=0,prev_speed_refR=0,prev_speed_refL=0,new_speed_refR=0,new_speed_refL=0,speedC=0,speed_refC=0;
+float corde=0,tetaC=0,phi_prim=0,corde_angle=0,Xc=0,Yc=0,Rayon=0,phi_target_rad=0,sens_de_mouvement=0;
+float Distance_empietement=50;
+float** matrix;
+int flag1=0,flag2=0;
+
+
+
+extern volatile mutex_button;
+
+float constrain (float x,float min,float Max)
+{
+	if (x<min) return min;
+	if (x>Max) return Max;
+	else return(x);
+}
+
+
+void Set_Coordinates(float currentX,float currentY , float currentPhiDeg){
+	current_x = currentX;
+	current_y = currentY;
+	current_phi_deg = currentPhiDeg;
+	current_phi_rad = currentPhiDeg * PI / 180;
+}
+
+void set_parameters(float kpRM_local , float kpLM_local , float kiRM_local , float kiLM_local , float ramp_local , float rampR_local){
+	kiRM = kiRM_local ; kiLM = kiLM_local ; kpRM = kpRM_local; kpLM = kpLM_local ;  ramp = ramp_local ; rampR = rampR_local ;
+}
+void set_ki(float kiRM_local , float kiLM_local ){
+	kiRM = kiRM_local ; kiLM = kiLM_local ;
+}
+void set_kp(float kpRM_local , float kpLM_local ){
+	kpRM = kpRM_local ; kpLM = kpLM_local ;
+}
+void set_ramp(float ramp_local , float rampR_local){
+	 ramp = ramp_local ; rampR = rampR_local ;
+}
+
+
+//void Robot_Locate_b_sens(float goal_x, float goal_y, float speed,int n)
+//{
+//	sens = (asinf((goal_y-current_y)/sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y)))>0)? 1 : -1;
+//	target_angle = sens * rad_to_deg(acosf((goal_x-current_x)/sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y))));
+//	float x=current_x;
+//	float y=current_y;
+//	orientate(target_angle+((1-n)/2)*PI,speed);
+//	goal_distance = sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y));
+//	move_distance(goal_distance*n,speed);
+//	current_x = ((1-n)/2)*2*x+n*current_x;
+//	current_y = ((1-n)/2)*2*y+n*current_y;
+//}
+
+
+
+void init (void)
+{
+	total_right=0;
+	total_left=0;
+	total_centre=0;
+	PWM_L_sign_counter=0;
+	PWM_R_sign_counter=0;
+	i_right_error = 0;
+	i_left_error = 0;
+	right_error=0;
+	left_error=0;
+}
+
+void init_allouch (void)
+{
+	PWM_L_sign_counter=0;
+	PWM_R_sign_counter=0;
+	i_right_error = 0;
+	i_left_error = 0;
+	right_error=0;
+	left_error=0;
+}
+
+void move_distance_allouch(float distance,float speed)
+{
+
+	init();
+	int z=0;
+	//Set accel/decel distance
+	if (fabs(distance) < (speed*speed/ramp))
+	{
+		accel_dist = 0.65 * fabs(distance)/2;
+		decel_dist = 0.65 * fabs(distance)/2;
+		speed = sqrt (2*ramp*accel_dist);
+	}
+	else
+	{
+		accel_dist = (float)0.5*speed*speed/ramp;
+		decel_dist = (float)0.5*speed*speed/ramp;
+	}
+	while(((fabs(total_right-distance)>2)||(fabs(total_left-distance)>2)) &&
+	      (speed*z/500)<((fabs(distance)*360/1000)+50) && !evitementFlag && mutex_button==0)
+	{
+		 z++;
+
+	   t0=t;
+
+
+		//Accel/Decel Speed Set
+		sens = (total_right+total_left)/2 < distance ? 1 : -1 ;
+
+		if (fabs((total_right+total_left)/2) < accel_dist)
+			speed_ref = sens*50+sens * constrain(speed * 0.5 * (1 - cosf(PI * 0.5 * (total_right+total_left) / accel_dist)) - 50,0,1000);
+
+		else if (fabs((total_right+total_left)/2 -distance) < decel_dist)
+			speed_ref = sens*10+sens * constrain(speed * 0.5 * (1 - cosf(PI * (distance - 0.5 * (total_right+total_left)) / decel_dist)) - 10,0,1000);//fabs((total_right+total_left)/2 -distance)
+		else
+			speed_ref = sens*speed;
+
+		//Right wheel regulation
+		saturation = 0;
+		right_error = speed_ref - right_speed;
+		i_right_error += right_error;
+		PWM_R = kpRM * right_error + kiRM * i_right_error;
+		if (PWM_R>PWM_Max) {
+			PWM_R = PWM_Max;
+			saturation = 1;
+		}
+		if (PWM_R<-PWM_Max) {
+			PWM_R = -PWM_Max;
+			saturation = 1;
+		}
+		sgn_error = right_error > 0 ;
+		sgn_output = PWM_R > 0;
+		if (saturation && ( sgn_error == sgn_output)){
+			PWM_R = kpRM * right_error ;
+			i_right_error -= right_error;
+		}
+		//Left wheel regulation
+		saturation = 0;
+		left_error = speed_ref - left_speed;
+		i_left_error += left_error;
+		PWM_L = kpLM * left_error + kiLM * i_left_error;
+		if (PWM_L>PWM_Max){
+			PWM_L = PWM_Max;
+			saturation = 1;
+		}
+		if (PWM_L<-PWM_Max) {
+			PWM_L = -PWM_Max;
+			saturation = 1;
+		}
+		sgn_error = left_error > 0 ;
+		sgn_output = PWM_L > 0;
+		if (saturation && ( sgn_error == sgn_output)){
+    			PWM_L = kpLM * left_error;
+			i_left_error -= left_error;
+		}
+
+		//Execution
+		run_motors();
+		HAL_Delay(10);
+	}
+	i = 0;
+	stop_motors();
+}
+
+
+void move_distance(float distance,float speed)
+{
+	if (RL == 0){
+		init();
+	}
+	else {
+		init_allouch();
+	}
+
+	int z=0;
+	suuuuuu = distance;
+	//Set accel/decel distance
+	if (fabs(distance) < (speed*speed/ramp))
+	{
+		accel_dist = 0.65 * fabs(distance)/2;
+		decel_dist = 0.65 * fabs(distance)/2;
+		speed = sqrt (2*ramp*accel_dist);
+	}
+	else
+	{
+		accel_dist = (float)0.5*speed*speed/ramp;
+		decel_dist = (float)0.5*speed*speed/ramp;
+	}
+	while(((fabs(total_right-distance)>2)||(fabs(total_left-distance)>2)) &&
+	      (speed*z/500)<((fabs(distance)*360/1000)+50) && !evitementFlag && mutex_button==0)
+	{
+		 z++;
+
+	   t0=t;
+
+
+		//Accel/Decel Speed Set
+		if (((total_right+total_left)/2 -distance)<0)
+			sens = 1;
+		else
+			sens = -1;
+		if (fabs((total_right+total_left)/2) < accel_dist)
+			speed_ref = sens*50+sens*(constrain(sqrt (ramp*fabs(total_right+total_left))-50,0,1000));
+
+		else if (fabs((total_right+total_left)/2 -distance) < decel_dist)
+			speed_ref = sens*10+sens*constrain((sqrt(2*ramp*fabs((total_right+total_left)/2 -distance))-10),0,1000);//fabs((total_right+total_left)/2 -distance)
+		else
+			speed_ref = sens*speed;
+
+		//Right wheel regulation
+		saturation = 0;
+		right_error = speed_ref - right_speed;
+		i_right_error += right_error;
+		PWM_R = kpRM * right_error + kiRM * i_right_error;
+		if (PWM_R>PWM_Max) {
+			PWM_R = PWM_Max;
+			saturation = 1;
+		}
+		if (PWM_R<-PWM_Max) {
+			PWM_R = -PWM_Max;
+			saturation = 1;
+		}
+		sgn_error = right_error > 0 ;
+		sgn_output = PWM_R > 0;
+		if (saturation && ( sgn_error == sgn_output)){
+			PWM_R = kpRM * right_error ;
+			i_right_error -= right_error;
+		}
+		//Left wheel regulation
+		saturation = 0;
+		left_error = speed_ref - left_speed;
+		i_left_error += left_error;
+		PWM_L = kpLM * left_error + kiLM * i_left_error;
+		if (PWM_L>PWM_Max){
+			PWM_L = PWM_Max;
+			saturation = 1;
+		}
+		if (PWM_L<-PWM_Max) {
+			PWM_L = -PWM_Max;
+			saturation = 1;
+		}
+		sgn_error = left_error > 0 ;
+		sgn_output = PWM_L > 0;
+		if (saturation && ( sgn_error == sgn_output)){
+    			PWM_L = kpLM * left_error;
+			i_left_error -= left_error;
+		}
+		//Execution
+		run_motors();
+		do delta=t-t0;
+		while (delta<T);//taslih
+	}
+	i = 0;
+	stop_motors();
+}
+
+//
+//void Safe_Robot_Locate_turky_b_sens(float goal_x, float goal_y, float speed)
+//{
+//    while (true)
+//    {
+//        // Wait until path is clear
+//        while (mutex_button == 1) {
+//            stop_motors();
+//            delay(100);
+//        }
+//
+//        // Try to reach the target
+//        Robot_Locate(goal_x, goal_y, speed);
+//
+//        // If movement completes and no interruption: done
+//        if (mutex_button == 0) break;
+//
+//        // Else retry
+//    }
+//}
+
+void move_distance_test_rihem(float distance,float speed)
+{
+
+	init();
+	int z=0;
+	//Set accel/decel distance
+	if (fabs(distance) < (speed*speed/ramp))
+	{
+		accel_dist = 0.65 * fabs(distance)/2;
+		decel_dist = 0.65 * fabs(distance)/2;
+		speed = sqrt (2*ramp*accel_dist);
+	}
+	else
+	{
+		accel_dist = (float)0.5*speed*speed/ramp;
+		decel_dist = (float)0.5*speed*speed/ramp;
+	}
+	while(((fabs(total_right-distance)>2)||(fabs(total_left-distance)>2)) &&
+	      (speed*z/500)<((fabs(distance)*360/1000)+50) && !evitementFlag )
+	{
+		if (mutex_button==0){
+
+		 z++;
+
+	   t0=t;
+
+
+		//Accel/Decel Speed Set
+		if (((total_right+total_left)/2 -distance)<0)
+			sens = 1;
+		else
+			sens = -1;
+		if (fabs((total_right+total_left)/2) < accel_dist)
+			speed_ref = sens*50+sens*(constrain(sqrt (ramp*fabs(total_right+total_left))-50,0,1000));
+
+		else if (fabs((total_right+total_left)/2 -distance) < decel_dist)
+			speed_ref = sens*10+sens*constrain((sqrt(2*ramp*fabs((total_right+total_left)/2 -distance))-10),0,1000);//fabs((total_right+total_left)/2 -distance)
+		else
+			speed_ref = sens*speed;
+
+		//Right wheel regulation
+
+		right_error = speed_ref - right_speed;
+		i_right_error += right_error;
+		PWM_R = kpRM * right_error + kiRM * i_right_error;
+		if (PWM_R>PWM_Max) {
+			PWM_R = PWM_Max;
+			saturation = 1;
+		}
+		if (PWM_R<-PWM_Max) {
+			PWM_R = -PWM_Max;
+			saturation = 1;
+		}
+		sgn_error = right_error > 0 ;
+		sgn_output = PWM_R > 0;
+		if (saturation && ( sgn_error == sgn_output)){
+			PWM_R = kpRM * right_error ;
+			i_right_error -= right_error;
+		}
+		//Left wheel regulation
+		saturation = 0;
+		left_error = speed_ref - left_speed;
+		i_left_error += left_error;
+		PWM_L = kpLM * left_error + kiLM * i_left_error;
+		if (PWM_L>PWM_Max){
+			PWM_L = PWM_Max;
+			saturation = 1;
+		}
+		if (PWM_L<-PWM_Max) {
+			PWM_L = -PWM_Max;
+			saturation = 1;
+		}
+		sgn_error = left_error > 0 ;
+		sgn_output = PWM_L > 0;
+		if (saturation && ( sgn_error == sgn_output)){
+    			PWM_L = kpLM * left_error;
+			i_left_error -= left_error;
+		}
+
+		//Execution
+		run_motors();
+		do delta=t-t0;
+		while (delta<T);//taslih
+	} else {stop_motors();
+		continue;}}
+	i = 0;
+	stop_motors();
+}
+
+
+
+void rotate(float angle, float speed)
+{
+	init();
+	//Set accel/decel distance
+	goal_distance = angle * PI * spacing_encoder/ 180;
+	if (fabs(goal_distance) < (2*speed*speed/rampR))
+	{
+		accel_dist = fabs(goal_distance)/2;
+		decel_dist = fabs(goal_distance)/2;
+		speed = sqrt(rampR*accel_dist);
+	}
+	else
+	{
+		accel_dist = (float)speed*speed/rampR;
+		decel_dist = (float)speed*speed/rampR;
+	}
+	while((fabs(total_right-total_left)<fabs(goal_distance) || fabs(total_right-total_left)> fabs(goal_distance)+2  ) && mutex_button==0 )
+	   {
+	//	nh.spinOnce();
+		t0=t;
+		//Accel/Decel Speed Set
+		if (((total_right-total_left)-goal_distance)<0)
+			sens = 1;
+		else
+			sens = -1;
+		if (fabs((total_right-total_left)) < accel_dist)
+			speed_ref = sens*constrain(sqrt(rampR*fabs(total_right-total_left)),50,1000);
+		else if (fabs((total_right-total_left)-goal_distance) < decel_dist)
+			speed_ref = sens*constrain(sqrt(rampR*fabs((total_right-total_left)-goal_distance)),10,1000);
+		else
+			speed_ref = sens*speed;
+		//Right wheel regulation
+		right_error = speed_ref - right_speed;
+		i_right_error += right_error;
+		PWM_R = kpRM * right_error + kiRM * i_right_error;
+		//Left wheel regulation
+		left_error = - speed_ref - left_speed;
+		i_left_error += left_error;
+		PWM_L = kpLM * left_error + kiLM * i_left_error;
+		//Position Correction;
+//
+		//Execution
+		run_motors();
+		do delta=t-t0;
+		while (delta<T);
+	}
+	total_right = goal_distance - total_right;
+	total_left = goal_distance - total_left;
+	total_centre = (total_left + total_right) / 2;
+	stop_motors();
+}
+
+
+
+
+void orientate (float orientation, float speed)
+{
+	target_angle = orientation - current_phi_deg;
+	if (target_angle>180) target_angle -= 360;
+	if (target_angle<-180) target_angle += 360;
+	rotate(target_angle,speed);
+}
+
+
+
+void Robot_Locate(float goal_x, float goal_y, float speed)
+{
+	sens = (asinf((goal_y-current_y)/sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y)))>0)? 1 : -1;
+	target_angle = sens * rad_to_deg(acosf((goal_x-current_x)/sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y))));
+	orientate(target_angle,speed);
+	goal_distance = sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y));
+	//RL = 1;
+	move_distance(goal_distance,speed);
+	RL = 0;
+}
+
+void Robot_Locate_b_sens(float goal_x, float goal_y, float speed , int direction)
+{
+
+	sens = (asinf((goal_y-current_y)/sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y)))>0)? 1 : -1;
+	target_angle = sens * rad_to_deg(acosf((goal_x-current_x)/sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y))));
+	goal_distance = sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y));
+
+	if ( direction == -1){
+		target_angle = sens * 180 + sens * rad_to_deg(acosf((goal_x-current_x)/sqrtf((current_x-goal_x)*(current_x-goal_x)+(current_y-goal_y)*(current_y-goal_y))));
+		suuuuuu = -goal_distance;
+		orientate(target_angle,speed);
+		move_distance(suuuuuu,speed);
+	}
+	else {
+		orientate(target_angle,speed);
+		move_distance(goal_distance,speed);
+	}
+	RL_b_sens = 1;
+}
+
+// 3ADDEL BEHA
+void move(float speed, int delay)
+{
+	i_right_error = 0;
+	i_left_error = 0;
+	t = 0;
+	while (t<delay)
+	{
+		t0=t;
+		speed_ref = ramp*t/1000;
+		if (speed_ref>speed)
+			speed_ref = speed;
+		//Right wheel regulation
+		right_error = speed_ref - right_speed;
+		i_right_error += right_error;
+		PWM_R = kp * right_error + ki * i_right_error;
+		//Left wheel regulation
+		left_error = speed_ref - left_speed;
+		i_left_error += left_error;
+		PWM_L = kp * left_error + ki * i_left_error;
+		run_motors();
+		do delta=t-t0;
+		while (delta<T);
+	}
+	stop_motors();
+}
+
+
+
+//calcul des donnees de la fonction robot locate curv
+void Calcul_Curv(float x, float y,float phi_target) {
+
+	corde=0;
+	corde_angle=0;
+	Rayon=0;
+	Xc=0;
+	Yc=0;
+	tetaC=0;
+	phi_target_rad=(double)PI*((phi_target)/180);
+
+	//Calcul de la corde
+	corde=sqrtf((pow((x-current_x),2)) + (pow((y-current_y),2)));
+
+	//Calcul des coordonnées du centre de la courbure
+
+	if ((phi_target==0) || (phi_target==180) || (phi_target==-180)){
+		if ((y==0) && (current_y==0))
+				current_y=0.000000001; //Résolution du probleme de division par zero
+		Xc=x;
+		Yc=(float)(((current_x-x)/(y-current_y))*Xc)+(0.5f*(y+current_y))-((pow(current_x,2)-pow(x,2))/(2*(y-current_y)));
+	}
+	else{
+		Xc=(float)((cosf(phi_target_rad)/sinf(phi_target_rad))*x+(((current_x*current_x)-(x*x))/(2*(y-current_y)))-(0.5f*(current_y-y)))/((cosf(phi_target_rad)/sinf(phi_target_rad))+((current_x-x)/(y-current_y)));
+		Yc=(float)((cosf(phi_target_rad)/sinf(phi_target_rad))*(x-Xc))+y;
+	}
+
+	//Calcul du rayon de la courbure
+	Rayon=sqrtf((pow((x-Xc),2)) + (pow((y-Yc),2)));
+
+	//Calcul de l'angle de la corde
+	sens = (asinf((y-current_y)/sqrtf((current_x-x)*(current_x-x)+(current_y-y)*(current_y-y)))>0)? 1 : -1;
+	corde_angle = sens * rad_to_deg(acosf((x-current_x)/sqrtf((current_x-x)*(current_x-x)+(current_y-y)*(current_y-y))));
+
+	//Calcul de la l'angle parcouru tout au long de la courbure [0,180] en valeur absolue
+	tetaC=rad_to_deg (2*asin((double)(corde/(2*Rayon))));
+
+	//Calcul du sens_de_mouvement {recucler ou avancer}
+	sens_de_mouvement=1;
+	if((phi_target-corde_angle>=90) ||(phi_target- corde_angle<=-90))
+		sens_de_mouvement=-1;
+
+	//Calcul du sens de rotation {trigonometique ou horraire}
+	if (sens_de_mouvement==1) {
+		if((phi_target-corde_angle)<0)
+			tetaC=-1*tetaC; // horraire
+	}
+	else if (sens_de_mouvement==-1) {
+		if((-phi_target+corde_angle)<0)
+			tetaC=-1*tetaC; // trigo
+	}
+
+	//Calcul de l'orientation initiale avant de commencer la courbure
+	phi_prim=phi_target-tetaC;
+	sens_de_mouvement=1; //ajoutéé
+}
+
+// Calcul des vitesses de chaque roue selon la courbure et le sens de mouvement
+void Calcul_speed_Refs(float theta,float R,int sens_de_mouvement, float speed){
+		if(sens_de_mouvement==1){
+			if (theta>=0) {
+				speed_refL=speed*((R-(spacing_wheel*0.5f))/R);
+				speed_refR=speed*((R+(spacing_wheel*0.5f))/R);
+			}
+			else if (theta<0) {
+				speed_refR=speed*((R-(spacing_wheel*0.5f))/R);
+				speed_refL=speed*((R+(spacing_wheel*0.5f))/R);
+				}
+		}
+		else{
+			if (theta<0) {
+				speed_refL=speed*((R-(spacing_wheel*0.5f))/R);
+				speed_refR=speed*((R+(spacing_wheel*0.5f))/R);
+			}
+			else if (theta>=0) {
+				speed_refR=speed*((R-(spacing_wheel*0.5f))/R);
+				speed_refL=speed*((R+(spacing_wheel*0.5f))/R);
+			}
+		}
+}
+// robot locate curv
+void Robot_locateCurv(float x, float y, float phi_target, float speed) {
+ //newwwwwwww
+	Calcul_Curv(x,y,phi_target);
+  orientate(phi_prim,speed);
+	curv(Rayon,tetaC,speed);
+}
+//curv
+void curv(float R,float theta ,float speed)
+{ init();
+	theta=(theta*PI)/180;
+	goalC=fabs(R*theta);
+	remain_distC=goalC-fabs(total_centre);
+	speedC=speed;
+	if (goalC < (speedC*speedC/rampC)) {
+		accel_dist = fabs(remain_distC)/2;
+		decel_dist = fabs(remain_distC)/2;
+		speedC = speedC* accel_dist / ((float)0.5*speedC*speedC/rampC);}
+	else{
+		accel_dist = (float)0.5*speedC*speedC/rampC;
+		decel_dist = (float)0.5*speedC*speedC/((rampC));
+	}
+	while((((remain_distC)>=2))||((remain_distC)<=-2)) {
+		t0=t;
+		goalC=fabs(R*theta);
+	  remain_distC=goalC-fabs(total_centre);
+	  if ((fabs(total_centre)) < accel_dist){
+			speed_refC = sens_de_mouvement*50+sens_de_mouvement*(speedC-50)*fabs((total_centre)/(accel_dist));
+		}
+		else if (fabs((remain_distC)) < decel_dist)
+			speed_refC = sens_de_mouvement*10+sens_de_mouvement*(speedC-10)*fabs((remain_distC)/(decel_dist));
+		else
+			speed_refC = sens_de_mouvement*speedC;
+		Calcul_speed_Refs( theta, R, sens_de_mouvement,speed_refC);
+		//Right wheel regulation
+		right_error = speed_refR - right_speed;
+		i_right_error += right_error;
+		PWM_R = kpR * right_error + kiR * i_right_error;
+		//Left wheel regulation
+		left_error = speed_refL - left_speed;
+		i_left_error += left_error;
+		PWM_L = kpL * left_error + kiL * i_left_error;
+		//Execution
+		run_motors();
+		do delta=t-t0;
+		while (delta<T);
+	  }
+  	stop_motors();
+}

@@ -1,0 +1,19 @@
+# Map Anchors Module - Python Dependencies
+
+# Core dependencies
+numpy>=1.21.0
+opencv-contrib-python>=4.6.0
+pyyaml>=6.0
+
+# For Euler angle conversions and rotation handling
+scipy>=1.7.0
+
+# Optional: For testing
+pytest>=7.0.0
+pytest-cov>=3.0.0
+
+# Optional: For visualization and plotting
+matplotlib>=3.5.0
+
+# Optional: For serial communication (LoRa module)
+pyserial>=3.5

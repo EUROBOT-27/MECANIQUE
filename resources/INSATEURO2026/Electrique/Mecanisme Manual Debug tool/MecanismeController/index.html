@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ESP32 Mechanism Control</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+    :root{
+      --bg:#0e1116;
+      --bg-2:#0b1b1f;
+      --bg-splash-1:#1d3b3a;
+      --bg-splash-2:#2b2135;
+      --card:#121821;
+      --card-2:#0f141c;
+      --ink:#e9eef7;
+      --muted:#a6b1c2;
+      --line:#223043;
+      --accent:#2dd4bf;
+      --accent-2:#f97316;
+      --danger:#fb7185;
+      --ok:#22c55e;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    html{color-scheme:light dark}
+    html[data-theme="light"]{
+      --bg:#f4f7fb;
+      --bg-2:#e9eef5;
+      --bg-splash-1:#c7ebe6;
+      --bg-splash-2:#e3d7ef;
+      --card:#ffffff;
+      --card-2:#f7f9fc;
+      --ink:#0f172a;
+      --muted:#5b6b7f;
+      --line:#d5dce6;
+      --shadow:0 12px 30px rgba(15,23,42,.15);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Space Grotesk","Sora",system-ui,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 85% -10%, var(--bg-splash-1) 0%, transparent 60%),
+        radial-gradient(900px 500px at -10% 0%, var(--bg-splash-2) 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      min-height:100vh;
+      transition:background-color .25s ease, color .25s ease;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .title{font-size:24px;letter-spacing:.4px;margin:0}
+    .subtitle{color:var(--muted);margin-top:4px;font-size:13px}
+    .top-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .grid-2{display:grid;gap:12px;grid-template-columns:1.15fr .85fr}
+    .grid-1{display:grid;gap:12px;grid-template-columns:1fr}
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+      animation:rise .35s ease both;
+    }
+    @keyframes rise{from{opacity:.7;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .row.space{justify-content:space-between}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      background:#0e1520;color:var(--muted);font-size:12px;letter-spacing:.3px
+    }
+    html[data-theme="light"] .pill{background:#f1f4fa}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 3px rgba(251,113,133,.15)}
+    .status-dot.ok{background:var(--ok);box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+    button,input,select,textarea{
+      border-radius:12px;border:1px solid var(--line);background:#0f1621;color:var(--ink);
+      padding:10px 12px;font-size:14px
+    }
+    html[data-theme="light"] button,html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:#f7f9fc}
+    textarea{min-height:120px;resize:vertical}
+    button{cursor:pointer;transition:transform .08s ease, box-shadow .2s ease, border-color .2s ease}
+    button:active{transform:translateY(1px)}
+    button.primary{background:linear-gradient(135deg, var(--accent) 0%, #14b8a6 100%);color:#07131a;border-color:transparent;box-shadow:0 8px 18px rgba(45,212,191,.25);font-weight:600}
+    button.ghost{background:#0c121b}
+    html[data-theme="light"] button.ghost{background:#edf2f7}
+    button.warn{background:linear-gradient(135deg, var(--accent-2) 0%, #f59e0b 100%);color:#1a0d00;border-color:transparent;font-weight:600}
+    button.danger{background:linear-gradient(135deg, var(--danger) 0%, #be123c 100%);color:#2a0a0a;border-color:transparent;font-weight:600}
+    
+    button.small{padding:8px 10px;font-size:12px}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .mono{font-family:ui-monospace,Consolas,Menlo,monospace}
+    .log{background:#0c1119;border:1px dashed #21314a;border-radius:12px;padding:10px;min-height:56px;color:#9fb0c5;font-size:12px;white-space:pre-line}
+    html[data-theme="light"] .log{background:#f6f8fb;border-color:#ccd6e6;color:#516176}
+    .kpi{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:12px}
+    .slider{width:100%;accent-color:var(--accent)}
+    .section-title{margin:0 0 8px;font-size:13px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+    .keyline{height:1px;background:var(--line);margin:10px 0}
+    .row-inline{display:inline-flex;align-items:center;gap:8px}
+    .muted{color:var(--muted)}
+    
+    .switch {
+      position: relative; display: inline-block; width: 40px; height: 20px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider-sw {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #334155; transition: .4s; border-radius: 20px;
+    }
+    .slider-sw:before {
+      position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+      background-color: white; transition: .4s; border-radius: 50%;
+    }
+    input:checked + .slider-sw { background-color: var(--accent); }
+    input:checked + .slider-sw:before { transform: translateX(20px); }
+
+    .ev-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .ev-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(15, 22, 33, 0.5); padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line);
+    }
+    
+    input[type=checkbox]{width:auto}
+    .channels-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+    .channel-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(12,18,27,.5)}
+    html[data-theme="light"] .channel-card{background:#f4f6fb}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;background:#0d141f;color:var(--muted)}
+    html[data-theme="light"] .chip{background:#eef2f8}
+    .chip button{border-radius:999px;padding:4px 8px;font-size:11px}
+    .chip .chip-main{background:transparent;border:0;color:inherit;padding:0 4px}
+    .channel-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(44px,1fr));gap:6px}
+    .channel-pick label{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:10px;padding:8px 0;font-size:12px;background:#0f1621}
+    html[data-theme="light"] .channel-pick label{background:#f5f7fb}
+    .channel-pick input{display:none}
+    .channel-pick input:checked + span{color:#07131a;background:var(--accent);border-radius:8px;padding:4px 8px}
+    .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .adv-panel{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(12,18,27,.45)}
+    html[data-theme="light"] .adv-panel{background:#f4f6fb}
+    .adv-panel.hidden{display:none}
+    .seq-steps{display:grid;gap:8px}
+    .step-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#0f1621}
+    html[data-theme="light"] .step-row{background:#f5f7fb}
+    .step-type{font-size:12px;color:var(--muted);min-width:60px}
+    .step-index{font-size:12px;color:var(--muted);min-width:28px}
+    .subsection-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0 0 6px}
+    .seq-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}
+    .seq-panel{display:grid;gap:8px;align-content:start}
+    .pose-preview{border:1px dashed var(--line);border-radius:12px;padding:8px;font-size:12px;background:rgba(12,18,27,.35);color:var(--muted)}
+    html[data-theme="light"] .pose-preview{background:#f4f6fb;color:#516176}
+
+    @media (max-width:880px){
+      .grid-2{grid-template-columns:1fr}
+      .seq-grid{grid-template-columns:1fr}
+      header{flex-direction:column}
+    }
+    @media (max-width:520px){
+      .wrap{padding:16px 12px 28px}
+      button,input,select,textarea{width:100%}
+      .row{gap:8px}
+      .top-actions{width:100%}
+      .top-actions select,.top-actions .pill{width:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1 class="title">Mechanism Control</h1>
+        <div class="subtitle">Maestro Servo + Stepper + Pump Control</div>
+      </div>
+      <div class="top-actions">
+        <select id="themeSelect">
+          <option value="auto">Theme: Auto</option>
+          <option value="dark">Theme: Dark</option>
+          <option value="light">Theme: Light</option>
+        </select>
+        <div class="pill mono"><span id="dot" class="status-dot"></span><span id="st">disconnected</span></div>
+      </div>
+    </header>
+
+    <div class="grid-2">
+      <!-- Connection Card -->
+      <section class="card">
+        <div class="section-title">Connection</div>
+        <div class="row">
+          <button id="btnConnect" class="primary">Connect</button>
+          <button id="btnDisconnect" class="ghost" disabled>Disconnect</button>
+          <button id="btnEmergency" class="danger">STOP ALL</button>
+        </div>
+        <div class="keyline"></div>
+        <div class="row">
+          <label>Device name
+            <input id="devNameInput" type="text" value="ESP32-Mecanisme">
+          </label>
+          <div class="pill mono" id="bleSupport">BLE: checking...</div>
+        </div>
+        <div class="keyline"></div>
+        <div class="section-title">Last status</div>
+        <div class="log mono" id="log">waiting for device...</div>
+        <div class="muted" style="margin-top:6px;font-size:12px" id="logHint">No errors yet.</div>
+      </section>
+
+      <!-- Mechanism Card (Pump/Valves/Stepper) -->
+      <section class="card">
+        <div class="section-title">Mechanism Actions</div>
+        
+        <!-- Pump -->
+        <div class="subsection-title">Pump Control</div>
+        <div class="row">
+          <button id="btnPump" class="warn">Pump Only: OFF</button>
+        </div>
+        
+        <div class="keyline"></div>
+        
+        <!-- Stepper -->
+        <div class="subsection-title">Stepper Rail</div>
+        <div class="row">
+          <button id="btnHome" class="primary small">RESET 0</button>
+          <button id="btnStepZero" class="ghost small">Go Zero</button>
+          <button onclick="sendText('P')" class="warn small">Pickup (2000)</button>
+          <button onclick="sendText('D')" class="warn small">Drop (4000)</button>
+        </div>
+        
+        <div style="margin-top:10px">
+          <div class="kpi">
+            <span>Rail Position</span>
+            <span class="mono" id="stepKpi">0 steps</span>
+          </div>
+          <input id="stepSlider" class="slider" type="range" min="0" max="5000" value="0">
+        </div>
+
+        <div class="row" style="margin-top:10px">
+             <button onclick="sendText('B')" class="ghost small">-500</button>
+             <button id="btnStepBack" class="ghost small">-</button>
+             <input id="relativeStepVal" type="number" value="100" style="width:55px">
+             <button id="btnStepFwd" class="ghost small">+</button>
+             <button onclick="sendText('F')" class="ghost small">+500</button>
+             <div style="flex-grow:1"></div>
+             <button id="btnStepStop" class="danger small">STOP</button>
+        </div>
+        
+        <div class="row" style="margin-top:8px">
+             <label style="font-size:12px">Manual Set: 
+               <input id="stepManualVal" type="number" placeholder="Steps" style="width:80px">
+             </label>
+             <button id="btnStepManual" class="ghost small">Go</button>
+        </div>
+
+        <div class="keyline"></div>
+
+        <div class="subsection-title">MCP Control (6 Suckers)</div>
+        <div class="row" style="margin-bottom:10px">
+          <button onclick="testValves()" class="ghost small">Test Sequence</button>
+        </div>
+        <div id="evGrid" class="ev-grid"></div>
+      </section>
+    </div>
+
+    <!-- Stepper / Quality Settings -->
+    <section class="card" style="margin-top:12px">
+        <div class="section-title">Control Settings</div>
+        <div class="settings-grid">
+          <label class="row-inline">
+            <input id="autoSend" type="checkbox" checked>
+            Auto send Servos
+          </label>
+          <label class="row-inline">
+            <input id="haptics" type="checkbox">
+            Haptics
+          </label>
+          <label class="row-inline">
+            Step deg
+            <input id="degStep" type="number" value="1" min="1" max="15" style="width:70px">
+          </label>
+          <label class="row-inline">
+            BLE Delay
+            <input id="sendDelay" type="number" value="25" min="0" max="200" style="width:70px">
+          </label>
+        </div>
+    </section>
+
+    <!-- Channels Picker -->
+    <section class="card" style="margin-top:12px">
+      <div class="section-title">Channels to show</div>
+      <div id="channelPick" class="channel-pick"></div>
+    </section>
+
+    <!-- Channel Sliders -->
+    <section class="card" style="margin-top:12px">
+      <div class="section-title">Servo controls</div>
+      <div id="channels" class="channels-grid"></div>
+    </section>
+
+    <!-- Sequences -->
+    <section class="card" style="margin-top:12px">
+      <div class="section-title">Sequences (Servo Only)</div>
+      <div class="row">
+        <label>Saved
+          <select id="seqSelect"></select>
+        </label>
+        <label>Name
+          <input id="seqName" type="text" placeholder="Pickup Sequence">
+        </label>
+        <button id="btnSeqNew" class="ghost">New</button>
+        <button id="btnSeqSave" class="primary">Save</button>
+        <button id="btnSeqDelete" class="ghost">Delete</button>
+        <button id="btnSeqExport" class="ghost small">Export</button>
+        <button id="btnSeqImport" class="ghost small">Import</button>
+        <input id="seqImportFile" type="file" accept=".json,application/json" style="display:none">
+      </div>
+      <div class="keyline"></div>
+      <div class="seq-grid">
+        <div class="seq-panel">
+          <div class="subsection-title">Add Step</div>
+          <div class="row">
+            <label>Saved pose
+              <select id="poseSelect"></select>
+            </label>
+            <button id="btnPoseAddToSeq" class="ghost">Add Pose</button>
+          </div>
+          <div class="row">
+            <button id="btnSeqCapture" class="primary">Capture Current</button>
+             <label>Duration
+              <input id="poseDuration" type="number" value="600" style="width:70px">
+            </label>
+          </div>
+          <div class="row">
+            <label>Delay
+              <input id="delayDuration" type="number" value="400" style="width:70px">
+            </label>
+            <button id="btnSeqAddDelay" class="ghost">Add Delay</button>
+          </div>
+          <div class="row">
+            <label>Command
+              <select id="cmdSelect">
+                <!-- Updated commands matching Arduino parser and 6 valves -->
+                <option value="PUMP:ON">Pump ON</option>
+                <option value="PUMP:OFF">Pump OFF</option>
+                
+                <option value="P">Pickup (P)</option>
+                <option value="D">Drop (D)</option>
+                <option value="F">Fwd +500 (F)</option>
+                <option value="B">Back -500 (B)</option>
+
+                <option value="V0:1">V0 ON</option><option value="V0:0">V0 OFF</option>
+                <option value="V1:1">V1 ON</option><option value="V1:0">V1 OFF</option>
+                <option value="V2:1">V2 ON</option><option value="V2:0">V2 OFF</option>
+                <option value="V3:1">V3 ON</option><option value="V3:0">V3 OFF</option>
+                <option value="V4:1">V4 ON</option><option value="V4:0">V4 OFF</option>
+                <option value="V5:1">V5 ON</option><option value="V5:0">V5 OFF</option>
+
+                <option value="H">Stepper HOME</option>
+                <option value="SZ">Stepper ZERO</option>
+              </select>
+            </label>
+            <button id="btnSeqAddCmd" class="ghost">Add Cmd</button>
+          </div>
+          
+           <div class="keyline"></div>
+           <div class="subsection-title">Pose Management</div>
+             <div class="row">
+            <input id="poseName" type="text" placeholder="Pose Name">
+            <button id="btnPoseSave" class="primary">Save</button>
+            <button id="btnPoseApply" class="ghost">Apply</button>
+            <button id="btnPoseDelete" class="ghost">Del</button>
+          </div>
+          <div id="posePreview" class="pose-preview mono">No pose selected.</div>
+        </div>
+        
+        
+        <div class="seq-panel">
+          <div class="subsection-title">Sequence Steps</div>
+          <div id="seqSteps" class="seq-steps"></div>
+          <div class="row" style="margin-top:10px">
+            <button id="btnSeqRun" class="primary">Play Sequence</button>
+            <button id="btnSeqStop" class="ghost">Stop</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+(() => {
+  // UUIDs matching the Arduino code
+  const SERVICE_UUID = "7c2f4b10-8a6d-4c0f-9d2c-3efb5e7d1a01";
+  const CONTROL_UUID = "7c2f4b11-8a6d-4c0f-9d2c-3efb5e7d1a01";
+  const STATUS_UUID  = "7c2f4b12-8a6d-4c0f-9d2c-3efb5e7d1a01";
+
+  const $ = id => document.getElementById(id);
+  const root = document.documentElement;
+  const st = $("st");
+  const dot = $("dot");
+  const log = $("log");
+  const logHint = $("logHint");
+  
+  // Buttons
+  const btnConnect = $("btnConnect");
+  const btnDisconnect = $("btnDisconnect");
+  const btnEmergency = $("btnEmergency"); // STOP ALL
+  
+  const btnPump = $("btnPump");
+  
+  const btnHome = $("btnHome");
+  const btnStepZero = $("btnStepZero");
+  const btnStepManual = $("btnStepManual");
+  const btnStepStop = $("btnStepStop");
+  const stepManualVal = $("stepManualVal");
+  
+  const stepSlider = $("stepSlider");
+  const stepKpi = $("stepKpi");
+  const btnStepBack = $("btnStepBack");
+  const btnStepFwd = $("btnStepFwd");
+  const relativeStepVal = $("relativeStepVal");
+
+  // Settings
+  const autoSend = $("autoSend");
+  const haptics = $("haptics");
+  const degStep = $("degStep");
+  const sendDelay = $("sendDelay");
+  const bleSupport = $("bleSupport");
+  const devNameInput = $("devNameInput");
+  const themeSelect = $("themeSelect");
+
+  // Channels
+  const channelPick = $("channelPick");
+  const channelsWrap = $("channels");
+  
+  // Sequence
+  const seqSelect = $("seqSelect");
+  const seqName = $("seqName");
+  const btnSeqNew = $("btnSeqNew");
+  const btnSeqSave = $("btnSeqSave");
+  const btnSeqCapture = $("btnSeqCapture");
+  const btnSeqAddDelay = $("btnSeqAddDelay");
+  const btnSeqAddCmd = $("btnSeqAddCmd");
+  const btnSeqDelete = $("btnSeqDelete");
+  const btnSeqExport = $("btnSeqExport");
+  const btnSeqImport = $("btnSeqImport");
+  const seqImportFile = $("seqImportFile");
+  const btnSeqRun = $("btnSeqRun");
+  const btnSeqStop = $("btnSeqStop");
+  const poseSelect = $("poseSelect");
+  const poseName = $("poseName");
+  const posePreview = $("posePreview");
+  const btnPoseSave = $("btnPoseSave");
+  const btnPoseApply = $("btnPoseApply");
+  const btnPoseDelete = $("btnPoseDelete");
+  const btnPoseAddToSeq = $("btnPoseAddToSeq");
+  const poseDuration = $("poseDuration");
+  const delayDuration = $("delayDuration");
+  const cmdSelect = $("cmdSelect");
+  const seqSteps = $("seqSteps");
+
+  const evGrid = $("evGrid");
+
+  const storeKey = "maestro-ui-v2";
+  const logLines = [];
+  let device = null;
+  let controlChar = null;
+  let statusChar = null;
+  let pumpOn = false;
+  let currentSeqId = null;
+  let stopSeq = false;
+  let sendQueue = Promise.resolve();
+
+  const defaultChannel = () => ({
+    minUs: 64,  maxUs: 4080, angle: 90,
+    us: 1500, speed: 50, accel: 50
+  });
+
+  const defaultState = {
+    deviceName: "ESP32-Mecanisme",
+    autoSend: true,
+    haptics: true,
+    degStep: 1,
+    sendDelay: 25,
+    theme: "auto",
+    selectedChannels: [0,1,2],
+    channels: {},
+    savedPoses: [],
+    sequences: [],
+    stepperPos: 0
+  };
+
+  function initChannels(state){
+    for (let i = 0; i < 12; i++){
+      if (!state.channels[i]){
+        state.channels[i] = defaultChannel();
+        continue;
+      }
+      const d = defaultChannel();
+      Object.keys(d).forEach(k => {
+        if (state.channels[i][k] === undefined) state.channels[i][k] = d[k];
+      });
+    }
+  }
+
+  function loadState(){
+    let state = JSON.parse(JSON.stringify(defaultState));
+    try{
+      const raw = localStorage.getItem(storeKey);
+      if (raw){
+        const data = JSON.parse(raw);
+        state = Object.assign(state, data);
+        state.channels = Object.assign({}, defaultState.channels, data.channels || {});
+      }
+    }catch(e){}
+    if (!Array.isArray(state.savedPoses)) state.savedPoses = [];
+    if (!Array.isArray(state.sequences)) state.sequences = [];
+    initChannels(state);
+    return state;
+  }
+
+  let state = loadState();
+
+  function saveState(){
+    try{ localStorage.setItem(storeKey, JSON.stringify(state)); }catch(e){}
+  }
+
+  function setStatus(t, ok){
+    st.textContent = t;
+    dot.className = "status-dot" + (ok ? " ok" : "");
+  }
+
+  function setHint(text){
+    logHint.textContent = text;
+  }
+
+  function pushLog(t){
+    const ts = new Date().toLocaleTimeString([], {hour12:false});
+    logLines.unshift(`[${ts}] ${t}`);
+    if (logLines.length > 8) logLines.pop();
+    log.textContent = logLines.join("\n");
+  }
+
+  function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+  function enqueueSend(fn){
+    sendQueue = sendQueue.then(fn).catch(() => {});
+    return sendQueue;
+  }
+
+  async function sendText(cmd){
+    if (!controlChar){
+      pushLog("Not connected");
+      return;
+    }
+    return enqueueSend(async () => {
+      //console.log("Sending:", cmd);
+      await controlChar.writeValueWithoutResponse(new TextEncoder().encode(cmd));
+      if (state.haptics && navigator.vibrate) navigator.vibrate(10);
+      const delay = Math.max(0, Number(state.sendDelay) || 0);
+      if (delay) await sleep(delay);
+    });
+  }
+
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+
+  function angleToUs(ch, angle){
+    const c = state.channels[ch];
+    let mn = Number(c.minUs);
+    let mx = Number(c.maxUs);
+    if (mn > mx){ const t = mn; mn = mx; mx = t; }
+    const t = clamp(Number(angle), 0, 180) / 180;
+    return Math.round(mn + (mx - mn) * t);
+  }
+
+  function usToAngle(ch, us){
+    const c = state.channels[ch];
+    let mn = Number(c.minUs);
+    let mx = Number(c.maxUs);
+    if (mn > mx){ const t = mn; mn = mx; mx = t; }
+    if (mn === mx) return 0;
+    const t = clamp((Number(us) - mn) / (mx - mn), 0, 1);
+    return Math.round(t * 180);
+  }
+
+  function applyTheme(){
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    let theme = state.theme;
+    if (theme === "auto") theme = prefersDark ? "dark" : "light";
+    root.setAttribute("data-theme", theme);
+    themeSelect.value = state.theme;
+  }
+
+  function renderChannelPicker(){
+    channelPick.innerHTML = "";
+    for (let i = 0; i < 12; i++){
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = i;
+      input.checked = state.selectedChannels.indexOf(i) >= 0;
+      input.addEventListener("change", () => {
+        const val = Number(input.value);
+        if (input.checked){
+          if (state.selectedChannels.indexOf(val) < 0) state.selectedChannels.push(val);
+        }else{
+          state.selectedChannels = state.selectedChannels.filter(v => v !== val);
+        }
+        if (state.selectedChannels.length === 0){
+          state.selectedChannels = [val];
+          input.checked = true;
+        }
+        saveState();
+        renderChannelPicker();
+        renderChannels();
+      });
+      const span = document.createElement("span");
+      span.textContent = i;
+      label.appendChild(input);
+      label.appendChild(span);
+      channelPick.appendChild(label);
+    }
+  }
+
+  function updateChannelDisplay(ch, card){
+    const c = state.channels[ch];
+    const kpi = card.querySelector("[data-field='kpi']");
+    const angleEl = card.querySelector("[data-field='angle']");
+    const usEl = card.querySelector("[data-field='us']");
+    const minEl = card.querySelector("[data-field='min']");
+    const maxEl = card.querySelector("[data-field='max']");
+    
+    kpi.textContent = `${c.angle} deg | ${c.us} us`;
+    angleEl.value = c.angle;
+    angleEl.step = String(Math.max(1, Number(state.degStep) || 1));
+    usEl.value = c.us;
+    minEl.value = c.minUs;
+    maxEl.value = c.maxUs;
+  }
+
+  function renderChannels(){
+    channelsWrap.innerHTML = "";
+    state.selectedChannels.forEach(ch => {
+      const c = state.channels[ch];
+      const card = document.createElement("div");
+      card.className = "channel-card";
+      card.dataset.ch = String(ch);
+      card.innerHTML = `
+        <div class="row space">
+          <div class="chip">CH ${ch}</div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label>Min
+            <input data-field="min" type="number" value="${c.minUs}" style="width:60px">
+          </label>
+          <label>Max
+            <input data-field="max" type="number" value="${c.maxUs}" style="width:60px">
+          </label>
+        </div>
+        <div style="margin-top:10px">
+          <div class="kpi">
+            <span>Angle</span>
+            <span class="mono" data-field="kpi">${c.angle} deg | ${c.us} us</span>
+          </div>
+          <input data-field="angle" class="slider" type="range" min="0" max="180" value="${c.angle}">
+        </div>
+        <div class="row" style="margin-top:10px">
+          <label>Manual US: 
+            <input data-field="us" type="number" value="${c.us}" style="width:100px">
+          </label>
+        </div>
+      `;
+      channelsWrap.appendChild(card);
+      updateChannelDisplay(ch, card);
+    });
+  }
+
+  channelsWrap.addEventListener("input", async (e) => {
+    const card = e.target.closest(".channel-card");
+    if (!card) return;
+    const ch = Number(card.dataset.ch);
+    const field = e.target.getAttribute("data-field");
+    const c = state.channels[ch];
+    if (field === "angle"){
+      c.angle = Number(e.target.value);
+      c.us = angleToUs(ch, c.angle);
+      updateChannelDisplay(ch, card);
+      saveState();
+      // Send: C<ch> <us>
+      if (state.autoSend) await sendText(`C${ch} ${c.us}`);
+    }else if (field === "us"){
+      c.us = Number(e.target.value);
+      c.angle = usToAngle(ch, c.us);
+      updateChannelDisplay(ch, card);
+      saveState();
+    }
+  });
+
+  channelsWrap.addEventListener("change", (e) => {
+    const card = e.target.closest(".channel-card");
+    if (!card) return;
+    const ch = Number(card.dataset.ch);
+    const field = e.target.getAttribute("data-field");
+    const c = state.channels[ch];
+    if (field === "min" || field === "max"){
+      c.minUs = Number(card.querySelector("[data-field='min']").value);
+      c.maxUs = Number(card.querySelector("[data-field='max']").value);
+      c.us = angleToUs(ch, c.angle);
+      updateChannelDisplay(ch, card);
+      saveState();
+    }
+  });
+
+  function renderSequences(){
+    seqSelect.innerHTML = "";
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Select";
+    seqSelect.appendChild(blank);
+    state.sequences.forEach(s => {
+      const o = document.createElement("option");
+      o.value = s.id;
+      o.textContent = s.name;
+      seqSelect.appendChild(o);
+    });
+    if (currentSeqId){
+      seqSelect.value = currentSeqId;
+    }
+  }
+
+  function nextSequenceName(){
+    const base = "Sequence";
+    const used = new Set(state.sequences.map(s => s.name));
+    let i = state.sequences.length + 1;
+    let name = `${base} ${i}`;
+    while (used.has(name)){
+      i += 1;
+      name = `${base} ${i}`;
+    }
+    return name;
+  }
+
+  function getCurrentSequence(){
+    return state.sequences.find(s => s.id === currentSeqId);
+  }
+
+  function ensureSequence(){
+    if (currentSeqId) return getCurrentSequence();
+    const name = (seqName.value || "").trim() || nextSequenceName();
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    const seq = { id, name, steps: [] };
+    state.sequences.push(seq);
+    currentSeqId = id;
+    saveState();
+    renderSequences();
+    return seq;
+  }
+
+  function loadSequence(id){
+    const s = state.sequences.find(x => x.id === id);
+    if (!s) return;
+    currentSeqId = s.id;
+    seqName.value = s.name;
+    renderSequences();
+    renderSequenceSteps();
+  }
+
+  function capturePose(){
+    const pose = {};
+    state.selectedChannels.forEach(ch => {
+      pose[ch] = state.channels[ch].us;
+    });
+    return pose;
+  }
+
+  function applyPose(pose){
+    Object.keys(pose).forEach(k => {
+      const ch = Number(k);
+      if (ch < 0 || ch > 11) return;
+      const c = state.channels[ch];
+      if (c) {
+        c.us = Number(pose[k]);
+        c.angle = usToAngle(ch, c.us);
+        // Force send to ESP32
+        sendText(`C${ch} ${c.us}`);
+      }
+    });
+    saveState();
+    renderChannels();
+  }
+
+  function renderSavedPoses(){
+    const selectedId = poseSelect.value;
+    poseSelect.innerHTML = "";
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Select";
+    poseSelect.appendChild(blank);
+    state.savedPoses.forEach(p => {
+      const o = document.createElement("option");
+      o.value = p.id;
+      o.textContent = p.name;
+      poseSelect.appendChild(o);
+    });
+    if (selectedId){
+      poseSelect.value = selectedId;
+    }
+  }
+
+  function renderEvControls(){
+    evGrid.innerHTML = "";
+    for(let i=0; i<6; i++){
+      const div = document.createElement("div");
+      div.className = "ev-item";
+      
+      const label = document.createElement("span");
+      label.className = "mono";
+      label.style.fontSize = "11px";
+      label.textContent = `V${i}`;
+      
+      const swLabel = document.createElement("label");
+      swLabel.className = "switch";
+      
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.addEventListener("change", () => {
+        sendText(`V${i}:${input.checked ? '1' : '0'}`);
+      });
+      
+      const span = document.createElement("span");
+      span.className = "slider-sw";
+      
+      swLabel.appendChild(input);
+      swLabel.appendChild(span);
+      div.appendChild(label);
+      div.appendChild(swLabel);
+      evGrid.appendChild(div);
+    }
+  }
+
+  function getSelectedPose(){
+    const id = poseSelect.value;
+    if (!id) return null;
+    return state.savedPoses.find(p => p.id === id) || null;
+  }
+
+  function renderPosePreview(){
+    if (!posePreview) return;
+    const pose = getSelectedPose();
+    if (!pose){
+      posePreview.textContent = "No pose selected.";
+      return;
+    }
+    const keys = Object.keys(pose.pose || {}).map(Number).sort((a,b) => a - b);
+    const txt = keys.map(ch => `CH${ch}:${pose.pose[ch]}us`).join(" ");
+    posePreview.textContent = txt;
+  }
+
+  function renderSequenceSteps(){
+    seqSteps.innerHTML = "";
+    const seq = getCurrentSequence();
+    if (!seq) {
+      seqSteps.innerHTML = "<div class='muted'>No sequence selected.</div>";
+      return;
+    }
+    
+    seq.steps.forEach((step, idx) => {
+    const row = document.createElement("div");
+    row.className = "step-row";
+    row.dataset.idx = String(idx);
+
+    const index = document.createElement("div");
+    index.className = "step-index";
+    index.textContent = `#${idx+1}`;
+    row.appendChild(index);
+
+    const type = document.createElement("div");
+    type.className = "step-type";
+    type.textContent = step.type.toUpperCase();
+    row.appendChild(type);
+
+      if (step.type === "pose"){
+        const desc = document.createElement("div");
+        desc.className = "mono";
+        desc.textContent = "Servo Pose";
+        row.appendChild(desc);
+
+        const durLabel = document.createElement("div");
+        durLabel.textContent = `${step.duration || 0}ms`;
+        durLabel.className = "muted";
+        durLabel.style.fontSize="11px";
+        row.appendChild(durLabel);
+      }else if (step.type === "delay"){
+        const lbl = document.createElement("div");
+        lbl.textContent = `${step.ms}ms`;
+        row.appendChild(lbl);
+      }else if (step.type === "command"){
+        const lbl = document.createElement("div");
+        lbl.textContent = step.cmd;
+        lbl.className = "mono";
+        row.appendChild(lbl);
+      }
+
+      const actions = document.createElement("div");
+      actions.className = "row";
+      const del = document.createElement("button");
+      del.className = "ghost small";
+      del.textContent = "X";
+      del.addEventListener("click", () => deleteStep(idx));
+      actions.appendChild(del);
+      row.appendChild(actions);
+
+      seqSteps.appendChild(row);
+    });
+  }
+
+  function deleteStep(idx){
+    const seq = getCurrentSequence();
+    if (!seq) return;
+    seq.steps.splice(idx, 1);
+    saveState();
+    renderSequenceSteps();
+  }
+
+  async function runSequence(){
+    const seq = getCurrentSequence();
+    if (!seq || seq.steps.length === 0){
+      pushLog("Sequence is empty");
+      return;
+    }
+    stopSeq = false;
+    btnSeqRun.disabled = true;
+    btnSeqStop.disabled = false;
+    for (const step of seq.steps){
+      if (stopSeq) break;
+      if (step.type === "pose"){
+        const pose = step.pose || {};
+        for (const k of Object.keys(pose)){
+          await sendText(`C${k} ${pose[k]}`);
+        }
+        const dur = Number(step.duration || 0);
+        if (dur) await sleep(dur);
+      }else if (step.type === "delay"){
+        await sleep(Number(step.ms || 0));
+      }else if (step.type === "command"){
+        await sendText(step.cmd);
+      }
+    }
+    btnSeqRun.disabled = false;
+    btnSeqStop.disabled = true;
+  }
+
+  function applyStateToUI(){
+    devNameInput.value = state.deviceName;
+    autoSend.checked = !!state.autoSend;
+    haptics.checked = !!state.haptics;
+    degStep.value = state.degStep;
+    sendDelay.value = state.sendDelay;
+  }
+
+  function setControlsEnabled(connected){
+    btnDisconnect.disabled = !connected;
+    btnConnect.disabled = connected;
+  }
+
+  // --- BUTTON ACTIONS ---
+
+  // Connection
+  btnEmergency.onclick = () => sendText("S");
+
+  // Pump/Mechanism
+  btnPump.onclick = () => {
+    pumpOn = !pumpOn;
+    sendText(pumpOn ? "PUMP:ON" : "PUMP:OFF");
+    btnPump.textContent = pumpOn ? "Pump Only: ON" : "Pump Only: OFF";
+  }
+
+  // Stepper
+  btnHome.onclick = () => sendText("H");
+  btnStepZero.onclick = () => sendText("SZ");
+  btnStepStop.onclick = () => sendText("STOP");
+  btnStepManual.onclick = () => {
+    const val = Number(stepManualVal.value);
+    if(!isNaN(val)) {
+      state.stepperPos = val;
+      updateStepperUI();
+      sendText("SM " + val);
+    }
+  }
+
+  stepSlider.oninput = () => {
+    state.stepperPos = Number(stepSlider.value);
+    updateStepperUI();
+    if(state.autoSend) sendText("SM " + state.stepperPos);
+  };
+  
+  btnStepFwd.onclick = () => {
+    const delta = Number(relativeStepVal.value || 0);
+    state.stepperPos += delta;
+    updateStepperUI();
+    sendText("SM " + state.stepperPos);
+  };
+  
+  btnStepBack.onclick = () => {
+    const delta = Number(relativeStepVal.value || 0);
+    state.stepperPos -= delta;
+    updateStepperUI();
+    sendText("SM " + state.stepperPos);
+  };
+
+  function updateStepperUI() {
+    stepSlider.value = state.stepperPos;
+    stepKpi.textContent = state.stepperPos + " steps";
+    saveState();
+  }
+
+  // Settings
+  autoSend.addEventListener("change", () => { state.autoSend = autoSend.checked; saveState(); });
+  haptics.addEventListener("change", () => { state.haptics = haptics.checked; saveState(); });
+  degStep.addEventListener("change", () => { state.degStep = Number(degStep.value || 1); saveState(); renderChannels(); });
+  sendDelay.addEventListener("change", () => { state.sendDelay = Number(sendDelay.value || 0); saveState(); });
+  devNameInput.addEventListener("change", () => { state.deviceName = devNameInput.value.trim() || "ESP32-Mecanisme"; saveState(); });
+  themeSelect.addEventListener("change", () => { state.theme = themeSelect.value; saveState(); applyTheme(); });
+
+  // Poses / Sequences
+  seqSelect.addEventListener("change", () => {
+    const id = seqSelect.value;
+    if (!id){
+      currentSeqId = null;
+      seqName.value = "";
+      renderSequenceSteps();
+      return;
+    }
+    loadSequence(id);
+  });
+
+  poseSelect.addEventListener("change", () => {
+    const pose = getSelectedPose();
+    if (!pose){
+      poseName.value = "";
+      renderPosePreview();
+      return;
+    }
+    poseName.value = pose.name;
+    renderPosePreview();
+  });
+
+  btnPoseSave.onclick = () => {
+    const name = (poseName.value || "").trim();
+    if (!name) { alert("Please enter a pose name"); return; }
+    if (state.savedPoses.find(p => p.name.toLowerCase() === name.toLowerCase())) {
+        alert("A pose with this name already exists"); 
+        return;
+    }
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    state.savedPoses.push({ id, name, pose: capturePose() });
+    saveState();
+    renderSavedPoses();
+    poseSelect.value = id;
+    renderPosePreview();
+  };
+
+  btnPoseApply.onclick = () => {
+    const pose = getSelectedPose();
+    if (pose) applyPose(pose.pose || {});
+  };
+
+  btnPoseDelete.onclick = () => {
+    const pose = getSelectedPose();
+    if(pose){
+      state.savedPoses = state.savedPoses.filter(p => p.id !== pose.id);
+      saveState();
+      renderSavedPoses();
+      renderPosePreview();
+      poseName.value = "";
+    }
+  };
+
+  btnPoseAddToSeq.onclick = () => {
+    const pose = getSelectedPose();
+    if(!pose) return;
+    const seq = ensureSequence();
+    const duration = Number(poseDuration.value || 0);
+    seq.steps.push({ type: "pose", pose: pose.pose, duration });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqNew.onclick = () => {
+    currentSeqId = null;
+    seqName.value = "";
+    renderSequences();
+    renderSequenceSteps();
+  };
+
+  btnSeqSave.onclick = () => {
+    const seq = getCurrentSequence();
+    if(seq) {
+      const newName = (seqName.value || "").trim();
+      if (!newName) { alert("Please enter a sequence name"); return; }
+      const exists = state.sequences.find(s => s.id !== seq.id && s.name.toLowerCase() === newName.toLowerCase());
+      if (exists) { alert("A sequence with this name already exists"); return; }
+      seq.name = newName;
+      saveState();
+      renderSequences();
+    }
+  };
+
+  btnSeqCapture.onclick = () => {
+    const seq = ensureSequence();
+    const duration = Number(poseDuration.value || 0);
+    seq.steps.push({ type: "pose", pose: capturePose(), duration });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqAddDelay.onclick = () => {
+    const seq = ensureSequence();
+    const ms = Number(delayDuration.value || 0);
+    seq.steps.push({ type: "delay", ms });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqAddCmd.onclick = () => {
+    const seq = ensureSequence();
+    const cmd = cmdSelect.value;
+    seq.steps.push({ type: "command", cmd });
+    saveState();
+    renderSequenceSteps();
+  };
+
+  btnSeqDelete.onclick = () => {
+    if (!currentSeqId) return;
+    state.sequences = state.sequences.filter(x => x.id !== currentSeqId);
+    currentSeqId = null;
+    seqName.value = "";
+    saveState();
+    renderSequences();
+    renderSequenceSteps();
+  };
+
+  btnSeqExport.onclick = () => {
+    const payload = {
+      version: 2,
+      savedPoses: state.savedPoses,
+      sequences: state.sequences
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "mech_sequences.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  btnSeqImport.onclick = () => seqImportFile.click();
+  seqImportFile.addEventListener("change", () => {
+    const file = seqImportFile.files && seqImportFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const data = JSON.parse(String(reader.result || ""));
+        if (Array.isArray(data.savedPoses)) state.savedPoses = data.savedPoses;
+        if (Array.isArray(data.sequences)) state.sequences = data.sequences;
+        saveState();
+        renderSavedPoses();
+        renderPosePreview();
+        renderSequences();
+        renderSequenceSteps();
+        pushLog("Imported OK");
+      }catch(e){
+        pushLog("Import failed");
+      }
+      seqImportFile.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  btnSeqRun.onclick = () => runSequence();
+  btnSeqStop.onclick = () => { stopSeq = true; };
+
+  // BLE Logic
+  if (!("bluetooth" in navigator)){
+    bleSupport.textContent = "BLE: unsupported";
+    bleSupport.style.color = "var(--danger)";
+  }else{
+    bleSupport.textContent = "BLE: ready";
+  }
+
+  btnConnect.onclick = async () => {
+    try{
+      setStatus("scanning...", false);
+      device = await navigator.bluetooth.requestDevice({
+        filters:[{namePrefix: "ESP32"}],
+        optionalServices:[SERVICE_UUID]
+      });
+
+      device.addEventListener("gattserverdisconnected", () => {
+        controlChar = null;
+        statusChar = null;
+        setStatus("disconnected", false);
+        setControlsEnabled(false);
+        pushLog("Disconnected");
+      });
+
+      setStatus("connecting...", false);
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService(SERVICE_UUID);
+      controlChar = await service.getCharacteristic(CONTROL_UUID);
+
+      try{
+        statusChar = await service.getCharacteristic(STATUS_UUID);
+        await statusChar.startNotifications();
+        statusChar.addEventListener("characteristicvaluechanged", (ev) => {
+          const msg = new TextDecoder().decode(ev.target.value);
+          pushLog(msg);
+        });
+      }catch(e){}
+
+      setStatus("connected", true);
+      setControlsEnabled(true);
+      pushLog("Connected");
+    }catch(e){
+      setStatus("error", false);
+      pushLog(String(e));
+    }
+  };
+
+  btnDisconnect.onclick = () => {
+    if (device && device.gatt && device.gatt.connected) device.gatt.disconnect();
+  };
+
+  // Expose to global scope for static HTML button onclick handlers
+  window.sendText = sendText;
+  window.applyPose = applyPose;
+  
+  window.testValves = async () => {
+    pushLog("Starting Valve Test...");
+    for(let i=0; i<6; i++) {
+       await sendText(`V${i}:1`);
+       await sleep(300);
+       await sendText(`V${i}:0`);
+       await sleep(100);
+    }
+    pushLog("Valve Test Complete.");
+  };
+
+  // Init
+  applyStateToUI();
+  updateStepperUI();
+  applyTheme();
+  renderChannelPicker();
+  renderChannels();
+  renderSavedPoses();
+  renderEvControls();
+  renderPosePreview();
+  renderSequences();
+  setControlsEnabled(false);
+  renderSequenceSteps();
+  btnSeqStop.disabled = true;
+
+  if (window.matchMedia){
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", () => { if (state.theme === "auto") applyTheme(); });
+  }
+})();
+</script>
+</body>
+</html>

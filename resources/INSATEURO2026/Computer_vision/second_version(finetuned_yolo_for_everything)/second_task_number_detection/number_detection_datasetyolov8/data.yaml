@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 4
+names: ['3', '5', '6', '9']
+
+roboflow:
+  workspace: eurobot26
+  project: number_detection-jvooa
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/eurobot26/number_detection-jvooa/dataset/2

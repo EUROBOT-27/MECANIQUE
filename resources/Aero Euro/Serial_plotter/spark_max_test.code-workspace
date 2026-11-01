@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "../../../Documents/PlatformIO/Projects/spark_max_test"
+		},
+		{
+			"name": "All_Terrain_Eurobot",
+			"path": "../../../Documents/PlatformIO/Projects/All_Terrain_Eurobot"
+		},
+		{
+			"name": "self-balancing-robot",
+			"path": "self-balancing-robot"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "All_Terrain_Eurobot"
+	}
+}

@@ -6,6 +6,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 
 ## From Seif (2026-11-01)
 - [ ] **Before your next pull:** back up your `claude-workspace/memory/` and `claude-workspace/tmp/` folders. They are no longer tracked (personal files, D-018), so the pull deletes them from your disk. Put them back after the pull; git ignores them from now on — Maatoug
+- [ ] Before the pull, also run `git config --global core.longpaths true` (some resources paths are too long for Windows' default limit). If git complains during the pull, a fresh clone is simpler — Maatoug
 - [ ] After the pull, update your personal memory: you share the hub with Seif (D-018); your TODO is `todo/maatoug.md`, logs are `logs/YYYY-MM-DD-maatoug.md` — Maatoug
 - [ ] Add the generators that live only on your PC (`C:\Projects\EUROBOT\Mecanique\`: clapets v1/v2/v4/PoC, SolidWorks C# `sw/` scripts, `ANALYSE_mecanisme_*.md`) to the repo under `mechanical/`, with relative paths — Maatoug
 - [ ] Check `tools/` (your helpers from `tmp/`, kept as examples) and `mechanical/resources/parts-photos/` (your `tmp/parts-img`) — Maatoug

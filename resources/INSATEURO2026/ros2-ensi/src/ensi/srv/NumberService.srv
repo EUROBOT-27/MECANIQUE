@@ -1,0 +1,5 @@
+# Number Detection Service
+# Request (empty - no input parameters needed)
+---
+# Response  
+int32 response_number    # The detected number (0-9)

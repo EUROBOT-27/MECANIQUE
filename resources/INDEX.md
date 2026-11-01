@@ -8,13 +8,16 @@ How it works:
 - When asked to "index the new resources", Claude skims each new item **once** and adds one row below.
 - When a resource gets studied in depth, Claude writes the findings to `_notes/<resource-name>.md`, so it never
   has to be re-read from scratch. The Notes column links to it.
+- **Everything here is committed to git as a snapshot** (D-018): cloned repos are copied without their `.git` folder
+  and without build output / caches. To refresh one, clone the source again outside the hub and copy it over.
+  Stored in normal git, not LFS (`resources/.gitattributes`).
 
 Tags: `drive` `gripper` `lift` `stacking` `launcher` `chassis` `beacon` `sima` `electronics` `localisation`
 `vision` `aruco` `ros` `navigation` `strategy` `poster` (add more as needed)
 
 ## Aero Euro — Aerobotix INSAT, Eurobot 2026 (`Aero Euro/`)
 
-Source: github.com/Eurobot-2026-Aerobotix, shallow clones taken 2026-10-25 (`git -C "<repo>" pull` to update).
+Source: github.com/Eurobot-2026-Aerobotix, shallow clones taken 2026-10-25, committed as a snapshot 2026-11-01.
 Descriptions below come from GitHub; rows marked *not skimmed* haven't been opened yet. Note: 2026 called SIMAs "PAMI".
 
 | Resource | What it is | Useful for | Tags | Notes |
@@ -38,7 +41,7 @@ Descriptions below come from GitHub; rows marked *not skimmed* haven't been open
 
 ## INSATEURO2026 — IEEE RAS INSAT previous team, Eurobot 2026 + ENSI 2025 (`INSATEURO2026/`)
 
-Our own club's handed-down material: 17 repos, shallow clones taken 2026-10-25. **All studied →
+Our own club's handed-down material: 17 repos, shallow clones taken 2026-10-25 (snapshot committed 2026-11-01). **All studied →
 [notes](_notes/insateuro2026.md)** (repo-by-repo table, vision post-mortem, lessons). 2026 result: 20th at the final.
 
 | Resource | What it is | Useful for | Tags |
@@ -64,7 +67,7 @@ Our own club's handed-down material: 17 repos, shallow clones taken 2026-10-25. 
 
 ## CDR-2027 — Barbatronic / Karibous, Coupe de France 2027 (`CDR-2027/`)
 
-Source: github.com/Barbatronic/CDR-2027, cloned 2026-10-28 (`git -C CDR-2027 pull` to update). FreeCAD CAD + Jekyll journal + firmware.
+Source: github.com/Barbatronic/CDR-2027, commit `91f057e` (2026-10-28), committed as a snapshot 2026-11-01. FreeCAD CAD + Jekyll journal + firmware.
 
 | Resource | What it is | Useful for | Tags | Notes |
 |---|---|---|---|---|

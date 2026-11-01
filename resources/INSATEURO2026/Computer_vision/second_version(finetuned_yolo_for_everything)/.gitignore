@@ -1,0 +1,6 @@
+*.jpg
+*.txt
+
+
+data_collector.py
+first_version(finetuned_yolo_for_everything)/

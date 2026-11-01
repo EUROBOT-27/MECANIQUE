@@ -1,0 +1,13 @@
+# Hybrid Strategy Supervisor Dependencies
+
+# Core vision and tracking
+opencv-contrib-python>=4.8.0
+numpy>=1.24.0
+filterpy>=1.4.5  # Kalman filtering
+
+# ROS2 (optional - for production integration)
+# Uncomment when deploying with ROS2:
+# rclpy
+# geometry-msgs
+# nav-msgs
+

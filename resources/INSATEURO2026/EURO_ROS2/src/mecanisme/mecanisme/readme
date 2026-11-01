@@ -1,0 +1,41 @@
+Maestro.py: 
+class for manipulating servos using maestro
+
+mechanism_servo: 
+This Python script controls a set of servos using a Pololu Maestro servo controller. It defines two groups of servos (ServoBot1 and ServoBot2) with predefined movement positions.
+Features:
+	Initialize servos to their default positions.
+	Move a specific servo to a target position.
+	Move all servos in a group to predefined positions.
+	Close the connection to the controller when finished.
+
+
+
+
+
+
+
+
+Mechanism_1:
+ Functionality
+Methods:
+
+🏗 lift_planks(): Moves the forklift motor to lift planks and updates the load_type parameter.
+
+🤖 ready_to_pickup(): Positions the servos to pick up objects.#not used
+
+🥫 hold_cans(): Adjusts the servos to hold cans.#aimant near can
+
+📦 place_first_cans(): Moves individual servos to place the first cans.#aimant far can
+
+📏 hold_plank(): Moves the forklift to hold a plank and activates the pump relay.(pump related)#not used
+
+🔄 place_first_plank_and_pick_last_cans(): Moves the forklift and servos to place the first plank and pick the last cans.#forklift down
+
+✅ place_last_cans(): Places the last cans using servo movements.#not used
+
+🏗 place_second_plank(): Moves the lift motor and activates the valve relay.#not used
+
+🏁 finish_building(): Resets servos and deactivates relays to complete the process.#aimant far can
+
+❌ destroy_node(): Cleans up GPIO resources when the node shuts down.

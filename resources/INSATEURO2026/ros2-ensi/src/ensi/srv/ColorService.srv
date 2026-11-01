@@ -1,0 +1,5 @@
+# Color Detection Service
+# Request (empty - no input parameters needed)
+---
+# Response
+string response_color    # The detected color (e.g., "red", "blue", "green", etc.)

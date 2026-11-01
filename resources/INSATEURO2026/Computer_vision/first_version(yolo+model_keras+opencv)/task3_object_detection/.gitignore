@@ -1,0 +1,14 @@
+# Ignore all files
+*.pt
+*.pth
+*.weights
+*.jpg 
+*.csv
+*.png
+*.bmp
+*.jpeg
+*.cache
+*.log
+*.zip
+*.tar
+*.yaml

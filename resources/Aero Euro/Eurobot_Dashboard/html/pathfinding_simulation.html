@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinding Simulation</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/pathfinding.css">
+    <link rel="icon" type="image/png" href="../resources/harissa.png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="strategy_selector.html" class="nav-link">Strategy</a>
+            <a href="pathfinding_simulation.html" class="nav-link active">Pathfinding</a>
+            <a href="realtime_robot.html" class="nav-link">Real-Time</a>
+            <a href="test_controller.html" class="nav-link">TEST</a>
+        </div>
+    </nav>
+    
+    <div class="logo-container">
+        <img src="../resources/AeRobotix.png" alt="AeRobotix Logo" class="logo">
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Pathfinding Simulation</h1>
+            <div id="rosStatus" class="ros-status">
+                <span class="status-indicator"></span>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="map-container">
+                <div class="map-wrapper" id="mapWrapper">
+                    <img id="map" src="../resources/map.png" alt="Eurobot Map">
+                    <!-- Markers will be added dynamically -->
+                </div>
+
+                <div class="orientation-selector" id="orientationSelector" style="display: none;">
+                    <h4>Select Orientation</h4>
+                    
+                    <div class="orientation-grid">
+                        <button class="orientation-btn" data-angle="180">↑</button>
+                        <button class="orientation-btn" data-angle="135">↗</button>
+                        <button class="orientation-btn" data-angle="90">→</button>
+                        <button class="orientation-btn" data-angle="-135">↖</button>
+                        <button class="orientation-btn" data-angle="0">●</button>
+                        <button class="orientation-btn" data-angle="45">↘</button>
+                        <button class="orientation-btn" data-angle="0">↓</button>
+                        <button class="orientation-btn" data-angle="-45">↙</button>
+                        <button class="orientation-btn" data-angle="-90">←</button>
+                    </div>
+
+                    <div class="orientation-input">
+                        <label>Angle (°):</label>
+                        <input type="number" id="orientationInput" min="-180" max="180" step="1" placeholder="0">
+                    </div>
+
+                    <button class="confirm-btn" id="confirmBtn">
+                        ✓ Confirm & Send
+                    </button>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="info-panel">
+                    <h3>Current Poses</h3>
+                    
+                    <div class="poses-grid">
+                        <div class="pose-info start-pose">
+                            <h4>Start Position</h4>
+                            <p id="startX">X: -</p>
+                            <p id="startY">Y: -</p>
+                            <p id="startTheta">θ: -</p>
+                        </div>
+
+                        <div class="pose-info goal-pose">
+                            <h4>Goal Position</h4>
+                            <p id="goalX">X: -</p>
+                            <p id="goalY">Y: -</p>
+                            <p id="goalTheta">θ: -</p>
+                        </div>
+
+                        <div class="pose-info enemy-pose">
+                            <h4>Enemy Position</h4>
+                            <p id="enemyX">X: -</p>
+                            <p id="enemyY">Y: -</p>
+                            <p id="enemyTheta">θ: -</p>
+                        </div>
+                    </div>
+
+                    <button class="button find-path-btn" id="findPathBtn">
+                        🔍 Find Path
+                    </button>
+
+                    <div style="margin-top: 10px; display: flex; gap: 8px; align-items: center;">
+                        <input
+                            type="number"
+                            id="roundTimerSecondsInput"
+                            min="0"
+                            step="1"
+                            placeholder="Seconds"
+                            value="0"
+                            style="width: 95px; padding: 6px 8px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;"
+                        >
+                        <select
+                            id="robotColorSelect"
+                            title="Robot color"
+                            style="padding: 6px 8px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.9rem;"
+                        >
+                            <option value="blue" selected>Blue</option>
+                            <option value="yellow">Yellow</option>
+                        </select>
+                        <button class="button timer-control-btn" id="timerControlBtn" style="margin-top: 0; background: linear-gradient(135deg, #ffb347 0%, #ffcc33 100%); color: #1a1a1a; white-space: nowrap;">
+                            ⏱️ Set Round Timer
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 8px; display: flex; gap: 14px; align-items: center; font-size: 0.92rem;">
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" id="frontEmptyCheckbox" checked>
+                            Front empty
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" id="backEmptyCheckbox" checked>
+                            Back empty
+                        </label>
+                    </div>
+                    
+                    <button class="button steal-batch-btn" id="stealBatchBtn" style="margin-top: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        🎯 Steal Batch
+                    </button>
+
+                    <button class="button" id="startTaskSchedulerBtn" style="margin-top: 10px; background: linear-gradient(135deg, #00b894 0%, #00a37a 100%);">
+                        ▶️ Start Task Scheduler
+                    </button>
+                </div>
+
+                <div class="batch-actions">
+                    <h4>🔢 Batch Actions</h4>
+                    
+                    <div class="batch-buttons">
+                        <button class="batch-toggle-all" id="toggleAllBtn">
+                            👁️ Toggle All Batches
+                        </button>
+                        
+                        <button class="batch-send-btn" id="sendBatchesBtn">
+                            📤 Send Selected Batches
+                        </button>
+                    </div>
+
+                    <div class="batch-list" id="batchList">
+                        <!-- Batch items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Context Menu -->
+            <div id="contextMenu" class="context-menu">
+                <div class="context-menu-item" data-action="start">🎯 Set Start Pose</div>
+                <div class="context-menu-item" data-action="goal">🏁 Set Goal Pose</div>
+                <div class="context-menu-item" data-action="enemy">⚠️ Set Enemy Pose</div>
+                <div class="context-menu-separator"></div>
+                <div class="context-menu-item" data-action="batch">➕ Add New Batch</div>
+            </div>
+
+            <!-- Batch Context Menu -->
+            <div id="batchContextMenu" class="context-menu">
+                <div class="context-menu-item" data-action="edit">✏️ Change Pattern</div>
+                <div class="context-menu-item" data-action="toggle">👁️ <span id="batchToggleText">Hide</span> Batch</div>
+                <div class="context-menu-separator"></div>
+                <div class="context-menu-item" data-action="delete">🗑️ Delete Batch</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Batch Modal -->
+    <div id="batchModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Batch</h3>
+                <span class="modal-close" id="modalClose">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p class="modal-instruction">Click on the map to place the batch center</p>
+                
+                <div class="batch-form" id="batchForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="batchKnownId">Known ID:</label>
+                        <input type="text" id="batchKnownId" placeholder="e.g., V_TOP_LEFT1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="batchDirection">Direction:</label>
+                        <select id="batchDirection" required>
+                            <option value="vertical">Vertical (50mm wide × 150mm tall, stacked)</option>
+                            <option value="horizontal">Horizontal (150mm wide × 50mm tall, side-by-side)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Member Colors (4 rectangles):</label>
+                        <div class="color-inputs">
+                            <select id="color1">
+                                <option value="yellow">🟡 Yellow (ID: 47)</option>
+                                <option value="blue">🔵 Blue (ID: 36)</option>
+                            </select>
+                            <select id="color2">
+                                <option value="blue">🔵 Blue (ID: 36)</option>
+                                <option value="yellow">🟡 Yellow (ID: 47)</option>
+                            </select>
+                            <select id="color3">
+                                <option value="yellow">🟡 Yellow (ID: 47)</option>
+                                <option value="blue">🔵 Blue (ID: 36)</option>
+                            </select>
+                            <select id="color4">
+                                <option value="blue">🔵 Blue (ID: 36)</option>
+                                <option value="yellow">🟡 Yellow (ID: 47)</option>
+                            </select>
+                        </div>
+                        <p style="font-size: 0.85em; color: #666; margin-top: 8px;">
+                            Yellow → ArUco ID 47 | Blue → ArUco ID 36
+                        </p>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn-cancel" id="cancelBatchBtn">Cancel</button>
+                        <button class="btn-save" id="saveBatchBtn">Save Batch</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROS Bridge Library -->
+    <script src="../js/lib/roslib.min.js"></script>
+    
+    <!-- Config must load first -->
+    <script src="../js/config.js"></script>
+    
+    <!-- Pathfinding Script -->
+    <script src="../js/pathfinding.js"></script>
+</body>
+</html>

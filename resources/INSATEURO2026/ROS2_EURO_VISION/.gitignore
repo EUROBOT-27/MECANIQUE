@@ -1,0 +1,44 @@
+# ROS2 Build Artifacts
+build/
+install/
+log/
+
+# Colcon artifacts
+.colcon/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+*.eggs/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Compiled files
+*.o
+*.a
+*.pyc
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+
+# ROS specific
+devel/
+.catkin_workspace
+
+# OS files
+Thumbs.db

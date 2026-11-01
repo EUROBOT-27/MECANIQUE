@@ -1,0 +1,2 @@
+int8 current_task_id
+int8 currently_doing_subtask

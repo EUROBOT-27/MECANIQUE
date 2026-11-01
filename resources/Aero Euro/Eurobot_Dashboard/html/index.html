@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eurobot Dashboard</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="icon" type="image/png" href="../resources/harissa.png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="strategy_selector.html" class="nav-link">Strategy</a>
+            <a href="pathfinding_simulation.html" class="nav-link">Pathfinding</a>
+            <a href="realtime_robot.html" class="nav-link">Real-Time</a>
+            <a href="test_controller.html" class="nav-link">TEST</a>
+            <button id="saveBtn" class="settings-btn" title="Save & Commit" style="margin-right: 10px;">💾</button>
+            <button id="settingsBtn" class="settings-btn" title="Server Settings">⚙️</button>
+        </div>
+    </nav>
+    
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Server Configuration</h2>
+            <div class="settings-info">
+                <div class="info-row">
+                    <strong>Current Mode:</strong>
+                    <span id="currentMode">-</span>
+                </div>
+                <div class="info-row">
+                    <strong>Server IP:</strong>
+                    <span id="currentIP">-</span>
+                </div>
+            </div>
+            <div class="settings-form">
+                <label for="serverIP">Raspberry Pi IP Address:</label>
+                <input type="text" id="serverIP" placeholder="e.g., 192.168.1.100 or 10.42.0.1">
+                <small>Set this when running on localhost. Leave as-is when accessing remotely.</small>
+                <button id="saveIPBtn">Save IP</button>
+                <button id="autoDetectBtn">Auto-detect</button>
+            </div>
+            <div id="settingsMessage" class="settings-message"></div>
+        </div>
+    </div>
+    
+    <div class="logo-container">
+        <img src="../resources/AeRobotix.png" alt="AeRobotix Logo" class="logo">
+    </div>
+    <h1 id="dashboardTitle" class="dashboard-title">Eurobot Dashboard</h1>
+
+    <div class="esp-status-panel">
+        <div class="esp-status-card">
+            <span class="esp-status-dot disconnected" id="frontStatusDot"></span>
+            <div class="esp-status-text">
+                <span class="esp-status-name">Front ESP</span>
+                <span class="esp-status-value" id="frontStatusLabel">Disconnected</span>
+            </div>
+        </div>
+        <div class="esp-status-card">
+            <span class="esp-status-dot disconnected" id="backStatusDot"></span>
+            <div class="esp-status-text">
+                <span class="esp-status-name">Back ESP</span>
+                <span class="esp-status-value" id="backStatusLabel">Disconnected</span>
+            </div>
+        </div>
+        <div class="esp-status-card">
+            <span class="esp-status-dot disconnected" id="pneumaticStatusDot"></span>
+            <div class="esp-status-text">
+                <span class="esp-status-name">Pneumatic ESP</span>
+                <span class="esp-status-value" id="pneumaticStatusLabel">Disconnected</span>
+            </div>
+        </div>
+        <div class="esp-status-card">
+            <span class="esp-status-dot disconnected" id="beaconStatusDot"></span>
+            <div class="esp-status-text">
+                <span class="esp-status-name">Beacon</span>
+                <span class="esp-status-value" id="beaconStatusLabel">Not Ready</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="button-container">
+        <div>
+        <button id="prepareBtn">Prepare Robot</button>
+         </div>
+        <div>
+            <button id="startBtn">Start Strategy</button>
+            <div class="start-options">
+                <label class="pami-toggle-label" for="startWithPamiCheckbox">
+                    <input type="checkbox" id="startWithPamiCheckbox">
+                    Start with PAMI
+                </label>
+            </div>
+            <br>
+            <center>
+                <label id="current-strategy" style="font-weight: 700; color: #ffcc00;font-size:1.25em">-</label>
+            </center>
+        </div>
+        <div>
+        <button id="stopBtn">Stop Strategy</button>
+         </div>
+    </div>
+    
+    <div class="button-container" style="margin-top: 20px;">
+        <div></div>
+        <div>
+            <button id="restartMicroRosBtn" style="background-color: #ff9800;">Restart MicroROS</button>
+        </div>
+        <div></div>
+    </div>
+    
+    <div id="status"></div>
+    
+    <div class="output-controls">
+        <label for="outputSelector">View Output:</label>
+        <select id="outputSelector">
+            <option value="strategy">Strategy</option>
+            <option value="pathfinding">Pathfinding</option>
+            <option value="pami">PAMI</option>
+        </select>
+    </div>
+    
+    <div id="output"></div>
+    
+    <script src="../js/config.js"></script>
+    <script src="../js/lib/roslib.min.js"></script>
+    <script src="../js/home.js"></script>
+</body>
+</html>

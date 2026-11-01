@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Robot Tracking</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/realtime_robot.css">
+    <link rel="icon" type="image/png" href="../resources/harissa.png">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="strategy_selector.html" class="nav-link">Strategy</a>
+            <a href="pathfinding_simulation.html" class="nav-link">Pathfinding</a>
+            <a href="realtime_robot.html" class="nav-link active">Real-Time</a>
+            <a href="test_controller.html" class="nav-link">TEST</a>
+        </div>
+    </nav>
+    
+    <div class="logo-container">
+        <img src="../resources/AeRobotix.png" alt="AeRobotix Logo" class="logo">
+    </div>
+
+    
+    
+    <div class="container">
+        <div class="header">
+            <h1>Real-Time Robot Tracking</h1>
+            <div id="rosStatus" class="ros-status">
+                <span class="status-indicator"></span>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="map-container-fullscreen">
+                <div class="map-wrapper" id="mapWrapper">
+                    <img id="map" src="../resources/map.png" alt="Eurobot Map">
+                    <!-- Robot and obstacles will be added dynamically -->
+                </div>
+
+                <div class="info-panels">
+                    <div class="scheduler-info">
+                        <h4>Task Scheduler</h4>
+                        <div class="info-row">
+                            <span class="label">Source:</span>
+                            <span id="schedulerSource" class="value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Remaining:</span>
+                            <span id="schedulerRemaining" class="value">-</span>
+                            <span class="unit">s</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Front:</span>
+                            <span id="schedulerFrontEmpty" class="value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Back:</span>
+                            <span id="schedulerBackEmpty" class="value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Tracked:</span>
+                            <span id="schedulerTrackedTask" class="value">none</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Queue:</span>
+                            <span id="schedulerQueueSize" class="value">0</span>
+                        </div>
+                        <div class="queue-box">
+                            <div class="queue-title">Queue Contents</div>
+                            <ul id="schedulerQueueList" class="queue-list">
+                                <li class="queue-empty">No task scheduler data yet</li>
+                            </ul>
+                        </div>
+
+                        <button id="restartBeaconBtn" class="button" style="margin-top: 10px; width: 100%; background: linear-gradient(135deg, #ff7675 0%, #d63031 100%); color: #fff;">
+                            🔁 Restart Beacon
+                        </button>
+
+                        <div style="margin-top: 10px; display: flex; gap: 6px; align-items: center;">
+                            <select id="batchOverridePrefix" style="flex: 0 0 64px; padding: 6px; border-radius: 6px; border: 1px solid #ccc;">
+                                <option value="s" selected>SX</option>
+                            </select>
+                            <input id="batchOverrideCode" type="text" placeholder="code 14" maxlength="8" style="flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc;" />
+                        </div>
+                        <button id="clearBatchOverrideBtn" class="button" style="margin-top: 8px; width: 100%;">🧽 Clear One</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="realtime-control-panel">
+            <div class="button-container" style="padding-left:auto; padding-right:auto; display:flex; gap:12px; justify-content:center;">
+                    <div class="esp-status-panel">
+                        <div class="esp-status-card">
+                            <span class="esp-status-dot disconnected" id="frontStatusDot"></span>
+                            <div class="esp-status-text">
+                                <span class="esp-status-name">Front ESP</span>
+                                <span class="esp-status-value" id="frontStatusLabel">Disconnected</span>
+                            </div>
+                        </div>
+                        <div class="esp-status-card">
+                            <span class="esp-status-dot disconnected" id="backStatusDot"></span>
+                            <div class="esp-status-text">
+                                <span class="esp-status-name">Back ESP</span>
+                                <span class="esp-status-value" id="backStatusLabel">Disconnected</span>
+                            </div>
+                        </div>
+                        <div class="esp-status-card">
+                            <span class="esp-status-dot disconnected" id="pneumaticStatusDot"></span>
+                            <div class="esp-status-text">
+                                <span class="esp-status-name">Pneumatic ESP</span>
+                                <span class="esp-status-value" id="pneumaticStatusLabel">Disconnected</span>
+                            </div>
+                        </div>
+                        <div class="esp-status-card">
+                            <span class="esp-status-dot disconnected" id="beaconStatusDot"></span>
+                            <div class="esp-status-text">
+                                <span class="esp-status-name">Beacon</span>
+                                <span class="esp-status-value" id="beaconStatusLabel">Not Ready</span>
+                            </div>
+                        </div>
+                    </div>
+                <div>
+                    <button id="prepareBtn">Prepare Robot</button>
+                </div>
+                <div>
+                    <button id="startBtn">Start Strategy</button>
+                    <div class="start-options" style="margin-top: 10px;">
+                        <label class="pami-toggle-label" for="startWithPamiCheckbox">
+                            <input type="checkbox" id="startWithPamiCheckbox">
+                            Start with PAMI
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <button id="stopBtn">Stop Strategy</button>
+                </div>
+            </div>
+
+            <div id="status"></div>
+
+            <div class="output-controls">
+                <label for="outputSelector">View Output:</label>
+                <select id="outputSelector">
+                    <option value="strategy">Strategy</option>
+                    <option value="pathfinding">Pathfinding</option>
+                    <option value="pami">PAMI</option>
+                </select>
+            </div>
+
+            <div id="output"></div>
+
+            <section class="strategy-selector-embed">
+                <div class="embed-header">
+                    <div>
+                        <p class="embed-kicker">Quick Access</p>
+                        <h2>Strategy Selector</h2>
+                    </div>
+                    <a class="embed-open-link" href="strategy_selector.html" target="_blank" rel="noreferrer">Open full page</a>
+                </div>
+                <p class="embed-description">Browse and manage strategies without leaving the realtime view.</p>
+                <div class="iframe-shell">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div class="strategy-mini strategy-mini--blue" style="flex:1; min-width:200px; border-color:rgba(94,184,255,0.25);">
+                            <label style="font-weight:700; color:#5eb8ff;">&#9632; Blue strategy</label>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <select id="strategySelectBlue" style="flex:1;">
+                                    <option>Loading...</option>
+                                </select>
+                                <button id="strategySelectBtnBlue" class="button">Select</button>
+                            </div>
+                            <div style="font-size:0.88rem;">Active: <span id="selectedStrategyLabelBlue" style="font-weight:700; color:#5eb8ff;">none</span></div>
+                        </div>
+                        <div class="strategy-mini strategy-mini--yellow" style="flex:1; min-width:200px; border-color:rgba(255,224,102,0.25);">
+                            <label style="font-weight:700; color:#ffe066;">&#9632; Yellow strategy</label>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <select id="strategySelectYellow" style="flex:1;">
+                                    <option>Loading...</option>
+                                </select>
+                                <button id="strategySelectBtnYellow" class="button">Select</button>
+                            </div>
+                            <div style="font-size:0.88rem;">Active: <span id="selectedStrategyLabelYellow" style="font-weight:700; color:#ffe066;">none</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                        <span style="font-size:0.88rem; color:#9fb4ff; font-weight:600;">Team color:</span>
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:700; color:#5eb8ff;">
+                            <input type="radio" name="teamColor" id="teamColorBlue" value="blue" checked> Blue
+                        </label>
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-weight:700; color:#ffe066;">
+                            <input type="radio" name="teamColor" id="teamColorYellow" value="yellow"> Yellow
+                        </label>
+                        <span style="font-size:0.85rem; color:#9fb4ff;">Will start: <span id="activeStrategyLabel" style="font-weight:700; color:#cfe3ff;">none</span></span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Load ROS library -->
+    <script src="../js/lib/roslib.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/realtime_robot.js"></script>
+</body>
+</html>

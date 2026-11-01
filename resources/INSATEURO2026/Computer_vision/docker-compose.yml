@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  computer-vision:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: computer_vision_service
+    restart: unless-stopped
+    
+    # Environment variables
+    environment:
+      - PYTHONPATH=/app
+      - OPENCV_LOG_LEVEL=ERROR
+      - PYTHONUNBUFFERED=1
+      - QT_QPA_PLATFORM=offscreen
+    
+    # Volume mounts for models and data persistence
+    volumes:
+      - ./models:/app/models:ro  # Read-only model files
+      - ./logs:/app/logs:rw      # Writable logs directory
+      - /dev/video0:/dev/video0  # Camera access (Linux)
+    
+    # Port mapping
+    ports:
+      - "8000:8000"
+      - "11311:11311"  # ROS master port
+    
+    # Device access for camera
+    devices:
+      - /dev/video0:/dev/video0
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import cv2, ultralytics; print('Health check passed')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    # Network mode for ROS communication
+    network_mode: host
+    
+    # Privileged mode for camera access (if needed)
+    # privileged: true
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Command override for different modes
+    command: ["python", "second_version(finetuned_yolo_for_everything)/computer_vision_service.py"]
+
+  # Development service with mounted code for live development
+  computer-vision-dev:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: computer_vision_dev
+    restart: "no"
+    
+    environment:
+      - PYTHONPATH=/app
+      - OPENCV_LOG_LEVEL=DEBUG
+      - PYTHONUNBUFFERED=1
+      - QT_QPA_PLATFORM=offscreen
+    
+    volumes:
+      - .:/app:rw  # Mount entire codebase for development
+      - /dev/video0:/dev/video0
+    
+    ports:
+      - "8001:8000"
+    
+    devices:
+      - /dev/video0:/dev/video0
+    
+    network_mode: host
+    
+    # Interactive mode for development
+    stdin_open: true
+    tty: true
+    
+    # Override command for development
+    command: ["python", "-c", "print('Development container ready. Run your scripts manually.')"]
+    
+    profiles:
+      - dev  # Only start with --profile dev

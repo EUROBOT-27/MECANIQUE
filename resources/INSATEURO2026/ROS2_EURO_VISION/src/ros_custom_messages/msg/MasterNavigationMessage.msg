@@ -1,0 +1,9 @@
+float32 nav_target_x
+float32 nav_target_y
+float32 nav_target_angle
+bool nav_is_forward
+int8 nav_linear_velocity_choice
+int8 nav_angular_velocity_choice
+int8 nav_linear_acceleration_choice
+int8 nav_angular_acceleration_choice
+bool nav_is_with_platforms

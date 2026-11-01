@@ -1,0 +1,4 @@
+# ESP32 Encoder Plotter - Requirements
+# Install with: pip install -r requirements.txt
+
+matplotlib>=3.5.0

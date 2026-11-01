@@ -1,0 +1,146 @@
+# Full Pipeline Configuration - Eurobot 2026
+
+# ============================================================================
+# CAMERA SETTINGS
+# ============================================================================
+camera:
+  device_id: 1  # Camera index (0 for built-in, 1 for external)
+  resolution:
+    width: 1280
+    height: 720
+  fps: 30
+
+# ============================================================================
+# CALIBRATION FILES
+# ============================================================================
+calibration:
+  intrinsics: "../../camera_calibration_folder/calibration/camera_calibration.json"
+  extrinsics: "../../camera_calibration_folder/calibration/camera_extrinsics.json"
+
+# ============================================================================
+# ARUCO MARKERS
+# ============================================================================
+aruco:
+  dictionary: "DICT_4X4_50"
+  
+  # Reference markers (fixed anchors, 10cm size)
+  reference_markers:
+    20:
+      position: [0.600, 1.400, 0.0]  # [x, y, z] in meters
+      size: 0.10
+    21:
+      position: [2.400, 1.400, 0.0]
+      size: 0.10
+    22:
+      position: [0.600, 0.600, 0.0]
+      size: 0.10
+    23:
+      position: [2.400, 0.600, 0.0]
+      size: 0.10
+  
+  # Object marker default size
+  object_marker_size: 0.05  # 5cm for all non-reference markers
+  
+  # Enemy marker ID
+  enemy_marker_id: 13
+
+# ============================================================================
+# KALMAN FILTER SETTINGS
+# ============================================================================
+kalman:
+  enabled: true
+  
+  # Process noise (lower = smoother but less responsive)
+  process_noise: 0.01
+  
+  # Measurement noise (higher = trust measurements less)
+  measurement_noise: 0.1
+  
+  # Maximum frames without detection before considering marker lost
+  max_frames_without_detection: 30
+  
+  # Apply Kalman filter to specific marker types
+  filter_types:
+    - "enemy"  # Always filter enemy markers
+    # - "caisse"  # Uncomment to filter box markers
+    # - "object"  # Uncomment to filter all object markers
+
+# ============================================================================
+# OCCLUSION HANDLING
+# ============================================================================
+occlusion:
+  enabled: true
+  
+  # Number of past detections to keep in history
+  history_length: 30
+  
+  # Minimum quality score for partial detections (0.0 to 1.0)
+  partial_detection_threshold: 0.5
+  
+  # Timeout in seconds before marking marker as lost
+  timeout: 1.0
+
+# ============================================================================
+# TEMPORAL SMOOTHING (for non-Kalman markers)
+# ============================================================================
+smoothing:
+  enabled: true
+  
+  # Number of frames to average (moving average)
+  history_size: 5
+
+# ============================================================================
+# VISUALIZATION
+# ============================================================================
+visualization:
+  # Show reference marker axes
+  show_reference_axes: true
+  
+  # Show object marker axes
+  show_object_axes: true
+  
+  # Display Kalman filter predictions during occlusion
+  show_predictions: true
+  
+  # Colors (BGR format)
+  colors:
+    reference_marker: [0, 255, 0]      # Green
+    enemy_marker: [0, 0, 255]          # Red
+    object_marker: [255, 0, 255]       # Magenta
+    kalman_filtered: [0, 255, 255]     # Yellow
+    no_extrinsics: [128, 128, 128]     # Gray
+
+# ============================================================================
+# COMPETITION MARKER SCHEMA
+# ============================================================================
+# Official Eurobot 2026 marker IDs:
+#
+# Map Anchors (20-23):
+#   - ID 20-23: Fixed corner reference markers (10cm)
+#
+# Caisses (Boxes):
+#   - ID 36: Blue caisse
+#   - ID 47: Yellow caisse  
+#   - ID 41: Black/rotten caisse
+#
+# Enemy Robots (30+):
+#   - IDs 30-35, 38-40, 42-46, 48+
+#   - Excluding caisse IDs
+#   - ID 13 configured as primary enemy target
+#
+# ============================================================================
+
+# ============================================================================
+# OUTPUT SETTINGS
+# ============================================================================
+output:
+  # Save tracking data to file
+  save_data: false
+  output_file: "tracking_data.json"
+  
+  # Log detections to console
+  log_detections: true
+  log_kalman_updates: true
+  
+  # FPS counter update interval (frames)
+  fps_update_interval: 30

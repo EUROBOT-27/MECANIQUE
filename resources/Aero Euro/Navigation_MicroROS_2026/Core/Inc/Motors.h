@@ -1,0 +1,103 @@
+/**
+  ******************************************************************************
+  * @file           : motors.h
+  * @brief          : Header for motors.c file.
+  *                   This file contains the common defines of the application.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __MOTORS_H
+#define __MOTORS_H
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
+#include <stdlib.h>
+#include <math.h>
+#include "FreeRTOS.h"
+#include "task.h"
+
+enum Communication{
+	PC,
+	RASPBERRY
+};
+
+#define PI 3.1415926535897932384626433832795
+#define STOP_PWM_THRESHOLD   3000   // close to PWM_max (4499)
+#define STOP_SPEED_THRESHOLD 120    // mm/s (robot almost stopped)
+
+extern enum Communication communication_state;
+extern TIM_HandleTypeDef* htim_motors;
+extern uint32_t right_forward, right_backward, left_forward, left_backward;
+extern int PWM_R, PWM_L;
+extern int PWM_max;
+extern int PWM_R_forward_min, PWM_L_forward_min, PWM_R_backward_min, PWM_L_backward_min;
+extern int PWM_offset_R; // used to start both PWMs at a point equally far from the PWM which can move them, so neither lag behind
+extern int PWM_offset_L;
+extern float current_speed_R;
+extern float current_speed_L;
+extern float previous_speed_R;
+extern float previous_speed_L;
+extern float target_speed_R;
+extern float target_speed_L;
+extern float current_acceleration_R; // marks the change in speed with respect to time
+extern float current_acceleration_L; // **
+extern uint32_t previous_speed_calculation_time;
+extern int32_t encoder_count_R;
+extern int32_t encoder_count_L;
+extern int32_t previous_encoder_count_R;
+extern int32_t previous_encoder_count_L;
+extern TIM_HandleTypeDef* encoder_timer_R;
+extern TIM_HandleTypeDef* encoder_timer_L;
+extern int CPR;
+extern float wheel_diameter_R;
+extern float wheel_diameter_L;
+extern int32_t debugger;
+extern float debugger_2;
+extern UART_HandleTypeDef huart2;
+extern int32_t previous_speed_control_time;
+extern float speed_integral_R;
+extern float speed_derivative_R;
+extern float previous_speed_error_R;
+extern float speed_integral_L;
+extern float speed_derivative_L;
+extern float previous_speed_error_L;
+extern float previous_position_error_R;
+extern float previous_position_error_L;
+extern int32_t previous_position_control_time;
+extern float position_max_response;
+extern float default_position_max_response;
+extern float position_integral_R;
+extern float position_derivative_R;
+extern float position_integral_L;
+extern float position_derivative_L;
+extern int32_t target_encoder_count_R;
+extern int32_t target_encoder_count_L;
+
+
+void run_right_motor();
+void run_left_motor();
+void setup_motor_channels(TIM_HandleTypeDef* motors_timer, uint32_t right_forward, uint32_t right_backward, uint32_t left_forward, uint32_t left_backward);
+void setup_PWM_min_max(int PWM__max, int PWM__R_forward_min, int PWM__L_forward_min, int PWM__R_backward_min,int PWM__L_backward_min);
+void stop_motors();
+void update_speed();
+void setup_encoder_timers(TIM_HandleTypeDef* right_timer, TIM_HandleTypeDef* left_timer, int cpr);
+void setup_wheel_diameters(float right_wheel, float left_wheel);
+void update_encoder_counts();
+void set_target_speeds(float target_speed_R, float target_speed_L);
+void send_values_to_usart(float value1, float value2, float value3, float value4); // hedhi ma3andheech 3ale9a b motors ama ma3andi win n7ottha, aslan for debugging stfu
+int32_t micros();
+void delay(int ms);
+void reset_position_control_variables();
+void reset_motors_vars();
+
+#endif /* __MOTORS_H */

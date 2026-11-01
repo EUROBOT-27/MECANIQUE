@@ -1,0 +1,365 @@
+/*
+ * odometry.c
+ *
+ *  Created on: Aug 27, 2025
+ *      Author: monji
+ */
+
+#include "../Inc/Odometry.h"
+
+float driven_wheels_spacing;
+float dead_wheels_spacing = 0;
+float current_x = 0;
+float current_y = 0;
+float current_phi = 0;
+float absolute_phi = 0;
+float inner_plane_x = 0;
+float inner_plane_y = 0;
+float inner_plane_phi = 0;
+float inner_plane_absolute_phi = 0;
+int8_t skip_position_update = 0; // for synchronization reasons
+int8_t block_get_position = 0;
+int8_t is_inside_inner_plane = 0;
+float imu_yaw_offset = 0;
+float current_imu_yaw;
+float absolute_imu_yaw = 0;
+float current_imu_gyro_z;
+int8_t imu_yaw_new = 0;
+int8_t imu_gyro_z_new = 0;
+float front_aruco_relative_x = 0;
+float front_aruco_relative_y = 0;
+float back_aruco_relative_x = 0;
+float back_aruco_relative_y = 0;
+
+float normalize_angle(float angle){
+	float a = angle;
+	while (a > PI){
+		a -= 2*PI;
+	}
+	while (a <= -PI){
+		a += 2*PI;
+	}
+	return a;
+}
+
+void update_position(int8_t skip){
+	if (!skip){
+		update_encoder_counts();
+
+		float dC = (ticks_to_distance(encoder_count_R - previous_encoder_count_R, wheel_diameter_R) + ticks_to_distance(encoder_count_L - previous_encoder_count_L, wheel_diameter_L))/2;
+
+		float previous_absolute_phi = absolute_phi;
+		absolute_phi = ( ticks_to_distance(encoder_count_R, wheel_diameter_R) - ticks_to_distance(encoder_count_L, wheel_diameter_L) )/dead_wheels_spacing;
+
+		current_x += dC*cos( ( previous_absolute_phi + absolute_phi ) / 2 );
+		current_y += dC*sin( ( previous_absolute_phi + absolute_phi ) / 2 );
+
+		current_phi = absolute_phi;
+		while (current_phi > PI){
+			current_phi -= 2*PI;
+		}
+		while (current_phi <= -PI){
+			current_phi += 2*PI;
+		}
+
+		update_speed();
+	}
+}
+void reset_position(){
+	set_position(0, 0, 0, 0);
+}
+void set_position(float current__x, float current__y, float current__phi, float absolute__phi){
+	current__phi = deg_to_rad(current__phi);
+	absolute__phi = deg_to_rad(absolute__phi);
+	current_x = current__x;
+	current_y = current__y;
+	current_phi = current__phi;
+	absolute_phi = absolute__phi;
+	encoder_count_R = (CPR * absolute__phi * dead_wheels_spacing/2) / (wheel_diameter_R * PI);
+	encoder_count_L = -(CPR * absolute__phi * dead_wheels_spacing/2) / (wheel_diameter_L * PI);
+	previous_encoder_count_L = encoder_count_L;
+	previous_encoder_count_R = encoder_count_R;
+	reset_position_control_variables();
+	target_encoder_count_R = encoder_count_R;
+	target_encoder_count_L = encoder_count_L;
+	position_integral_R = 0;
+	position_derivative_R = 0;
+	position_integral_L = 0;
+	position_derivative_L = 0;
+}
+float get_distance_to(float x, float y){
+	return sqrt(SQR(current_x - x) + SQR(current_y - y));
+}
+float get_arc_distance_to(float target_point__x, float target_point__y, float center_point__x, float center_point__y, float R){
+	float projection_angle = atan2(current_y - center_point__y , current_x - center_point__x);
+	float target_angle = atan2(target_point__y - center_point__y , target_point__x - center_point__x);
+	float robot_to_target_angle = atan2(target_point__y - current_y , target_point__x - current_x);
+
+	float delta = projection_angle - target_angle;
+	if (delta > PI) delta -= 2 * PI;
+	if (delta < -PI) delta += 2 * PI;
+
+	if (fabs(normalize_angle(current_phi - robot_to_target_angle)) > PI/2){
+		delta = 2*PI - fabs(delta);
+	}
+	return fabs(R * delta);
+}
+float get_angle_to(float x, float y){
+	return atan2(y - current_y, x - current_x);
+}
+void setup_aruco_positions(float front_x, float front_y, float back_x, float back_y){
+	front_aruco_relative_x = front_x;
+	front_aruco_relative_y = front_y;
+	back_aruco_relative_x = back_x;
+	back_aruco_relative_y = back_y;
+}
+float get_bezier_distance(float t ,float x0, float y0,float x1, float y1,float x2 , float y2 ,float x3, float y3){
+    float length = 0.0f;
+    float control_len =hypotf(x1-x0, y1-y0) +hypotf(x2-x1, y2-y1) +hypotf(x3-x2, y3-y2);
+
+	float chord_len = hypotf(x3-x0, y3-y0);
+	float curv = control_len / chord_len;
+	int N = (int)(0.4f * control_len + 25.0f * (curv - 1.0f)); //0.4 wl 25.0 tnjm ttunihom
+	if (N < 20)  N = 20;
+	if (N > 300) N = 300;
+
+    for(float i = (t * N); i <= N; i++){
+        float t_prev = (float)(i - 1) / N;
+        float t_curr = (float)i / N;
+
+        float mt_prev = 1.0f - t_prev;
+        float mt_curr = 1.0f - t_curr;
+
+        float x_prev =  mt_prev*mt_prev*mt_prev * x0
+                      + 3*mt_prev*mt_prev*t_prev * x1
+                      + 3*mt_prev*t_prev*t_prev * x2
+                      + t_prev*t_prev*t_prev * x3;
+
+        float y_prev =  mt_prev*mt_prev*mt_prev * y0
+                      + 3*mt_prev*mt_prev*t_prev * y1
+                      + 3*mt_prev*t_prev*t_prev * y2
+                      + t_prev*t_prev*t_prev * y3;
+
+        float x_curr =  mt_curr*mt_curr*mt_curr * x0
+                      + 3*mt_curr*mt_curr*t_curr * x1
+                      + 3*mt_curr*t_curr*t_curr * x2
+                      + t_curr*t_curr*t_curr * x3;
+
+        float y_curr =  mt_curr*mt_curr*mt_curr * y0
+                      + 3*mt_curr*mt_curr*t_curr * y1
+                      + 3*mt_curr*t_curr*t_curr * y2
+                      + t_curr*t_curr*t_curr * y3;
+
+        length += sqrtf((x_curr - x_prev)*(x_curr - x_prev)
+                      + (y_curr - y_prev)*(y_curr - y_prev));
+    }
+    return length;
+}
+
+void bezier(float t, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float *x, float *y){
+    float mt = 1.0f - t;
+    float mt2 = mt * mt;
+    float t2  = t * t;
+
+    *x = mt2*mt*x0 + 3*mt2*t*x1 + 3*mt*t2*x2 + t2*t*x3;
+    *y = mt2*mt*y0 + 3*mt2*t*y1 + 3*mt*t2*y2 + t2*t*y3;
+}
+
+void bezier_derivative(float t, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float *x, float *y){
+    float mt = 1.0f - t;
+
+    *x = 3*mt*mt*(x1 - x0)
+       + 6*mt*t*(x2 - x1)
+       + 3*t*t*(x3 - x2);
+
+    *y = 3*mt*mt*(y1 - y0)
+       + 6*mt*t*(y2 - y1)
+       + 3*t*t*(y3 - y2);
+}
+
+double signed_distance_to_bezier(double px, double py, double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double t){
+    double mt = 1.0 - t;
+
+    double cx =
+        (mt*mt*mt)*x0 +
+        3.0*(mt*mt)*t*x1 +
+        3.0*mt*(t*t)*x2 +
+        (t*t*t)*x3;
+
+    double cy =
+        (mt*mt*mt)*y0 +
+        3.0*(mt*mt)*t*y1 +
+        3.0*mt*(t*t)*y2 +
+        (t*t*t)*y3;
+
+    double tx =
+        3.0*mt*mt*(x1 - x0) +
+        6.0*mt*t*(x2 - x1) +
+        3.0*t*t*(x3 - x2);
+
+    double ty =
+        3.0*mt*mt*(y1 - y0) +
+        6.0*mt*t*(y2 - y1) +
+        3.0*t*t*(y3 - y2);
+
+    double vx = px - cx;
+    double vy = py - cy;
+
+    double dist = sqrt(vx*vx + vy*vy);
+    double cross = tx*vy - ty*vx;
+
+    return (cross < 0.0) ? dist : -dist;
+}
+
+float get_bezier_radius(float t,float x0, float y0,float x1, float y1, float x2, float y2,float x3, float y3){
+	float dx1, dy1, dx2, dy2;
+    bezier_derivative(t, x0, y0, x1, y1, x2, y2, x3, y3, &dx1, &dy1);
+
+    float mt = 1.0f - t;
+    dx2 = 6*mt*(x2 - 2*x1 + x0) + 6*t*(x3 - 2*x2 + x1);
+    dy2 = 6*mt*(y2 - 2*y1 + y0) + 6*t*(y3 - 2*y2 + y1);
+
+    float speed2 = dx1*dx1 + dy1*dy1;
+    float cross  = dx1*dy2 - dy1*dx2;
+
+    if(fabsf(cross) < 1e-6f)
+         return 1e6f;
+
+    float R = powf(speed2, 1.5f) / fabsf(cross);
+
+    return (cross > 0.0f) ? R : -R;
+}
+
+float project_bezier(float px, float py, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
+    float t = 0.5;
+	for(int i=0;i<10;i++){
+		float bx, by, dx, dy;
+
+		bezier(t, x0,y0,x1,y1,x2,y2,x3,y3, &bx,&by);
+		bezier_derivative(t, x0,y0,x1,y1,x2,y2,x3,y3, &dx,&dy);
+
+		float rx = bx - px;
+		float ry = by - py;
+
+		float denom = dx*dx + dy*dy;
+		if(denom < 1e-6f) break;
+
+		float step = (rx*dx + ry*dy) / denom;
+
+		t -= step;
+
+		if(t < 0.0f) t = 0.0f;
+		if(t > 1.0f) t = 1.0f;
+	}
+	return t;
+}
+
+float get_target_phi(float t,float x0, float y0,float x1, float y1,float x2, float y2,float x3, float y3){
+    float mt = 1.0f - t;
+
+    float dx = 3*mt*mt*(x1-x0) + 6*mt*t*(x2-x1) + 3*t*t*(x3-x2);
+    float dy = 3*mt*mt*(y1-y0) + 6*mt*t*(y2-y1) + 3*t*t*(y3-y2);
+
+    return atan2f(dy, dx);
+}
+
+void setup_wheels_spacing(float driven__wheels_spacing, float dead__wheels_spacing){
+	driven_wheels_spacing = driven__wheels_spacing;
+	dead_wheels_spacing = dead__wheels_spacing;
+}
+float ticks_to_distance(int32_t ticks, float wheel_diameter){
+	return (ticks*wheel_diameter*PI/CPR);
+}
+int32_t distance_to_ticks(float distance, float wheel_diameter){
+	return (distance*CPR)/(wheel_diameter*PI);
+}
+float rad_to_deg(float radian){
+	return ((radian*180)/PI);
+}
+float deg_to_rad(float degrees){
+	return ((degrees*PI)/180);
+}
+void set_new_plane(){
+	skip_position_update = 1;
+	update_position(0);
+	inner_plane_x = current_x;
+	inner_plane_y = current_y;
+	inner_plane_phi = current_phi;
+	inner_plane_absolute_phi = absolute_phi;
+	block_get_position = 1;
+	set_position(0, 0, 0, 0);
+	is_inside_inner_plane = 1;
+	block_get_position = 0;
+	skip_position_update = 0;
+}
+void revert_to_original_plane(){
+	skip_position_update = 1;
+	update_position(0);
+	float c = cos(inner_plane_phi);
+	float s = sin(inner_plane_phi);
+	float new_absolute_phi = inner_plane_absolute_phi + absolute_phi;
+	block_get_position = 1;
+	set_position(inner_plane_x + c*current_x - s*current_y, inner_plane_y + s*current_x + c*current_y, rad_to_deg(normalize_angle(new_absolute_phi)), rad_to_deg(new_absolute_phi));
+	is_inside_inner_plane = 0;
+	block_get_position = 0;
+	skip_position_update = 0;
+}
+
+void convert_point_coordinates_to_inner(float x, float y, float* result){
+	float dx = x - inner_plane_x;
+	float dy = y - inner_plane_y;
+	float c = cos(inner_plane_phi);
+	float s = sin(inner_plane_phi);
+	result[0] = c*dx + s*dy;
+	result[1] = -s*dx + c*dy;
+}
+
+void convert_point_coordinates_to_original(float x, float y, float* result){
+	float c = cos(inner_plane_phi);
+	float s = sin(inner_plane_phi);
+	float rx =  c*x - s*y;
+	float ry =  s*x + c*y;
+	result[0] = rx + inner_plane_x;
+	result[1] = ry + inner_plane_y;
+}
+
+float convert_phi_to_inner(float phi){
+	return normalize_angle(phi - inner_plane_phi);
+}
+float convert_phi_to_original(float phi){
+	return normalize_angle(phi + inner_plane_phi);
+}
+
+void get_position(float* position){
+	while(block_get_position){
+		delay(1);
+	}
+	if (is_inside_inner_plane){
+		convert_point_coordinates_to_original(current_x, current_y, position);
+		position[2] = current_phi;
+	}else{
+		position[0] = current_x;
+		position[1] = current_y;
+		position[2] = current_phi;
+	}
+}
+
+void reset_odometry_vars(){
+	current_x = 0;
+	current_y = 0;
+	current_phi = 0;
+	absolute_phi = 0;
+	inner_plane_x = 0;
+	inner_plane_y = 0;
+	inner_plane_phi = 0;
+	inner_plane_absolute_phi = 0;
+	skip_position_update = 0;
+	block_get_position = 0;
+	is_inside_inner_plane = 0;
+	imu_yaw_offset = 0;
+	current_imu_yaw;
+	absolute_imu_yaw = 0;
+	current_imu_gyro_z;
+	imu_yaw_new = 0;
+	imu_gyro_z_new = 0;
+}

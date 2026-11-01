@@ -1,0 +1,45 @@
+/*
+ * IMU.h
+ *
+ *  Created on: Nov 22, 2025
+ *      Author: monji
+ */
+
+#ifndef INC_IMU_H_
+#define INC_IMU_H_
+
+#include "stm32f4xx_hal.h"
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+
+#define BNO055_I2C_ADDR_LO   (0x28 << 1)
+#define BNO055_I2C_ADDR_HI   (0x29 << 1)
+
+#define BNO055_CHIP_ID       0x00
+#define BNO055_OPR_MODE      0x3D
+#define BNO055_PWR_MODE      0x3E
+#define BNO055_SYS_TRIGGER   0x3F
+#define BNO055_UNIT_SEL      0x3B
+#define BNO055_PAGE_ID       0x07
+
+// operation modes
+#define OPERATION_MODE_CONFIG  0x00
+#define OPERATION_MODE_NDOF    0x0C
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+} bno055_vector_t;
+
+void bno055_init(I2C_HandleTypeDef *hi2c, uint8_t address);
+uint8_t bno055_read8(uint8_t reg);
+void bno055_write8(uint8_t reg, uint8_t value);
+
+bno055_vector_t bno055_readGyro(void);
+bno055_vector_t bno055_readAccel(void);
+bno055_vector_t bno055_readMag(void);
+bno055_vector_t bno055_readEuler(void);
+
+#endif /* INC_IMU_H_ */

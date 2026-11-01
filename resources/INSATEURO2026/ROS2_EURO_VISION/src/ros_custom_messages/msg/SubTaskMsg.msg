@@ -1,0 +1,10 @@
+int32 order
+int32 type
+geometry_msgs/Pose2D position
+int32 mechanism_subtask_type
+bool nav_is_forward
+int8 nav_linear_velocity_choice
+int8 nav_angular_velocity_choice
+int8 nav_linear_acceleration_choice
+int8 nav_angular_acceleration_choice
+bool nav_is_with_platforms

@@ -1,0 +1,181 @@
+/*
+ * odometry.c
+ *
+ *  Created on: Aug 27, 2025
+ *      Author: monji
+ */
+
+#include "../Inc/Odometry.h"
+
+float driven_wheels_spacing;
+float dead_wheels_spacing;
+float current_x = 0;
+float current_y = 0;
+float current_phi = 0;
+float absolute_phi = 0;
+float inner_plane_x = 0;
+float inner_plane_y = 0;
+float inner_plane_phi = 0;
+float inner_plane_absolute_phi = 0;
+int8_t skip_position_update = 0; // for synchronization reasons
+int8_t block_get_position = 0;
+int8_t is_inside_inner_plane = 0;
+
+float normalize_angle(float angle){
+	float a = angle;
+	while (a > PI){
+		a -= 2*PI;
+	}
+	while (a <= -PI){
+		a += 2*PI;
+	}
+	return a;
+}
+
+void update_position(int skip){
+	if (!skip){
+		update_encoder_counts();
+
+		float dR = ticks_to_distance(encoder_count_R - previous_encoder_count_R, wheel_diameter_R);
+		float dL = ticks_to_distance(encoder_count_L - previous_encoder_count_L, wheel_diameter_L);
+		float dC = (dR+dL)/2;
+
+		float previous_absolute_phi = absolute_phi;
+		absolute_phi = ( ticks_to_distance(encoder_count_R, wheel_diameter_R) - ticks_to_distance(encoder_count_L, wheel_diameter_L) )/dead_wheels_spacing;
+
+		current_x += dC*cos( ( previous_absolute_phi + absolute_phi ) / 2 );
+		current_y += dC*sin( ( previous_absolute_phi + absolute_phi ) / 2 );
+
+		current_phi = absolute_phi;
+		while (current_phi > PI){
+			current_phi -= 2*PI;
+		}
+		while (current_phi <= -PI){
+			current_phi += 2*PI;
+		}
+
+		update_speed();
+	}
+}
+void reset_position(){
+	set_position(0, 0, 0, 0);
+}
+void set_position(float current__x, float current__y, float current__phi, float absolute__phi){
+	current__phi = deg_to_rad(current__phi);
+	absolute__phi = deg_to_rad(absolute__phi);
+	current_x = current__x;
+	current_y = current__y;
+	current_phi = current__phi;
+	absolute_phi = absolute__phi;
+	encoder_count_R = (CPR * absolute__phi * dead_wheels_spacing/2) / (wheel_diameter_R * PI);
+	encoder_count_L = -(CPR * absolute__phi * dead_wheels_spacing/2) / (wheel_diameter_L * PI);
+	previous_encoder_count_L = encoder_count_L;
+	previous_encoder_count_R = encoder_count_R;
+	reset_position_control_variables();
+	target_encoder_count_R = encoder_count_R;
+	target_encoder_count_L = encoder_count_L;
+	position_integral_R = 0;
+	position_derivative_R = 0;
+	position_integral_L = 0;
+	position_derivative_L = 0;
+}
+float get_distance_to(float x, float y){
+	return sqrt(SQR(current_x - x) + SQR(current_y - y));
+}
+float get_arc_distance_to(float target_point__x, float target_point__y, float center_point__x, float center_point__y, float R){
+	float projection_angle = atan2(current_y - center_point__y , current_x - center_point__x);
+	float target_angle = atan2(target_point__y - center_point__y , target_point__x - center_point__x);
+	float robot_to_target_angle = atan2(target_point__y - current_y , target_point__x - current_x);
+
+	float delta = projection_angle - target_angle;
+	if (delta > PI) delta -= 2 * PI;
+	if (delta < -PI) delta += 2 * PI;
+
+	if (fabs(normalize_angle(current_phi - robot_to_target_angle)) > PI/2){
+		delta = 2*PI - fabs(delta);
+	}
+	return fabs(R * delta);
+}
+float get_angle_to(float x, float y){
+	return atan2(y - current_y, x - current_x);
+}
+void setup_wheels_spacing(float driven__wheels_spacing, float dead__wheels_spacing){
+	driven_wheels_spacing = driven__wheels_spacing;
+	dead_wheels_spacing = dead__wheels_spacing;
+}
+float ticks_to_distance(int32_t ticks, float wheel_diameter){
+	return (ticks*wheel_diameter*PI/CPR);
+}
+float distance_to_ticks(int32_t distance, float wheel_diameter){
+	return (distance*CPR)/(wheel_diameter*PI);
+}
+float rad_to_deg(float radian){
+	return ((radian*180)/PI);
+}
+float deg_to_rad(float degrees){
+	return ((degrees*PI)/180);
+}
+void set_new_plane(){
+	skip_position_update = 1;
+	update_position(0);
+	inner_plane_x = current_x;
+	inner_plane_y = current_y;
+	inner_plane_phi = current_phi;
+	inner_plane_absolute_phi = absolute_phi;
+	block_get_position = 1;
+	set_position(0, 0, 0, 0);
+	is_inside_inner_plane = 1;
+	block_get_position = 0;
+	skip_position_update = 0;
+}
+void revert_to_original_plane(){
+	skip_position_update = 1;
+	update_position(0);
+	float c = cos(inner_plane_phi);
+	float s = sin(inner_plane_phi);
+	float new_absolute_phi = inner_plane_absolute_phi + absolute_phi;
+	block_get_position = 1;
+	set_position(inner_plane_x + c*current_x - s*current_y, inner_plane_y + s*current_x + c*current_y, rad_to_deg(normalize_angle(new_absolute_phi)), rad_to_deg(new_absolute_phi));
+	is_inside_inner_plane = 0;
+	block_get_position = 0;
+	skip_position_update = 0;
+}
+
+void convert_point_coordinates_to_inner(float x, float y, float* result){
+	float dx = x - inner_plane_x;
+	float dy = y - inner_plane_y;
+	float c = cos(inner_plane_phi);
+	float s = sin(inner_plane_phi);
+	result[0] = c*dx + s*dy;
+	result[1] = -s*dx + c*dy;
+}
+
+void convert_point_coordinates_to_original(float x, float y, float* result){
+	float c = cos(inner_plane_phi);
+	float s = sin(inner_plane_phi);
+	float rx =  c*x - s*y;
+	float ry =  s*x + c*y;
+	result[0] = rx + inner_plane_x;
+	result[1] = ry + inner_plane_y;
+}
+
+float convert_phi_to_inner(float phi){
+	return normalize_angle(phi - inner_plane_phi);
+}
+float convert_phi_to_original(float phi){
+	return normalize_angle(phi + inner_plane_phi);
+}
+
+void get_position(float* position){
+	while(block_get_position){
+		delay(1);
+	}
+	if (is_inside_inner_plane){
+		convert_point_coordinates_to_original(current_x, current_y, position);
+		position[2] = current_phi;
+	}else{
+		position[0] = current_x;
+		position[1] = current_y;
+		position[2] = current_phi;
+	}
+}

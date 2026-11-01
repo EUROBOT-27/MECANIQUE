@@ -1,0 +1,1 @@
+bool master_acknowledge_signal

@@ -1,0 +1,138 @@
+# Camera Configuration
+# Updated from camera_calibration_folder/calibration/camera_calibration.json
+# Last Updated: October 6, 2025
+
+# Camera identification
+camera:
+  name: "Overhead Camera"
+  model: "Unknown"  # e.g., "Raspberry Pi Camera Module v2"
+  serial: ""
+  mount_height: null  # Height above table in meters (to be measured during extrinsics)
+  
+# Camera intrinsic parameters
+# ✅ CALIBRATED - Populated from camera_calibration.json (2025-10-01)
+intrinsics:
+  # 3x3 camera matrix
+  # [fx  0  cx]
+  # [ 0 fy  cy]
+  # [ 0  0   1]
+  camera_matrix:
+    fx: 662.1753552099532     # Focal length in X (pixels)
+    fy: 658.5001056595372     # Focal length in Y (pixels)
+    cx: 315.63276742168136    # Principal point X (pixels)
+    cy: 239.76677084505275    # Principal point Y (pixels)
+  
+  # Distortion coefficients
+  # [k1, k2, p1, p2, k3]
+  # k1, k2, k3: Radial distortion
+  # p1, p2: Tangential distortion
+  distortion_coefficients:
+    k1: 0.15619002293583809       # Radial distortion coefficient 1
+    k2: -1.3830458585411074       # Radial distortion coefficient 2
+    p1: -0.00039176059643111923   # Tangential distortion coefficient 1
+    p2: -0.0030385296455848485    # Tangential distortion coefficient 2
+    k3: 2.793077033686938         # Radial distortion coefficient 3
+  
+  # Image dimensions
+  image_size:
+    width: 640    # pixels
+    height: 480   # pixels
+  
+  # Calibration metadata
+  calibration_date: "2025-10-01T15:16:13.093678"
+  reprojection_error: 0.09574444599637484  # RMS error in pixels (EXCELLENT - < 0.1 px)
+  calibration_images_used: 20
+  chessboard_size: [9, 6]
+  square_size_mm: 25.0
+
+# Camera extrinsic parameters (pose relative to world frame)
+# These values are computed using map anchor markers
+# Run extrinsics computation to populate these fields
+extrinsics:
+  # Rotation vector (Rodrigues format)
+  # Represents rotation from world frame to camera frame
+  rvec: null  # [rx, ry, rz] in radians
+  
+  # Translation vector
+  # Represents camera position in world frame
+  tvec: null  # [tx, ty, tz] in meters
+  
+  # Camera position in world coordinates (computed from tvec and rvec)
+  camera_position_world:
+    x: null  # meters
+    y: null  # meters
+    z: null  # meters (height above table)
+  
+  # Camera orientation (Euler angles)
+  camera_orientation_world:
+    roll: null   # degrees
+    pitch: null  # degrees
+    yaw: null    # degrees
+  
+  # Extrinsics computation metadata
+  computation_date: null
+  markers_used: null  # List of marker IDs detected
+  reprojection_error: null  # Mean reprojection error in pixels
+
+# Validation results
+validation:
+  validated: false
+  validation_date: null
+  
+  # Pose stability test results
+  stability:
+    position_std: null  # [std_x, std_y, std_z] in meters
+    orientation_std: null  # [std_roll, std_pitch, std_yaw] in degrees
+    test_duration: null  # seconds
+    passes: false
+  
+  # Reprojection error test results
+  reprojection:
+    mean_error: null  # pixels
+    max_error: null   # pixels
+    percentile_95: null  # pixels
+    passes: false
+  
+  # Detection consistency test results
+  detection:
+    detection_rate: null  # percentage
+    max_gap: null  # frames
+    passes: false
+  
+  # Overall validation status
+  overall_pass: false
+
+# Camera settings (for capture)
+capture:
+  # Video device index (Linux: /dev/videoX)
+  device_index: 0
+  
+  # Resolution
+  resolution:
+    width: 1920   # Adjust based on camera capabilities
+    height: 1080
+  
+  # Frame rate
+  fps: 30
+  
+  # Additional settings
+  auto_exposure: true
+  auto_white_balance: true
+  brightness: 50  # 0-100
+  contrast: 50    # 0-100
+  saturation: 50  # 0-100
+
+# Notes
+notes: |
+  This configuration file should be populated through the following steps:
+  1. Perform camera intrinsic calibration (use calibration checkerboard)
+  2. Mount camera in overhead position
+  3. Place map anchor markers at table corners
+  4. Compute camera extrinsics using map anchors
+  5. Validate camera pose stability
+  6. Update this file with all computed parameters
+  
+  Calibration tools:
+  - Intrinsic calibration: Use OpenCV calibration tools or custom script
+  - Extrinsic calibration: Use scripts/compute_extrinsics.py
+  - Validation: Use scripts/validate_pose.py

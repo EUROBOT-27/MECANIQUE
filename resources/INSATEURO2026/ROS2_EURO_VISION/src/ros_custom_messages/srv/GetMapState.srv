@@ -1,0 +1,3 @@
+---
+TaskMsg[] tasks
+ObstacleMsg[] obstacle_positions

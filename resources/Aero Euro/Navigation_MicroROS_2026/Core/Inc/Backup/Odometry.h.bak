@@ -1,0 +1,51 @@
+/*
+ * odometry.h
+ *
+ *  Created on: Aug 27, 2025
+ */
+
+#ifndef INC_ODOMETRY_H_
+#define INC_ODOMETRY_H_
+
+#include <math.h>
+#include "Motors.h"
+
+#define SQR(x) ((x) * (x))
+#define SGN(x) ( ( (x)<0 ) ? -1 : 1)
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+extern float driven_wheels_spacing;
+extern float dead_wheels_spacing;
+extern float current_x;
+extern float current_y;
+extern float current_phi; // angle between x axis and the robot's center axis, in radians
+extern float absolute_phi; // phi without modulo 2PI
+extern float inner_plane_x;
+extern float inner_plane_y;
+extern float inner_plane_phi;
+extern float inner_plane_absolute_phi;
+extern int8_t skip_position_update;
+extern int8_t block_get_position;
+extern int8_t is_inside_inner_plane;
+
+void setup_wheels_spacing(float driven__wheels_spacing, float dead__wheels_spacing);
+void update_position(int skip);
+void reset_position();
+void set_position(float current__x, float current__y, float current__phi, float absolute__phi);
+float get_distance_to(float x, float y);
+float get_arc_distance_to(float target_point_x, float target_point_y, float center_point_x, float center_point_y, float radius);
+float get_angle_to(float x, float y);
+float ticks_to_distance(int32_t ticks, float wheel_diameter);
+float distance_to_ticks(int32_t distance, float wheel_diameter);
+float rad_to_deg(float radian);
+float deg_to_rad(float degrees);
+void set_new_plane();
+void revert_to_original_plane();
+void convert_point_coordinates_to_inner(float x, float y, float* result);
+float convert_phi_to_inner(float phi);
+float convert_phi_to_original(float phi);
+float normalize_angle(float angle);
+void get_position(float* position);
+
+#endif /* INC_ODOMETRY_H_ */

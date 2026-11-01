@@ -1,0 +1,14 @@
+# Ignore all files
+
+*.pth
+*.jpg 
+*.csv
+*.png
+*.bmp
+*.jpeg
+*.cache
+*.log
+*.zip
+*.tar
+*.yaml
+*.tflite

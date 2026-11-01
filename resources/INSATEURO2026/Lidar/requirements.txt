@@ -1,0 +1,22 @@
+# YDLidar X2 Visualization and Control Requirements
+
+# Core LiDAR communication
+pyserial>=3.5
+ydlidar>=1.0.3
+
+# Data processing and analysis
+numpy>=1.21.0
+scipy>=1.7.0
+
+# Visualization
+matplotlib>=3.4.0
+pygame>=2.1.0
+
+# Optional: For advanced SLAM and mapping
+# Uncomment if needed for your application
+# opencv-python>=4.5.0
+# scikit-learn>=1.0.0
+# pylidar3>=1.0.0
+
+# Development and testing
+pytest>=7.0.0

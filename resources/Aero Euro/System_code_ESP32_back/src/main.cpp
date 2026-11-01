@@ -1,0 +1,912 @@
+#include <Arduino.h>
+#include <ESP32Servo.h>
+#include "driver/pcnt.h"
+#include <micro_ros_arduino.h>
+#include <rcl/rcl.h>
+#include <rclc/rclc.h>
+#include <rclc/executor.h>
+#include <std_msgs/msg/int32.h>
+#include <std_msgs/msg/int64.h>
+#include <std_msgs/msg/string.h>
+#include <std_srvs/srv/trigger.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <freertos/semphr.h>
+#include <rmw_microros/rmw_microros.h>
+
+#define SGN(a) ((a<0)?-1:1)
+
+// Agent status enum
+typedef enum {
+    AGENT_WAIT = 0,
+    AGENT_AVAILABLE,
+    AGENT_CONNECTED,
+    AGENT_DISCONNECTED
+} AgentStatus;
+
+AgentStatus agent_status = AGENT_WAIT;
+
+// FreeRTOS Task Handles
+TaskHandle_t microROSTaskHandle = NULL;
+TaskHandle_t pidControlTaskHandle = NULL;
+
+// Mutex for shared resources
+SemaphoreHandle_t commandMutex;
+SemaphoreHandle_t idleMutex;
+
+int motorPinsA[4] = {15, 5, 4, 2};
+int motorPinsB[4] = {16, 23, 14, 19};
+int motorPinsEnable[4] = {22, 21, 12, 18};
+int motorPWMChannels[4] = {2, 3, 4, 5};
+const int motorPWMFreq = 20000;
+const int motorPWMResolution = 8;
+// motors are ordered from right to left when looking from above and the ESP32's USB port is facing downwards
+
+int encoderPinsB[4] = {26, 32, 34, 39};
+int encoderPinsA[4] = {27, 25, 35, 36};
+
+const int middle_servo_pin = 17;
+const int left_servo_pin = 13;
+const int right_servo_pin = 33;
+
+Servo middle_servo;
+Servo left_servo;
+Servo right_servo;
+int middle_servo_pos_0 = 46;
+int middle_servo_pos_1 = 125;
+
+int left_servo_pos_0 = 9;
+int left_servo_pos_1 = 148;
+int left_servo_pos_2 = 115;
+
+int right_servo_pos_0 = 161;
+int right_servo_pos_1 = 28;
+int right_servo_pos_2 = 57;
+
+int minPWM[4] = {80, 80, 80, 80};
+
+// Global variable for isIDLE service
+bool isIDLE = true;
+bool setup_completed = false;
+bool homed = false;
+
+// micro-ROS variables
+rcl_subscription_t n20_subscriber;
+rcl_subscription_t kabech_subscriber;
+rcl_subscription_t dawer_subscriber;
+rcl_publisher_t status_publisher;
+rcl_service_t idle_service;
+rclc_executor_t executor;
+rclc_support_t support;
+rcl_allocator_t allocator;
+rcl_node_t node;
+std_msgs__msg__Int32 n20_msg;
+std_msgs__msg__Int32 kabech_msg;
+std_msgs__msg__Int32 dawer_msg;
+std_msgs__msg__Int64 status_msg;
+std_srvs__srv__Trigger_Request idle_req;
+std_srvs__srv__Trigger_Response idle_res;
+
+// Function declarations
+void n20_callback(const void *msgin);
+void kabech_callback(const void *msgin);
+void dawer_callback(const void *msgin);
+void idle_service_callback(const void *req, void *res);
+
+long encoderCount[4] = {0, 0, 0, 0};
+int32_t pcnt_offset[4] = {0, 0, 0, 0};
+
+float kp[4] = {3, 3, 3, 3};
+float ki[4] = {1.5, 1.5, 1.5, 1.5};
+float kd[4] = {0.05, 0.05, 0.05, 0.05};
+
+float integral[4] = {0, 0, 0, 0};
+float last_error[4] = {0, 0, 0, 0};
+
+long target_encoder_count[4] = {0, 0, 0, 0};
+int pwm_output[4] = {0, 0, 0, 0};
+
+long upPosition[4] = {0, 0, 0, 0};
+long midPosition[4] = {2500, 2450, 2450, 2300};
+long preparePosition[4] = {6500, 6400, 6500, 6150};
+long downPosition[4] = {8300, 8300, 8200, 8000};
+bool motor_homing[4] = {false, false, false, false};
+int motor_homing_time[4] = {0, 0, 0, 0};
+int saved_encoder_count[4] = {0, 0, 0, 0};
+int first_saved_encoder_count[4] = {0, 0, 0, 0};
+int average_encoder_change[4] = {0, 0, 0, 0};
+int encoder_change_filter = 0.9;
+
+bool going_down = false;
+int before_going_up_encoder_count[4] = {0, 0, 0, 0};
+
+unsigned long last_time = 0;
+
+int homing_waiting = 0;
+int current_command = 0;
+int command_waiting = 0;
+bool system_idle = false;
+bool restart_requested = false;
+int stuck_on_reverse_counter = 0;
+bool reverse_recovery_latched = false;
+unsigned long reverse_recovery_cooldown_until = 0;
+
+int disconnection_counter = 0;
+
+// micro-ROS agent connection tuning (serial transport is sensitive to short jitter)
+const uint32_t AGENT_PING_TIMEOUT_MS = 400;
+const uint8_t AGENT_PING_ATTEMPTS = 2;
+const uint8_t AGENT_MAX_CONSECUTIVE_PING_FAILS = 3;
+const uint32_t AGENT_PING_INTERVAL_MS = 1000;
+const uint32_t AGENT_RECONNECT_DELAY_MS = 100;
+
+// Initialise PCNT units for X4 quadrature decoding on all 4 encoders.
+// Direction convention is identical to the former ISRs:
+//   encoderA_ISR: count += (A == B) ? +1 : -1   =>  CH0: hctrl=KEEP lctrl=REVERSE pos=INC neg=DEC
+//   encoderB_ISR: count += (A != B) ? +1 : -1   =>  CH1: hctrl=KEEP lctrl=REVERSE pos=DEC neg=INC
+void setupPCNT() {
+    for (int i = 0; i < 4; i++) {
+        pcnt_unit_t unit = (pcnt_unit_t)i;
+
+        // CH0: A = pulse, B = control
+        pcnt_config_t cfg0 = {};
+        cfg0.pulse_gpio_num = encoderPinsA[i];
+        cfg0.ctrl_gpio_num  = encoderPinsB[i];
+        cfg0.lctrl_mode     = PCNT_MODE_REVERSE; // B LOW  → reverse direction
+        cfg0.hctrl_mode     = PCNT_MODE_KEEP;    // B HIGH → normal direction
+        cfg0.pos_mode       = PCNT_COUNT_INC;    // A rising  → +1 (when B HIGH)
+        cfg0.neg_mode       = PCNT_COUNT_DEC;    // A falling → -1 (when B HIGH)
+        cfg0.counter_h_lim  = 32000;
+        cfg0.counter_l_lim  = -32000;
+        cfg0.unit           = unit;
+        cfg0.channel        = PCNT_CHANNEL_0;
+        pcnt_unit_config(&cfg0);
+
+        // CH1: B = pulse, A = control
+        pcnt_config_t cfg1 = {};
+        cfg1.pulse_gpio_num = encoderPinsB[i];
+        cfg1.ctrl_gpio_num  = encoderPinsA[i];
+        cfg1.lctrl_mode     = PCNT_MODE_REVERSE; // A LOW  → reverse direction
+        cfg1.hctrl_mode     = PCNT_MODE_KEEP;    // A HIGH → normal direction
+        cfg1.pos_mode       = PCNT_COUNT_DEC;    // B rising  → -1 (when A HIGH)
+        cfg1.neg_mode       = PCNT_COUNT_INC;    // B falling → +1 (when A HIGH)
+        cfg1.counter_h_lim  = 32000;
+        cfg1.counter_l_lim  = -32000;
+        cfg1.unit           = unit;
+        cfg1.channel        = PCNT_CHANNEL_1;
+        pcnt_unit_config(&cfg1);
+
+        // Glitch filter: 100 APB cycles ≈ 12.5 µs @ 80 MHz
+        pcnt_set_filter_value(unit, 1000);
+        pcnt_filter_enable(unit);
+
+        pcnt_counter_pause(unit);
+        pcnt_counter_clear(unit);
+        pcnt_counter_resume(unit);
+    }
+}
+
+// Read all four PCNT counters and update encoderCount[].
+// Called from pidControlTask each cycle and from find_home.
+void readEncoderCounts() {
+    for (int i = 0; i < 4; i++) {
+        int16_t val;
+        pcnt_get_counter_value((pcnt_unit_t)i, &val);
+        int32_t new_encoder_count = pcnt_offset[i] + (int32_t)val;
+        average_encoder_change[i] = encoder_change_filter * average_encoder_change[i] + (1 - encoder_change_filter) * abs(new_encoder_count - encoderCount[i]);
+        encoderCount[i] = new_encoder_count;
+    }
+}
+
+// Reset a single encoder to upPosition (0): clears the PCNT counter and offset.
+void resetEncoder(int i) {
+    pcnt_counter_pause((pcnt_unit_t)i);
+    pcnt_counter_clear((pcnt_unit_t)i);
+    pcnt_offset[i] = upPosition[i];  // always 0
+    pcnt_counter_resume((pcnt_unit_t)i);
+    encoderCount[i] = upPosition[i];
+}
+
+void send_values(float s, float ts, long pos, long tgt){
+    Serial.write((uint8_t)0xAA); Serial.write((uint8_t*)&s, sizeof(s));
+    Serial.write((uint8_t)0xAB); Serial.write((uint8_t*)&ts, sizeof(ts));
+    Serial.write((uint8_t)0xAC); Serial.write((uint8_t*)&pos, sizeof(pos));
+    Serial.write((uint8_t)0xAD); Serial.write((uint8_t*)&tgt, sizeof(tgt));
+}
+
+void setupServos(){
+    middle_servo.setPeriodHertz(50);
+    middle_servo.attach(middle_servo_pin);
+    middle_servo.write(middle_servo_pos_0);
+    left_servo.setPeriodHertz(50);
+    left_servo.attach(left_servo_pin);
+    left_servo.write(left_servo_pos_0);
+    right_servo.setPeriodHertz(50);
+    right_servo.attach(right_servo_pin);
+    right_servo.write(right_servo_pos_0);
+}
+
+void setupMotorPWM(){
+    for (int i = 0; i < 4; i++) {
+        ledcSetup(motorPWMChannels[i], motorPWMFreq, motorPWMResolution);
+        ledcAttachPin(motorPinsEnable[i], motorPWMChannels[i]);
+        ledcWrite(motorPWMChannels[i], 0);
+    }
+}
+
+void setMotor(int pwm, int motorIndex){
+    pwm_output[motorIndex] = pwm;
+    if(abs(pwm)<minPWM[motorIndex]){
+    pwm = 0;
+    }
+    pwm = constrain(pwm , -255 , 255);
+    ledcWrite(motorPWMChannels[motorIndex], abs(pwm));
+    if (pwm > 0){
+        digitalWrite(motorPinsA[motorIndex], 1);
+        digitalWrite(motorPinsB[motorIndex], 0);
+    }
+    else if (pwm < 0){
+        digitalWrite(motorPinsA[motorIndex], 0);
+        digitalWrite(motorPinsB[motorIndex], 1);
+    }else{
+        ledcWrite(motorPWMChannels[motorIndex], 255);
+        digitalWrite(motorPinsA[motorIndex], 1);
+        digitalWrite(motorPinsB[motorIndex], 1);
+    }
+}
+
+void applyPositionPID(float dt, int motorIndex){
+    if(target_encoder_count[motorIndex] != upPosition[motorIndex] ){
+        float error = target_encoder_count[motorIndex] - encoderCount[motorIndex];
+        integral[motorIndex] += error * dt;
+        if(SGN(last_error[motorIndex]) != SGN(error)){
+        integral[motorIndex] = 0;
+        }
+        integral[motorIndex] = constrain(integral[motorIndex], -500.0f, 500.0f);
+        float derivative = (error - last_error[motorIndex]) / dt;
+        float speedCmd = kp[motorIndex] * error + ki[motorIndex] * integral[motorIndex] + kd[motorIndex] * derivative;
+
+        last_error[motorIndex] = error;
+        setMotor((int)speedCmd, motorIndex);
+    }else{
+        if (!motor_homing[motorIndex]){
+            setMotor(-255, motorIndex);
+            motor_homing[motorIndex] = true;
+            saved_encoder_count[motorIndex] = encoderCount[motorIndex];
+            first_saved_encoder_count[motorIndex] = encoderCount[motorIndex];
+            motor_homing_time[motorIndex] = millis();
+        }else if (millis() - motor_homing_time[motorIndex] > 350 && (encoderCount[motorIndex] <= first_saved_encoder_count[motorIndex]/2) ){
+            setMotor(-255, motorIndex);
+            if (abs(encoderCount[motorIndex] - saved_encoder_count[motorIndex]) == 0){
+                motor_homing[motorIndex] = false;
+                setMotor(0, motorIndex);
+                resetEncoder(motorIndex);
+                target_encoder_count[motorIndex] = upPosition[motorIndex] + 40;
+            }else{
+                saved_encoder_count[motorIndex] = encoderCount[motorIndex];
+            }
+            motor_homing_time[motorIndex] = millis();
+        }
+    }
+}
+
+void ba33ed_3la_ba3dhou(){
+    middle_servo.write(middle_servo_pos_1);
+}
+
+void lemm_l_ba3dhou(){
+    middle_servo.write(middle_servo_pos_0);
+}
+
+void estwi_l_crates(){
+    left_servo.write(left_servo_pos_1);
+    right_servo.write(right_servo_pos_1);
+}
+
+void khabbi_l_kabecha(){
+    left_servo.write(left_servo_pos_0);
+    right_servo.write(right_servo_pos_0);
+}
+void bala(){
+    left_servo.write(left_servo_pos_2);
+    right_servo.write(right_servo_pos_2);
+}
+void apply_command(String command){
+    for(int i=0; i<4; i++){
+        motor_homing[i] = false;
+    }
+    if (command[0] == 'p' || command[0] == 'u' || command[0] == 'm' || command[0] == 'd'){
+        for(int i=0; i<4; i++){
+            if (command[i] == 'u'){
+                target_encoder_count[i] = upPosition[i];
+            }else if (command[i] == 'm'){
+                target_encoder_count[i] = midPosition[i];
+            }else if (command[i] == 'p'){
+                target_encoder_count[i] = preparePosition[i];
+            }else if (command[i] == 'd'){
+                target_encoder_count[i] = downPosition[i];
+            }
+        }
+    }else{
+        target_encoder_count[(int)command[0]-48] = command.substring(1).toInt();
+    }
+}
+void find_home(int inside_task = 0){
+    homed = false;
+    for(int i=0; i<4; i++){
+        setMotor(-255, i);
+    }
+    int motors_at_home = 0;
+    readEncoderCounts();
+    int saved_encoder_counts[4] = {encoderCount[0], encoderCount[1], encoderCount[2], encoderCount[3]};
+    bool motor_homed[4] = {false, false, false, false};
+    if (inside_task){
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }else{
+        delay(500);
+    }
+    while(motors_at_home < 4){
+        if (inside_task){
+            vTaskDelay(pdMS_TO_TICKS(350));
+        }else{
+            delay(350);
+        }
+        readEncoderCounts();
+        for(int i=0; i<4; i++){
+            if (!motor_homed[i] && abs(encoderCount[i] - saved_encoder_counts[i]) == 0){
+                motors_at_home++;
+                motor_homed[i] = true;
+                setMotor(0, i);
+                resetEncoder(i);
+            }else{
+                saved_encoder_counts[i] = encoderCount[i];
+            }
+        }
+    }
+    homed = true;
+}
+void process_command(int value){
+    if (!value){
+        homing_waiting = 1;
+        return;
+    }
+    if(value ==20){
+        restart_requested = true;
+        return;
+    }
+    // 1 means down, 2 means middle, and 3 means up, ordered from MSB to LSB
+    String command = "";
+    going_down = false;
+    for (int i=0; i<4; i++){
+        int bit = value % 10;
+        if (bit == 1){
+            command = 'd' + command; // down
+            going_down = true;
+        }else if (bit == 2){
+            command = 'p' + command; // prepare
+        }else if (bit == 3){
+            command = 'm' + command; // middle
+        }else{
+            command = 'u' + command; // up
+        }
+        value /= 10;
+    }
+    if (!homing_waiting){ 
+        apply_command(command);
+    }
+}
+
+void store_command(int value){
+    xSemaphoreTake(commandMutex, portMAX_DELAY);
+    command_waiting = 1;
+    current_command = value;
+    xSemaphoreGive(commandMutex);
+}
+
+// Callback function for /forward/n20 topic
+void n20_callback(const void *msgin) {
+    const std_msgs__msg__Int32 *msg = (const std_msgs__msg__Int32 *)msgin;
+    int value = msg->data;
+    store_command(value);
+}
+
+// Callback function for /forward/kabech topic
+void kabech_callback(const void *msgin) {
+    const std_msgs__msg__Int32 *msg = (const std_msgs__msg__Int32 *)msgin;
+    int value = msg->data;
+    if (value == 1){
+        estwi_l_crates();
+    }else if (value == 0){
+        khabbi_l_kabecha();
+    }else{
+        bala();
+    }
+}
+
+// Callback function for /forward/dawer topic
+void dawer_callback(const void *msgin) {
+    const std_msgs__msg__Int32 *msg = (const std_msgs__msg__Int32 *)msgin;
+    int value = msg->data;
+    if (value == 1){
+        ba33ed_3la_ba3dhou();
+    }else{
+        lemm_l_ba3dhou();
+    }
+}
+
+bool is_idle(int tolerance=50){
+    bool idle = true;
+    for(int i=0; i<4; i++){
+        if (abs(target_encoder_count[i] - encoderCount[i]) > tolerance){
+            idle = false;
+            break;
+        }
+    }
+    return idle;
+}
+// Service callback for /back/isIDLE service
+void idle_service_callback(const void *req, void *res) {
+    std_srvs__srv__Trigger_Response *response = (std_srvs__srv__Trigger_Response *)res;
+    
+    // Check if system is idle
+    xSemaphoreTake(idleMutex, portMAX_DELAY);
+    response->success = system_idle;
+    xSemaphoreGive(idleMutex);
+    
+    
+    // Use static strings to avoid memory leaks - micro-ROS will handle these correctly
+    static const char* idle_msg = "System is IDLE";
+    static const char* busy_msg = "System is BUSY";
+    const char* msg = response->success ? idle_msg : busy_msg;
+    
+    // Assign static string directly without malloc
+    response->message.data = (char*)msg;
+    response->message.size = strlen(msg);
+    response->message.capacity = 0; // Indicates static string, no deallocation needed
+}
+
+void test_with_serial(){
+    if (Serial.available() > 0) {
+        String command = Serial.readStringUntil('\n');
+        if (command[0] == 'p' || command[0] == 'u' || command[0] == 'm' || command[0] == 'd'){
+            for(int i=0; i<4; i++){
+                if (command[i] == 'u'){
+                    target_encoder_count[i] = upPosition[i];
+                }else if (command[i] == 'm'){
+                    target_encoder_count[i] = midPosition[i];
+                }else if (command[i] == 'p'){
+                    target_encoder_count[i] = preparePosition[i];
+                }else if (command[i] == 'd'){
+                    target_encoder_count[i] = downPosition[i];
+                }
+            }
+        }else if (command[0] == 'k'){
+            estwi_l_crates();
+        }else if (command[0] == 'l'){
+            khabbi_l_kabecha();
+        }else if (command[0] == 'b'){
+            ba33ed_3la_ba3dhou();
+        }else if (command[0] == 's'){
+            lemm_l_ba3dhou();
+        }else if (command[0] == 'a'){
+            bala();
+        }else if (command[0] == 'c') {
+            // format: c<servo_id><angle>
+            // example: // example: c130  -> right servo to 90°
+            //          c260  -> left servo to 45°
+            //          c3120 -> middle servo to 120°
+            // Note: The servo IDs are relative to the face you are testing from, not according to the right and left of the robot itself
+
+            int servo_id = command[1] - '1';   // '1'->0, '2'->1, '3'->2
+
+            if (servo_id >= 0 && servo_id < 3) {
+                int angle = command.substring(2).toInt();
+
+                if (servo_id == 1){
+                    left_servo.write(angle);
+                    Serial.print("moving left servo to angle ");
+                    Serial.println(angle);
+                }else if (servo_id == 2){
+                    middle_servo.write(angle);
+                    Serial.print("moving middle servo to angle ");
+                    Serial.println(angle);
+                }else{
+                    right_servo.write(angle);
+                    Serial.print("moving right servo to angle ");
+                    Serial.println(angle);
+                }
+            }
+        }else{
+            target_encoder_count[(int)command[0]-48] = command.substring(1).toInt();
+        }
+    }
+}
+
+// ============================================================================
+// Agent Connection Management Functions
+// ============================================================================
+bool pingAgent() {
+    // Ping the agent to check if it's still alive
+    rcl_ret_t ping_result = rmw_uros_ping_agent(AGENT_PING_TIMEOUT_MS, AGENT_PING_ATTEMPTS);
+    return ping_result == RCL_RET_OK;
+}
+
+void cleanupMicroROS() {
+    // Clean up executor
+    rclc_executor_fini(&executor);
+    
+    // Clean up service
+    rcl_service_fini(&idle_service, &node);
+    
+    // Clean up publisher
+    rcl_publisher_fini(&status_publisher, &node);
+    
+    // Clean up subscriptions
+    rcl_subscription_fini(&n20_subscriber, &node);
+    rcl_subscription_fini(&kabech_subscriber, &node);
+    rcl_subscription_fini(&dawer_subscriber, &node);
+    
+    // Clean up node and support
+    rcl_node_fini(&node);
+    rclc_support_fini(&support);
+}
+
+bool initializeMicroROS() {
+    allocator = rcl_get_default_allocator();
+    rcl_ret_t ret = rclc_support_init(&support, 0, NULL, &allocator);
+    
+    if (ret != RCL_RET_OK) {
+        return false;
+    }
+    
+    ret = rclc_node_init_default(&node, "esp32_back_node", "", &support);
+    if (ret != RCL_RET_OK) {
+        rclc_support_fini(&support);
+        return false;
+    }
+
+    // Create QoS profile with reliable settings
+    rcl_subscription_options_t sub_opts = rcl_subscription_get_default_options();
+    sub_opts.qos.reliability = RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+    sub_opts.qos.history = RMW_QOS_POLICY_HISTORY_KEEP_LAST;
+    sub_opts.qos.depth = 5;
+
+    // Create subscriptions with reliable QoS
+    ret = rclc_subscription_init(
+        &n20_subscriber,
+        &node,
+        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
+        "/back/n20",
+        &sub_opts.qos);
+    if (ret != RCL_RET_OK) {
+        rcl_node_fini(&node);
+        rclc_support_fini(&support);
+        return false;
+    }
+
+    ret = rclc_subscription_init(
+        &kabech_subscriber,
+        &node,
+        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
+        "/back/kabech",
+        &sub_opts.qos);
+    if (ret != RCL_RET_OK) {
+        rcl_subscription_fini(&n20_subscriber, &node);
+        rcl_node_fini(&node);
+        rclc_support_fini(&support);
+        return false;
+    }
+
+    ret = rclc_subscription_init(
+        &dawer_subscriber,
+        &node,
+        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
+        "/back/dawer",
+        &sub_opts.qos);
+    if (ret != RCL_RET_OK) {
+        rcl_subscription_fini(&n20_subscriber, &node);
+        rcl_subscription_fini(&kabech_subscriber, &node);
+        rcl_node_fini(&node);
+        rclc_support_fini(&support);
+        return false;
+    }
+
+    // Create publisher with reliable QoS
+    rcl_publisher_options_t pub_opts = rcl_publisher_get_default_options();
+    pub_opts.qos.reliability = RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+    pub_opts.qos.history = RMW_QOS_POLICY_HISTORY_KEEP_LAST;
+    pub_opts.qos.depth = 5;
+
+    ret = rclc_publisher_init(
+        &status_publisher,
+        &node,
+        ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int64),
+        "/back/status",
+        &pub_opts.qos);
+    if (ret != RCL_RET_OK) {
+        rcl_subscription_fini(&n20_subscriber, &node);
+        rcl_subscription_fini(&kabech_subscriber, &node);
+        rcl_subscription_fini(&dawer_subscriber, &node);
+        rcl_node_fini(&node);
+        rclc_support_fini(&support);
+        return false;
+    }
+
+    // Create service options with reliable QoS
+    rcl_service_options_t svc_opts = rcl_service_get_default_options();
+    svc_opts.qos.reliability = RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+    svc_opts.qos.history = RMW_QOS_POLICY_HISTORY_KEEP_LAST;
+    svc_opts.qos.depth = 5;
+
+    // Create isIDLE service with reliable QoS
+    ret = rclc_service_init(
+        &idle_service,
+        &node,
+        ROSIDL_GET_SRV_TYPE_SUPPORT(std_srvs, srv, Trigger),
+        "/back/isIDLE",
+        &svc_opts.qos);
+    if (ret != RCL_RET_OK) {
+        rcl_subscription_fini(&n20_subscriber, &node);
+        rcl_subscription_fini(&kabech_subscriber, &node);
+        rcl_subscription_fini(&dawer_subscriber, &node);
+        rcl_node_fini(&node);
+        rclc_support_fini(&support);
+        return false;
+    }
+
+    // Create executor (4 handles: 3 subscriptions + 1 service)
+    ret = rclc_executor_init(&executor, &support.context, 4, &allocator);
+    if (ret != RCL_RET_OK) {
+        rcl_service_fini(&idle_service, &node);
+        rcl_subscription_fini(&n20_subscriber, &node);
+        rcl_subscription_fini(&kabech_subscriber, &node);
+        rcl_subscription_fini(&dawer_subscriber, &node);
+        rcl_node_fini(&node);
+        rclc_support_fini(&support);
+        return false;
+    }
+    
+    rclc_executor_add_subscription(&executor, &n20_subscriber, &n20_msg,
+                                    &n20_callback, ON_NEW_DATA);
+    rclc_executor_add_subscription(&executor, &kabech_subscriber, &kabech_msg,
+                                    &kabech_callback, ON_NEW_DATA);
+    rclc_executor_add_subscription(&executor, &dawer_subscriber, &dawer_msg,
+                                    &dawer_callback, ON_NEW_DATA);
+    rclc_executor_add_service(&executor, &idle_service, &idle_req, &idle_res,
+                              &idle_service_callback);
+
+    return true;
+}
+
+// ============================================================================
+// FreeRTOS Task: micro-ROS Communication with Advanced Connection Management
+// ============================================================================
+void microROSTask(void *parameter) {
+    unsigned long last_ping_time = 0;
+    unsigned long last_status_time = 0;
+    const unsigned long STATUS_INTERVAL = 1000; // Publish status every 1 second
+    uint8_t consecutive_ping_failures = 0;
+    
+    agent_status = AGENT_WAIT;
+    
+    while (true) {
+        switch (agent_status) {
+            case AGENT_WAIT:
+            case AGENT_DISCONNECTED:
+                agent_status = AGENT_WAIT;
+                
+                // Check if agent is available
+                if (pingAgent()) {
+                    agent_status = AGENT_AVAILABLE;
+                } else {
+                    vTaskDelay(pdMS_TO_TICKS(AGENT_RECONNECT_DELAY_MS));
+                }
+                break;
+                
+            case AGENT_AVAILABLE:
+                // Try to initialize micro-ROS
+                if (initializeMicroROS()) {
+                    agent_status = AGENT_CONNECTED;
+                    last_ping_time = millis();
+                    last_status_time = millis();
+                    consecutive_ping_failures = 0;
+                } else {
+                    agent_status = AGENT_WAIT;
+                    vTaskDelay(pdMS_TO_TICKS(AGENT_RECONNECT_DELAY_MS));
+                }
+                break;
+                
+            case AGENT_CONNECTED:
+                if (restart_requested) {
+                    cleanupMicroROS();
+                    vTaskDelay(pdMS_TO_TICKS(100));
+                    ESP.restart();
+                }
+
+                // Spin executor to process messages
+                rcl_ret_t ret = rclc_executor_spin_some(&executor, RCL_MS_TO_NS(10));
+                
+                // Publish status every 1 second
+                if (millis() - last_status_time > STATUS_INTERVAL) {
+                    status_msg.data = disconnection_counter;
+                    status_msg.data = (encoderCount[0]/10)*1000000000+(encoderCount[1]/10)*1000000+(encoderCount[2]/10)*1000+(encoderCount[3]/10);
+                    rcl_publish(&status_publisher, &status_msg, NULL);
+                    last_status_time = millis();
+                }
+                
+                // Periodic ping to check agent health
+                if (millis() - last_ping_time > AGENT_PING_INTERVAL_MS) {
+                    if (!pingAgent()) {
+                        consecutive_ping_failures++;
+                        if (consecutive_ping_failures >= AGENT_MAX_CONSECUTIVE_PING_FAILS) {
+                            cleanupMicroROS();
+                            agent_status = AGENT_DISCONNECTED;
+                            disconnection_counter++;
+                            consecutive_ping_failures = 0;
+                        }
+                    } else {
+                        consecutive_ping_failures = 0;
+                    }
+                    last_ping_time = millis();
+                }
+                
+                vTaskDelay(pdMS_TO_TICKS(5));
+                break;
+        }
+    }
+}
+
+// ============================================================================
+// FreeRTOS Task: PID Control Loop
+// ============================================================================
+void pidControlTask(void *parameter) {
+    unsigned long last_time = millis();
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 100Hz PID update
+    
+    while (true) {
+
+        unsigned long currentTime = millis();
+        float dt = fabs(currentTime - last_time) / 1000.0;
+        last_time = currentTime;
+
+        xSemaphoreTake(commandMutex, portMAX_DELAY);
+        if (command_waiting) {
+            process_command(current_command);
+            command_waiting = 0;
+            stuck_on_reverse_counter = 0;
+            reverse_recovery_latched = false;
+        }
+        xSemaphoreGive(commandMutex);
+
+        xSemaphoreTake(idleMutex, portMAX_DELAY);
+        system_idle = !command_waiting && homed && (( going_down && is_idle() ) || (!going_down && is_idle(7000)));
+        
+        if (
+            (average_encoder_change[0] < 10 && average_encoder_change[1] < 10 && average_encoder_change[2] < 10 && average_encoder_change[3] < 10)
+            ||
+            (encoderCount[0] > downPosition[0] + 100)
+            ||
+            (encoderCount[1] > downPosition[1] + 100)
+            ||
+            (encoderCount[2] > downPosition[2] + 100)
+            ||
+            (encoderCount[3] > downPosition[3] + 100)
+            ){
+            stuck_on_reverse_counter++;
+        }else{
+            stuck_on_reverse_counter = 0;
+            reverse_recovery_latched = false;
+        }
+
+        if (millis() >= reverse_recovery_cooldown_until &&
+            stuck_on_reverse_counter > 100 && !command_waiting && !system_idle &&
+            !reverse_recovery_latched){
+            system_idle = false;
+            xSemaphoreGive(idleMutex);
+            find_home(1);
+            xSemaphoreTake(commandMutex, portMAX_DELAY);
+            command_waiting = 1;
+            xSemaphoreGive(commandMutex);
+            stuck_on_reverse_counter = 0;
+            reverse_recovery_latched = true;
+            reverse_recovery_cooldown_until = millis() + 3000;
+        }else{
+            xSemaphoreGive(idleMutex);
+        }
+
+        if (homing_waiting){
+            homing_waiting = 0;
+            find_home(1);
+            apply_command("mmmm");
+            xLastWakeTime = xTaskGetTickCount();
+            continue;
+        }
+
+        if (dt <= 0.0f) {
+            vTaskDelayUntil(&xLastWakeTime, xFrequency);
+            continue;
+        }
+
+        // Update encoder counts from PCNT hardware counters
+        readEncoderCounts();
+
+        // Apply PID control for all 4 motors
+        if (homed){
+            for (int i = 0; i < 4; i++) {
+                applyPositionPID(dt, i);
+            }
+        }
+        // test_with_serial();
+        // Delay until next cycle
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
+    }
+}
+
+void microros_setup(){
+    set_microros_transports();
+}
+
+void setup(){
+    setupServos();
+    Serial.begin(115200);
+ // Create FreeRTOS mutexes for shared resource protection
+    commandMutex = xSemaphoreCreateMutex();
+    idleMutex = xSemaphoreCreateMutex();
+    for(int i=0; i<4; i++){
+        pinMode(encoderPinsA[i], INPUT_PULLUP);
+        pinMode(encoderPinsB[i], INPUT_PULLUP);
+        pinMode(motorPinsA[i], OUTPUT);
+        pinMode(motorPinsB[i], OUTPUT);
+        pinMode(motorPinsEnable[i], OUTPUT);
+    }
+
+    setupMotorPWM();
+
+    setupPCNT();
+
+    delay(2000);
+
+    microros_setup();
+    find_home();
+
+    apply_command("mmmm");
+    
+    // ========================================================================
+    // Create FreeRTOS Tasks
+    // ========================================================================
+    
+    // Create micro-ROS task on Core 0 (higher priority)
+    xTaskCreatePinnedToCore(
+        microROSTask,           // Task function
+        "microROSTask",         // Task name
+        8192,                   // Stack size (bytes)
+        NULL,                   // Parameters
+        2,                      // Priority (0-24, higher number = higher priority)
+        &microROSTaskHandle,    // Task handle
+        0                       // Core ID (0 or 1)
+    );
+    
+    // Create PID control task on Core 1 (medium priority)
+    xTaskCreatePinnedToCore(
+        pidControlTask,         // Task function
+        "pidControlTask",       // Task name
+        8192,                   // Stack size (bytes)
+        NULL,                   // Parameters
+        1,                      // Priority
+        &pidControlTaskHandle,  // Task handle
+        1                       // Core ID (0 or 1)
+    );
+    
+    if (microROSTaskHandle == NULL || pidControlTaskHandle == NULL) {
+        while(1) { delay(100); }
+    }
+
+    setup_completed = true;
+}
+void loop(){
+    // Empty loop - all work is done by FreeRTOS tasks
+    // The loop() function is still called but doesn't need to do anything
+    vTaskDelay(pdMS_TO_TICKS(1000)); // Yield to FreeRTOS scheduler
+    
+}

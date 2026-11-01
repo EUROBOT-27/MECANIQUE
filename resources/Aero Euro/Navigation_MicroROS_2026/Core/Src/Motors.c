@@ -1,0 +1,224 @@
+/*
+ * motors.c
+ *
+ *  Created on: Aug 25, 2025
+ *      Author: monji
+ */
+
+#include "../Inc/Motors.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+TIM_HandleTypeDef* htim_motors;
+uint32_t right_forward, right_backward, left_forward, left_backward;
+enum Communication communication_state;
+int PWM_R, PWM_L;
+int PWM_max;
+int PWM_R_forward_min, PWM_L_forward_min, PWM_R_backward_min, PWM_L_backward_min;
+int PWM_offset_R;
+int PWM_offset_L;
+float current_speed_R = 0;
+float current_speed_L = 0;
+float previous_speed_R = 0;
+float previous_speed_L = 0;
+float target_speed_R = 0;
+float target_speed_L = 0;
+float current_acceleration_R = 0;
+float current_acceleration_L = 0;
+uint32_t previous_speed_calculation_time = 0;
+int32_t encoder_count_R;
+int32_t encoder_count_L;
+uint16_t previous_encoder_timer_CNT_R;
+uint16_t previous_encoder_timer_CNT_L;
+int32_t previous_encoder_count_R;
+int32_t previous_encoder_count_L;
+TIM_HandleTypeDef* encoder_timer_R;
+TIM_HandleTypeDef* encoder_timer_L;
+int CPR;
+float wheel_diameter_R;
+float wheel_diameter_L;
+int32_t debugger = 0;
+float debugger_2 = 0.0f;
+extern UART_HandleTypeDef huart2;
+int32_t previous_speed_control_time = 0;
+float speed_integral_R = 0;
+float speed_derivative_R = 0;
+float previous_speed_error_R = 0;
+float speed_integral_L = 0;
+float speed_derivative_L = 0;
+float previous_speed_error_L = 0;
+float previous_position_error_R = 0;
+float previous_position_error_L = 0;
+int32_t previous_position_control_time = 0;
+float position_max_response = 550;
+float default_position_max_response = 550;
+float position_integral_R = 0;
+float position_derivative_R = 0;
+float position_integral_L = 0;
+float position_derivative_L = 0;
+int32_t target_encoder_count_R = 0;
+int32_t target_encoder_count_L = 0;
+
+void run_right_motor(){
+	if (PWM_R>0){
+		__HAL_TIM_SET_COMPARE(htim_motors, right_forward, (PWM_R < PWM_R_forward_min)? 0 : PWM_R );
+		__HAL_TIM_SET_COMPARE(htim_motors, right_backward, 0);
+	}else{
+		__HAL_TIM_SET_COMPARE(htim_motors, right_forward, 0);
+		__HAL_TIM_SET_COMPARE(htim_motors, right_backward, (PWM_R > PWM_R_backward_min)? 0 : -PWM_R );
+	}
+}
+void run_left_motor(){
+	if (PWM_L>0){
+		__HAL_TIM_SET_COMPARE(htim_motors, left_forward, (PWM_L < PWM_L_forward_min)? 0 : PWM_L );
+		__HAL_TIM_SET_COMPARE(htim_motors, left_backward, 0);
+	}else{
+		__HAL_TIM_SET_COMPARE(htim_motors, left_forward, 0);
+		__HAL_TIM_SET_COMPARE(htim_motors, left_backward, (PWM_L > PWM_L_backward_min)? 0 : -PWM_L );
+	}
+}
+void setup_motor_channels(TIM_HandleTypeDef* motors_timer, uint32_t right__forward, uint32_t right__backward, uint32_t left__forward, uint32_t left__backward){
+	htim_motors =  motors_timer;
+	right_forward = right__forward;
+	right_backward = right__backward;
+	left_forward = left__forward;
+	left_backward = left__backward;
+}
+void setup_encoder_timers(TIM_HandleTypeDef* right_timer, TIM_HandleTypeDef* left_timer, int cpr){
+	encoder_timer_R = right_timer;
+	encoder_timer_L = left_timer;
+	CPR = cpr;
+}
+void setup_wheel_diameters(float right_wheel, float left_wheel){
+	wheel_diameter_R = right_wheel;
+	wheel_diameter_L = left_wheel;
+}
+void setup_PWM_min_max(int PWM__max, int PWM__R_forward_min, int PWM__L_forward_min, int PWM__R_backward_min,int PWM__L_backward_min){
+	PWM_max = PWM__max;
+	PWM_R_forward_min = PWM__R_forward_min;
+	PWM_L_forward_min = PWM__L_forward_min;
+	PWM_R_backward_min = PWM__R_backward_min;
+	PWM_L_backward_min = PWM__L_backward_min;
+}
+void stop_motors(){
+	__HAL_TIM_SET_COMPARE(htim_motors, right_forward, 0);
+	__HAL_TIM_SET_COMPARE(htim_motors, right_backward, 0);
+	__HAL_TIM_SET_COMPARE(htim_motors, left_forward, 0);
+	__HAL_TIM_SET_COMPARE(htim_motors, left_backward, 0);
+	target_speed_R = 0;
+	target_speed_L = 0;
+}
+void update_encoder_counts(){ // ISR safe, takes approximately 250ns
+	int32_t tmp = encoder_timer_R->Instance->CNT;
+	int32_t delta = tmp - (int32_t)previous_encoder_timer_CNT_R;
+	previous_encoder_timer_CNT_R = tmp;
+
+	delta = (delta>60000)? delta-65536 : (delta<-60000)? delta+65536 : delta; // handling overflow
+	encoder_count_R -= delta; // it was + not - but the encoder phase pins were inverted
+
+	tmp = encoder_timer_L->Instance->CNT;
+	delta = tmp - (int32_t)previous_encoder_timer_CNT_L;
+	previous_encoder_timer_CNT_L = tmp;
+
+	delta = (delta>60000)? delta-65536 : (delta<-60000)? delta+65536 : delta;
+	encoder_count_L += delta;
+}
+void update_speed(){ // ISR safe, takes approximately 350ns
+	float tmp = (float)((int32_t)micros() - (int32_t)previous_speed_calculation_time);
+	if (tmp > 100){
+		current_speed_R = current_speed_R*0.7 + 0.3 * ((encoder_count_R - previous_encoder_count_R) / tmp)*(wheel_diameter_R*PI*1000000/CPR); // unit = mm/s // the first part is a filter that reduces jitter
+		current_speed_L = current_speed_L*0.7 + 0.3* ((encoder_count_L - previous_encoder_count_L) / tmp)*(wheel_diameter_L*PI*1000000/CPR);
+		previous_encoder_count_R = encoder_count_R;
+		previous_encoder_count_L = encoder_count_L;
+		current_acceleration_R = current_acceleration_R * 0.998 + 0.002* (current_speed_R - previous_speed_R)*1000000 / tmp;// unit = mm/s² // the first part is a filter that reduces jitter
+		current_acceleration_L = current_acceleration_L * 0.998 + 0.002* (current_speed_L - previous_speed_L)*1000000 / tmp;
+		previous_speed_R = current_speed_R;
+		previous_speed_L = current_speed_L;
+		previous_speed_calculation_time = micros();
+		// TODO: this speed is the dead wheel's speed, if the robot is following a curve the dead wheel's speed does not exactly match the driven wheel's speed, no problem for now
+	}
+}
+void set_target_speeds(float target__speed_R, float target__speed_L){
+	PWM_offset_R = (target__speed_R > 0)? PWM_R_forward_min - 30: PWM_R_backward_min +30;
+	target_speed_R = target__speed_R;
+	PWM_offset_L = (target__speed_L > 0)? PWM_L_forward_min - 30: PWM_L_backward_min +30;
+	target_speed_L = target__speed_L;
+}
+int32_t micros(){
+	return TIM5->CNT;
+}
+void send_values_to_usart(float value1, float value2, float value3, float value4){
+	if (communication_state == PC){
+		uint8_t header1 = 0xAA;
+		uint8_t header2 = 0xAB;
+		uint8_t header3 = 0xAC;
+		uint8_t header4 = 0xAD;
+		uint8_t* bytes1 = (uint8_t*)&value1;
+		uint8_t* bytes2 = (uint8_t*)&value2;
+		uint8_t* bytes3 = (uint8_t*)&value3;
+		uint8_t* bytes4 = (uint8_t*)&value4;
+		HAL_UART_Transmit(&huart2, &header1, 1, 10);
+		HAL_UART_Transmit(&huart2, bytes1, 4, 10);
+		HAL_UART_Transmit(&huart2, &header2, 1, 10);
+		HAL_UART_Transmit(&huart2, bytes2, 4, 10);
+		HAL_UART_Transmit(&huart2, &header3, 1, 10);
+		HAL_UART_Transmit(&huart2, bytes3, 4, 10);
+		HAL_UART_Transmit(&huart2, &header4, 1, 10);
+		HAL_UART_Transmit(&huart2, bytes4, 4, 10);
+	}
+}
+void delay(int ms){
+	if (communication_state == RASPBERRY){
+		vTaskDelay(pdMS_TO_TICKS(ms));
+	}else{
+		HAL_Delay(ms);
+	}
+}
+
+void reset_position_control_variables(){
+	previous_position_control_time = micros()-999;
+	position_integral_L = 0;
+	position_integral_R = 0;
+	position_derivative_L = 0;
+	position_derivative_R = 0;
+	PWM_L = 0;
+	PWM_R = 0;
+	previous_position_error_L = 0;
+	previous_position_error_R = 0;
+}
+void reset_motors_vars(){
+	current_speed_R = 0;
+	current_speed_L = 0;
+	previous_speed_R = 0;
+	previous_speed_L = 0;
+	target_speed_R = 0;
+	target_speed_L = 0;
+	current_acceleration_R = 0;
+	current_acceleration_L = 0;
+	previous_speed_calculation_time = 0;
+	encoder_count_R = 0;
+	encoder_count_L = 0;
+	previous_encoder_timer_CNT_R = micros() - 999;
+	previous_encoder_timer_CNT_L = micros() - 999;
+	previous_encoder_count_R = 0;
+	previous_encoder_count_L = 0;
+	debugger = 0;
+	debugger_2 = 0.0f;
+	previous_speed_control_time = 0;
+	speed_integral_R = 0;
+	speed_derivative_R = 0;
+	previous_speed_error_R = 0;
+	speed_integral_L = 0;
+	speed_derivative_L = 0;
+	previous_speed_error_L = 0;
+	previous_position_error_R = 0;
+	previous_position_error_L = 0;
+	previous_position_control_time = 0;
+	position_max_response = 600;
+	position_integral_R = 0;
+	position_derivative_R = 0;
+	position_integral_L = 0;
+	position_derivative_L = 0;
+	target_encoder_count_R = 0;
+	target_encoder_count_L = 0;
+}

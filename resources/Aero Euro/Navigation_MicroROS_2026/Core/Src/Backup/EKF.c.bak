@@ -1,0 +1,47 @@
+/*
+ * EKF.c
+ *
+ *  Created on: Nov 23, 2025
+ *      Author: monji
+ */
+
+
+#include "EKF.h"
+
+float imu_yaw_offset = 0;
+float current_imu_yaw;
+float current_imu_gyro_z;
+
+void set_IMU_I2C_channel(I2C_HandleTypeDef *hi2c){
+	bno055_init(hi2c, BNO055_I2C_ADDR_LO);
+}
+
+void update_position_EKF(){
+	update_current_yaw();
+	send_values_to_usart(current_imu_yaw*100, 0, 0, 0);
+}
+
+void set_position_IMU(float current__x, float current__y, float current__phi, float absolute__phi){
+	set_position(current__x, current__y, current__phi, absolute__phi);
+	update_current_yaw();
+	imu_yaw_offset = normalize_angle(imu_yaw_offset + deg_to_rad(current__phi) - current_imu_yaw);
+}
+
+void reset_position_IMU(){
+	update_current_yaw();
+	imu_yaw_offset = -current_imu_yaw;
+	set_position(0, 0, 0, 0);
+}
+
+void update_current_yaw(){
+	bno055_vector_t v = bno055_readEuler();
+	float yaw_rad = v.x * PI / 180.0;
+	if (yaw_rad > PI) yaw_rad -= 2*PI;
+	yaw_rad *= -1;
+
+	current_imu_yaw = normalize_angle(yaw_rad + imu_yaw_offset);
+}
+void update_current_z_angular_velocity(){ // returns in rad/s
+	bno055_vector_t v = bno055_readGyro();
+	current_imu_gyro_z = v.x/2;
+}

@@ -1,0 +1,11 @@
+int32 id
+geometry_msgs/Pose2D position
+int32 type
+int32 direction
+int32 score
+int32 nav_linear_velocity_choice
+int32 nav_angular_velocity_choice
+int32 nav_linear_acceleration_choice
+int32 nav_angular_acceleration_choice
+bool nav_is_with_platforms
+SubTaskMsg[] subtask_list
