@@ -29,12 +29,18 @@ class G:
     BASE_X, BASE_Y0 = 150, -160
     # ---- Two Trees Bluer V2 lift, 25 mm further back than v4 ----
     LIFT_DY = -25
-    RAIL_W, RAIL_DX, RAIL_YC, RAIL_Z0, RAIL_L = 20, 40.45, 58.5 + LIFT_DY, 6, 350
-    PL_GAP, PL_T = 4.0, 3.0                                 # real plate (from the .3dm): 3.0 thick, 14.0 from the wheel plane
+    RAIL_W, RAIL_DX, RAIL_YC, RAIL_Z0, RAIL_L = 20, 40.45, 58.5 + LIFT_DY - 0.5, 6, 350   # v7: -0.5 (real plate gap 4.5)
+    PL_GAP, PL_T = 4.5, 3.0                                 # real plate (from the .3dm): 3.0 thick, 14.0 from the wheel plane
     PL_Y0 = RAIL_YC + RAIL_W / 2 + PL_GAP                   # butterfly plate rear 47.5, front 50.5
     PL_Y1 = PL_Y0 + PL_T
     PL_ZC = 150
     WH_X, WH_DZ = 60.0, 37.5
+    # v7: real Two Trees parts (../../resources/two-trees-bluer-v2-parts, printer coordinates). Printer -> module:
+    # X = TT_X0 - x, Y = z - TT_ZR + RAIL_YC, Z = y - (printer y of the reference) + (module z of the reference)
+    TT_DIR = os.path.join(HERE, "..", "..", "resources", "two-trees-bluer-v2-parts")
+    TT_X0, TT_ZR, TT_YR0, TT_YW = 120.75, 54.0, 115.1, 290.1   # axis x, rail centre plane, rail bottom end, wheel centre
+    TT_ZAX = (263.0, 191.2)                                 # printer Z axis (motor, coupler, nut): x, y
+    TT_CPL_Z0, TT_NUT_FL = 50.5, 263.1                      # printer coupler bottom; nut flange face on the long-body side
     WH_R, WH_W = WH_X - RAIL_DX - RAIL_W / 2, 10.2
     SPRING_U = SPRING_V = 85                                # corner holes (M4) -> door units
     CLAMP_V = 10                                            # centre holes Ø4.3 (M4) -> nut support
@@ -646,7 +652,14 @@ def tete_bague():       # clamp ring over the TPU rim; a notch lets the tube lea
 
 # ---------------------------------------------------------------- references + reserved space
 def refs():
-    part("REF_RAIL_2020", box(1, G.RAIL_DX - 10, G.RAIL_DX + 10, RY0, RY1, G.RAIL_Z0, G.RAIL_Z0 + G.RAIL_L), 2700, DARK, "ref", "A")
+    # v7: real Two Trees Bluer V2 parts (see ../../resources/two-trees-bluer-v2-parts/SOURCE.md)
+    def tt(name):
+        return Part.read(os.path.join(G.TT_DIR, name + ".step"))
+    def tt_axis(shape, y_ref, z_ref):           # Y-axis parts: printer y along the rails -> module z
+        m = App.Matrix(-1, 0, 0, G.TT_X0, 0, 0, 1, G.RAIL_YC - G.TT_ZR, 0, 1, 0, z_ref - y_ref, 0, 0, 0, 1)
+        sh = shape.copy(); sh.transformShape(m)
+        return Part.makeCompound(sh.Solids)
+    part("REF_RAILS_2020", tt_axis(tt("rails_2020_Y"), G.TT_YR0, G.RAIL_Z0), 2700, DARK, "ref", "A")
     # the REAL butterfly plate (Two Trees Bluer V2 heatbed base, "Product 298"), outline + holes read from the .3dm
     # (fc/plaque_papillon_reelle.json, centre = wheel pattern). Mounted with its 3rd hole at +x, eccentric wheels at +x.
     import json
@@ -656,16 +669,24 @@ def refs():
     a = [prism_xz(1, [(x, cz + z) for x, z in pl["outer"]], y0, y1)]
     c = [ycyl(1, x, y0 - 1, y1 + 1, cz + z, d / 2) for x, z, d in pl["holes"]]
     part("REF_PLAQUE_PAPILLON", solid(a, c), 2700, DARK, "ref", "A")
-    part("REF_ROUE_V", ycyl(1, G.WH_X, YC - G.WH_W / 2, YC + G.WH_W / 2, G.PL_ZC - G.WH_DZ, G.WH_R), 1400, DARK, "ref", "A")
+    # (butterfly_plate.step is B-spline only, no true holes: the exact plate above is kept)
+    for name, f in (("REF_ROUES_V", "v_wheels_Y"), ("REF_ENTRETOISES_M5", "m5_spacers_Y"),
+                    ("REF_ENTRETOISES_EXC", "eccentric_spacers_Y"), ("REF_RONDELLES_BRONZE", "bronze_washers_Y")):
+        part(name, tt_axis(tt(f), G.TT_YW, G.PL_ZC), 2700, DARK, "ref", "A")
+    # (the printer's M5 wheel screws + nyloc nuts are not used: ours are longer, through the head bracket -> fasteners)
     part("REF_608ZZ", solid([vcyl(1, G.PX, G.PY, G.LOW + G.PT - 7, G.LOW + G.PT, 11)], [vcyl(1, G.PX, G.PY, 0, 400, 4)]), 7850, STEEL, "ref", "A")
     part("REF_608ZZ_TETE", solid([ycyl(1, 0, G.HBR_Y0, G.HBR_Y0 + 7, G.HZ, 11)], [ycyl(1, 0, 0, 200, G.HZ, 4)]), 7850, STEEL, "ref", "B")
-    part("REF_NEMA17", solid([box(1, -21.15, 21.15, YC - 21.15, YC + 21.15, G.MOT_Z1 - 40, G.MOT_Z1),
-                              vcyl(1, 0, YC, G.MOT_Z1, G.MOT_Z1 + 2, 11), vcyl(1, 0, YC, G.MOT_Z1 + 2, G.MOT_Z1 + 24, 2.5)]), 3500, DARK, "ref", "A")
-    part("REF_COUPLEUR_5x8", solid([vcyl(1, 0, YC, G.CPL_Z0, G.CPL_Z1, 9.5)],
-                                   [vcyl(1, 0, YC, G.SCREW_Z0, G.CPL_Z1 + 1, 4), vcyl(1, 0, YC, G.CPL_Z0 - 1, G.MOT_Z1 + 24, 2.5)]), 2700, ALU, "ref", "A")
+    mot = tt("nema17")                                                       # v7: real motor, body top on the shelf
+    top = max(f.BoundBox.ZMax for f in mot.Faces if f.Area > 1000 and f.BoundBox.ZLength < 1e-6)
+    mot.translate(Vector(-G.TT_ZAX[0], YC - G.TT_ZAX[1], G.MOT_Z1 - top))
+    part("REF_NEMA17", Part.makeCompound(mot.Solids), 3500, DARK, "ref", "A")
+    cpl = tt("coupler_5x8")
+    cpl.translate(Vector(-G.TT_ZAX[0], YC - G.TT_ZAX[1], G.CPL_Z0 - G.TT_CPL_Z0))
+    part("REF_COUPLEUR_5x8", Part.makeCompound(cpl.Solids), 2700, ALU, "ref", "A")
     part("REF_VIS_T8", vcyl(1, 0, YC, G.SCREW_Z0, G.SCREW_Z1, 4), 7850, STEEL, "ref", "A")
-    part("REF_ECROU_T8", solid([vcyl(1, 0, YC, G.NUT_Z - 3.5, G.NUT_Z, 11), vcyl(1, 0, YC, G.NUT_Z - 0.1, G.NUT_Z + 11.5, 5.1)],   # flange under the shelf
-                               [vcyl(1, 0, YC, 0, 400, 4)]), 8500, BRASS, "ref", "A")
+    nut = tt("lead_nut_TR8x8")                                               # v7: real nut, flipped: long body up, flange under the shelf
+    nut.transformShape(App.Matrix(1, 0, 0, -G.TT_ZAX[0], 0, -1, 0, G.TT_ZAX[1] + YC, 0, 0, -1, G.NUT_Z + G.TT_NUT_FL, 0, 0, 0, 1))
+    part("REF_ECROU_T8", Part.makeCompound(nut.Solids), 8500, BRASS, "ref", "A")
     part("REF_TIGE_PORTE_D8", vcyl(1, G.PX, G.PY, G.ROD_Z0, G.ROD_Z1, 4), 7850, STEEL, "ref", "A")
     part("REF_AXE_TETE_D8", ycyl(1, 0, G.HBR_Y0 + 0.5, G.HF_Y0 + 1.5, G.HZ, 4), 7850, STEEL, "ref", "B")
     part("REF_MOUSSE_PORTE", box(1, G.PAD_X0, G.SX0, G.PAD_Y0, G.PAD_Y1, G.PADS_Z[0][0], G.PADS_Z[0][1]), 50, FOAM, "ref", "A")
@@ -720,7 +741,8 @@ def placements():
     p = [("A_SOCLE", 0, 0, 0, "fixed"), ("A_TRAVERSE_HAUT", 0, 0, 0, "fixed"), ("REF_NEMA17", 0, 0, 0, "fixed"),
          ("REF_COUPLEUR_5x8", 0, 0, 0, "fixed"), ("REF_VIS_T8", 0, 0, 0, "fixed"),
          ("REF_608ZZ", -G.PX, YC - G.PY, G.RAIL_Z0 + G.RAIL_L - (G.LOW + G.PT - 7), "fixed"),
-         ("REF_RAIL_2020", 0, 0, 0, "fixed"), ("REF_RAIL_2020", -2 * G.RAIL_DX, 0, 0, "fixed"),
+         ("REF_RAILS_2020", 0, 0, 0, "fixed"), ("REF_ROUES_V", 0, 0, 0, "carriage"), ("REF_ENTRETOISES_M5", 0, 0, 0, "carriage"),
+         ("REF_ENTRETOISES_EXC", 0, 0, 0, "carriage"), ("REF_RONDELLES_BRONZE", 0, 0, 0, "carriage"),
          ("REF_PLAQUE_PAPILLON", 0, 0, 0, "carriage"), ("A_SUPPORT_ECROU", 0, 0, 0, "carriage"), ("REF_ECROU_T8", 0, 0, 0, "carriage"),
          ("A_AILE_D", 0, 0, 0, "carriage"), ("A_AILE_G", 0, 0, 0, "carriage"), ("REF_MG996R_D", 0, 0, 0, "carriage"), ("REF_MG996R_G", 0, 0, 0, "carriage"),
          ("B_SUPPORT_TETE", 0, 0, 0, "carriage"), ("REF_608ZZ_TETE", 0, 0, 0, "carriage"),
@@ -735,7 +757,6 @@ def placements():
          ("REF_PILE_3_PIERRES", 0, 0, 0, "stack"),
          ("RES_TETE_ROTATION", 0, 0, 0, "reserve"), ("RES_TETE_FIXE", 0, 0, 0, "reserve"), ("RES_TETE_CABLES", 0, 0, 0, "reserve"),
          ("RES_TETE_REPOS", 0, 0, 0, "reserve")]
-    p += [("REF_ROUE_V", dx, 0, dz, "carriage") for dx in (0, -2 * G.WH_X) for dz in (0, 2 * G.WH_DZ)]
     for cz in G.CUPS_Z:
         p += [("B_STATION_TPU", 0, 0, cz, "head"), ("B_BAGUE_STATION", 0, 0, cz, "head"), ("REF_VENTOUSE_DPS30", 0, 0, cz, "head")]
     for s, dx, tag in ((1, 0, "D"), (-1, L, "G")):
@@ -808,14 +829,18 @@ def main():
         inst.append(o)
     doc.recompute()
     real = [o for o in inst if o.MotionGroup != "reserve"]
-    clashes = []
+    clashes, expected = [], []
+    # v7: contacts that are real on the hardware (V-wheels in the V-slot, screw in the nut thread / coupler bore)
+    EXPECTED = (("REF_RAILS_2020", "REF_ROUES_V"), ("REF_VIS_T8", "REF_ECROU_T8"), ("REF_COUPLEUR_5x8", "REF_VIS_T8"), ("A_SOCLE", "REF_RAILS_2020"))
     for i in range(len(real)):
         for j in range(i + 1, len(real)):
             si, sj = real[i].Shape, real[j].Shape
             if si.BoundBox.intersect(sj.BoundBox):
                 v = si.common(sj).Volume
                 if v > 0.01:
-                    clashes.append("  %9.2f mm3  %s / %s" % (v, real[i].Label, real[j].Label))
+                    line = "  %9.2f mm3  %s / %s" % (v, real[i].Label, real[j].Label)
+                    pair = {real[i].Label.rsplit("-", 1)[0], real[j].Label.rsplit("-", 1)[0]}
+                    (expected if any(pair == set(e) for e in EXPECTED) else clashes).append(line)
     # module A must keep the head's fixed zone, cable passage and rest envelope free (the turning disc: checked in motion)
     res = [o for o in inst if o.MotionGroup == "reserve" and o.Name.startswith(("RES_TETE_FIXE", "RES_TETE_CABLES", "RES_TETE_REPOS"))]
     res_hits = []
@@ -829,6 +854,7 @@ def main():
                     res_hits.append("  %9.2f mm3  %s / %s" % (v, r.Label, o.Label))
     rep += ["", "Rest pose (carriage down, doors at contact, head vertical, stack in place): real parts"] + clashes
     rep.append("interferences: %d" % len(clashes))
+    rep += ["", "Expected contacts (real on the hardware, not counted):"] + expected
     rep += ["", "Module A (fixed parts) inside the space reserved for module B:"] + res_hits
     rep.append("reserve violations: %d" % len(res_hits))
     doc.saveAs(os.path.join(OUT, "MODULE_CLAPETS_V7.FCStd"))

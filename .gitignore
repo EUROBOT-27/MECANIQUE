@@ -21,3 +21,7 @@ venv*/
 
 # graft's local graph cache: regenerable, not committed (run `graft build`).
 /graft/
+
+# Downloaded printer model (GBs): keep local, never commit. Extracted parts go in their own folders.
+mechanical/resources/3d-printer-two-trees-bluer-v2-1.snapshot.4/
+mechanical/resources/*.zip
