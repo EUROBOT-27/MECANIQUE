@@ -24,7 +24,7 @@ HS_Z = HZ - HGC * math.cos(math.radians(HS_ANG))
 HEAD_RATIO = 30 / 20                               # head pinion turns -1.5x the head
 DOOR_RATIO = 28 / 20                               # door pinion turns -1.4x the door
 BASE_X, BASE_Y0, BASE_Y1 = 150.0, -160.0, 140.0
-EXEMPT_HEIGHT = ("REF_RAIL", "A_TRAVERSE_HAUT", "REF_VIS_T8", "REF_608ZZ_1", "RES_")   # rails/top tie: height ignored for now (Maatoug)
+EXEMPT_HEIGHT = ("REF_RAIL", "A_TRAVERSE_HAUT", "REF_VIS_T8", "REF_608ZZ_1", "RES_", "FIX_TNUT_RAILS", "FIX_VIS_RAILS")   # v7: + top-tie screws   # rails/top tie: height ignored for now (Maatoug)
 
 # timeline: (duration s, lift mm, door deg, head deg, stack follows lift, stack follows head, label) at the END of each step
 A_FOLD, A_OPEN_APPROACH, A_CLAMP, A_OPEN = 90.0, -30.0, 3.0, -38.0
@@ -215,6 +215,11 @@ def check(doc, fps=5):
                 if v > 0.05:
                     pair = tuple(sorted((label[names[i]], label[names[j]])))
                     expected = any(p.startswith("REF_PILE") for p in pair) and any(p.startswith(("REF_MOUSSE", "REF_VENTOUSE")) for p in pair)
+                    # v7: real contacts on the hardware (V-wheels in the slot, lead screw in the nut thread, horn screws
+                    # self-tapping into the horns: in the motion the horn stays with the servo body while the pinion turns)
+                    real = (("REF_ECROU_T8", "REF_VIS_T8"), ("REF_RAILS_2020", "REF_ROUES_V"), ("FIX_VIS_PIGNON_PORTE", "REF_MG996R"),
+                            ("FIX_VIS_TETE_PIGNON", "REF_MG996R_TETE"))
+                    expected = expected or any(any(p.startswith(a) for p in pair) and any(p.startswith(b) for p in pair) for a, b in real)
                     kk = (pair, expected)
                     if kk not in worst or v > worst[kk][0]:
                         worst[kk] = (v, t, lab)
