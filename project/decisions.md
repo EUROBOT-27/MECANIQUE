@@ -286,3 +286,16 @@ Template:
 - Consequences: D-014 to D-017 (clapets, Maatoug) were logged before this rule and still need Seif's review as
   mechanical lead. Binary CAD files have one owner at a time (`git lfs lock` if needed). Committed files use paths
   relative to the hub only.
+
+## D-019 — Clapets v6: print and test v5 first, in its own folder
+- Date: 2026-11-01
+- Area: mechanical
+- Decided by: Seif
+- Status: active
+- Decision: The first stone gripper we print and test on real stones is **clapets v5**, refined for printing by Seif
+  as **clapets v6** in `mechanical/clapets-v6/` (scripts copied from v5, renamed v6; outputs go to `clapets-v6/CAD_FC/`).
+  v5 stays as Maatoug left it. Concepts A/B/C (`mechanical/concepts/stone-gripper.md`) are **not dropped**; the real
+  test decides.
+- Alternatives considered: editing v5 in place (would overwrite Maatoug's reference outputs); prototyping A/B first.
+- Why: v5 is the most complete design (CAD-checked full cycle); a real print + test answers more than more concept work.
+- Consequences: D-014 → D-017 stay active as the base of v6. Maatoug is told that Seif owns `clapets-v6/` for now.
