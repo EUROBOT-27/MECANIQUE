@@ -5,9 +5,6 @@ Tasks for Seif go in `todo/seif.md`.
 Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 
 ## From Seif (2026-11-01)
-- [ ] **Before your next pull:** back up your `claude-workspace/memory/` and `claude-workspace/tmp/` folders. They are no longer tracked (personal files, D-018), so the pull deletes them from your disk. Put them back after the pull; git ignores them from now on — Maatoug
-- [ ] Before the pull, also run `git config --global core.longpaths true` (some resources paths are too long for Windows' default limit). If git complains during the pull, a fresh clone is simpler — Maatoug
-- [ ] After the pull, update your personal memory: you share the hub with Seif (D-018); your TODO is `todo/maatoug.md`, logs are `logs/YYYY-MM-DD-maatoug.md` — Maatoug
 - [ ] Add the generators that live only on your PC (`C:\Projects\EUROBOT\Mecanique\`: clapets v1/v2/v4/PoC, SolidWorks C# `sw/` scripts, `ANALYSE_mecanisme_*.md`) to the repo under `mechanical/`, with relative paths — Maatoug
 - [ ] Check `tools/` (your helpers from `tmp/`, kept as examples) and `mechanical/resources/parts-photos/` (your `tmp/parts-img`) — Maatoug
 - [ ] Review the clapets v5 status with Seif: stone gripper choice, D-016/D-017 (see `todo/seif.md`) — Maatoug, Seif
@@ -20,6 +17,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add the other parts in hand to `mechanical/parts-library.md` — Maatoug
 
 ## Mechanical (fabrication CAD)
+- [ ] Clapets v8 strike (D-021, proposed): show Seif `mechanical/clapets-v8/` and get it confirmed or folded into v7 — Maatoug, Seif
+- [ ] v8: test-print a base bar (Ø8.0 rod press fit) + the carriage bushings (Ø8.3 slide) before the full print — Maatoug
+- [ ] v8: tune the strike angle on real stones (press force vs attach reliability) — Maatoug
 - [ ] Agree with Seif which mechanisms I turn into fabrication CAD, and the hand-off format (SolidWorks files, DXF, cut lists) — Maatoug, Seif
 - [ ] Mechanical built and assembled — team — due 2026-12-31 (CAD freeze 2026-12-13)
 
@@ -34,6 +34,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 ## Backlog
 
 ## Done
+- [x] Pulled the shared hub (main = origin/main 7979428); `claude-workspace/` kept on disk and now ignored; `core.longpaths` on; personal memory updated for D-018 — 2026-11-02
 - [x] Parts library created (Ender 3 V2, unverified) → `mechanical/parts-library.md` (D-012) — 2026-10-27
 - [x] Hub handed over to Maatoug, software in scope (D-013) — 2026-10-27 (replaced by the shared hub, D-018, 2026-11-01)
 - [x] Git for the hub + how to version CAD files: repo EUROBOT-27/MECANIQUE, Git LFS (D-018, done by Seif) — 2026-11-01

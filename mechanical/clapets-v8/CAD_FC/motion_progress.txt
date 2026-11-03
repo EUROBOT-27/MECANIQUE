@@ -1,0 +1,7 @@
+frames: 88
+frame 1/88  t=0.0 s  start: doors folded inside the base  elapsed 0 s
+frame 2/88  t=0.2 s  start: doors folded inside the base  elapsed 69 s
+frame 3/88  t=0.4 s  start: doors folded inside the base  elapsed 139 s
+frame 4/88  t=0.6 s  doors open  elapsed 199 s
+frame 5/88  t=0.8 s  doors open  elapsed 265 s
+frame 6/88  t=1.0 s  doors open  elapsed 338 s
