@@ -1,0 +1,8 @@
+# FreeCAD backups and caches
+*.FCBak
+__pycache__/
+*.pyc
+# motion video frames (the mp4/gif are kept)
+CAD_FC/motion/frames/
+# run logs
+*.log

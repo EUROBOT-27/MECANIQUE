@@ -42,7 +42,8 @@ subfolder per study, listed in `simulations/INDEX.md`), even when the script tha
   `module_clapets_v2`, `module_clapets_v4`, `module_clapets_poc`, SolidWorks C# API scripts in each `sw/` folder,
   `ANALYSE_mecanisme_*.md`, `simulation/`, `mecanisme1/`). To be added to the repo (`todo/maatoug.md`).
 - `module_clapets_v3`, `base omniwheel 4/CAD/V2_280` (omni base): set aside (Maatoug, 2026-10-27).
-- **Clapets v6 / v7 (Seif, D-019, D-020):** `mechanical/clapets-v6/` (v5 + real horn and servo wires), `mechanical/clapets-v7/` (**the version we print**: door units with M3 inserts (hole Ø4.6 × 7 + 0.5 chamfer, see `design-principles.md`), real Two Trees parts, every fastener + BOM, motor on the floor). Same workflow as v5 (`fc/v7_fc.py`, README). Real printer parts: `mechanical/resources/two-trees-bluer-v2-parts/` (the 2 GB download is local only, gitignored).
+- **Clapets v6 / v7 (Seif, D-019, D-020, D-022):** `mechanical/clapets-v6/` (v5 + real horn and servo wires), `mechanical/clapets-v7/` (**the version we print**: door unit + cap rebuilt as option B (C-section spine, D-022), nuts in pockets instead of inserts except 4 M3 in the socle, real Two Trees parts, every fastener + BOM, sized for PLA; tolerance coupons in `tolerance-tests/`, assembly guide PDF in `assembly/`, status box at the top of its README). Same workflow as v5 (`fc/v7_fc.py`, README). Real printer parts: `mechanical/resources/two-trees-bluer-v2-parts/` (the 2 GB download is local only, gitignored).
+- **Clapets v8 (Maatoug, D-021, proposed):** `mechanical/clapets-v8/` = v7 + a suction head that strikes 8 mm forward on its own (fixed base bars + sliding carriage on 2 Ø8 rods, 3rd MG996R, scotch yoke). Module A = v7 (v7's module A changed a lot on 2026-11-08 → 11-10: to be carried into v8).
 - Prompt-to-CAD helpers: `tools/` (FreeCAD + SolidWorks API).
 
 ## Sourcing (Tunisia)

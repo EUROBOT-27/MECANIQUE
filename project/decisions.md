@@ -320,3 +320,22 @@ Template:
 - Why: make the first print match the real parts in hand, with nothing left to guess.
 - Consequences: before printing: tolerance check of every fastener, door sheet + foam redesign, suction carrier with real
   tube sizes, printability check, caliper measurements (`mechanical/clapets-v7/README.md`). Full-cycle check not run yet.
+
+## D-021 — Clapets v8: the suction head strikes forward on its own
+- Date: 2026-11-03
+- Area: mechanical
+- Decided by: Maatoug
+- Status: **proposed** (Seif to confirm; v7 stays the print target until then)
+- Decision: The cups must press firmly onto the boxes to attach reliably, with a forward movement inside module B only,
+  while the doors hold the stack. In `mechanical/clapets-v8/` (copy of v7, owned by Maatoug), module B is split into a
+  **fixed base** (2 bars on the 4 wheel bolts, each holding a Ø8 guide rod) and a **sliding carriage** (bearing tube,
+  head servo, gears, carrier, cups). A **3rd MG996R** on the carriage turns a crank whose pin runs in a slot of the base
+  (scotch yoke): +90° → the carriage goes **8 mm forward**, at dead centre so it holds. Rest pose = v7 (cups touching
+  the stack face); at strike the cups press 8 mm in (bellows + TPU discs take it). Module A is unchanged.
+- Alternatives considered: passive longer-travel springs under the cups (no actuator, but the force comes from the doors);
+  sliding only the head shaft in LM8UU with a long pinion and a fork (more parts).
+- Why: simplest active option: the rotation drive rides on the carriage, so the gear mesh and the turning cycle don't
+  change; only printed parts + an MG996R + Ø8 rod.
+- Consequences: +1 servo (wiring, a PWM channel), 2 × 47 mm Ø8 rods, 4 more M3 inserts. The strike force is set by the
+  servo angle (TPU + bellows compression), so it must be tuned on real stones. No room to retract the cups behind the
+  stack face: the strike is a press from contact, not a blow from a gap.
