@@ -362,3 +362,20 @@ Template:
 - Consequences: tolerance coupons first (`tolerance-tests/`, 10 coupons, ~150 g), then module A (~600 g PLA);
   assembly guide `assembly/clapets_v7_moduleA_assembly.pdf`. FEM check of B not run yet. Module A of v8 (D-021) must
   take these changes.
+
+## D-023 — Printed parts in ABS on the Bambu X1 Carbon, tolerance coupons included
+- Date: 2026-11-10
+- Area: mechanical
+- Decided by: Seif
+- Status: active (updates D-022: "sized for PLA")
+- Decision: The robot's printed parts are printed in **ABS** on a **Bambu X1 Carbon** (enclosed, door and lid closed,
+  AMS). The clapets v7 **tolerance coupons are printed in ABS too**, on the same printer and filament, so the fits they
+  give carry over to the real parts. Coupon settings: 0.2 mm layers, 4 walls, 15–20 % infill, as the STL lies, no
+  supports. Real parts: 4 walls, 40 % infill, brim on tall parts.
+- Alternatives considered: PLA coupons + PLA prototype, ABS later (the earlier plan): fits measured on PLA don't carry
+  over to ABS (ABS shrinks more, holes come out smaller). PETG: not available.
+- Why: an enclosed printer is available, so ABS warping on tall parts (~210 mm door unit spine) is manageable; ABS is
+  tougher, takes heat and doesn't creep like PLA under the rod clamps and nut posts.
+- Consequences: masses ~16 % lower than the PLA figures (ABS ≈ 1.04–1.05 g/cm³): coupons ~127 g, module A ~510 g with
+  margin. Heat-set inserts (T6, socle) at ~245–265 °C. The generator `clapets-v7/fc/v7_fc.py` still uses
+  `RHO_PRINT` = 1.24 (PLA), so its reported masses are high until changed.

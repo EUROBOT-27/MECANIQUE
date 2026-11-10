@@ -8,8 +8,8 @@ working on mechanical design.
 - Maatoug's role here: take a mechanism design and make it **ready to fabricate**: printable parts (orientation, tolerances, inserts), laser-cut DXFs, profile cut lists, hole and fastener choices from `parts-library.md`.
 - Manufacturing: 3D printing, laser cutting, aluminium profiles, rods (D-002). Fast turnaround.
 - **Print materials available: PLA and ABS only, no PETG** (Seif, 2026-11-10). The clapets CAD so far assumes PETG
-  (densities, insert temperatures); the geometry does not depend on it. Plan (not a decision yet): PLA for tolerance
-  tests + first prototype, ABS (or PETG if we get some) for robot parts. Details: `design-principles.md`, "Print materials".
+  (densities, insert temperatures); the geometry does not depend on it. **D-023: printed parts and their
+  tolerance tests in ABS on the Bambu X1 Carbon** (enclosed); PLA only for quick fit checks. Details: `design-principles.md`, "Print materials".
 - Electrical design: Hamza Bjaoui. Coordinate on battery, e-stop, wiring routes and board space early.
 - SIMAs (knights): Hamza Sammoud — see `simas/CLAUDE.md`. Coordinate if the robot launches or carries them.
 

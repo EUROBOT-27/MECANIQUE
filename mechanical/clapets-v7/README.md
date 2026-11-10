@@ -4,8 +4,8 @@
 > - **Module A (lift + doors) design: done for the first prototype.** Door unit + cap rebuilt (option B, section
 >   "2026-11-10 (3)" below), all fasteners checked, rest check clean, door sweep clean.
 > - **Now: print the tolerance tests** → [`tolerance-tests/README.md`](tolerance-tests/README.md) (10 coupons,
->   ~150 g PLA). Report the best variant of each, the CAD values get updated.
-> - **Then:** print module A for real (~600 g PLA, list in "Printing module A" below), assemble, test.
+>   ~127 g ABS, D-023). Report the best variant of each, the CAD values get updated.
+> - **Then:** print module A for real (~510 g ABS, list in "Printing module A" below), assemble, test.
 > - **In parallel:** module B (suction head) with Maatoug in `../clapets-v8/`; it must take module A from here.
 > - **Assembly guide (v1):** [`assembly/clapets_v7_moduleA_assembly.pdf`](assembly/clapets_v7_moduleA_assembly.pdf),
 >   15 A4 sheets, made from the CAD. Regenerate after the tolerance tests (see `assembly/README.md`).
@@ -35,18 +35,18 @@ seat, key access, wall around each nut/insert) and a cut view through each screw
 into" for the horn screws and "key blocked" / "head bears on nothing" next to the motor and V-wheels are false alarms
 (those bought-part models confuse the inside test).
 
-**Material (2026-11-10):** we only have **PLA and ABS** (no PETG). Everything is sized for **PLA**: the generator
-uses PLA density for every printed part (`RHO_PRINT` = 1.24 g/cm³; ABS parts would be ~16 % lighter).
-Plan: PLA for the tolerance tests + this prototype, ABS for robot parts (enclosed printer for tall parts, holes
-+0.1–0.2). See `../design-principles.md`, "Print materials".
+**Material (D-023, 2026-11-10):** coupons and real parts in **ABS on the Bambu X1 Carbon** (enclosed). The generator
+still uses PLA density for every printed part (`RHO_PRINT` = 1.24 g/cm³), so its reported masses are ~16 % high;
+the figures below are converted to ABS (≈ 1.045 g/cm³). Fits come from the ABS coupons (ABS shrinks more than PLA).
+See `../design-principles.md`, "Print materials".
 
 ## Printing module A (2026-11-10)
-- **Tolerance tests first:** `tolerance-tests/README.md` (10 coupons, ~150 g PLA at 20 % infill). Report the best variants, the CAD is
+- **Tolerance tests first:** `tolerance-tests/README.md` (10 coupons, ~127 g ABS at 20 % infill). Report the best variants, the CAD is
   updated, then the real parts.
-- **Filament for module A** (both sides, PLA, measured from the CAD solids with 4 perimeters): **~550 g at 40 % infill**
-  (490 g at 20 %, 715 g solid), about 184 m of 1.75 mm. Plan **~600 g** with skirts, brims and a failed start; one
-  1 kg spool covers module A + the tests. Biggest parts: door unit body ×2 (~119 g each), socle (~65 g),
-  top crossbar (~41 g), nut support (~36 g).
+- **Filament for module A** (both sides, ABS, from the CAD solids with 4 perimeters): **~465 g at 40 % infill**
+  (415 g at 20 %, 605 g solid), about 184 m of 1.75 mm. Plan **~510 g** with skirts, brims and a failed start; one
+  1 kg spool covers module A + the tests. Biggest parts: door unit body ×2 (~101 g each), socle (~55 g),
+  top crossbar (~35 g), nut support (~31 g). Brim on the door unit bodies (tall, ABS warps).
 
 ## Changes from v6
 ### 2026-11-10 (4): no M4 inserts, no motor pad (Seif)

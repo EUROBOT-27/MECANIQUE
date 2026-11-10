@@ -64,17 +64,18 @@ Main source: Aerobotix INSAT's 2026 robot (2nd at the European final). Details i
 - **Print orientation is chosen from the loads and the precise features:** bearing seats and bores on one axis →
   print with that axis vertical (round, coaxial). Check that the main loads run along the layers; fillets where walls
   meet shelves. ABS: tall parts need an enclosed printer.
-- **Size for PLA by default** (tolerances, masses), see "Print materials".
+- **Size for ABS** (tolerances from ABS test prints, ABS masses), D-023; see "Print materials".
 
 ## Print materials (we have PLA and ABS, no PETG)
 Seif, 2026-11-10. Our CAD so far assumed PETG; nothing in the geometry depends on it, only tolerances and habits.
 
 | | PLA | ABS |
 |---|---|---|
-| Use | **tolerance tests + first prototypes** | **robot parts** (or PETG if we can get it) |
+| Use | quick fit checks only (sizes don't carry over to ABS) | **robot parts + their tolerance tests**, on the Bambu X1 Carbon (D-023) |
 | Good | stiff, accurate, almost no warping: sizes measured on PLA test pieces carry over well | tougher, takes heat |
 | Watch | **creeps** under constant load: rod clamps and nut-under-roof posts loosen, re-tighten after the first runs; brittle on impacts; softens at 55–60 °C (no hot car) | **warps** on big tall parts: print the ~210 mm door unit spine in an **enclosed printer** or it lifts and cracks between layers; **shrinks more**: printed holes come out smaller, plan **+0.1–0.2 mm** on hole sizes |
-| Insert iron | ~225 °C | ~265 °C |
+| Density | 1.24 g/cm³ | ~1.045 g/cm³ (~16 % lighter) |
+| Insert iron | ~225 °C | ~245 °C, up to ~265 °C |
 
 Re-check in the material actually used (that is what the tolerance test prints are for): the Ø4.6 insert hole
 (proven once, material unknown), the 608 seats Ø22.2 (ABS may come out tight), the hex nut recesses (AF 5.7) and the
