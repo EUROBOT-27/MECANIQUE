@@ -339,3 +339,26 @@ Template:
 - Consequences: +1 servo (wiring, a PWM channel), 2 × 47 mm Ø8 rods, 4 more M3 inserts. The strike force is set by the
   servo angle (TPU + bellows compression), so it must be tuned on real stones. No room to retract the cups behind the
   stack face: the strike is a press from contact, not a blow from a gap.
+
+## D-022 — Clapets v7: door unit rebuilt as option B, nuts instead of inserts, sized for PLA
+- Date: 2026-11-10
+- Area: mechanical
+- Decided by: Seif
+- Status: active (updates D-020: door unit, inserts, motor pad)
+- Decision: In `mechanical/clapets-v7/`, the door unit (`A_AILE`) and its cap are rebuilt from scratch as **option B**
+  (`mechanical/concepts/aile-redesign/README.md`): a **C-section spine** (keel on the plate, back wall behind the servo,
+  outer wall, bottom + top shelves, 3 mm walls, rounded windows, one outline whose chamfers continue into the cap) and a
+  **cap to z 242** that carries the top 608 and the top plate M4. Print upright. Servo: **3 screws**, plain M3 nut under a
+  roof, nut windows on the robot's side (+ one to the front). With it:
+  - **Nuts in pockets instead of heat-set inserts** wherever an insert can't get 1.6 mm of wall; **no M4 inserts** (none
+    in stock): the nut support uses the printer's own M4 × 8 (Y belt clamp screws) into nut pockets. Only 4 M3 inserts
+    left (socle).
+  - **No motor pad** (none in stock): the motor hangs from the clamp plate, 1 mm air gap.
+  - **Everything sized for PLA** (tests + prototype); ABS (or PETG) later for robot parts.
+- Alternatives considered: A (two corner brackets), C (drive on top), D (direct drive, −30 % squeeze); curved ribs,
+  cap rib, a lip instead of the 3rd servo screw (all dropped by Seif).
+- Why: the old door unit grew fix by fix (thin walls around inserts, openings everywhere); B is the sturdiest and keeps
+  both bearings in one part; we print in PLA and have no M4 inserts / pad.
+- Consequences: tolerance coupons first (`tolerance-tests/`, 10 coupons, ~150 g), then module A (~600 g PLA);
+  assembly guide `assembly/clapets_v7_moduleA_assembly.pdf`. FEM check of B not run yet. Module A of v8 (D-021) must
+  take these changes.

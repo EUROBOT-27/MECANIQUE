@@ -16,18 +16,13 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
-- [ ] **Plan (2026-11-10):** print + test **module A only** first (tolerance coupons → real parts); work on the
-  suction module (B) in parallel with Maatoug's v8; then a **technical-drawing style assembly guide** for module A — Seif
-- [ ] **Clapets v7 before printing** (`mechanical/clapets-v7/`, D-020), in this order: — Seif
-  1. Tolerance check of every nut / screw / insert
-  2. Redesign the door sheet (tôle porte) + foam pads
-  3. Rework the suction cup carrier with the real tube sizes and measurements
-  4. Printability check of every part; refine what needs it
-  5. Caliper measurements (list at the end of the v7 README), update `class G`
-  6. **Print the tolerance coupons** (`mechanical/clapets-v7/tolerance-tests/README.md`, 10 coupons incl. the 2 door gears, ~150 g PLA at 20 % infill) and report
-     the best variants back → CAD update — added 2026-11-10
-  7. Print, assemble, test in real life
-- [ ] Re-run `fc/motion_v7.py` **in the GUI** (`freecad.exe`) to get the video; expect 0 unexpected collisions, max 347.7 mm — Seif
+- [ ] **Clapets v7 module A: print and test** (`mechanical/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
+  1. Print the **tolerance coupons** (`tolerance-tests/README.md`, 10 coupons incl. the 2 door gears, ~150 g PLA,
+     4 perimeters, 20 % infill) and report the best variant of each → update `class G`, regenerate CAD + assembly guide
+  2. Print module A (~600 g PLA, 40 % infill), assemble with `assembly/clapets_v7_moduleA_assembly.pdf`, test
+  3. Door sheet foam pads: none in hand (CAD keeps 8 mm); get some or decide another pad
+  4. Optional: FEM check of the new door unit (gear force ~90 N + door squeeze)
+- [ ] Decide: "PLA for tests / prototype, ABS (or PETG) for robot parts" → log it as a decision or not — Seif
 - [ ] Add the GrabCAD link of the Two Trees Bluer V2 model to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` — Seif
 - [ ] Robot layout: chassis floor height vs the module (z 0 = table in the clapets CAD; floor must stay < z 27; cut profiles, top tie ≤ 350) — Seif
 - [ ] Prototype and test stone gripper concepts A (side clamp) and B (suction) → `mechanical/concepts/stone-gripper.md` — Seif, Ayoub, Baha — due 2026-11-22
@@ -49,6 +44,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Decide ArUco tags on our SIMAs (IDs > 90 suggested) — Seif, Hamza Sammoud
 
 ## Follow-ups with others
+- [ ] **Confirm or reject D-021** (Maatoug's clapets v8: suction head strikes 8 mm forward, 3rd servo; proposed 2026-11-03) — Seif
 - [ ] **Review Maatoug's clapets work (D-014 → D-017)**: v5 is being printed and tested as v7 (D-019, D-020); A/B/C not dropped, the real test decides. Close this after the test — Seif, Maatoug — before 2026-11-22
 - [ ] Confirm D-012 (parts library, logged as "Decided by: Seif" on 2026-10-27) — Seif
 - [ ] Tell Maatoug about the shared hub (D-018) and the steps before his next pull (see `todo/maatoug.md`) — Seif — 2026-11-01
@@ -63,6 +59,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Clapets v7 module A ready to print: caliper values, insert holes + walls, nuts instead of inserts, rod clamps, door unit + cap rebuilt (option B, D-022), PLA sizing, no M4 inserts / no pad, tolerance coupons, assembly guide PDF, fast door sweep + GIFs — 2026-11-10
+- [x] Tolerance check of every nut / screw / insert (fastener check + insert views) — 2026-11-10
+- [x] Motion video of v7 → `mechanical/simulations/clapets_v7/` (door GIF + module A cycle GIF) — 2026-11-10
 - [x] Full-cycle check of clapets v7: no real collision, deployed ≤ 1367.3 mm — 2026-11-01
 - [x] Clapets v6 (real horn + wires) and v7 (door units reworked, real Two Trees parts, all fasteners + BOM, motor on the floor) → `mechanical/clapets-v6/`, `mechanical/clapets-v7/` (D-019, D-020) — 2026-11-01
 - [x] Real Two Trees Bluer V2 parts extracted → `mechanical/resources/two-trees-bluer-v2-parts/` — 2026-11-01

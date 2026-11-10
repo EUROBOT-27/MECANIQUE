@@ -1,0 +1,3 @@
+Door sweep (fast), right door, no stack, carriage down: -43 .. +95 deg in 2 deg steps, 16 moving parts vs 41 nearby parts, 152 s
+  CONTACT A_TOLE_PORTE-1 / B_PLATEAU_TETE-1: from +93.25 to +95 deg (max 450.6 mm3)
+  Travel used: open -38 (stack released), clamp +3, fold +90. Contacts outside -38..+90 are only margin.

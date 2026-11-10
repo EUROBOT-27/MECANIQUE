@@ -1,9 +1,9 @@
 # Status
 
-_Last updated: 2026-11-01, evening (Seif)_
+_Last updated: 2026-11-10 (Seif)_
 
-**Phase:** Strategy partly fixed → mechanical concepts + first gripper prototype (clapets v7) being finalised for printing. Hub shared by Seif and Maatoug (D-018).
-**Next deadline:** Strategy chosen (internal), 2026-11-08 (7 days) · Concepts chosen + prototypes tested 2026-11-22 (21 days) · CAD freeze 2026-12-13 (42 days) · Mechanical built and assembled, 2026-12-31 (60 days)
+**Phase:** Strategy partly fixed → **clapets v7 module A ready to print** (tolerance tests first); module B (suction) reworked by Maatoug in v8. Hub shared by Seif and Maatoug (D-018).
+**Next deadline:** Strategy chosen (internal), 2026-11-08 (**2 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (12 days) · CAD freeze 2026-12-13 (33 days) · Mechanical built and assembled, 2026-12-31 (51 days)
 **Qualifier:** end of March 2027
 
 ## Where we are
@@ -13,10 +13,12 @@ _Last updated: 2026-11-01, evening (Seif)_
   concepts in `mechanical/concepts/gate-lintel.md`. Mechanism not chosen.
 - **Stone gripper:** concepts A (side clamp), B (suction), C (both) in `mechanical/concepts/stone-gripper.md` (Seif).
   In parallel, Maatoug designed **clapets v5** (`mechanical/clapets-v5/`, D-014 → D-017): doors + lift + a suction head
-  that turns the 3-box stack. **Seif is turning it into the first prototype: clapets v7** (`mechanical/clapets-v7/`,
-  D-019, D-020): real horn/servo/printer parts, door units reworked with M3 inserts, every fastener + BOM, motor on the
-  floor. Rest pose and full cycle clean (no real collision, deployed ≤ 1367.3 mm). Next: fastener tolerances, door sheet + foam, suction carrier with real
-  tubes, printability, caliper check, print + test. A/B/C not dropped; the test decides.
+  that turns the 3-box stack. **First prototype = clapets v7** (`mechanical/clapets-v7/`, D-019, D-020, **D-022**):
+  **module A (lift + doors) is ready to print**: door unit + cap rebuilt (option B, C-section spine), nuts in pockets
+  instead of inserts (only 4 M3 inserts left), sized for PLA, rest check + fast door sweep clean. **Next: print the
+  tolerance coupons** (`tolerance-tests/`, ~150 g), update the fits, then module A (~600 g PLA) with the assembly guide
+  (`assembly/clapets_v7_moduleA_assembly.pdf`). Module B: Maatoug's **v8** (D-021, proposed: cups strike 8 mm forward),
+  which must take v7's module A. A/B/C not dropped; the test decides.
 - Parts library from the disassembled Ender 3 V2, lines still unverified (D-012).
 - Software: simulation repo (ROS 2 Jazzy + Gazebo), clone separately into `eurobot2027/`. `software/` area exists.
 - Earlier decisions: differential drive (D-004), LiDAR + vision (D-007), overhead station on the table (D-008), Aerobotix principles (D-006).
@@ -29,8 +31,9 @@ _Last updated: 2026-11-01, evening (Seif)_
    gate protrusion compete for it. Full robot layout not checked yet; FAQ Q1 (does a carried stone count?) unconfirmed.
 
 ## Waiting on
-- Seif: order stones + foam balls, robot and roof layout sketches, refined timeline, confirmation of the D-008 location,
-  clapets v7 fastener tolerances + caliper check.
-- Maatoug: back up personal files before the next pull; push the generators that only exist on his PC.
+- Seif: tolerance coupon results (clapets v7), order stones + foam balls, robot and roof layout sketches, refined
+  timeline, confirmation of the D-008 location, confirm/reject D-021.
+- Maatoug: back up personal files before the next pull; push the generators that only exist on his PC; carry v7's
+  module A into v8; remove the ~470 software build files committed in `a746ea1`; fix the head servo posts.
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.
 - FAQ answers (Q1–Q9 not sent yet).
