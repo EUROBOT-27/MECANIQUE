@@ -69,3 +69,6 @@ resources/                 previous teams' material -> drop files in mechanical/
 logs/                      one file per person per day (YYYY-MM-DD-<name>.md)
 tools/                     prompt-to-CAD helper scripts (FreeCAD, SolidWorks API)
 Docs/                      official PDFs (never edited)
+
+
+& "C:\Program Files\FreeCAD 1.1\bin\freecad.exe" fc/motion_v7.py

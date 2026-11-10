@@ -293,6 +293,82 @@ def door_range(doc):
     print("\n".join(lines))
 
 
+def door_sweep_fast(doc, a_min=-43.0, a_max=95.0, step=2.0):
+    """2026-11-10, FAST door check (V4_MODE=doors): right door only (the left is its mirror), carriage down, head
+    vertical, no stack. Only the door's moving parts (door_D + pinion_D groups) move; they are checked only against
+    the parts that come inside their swing (picked once from the swept bounding box). Angles: the real travel
+    (open -38 .. fold +90) + 5 deg margin, 2 deg steps, then 0.25 deg around every contact."""
+    import time
+    t0 = time.time()
+    objs = [o for o in objects(doc) if o.MotionGroup not in ("stack", "reserve")]
+    label = {o.Name: o.Label for o in objs}
+    moving = [o for o in objs if o.MotionGroup in ("door_D", "pinion_D")]
+    mshape = {o.Name: o.Shape.copy() for o in moving}
+    mbase = {o.Name: o.Placement for o in moving}
+    mgrp = {o.Name: o.MotionGroup for o in moving}
+    # swept box of the moving parts: around the rod (door group) and the servo axis (pinion group)
+    rad = {}
+    for o in moving:
+        cx, cy = (PX, PY) if o.MotionGroup == "door_D" else (PX, SVY)
+        bb = o.Shape.BoundBox
+        r = max(math.hypot(x - cx, y - cy) for x in (bb.XMin, bb.XMax) for y in (bb.YMin, bb.YMax))
+        rad[o.Name] = (cx, cy, r, bb.ZMin, bb.ZMax)
+    def near(o):
+        bb = o.Shape.BoundBox
+        for cx, cy, r, z0, z1 in rad.values():
+            if bb.XMax >= cx - r and bb.XMin <= cx + r and bb.YMax >= cy - r and bb.YMin <= cy + r and bb.ZMax >= z0 and bb.ZMin <= z1:
+                return True
+        return False
+    static = [o for o in objs if o.MotionGroup not in ("door_D", "pinion_D", "door_G", "pinion_G") and near(o)]
+    real = (("FIX_VIS_PIGNON_PORTE", "REF_MG996R"),)        # horn screws turn with the pinion, the horn model stays
+    def hits_at(a):
+        out = []
+        cur = {}
+        for nm, sh in mshape.items():
+            s = sh.copy()
+            s.Placement = placement(mbase[nm], mgrp[nm], 0, a, 0, 0, 0)
+            cur[nm] = s
+        for nm, s in cur.items():
+            for o in static:
+                if not s.BoundBox.intersect(o.Shape.BoundBox):
+                    continue
+                v = s.common(o.Shape).Volume
+                if v > 0.05:
+                    pair = (label[nm], o.Label)
+                    if any(pair[0].startswith(p) and pair[1].startswith(q) or pair[1].startswith(p) and pair[0].startswith(q) for p, q in real):
+                        continue
+                    out.append((pair[0], pair[1], v))
+        return out
+    angles = [a_min + step * k for k in range(int((a_max - a_min) / step) + 1)]
+    found = {}
+    for a in angles:
+        for l1, l2, v in hits_at(a):
+            found.setdefault((l1, l2), []).append((a, v))
+    # refine: first and last touching angle of every pair, 0.25 deg
+    lines = ["Door sweep (fast), right door, no stack, carriage down: %.0f .. %+.0f deg in %.0f deg steps, %d moving parts vs %d nearby parts, %.0f s"
+             % (a_min, a_max, step, len(moving), len(static), 0)]
+    if not found:
+        lines.append("  NO contact over the whole travel (needed: open -38, clamp +3, fold +90).")
+    for (l1, l2), lst in sorted(found.items()):
+        a0, a1 = lst[0][0], lst[-1][0]
+        lo = a0
+        for k in range(1, 9):                                   # step back to where it starts touching
+            b = a0 - 0.25 * k
+            if b < a_min or not any(h[0] == l1 and h[1] == l2 for h in hits_at(b)):
+                break
+            lo = b
+        vmax = max(v for _, v in lst)
+        lines.append("  CONTACT %s / %s: from %+.2f to %+.0f deg (max %.1f mm3)" % (l1, l2, lo, a1, vmax))
+    took = time.time() - t0
+    lines[0] = lines[0].replace(", 0 s", ", %.0f s" % took)
+    lines.append("  Travel used: open -38 (stack released), clamp +3, fold +90. Contacts outside -38..+90 are only margin.")
+    for d in [OUT] + ([HUB_SIM] if HUB_SIM else []):
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "door_sweep_report.txt"), "w") as f:
+            f.write("\n".join(lines) + "\n")
+    print("\n".join(lines))
+
+
 # ---------------------------------------------------------------- GUI: animation + video
 def animate(doc, fps=10):
     import shutil
@@ -362,6 +438,8 @@ else:
     _doc = App.openDocument(FCSTD)
     if os.environ.get("V4_MODE") == "range":
         door_range(_doc)
+    elif os.environ.get("V4_MODE") == "doors":          # 2026-11-10: fast door check (right door, real travel)
+        door_sweep_fast(_doc)
     else:
         check(_doc)
     App.closeDocument(_doc.Name)

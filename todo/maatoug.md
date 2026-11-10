@@ -14,6 +14,15 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Note: Seif owns `mechanical/clapets-v6/` and `clapets-v7/` for now (v5 untouched). v7 = the version we print (D-020); have a look at its README (fasteners, real printer parts, motor on the floor) — Maatoug
 - [ ] Where did you download the Two Trees Bluer V2 model? Add the link to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` if Seif hasn't — Maatoug
 
+## From Seif (2026-11-10)
+- [ ] Your commit `a746ea1` added ~470 **software build outputs** (STM32 / micro-ROS `Debug/`, `.elf`, `.hex`, `.map`,
+  a 7 MB `libmicroros.a`): build outputs usually stay out of git (`.gitignore`). Can you remove them from the repo? — Maatoug
+- [ ] **Module A changed a lot in v7** since your v8 copy (door unit + cap rebuilt as option B, nuts instead of
+  inserts, rod clamps, nut support, motor plate: `mechanical/clapets-v7/README.md`, 2026-11-08 → 11-10). Carry it
+  into v8 (v8's module A = v7) — Maatoug
+- [ ] Head servo posts (module B, `B_SUPPORT_TETE`): inserts have 0.9 mm walls; use the door unit's nut + roof +
+  window fix. Head 20T: only 4.1 mm of face since the horn is 47.4 tall (`mechanical/clapets-v7/README.md`, 2026-11-09) — Maatoug
+
 ## Now (current focus)
 - [ ] Add my own current tasks (software + CAD) to this list — Maatoug
 - [ ] Count and measure the Ender 3 V2 parts, mark lines `verified` in `mechanical/parts-library.md` — Maatoug

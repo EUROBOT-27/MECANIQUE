@@ -1,5 +1,16 @@
 # Clapets v7: v6 with reworked door units (Seif)
 
+> **Where we are (2026-11-10)**
+> - **Module A (lift + doors) design: done for the first prototype.** Door unit + cap rebuilt (option B, section
+>   "2026-11-10 (3)" below), all fasteners checked, rest check clean, door sweep clean.
+> - **Now: print the tolerance tests** → [`tolerance-tests/README.md`](tolerance-tests/README.md) (10 coupons,
+>   ~150 g PLA). Report the best variant of each, the CAD values get updated.
+> - **Then:** print module A for real (~600 g PLA, list in "Printing module A" below), assemble, test.
+> - **In parallel:** module B (suction head) with Maatoug in `../clapets-v8/`; it must take module A from here.
+> - **Assembly guide (v1):** [`assembly/clapets_v7_moduleA_assembly.pdf`](assembly/clapets_v7_moduleA_assembly.pdf),
+>   15 A4 sheets, made from the CAD. Regenerate after the tolerance tests (see `assembly/README.md`).
+> - Concept history of the door unit: [`../concepts/aile-redesign/README.md`](../concepts/aile-redesign/README.md).
+
 Copy of [clapets v6](../clapets-v6/README.md) (v5 + real horn + real servo wires). v5 and v6 stay untouched. Owner while
 in progress: **Seif**. Design = `fc/v7_fc.py` (dimensions in `class G`); never edit the `.FCStd` by hand.
 
@@ -7,20 +18,79 @@ in progress: **Seif**. Design = `fc/v7_fc.py` (dimensions in `class G`); never e
 ```
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/v7_fc.py      # parts, STEP/STL/DXF, FCStd, report.txt (~1 min)
 "C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/render_v7.py  # colours + images
-"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/motion_v7.py  # full-cycle checks (~10 min)
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/motion_v7.py  # full-cycle checks (~10 min, only when asked)
+set V4_MODE=doors & "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/motion_v7.py  # FAST door sweep (~2.5 min)
+"C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/door_gif_v7.py  # door module GIF, top + 3D split view (~1 min) -> CAD_FC/motion/doors.gif
+"C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/cycle_gif_v7.py # module A cycle GIF (no module B), side + 3D (~1 min) -> CAD_FC/motion/cycle_moduleA.gif
 "C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/fastener_check_v7.py  # every screw/nut/insert: numbers + cut views (~15 min)
 ```
+**Fast door sweep (`V4_MODE=doors`, 2026-11-10):** right door only (the left is its mirror), carriage down, no stack.
+Only the door's moving parts (arms, door sheet, 28T, pinion, their screws) move, checked only against the parts that
+come inside their swing; the real travel (open −38 … fold +90) + 5° margin in 2° steps, refined to 0.25° at each
+contact. Report: `CAD_FC/motion/door_sweep_report.txt`. Last run: **no contact over the travel**; the folded door
+sheet meets the head's MDF carrier only past +93.25° (3.25° margin beyond the +90° fold).
+
 `fastener_check_v7.py` writes `CAD_FC/fastener_check/report.txt` (thread length in the nut/insert, hole gaps, head
 seat, key access, wall around each nut/insert) and a cut view through each screw (`s_NN_*.png`). Its "nothing to screw
 into" for the horn screws and "key blocked" / "head bears on nothing" next to the motor and V-wheels are false alarms
 (those bought-part models confuse the inside test).
 
-**Material (2026-11-10):** we only have **PLA and ABS** (no PETG). The generator still uses PETG density (1.27 g/cm³):
-masses in `CAD_FC/report.txt` are ~2 % high for PLA (1.24) and ~20 % high for ABS (1.04), so they are on the safe side.
+**Material (2026-11-10):** we only have **PLA and ABS** (no PETG). Everything is sized for **PLA**: the generator
+uses PLA density for every printed part (`RHO_PRINT` = 1.24 g/cm³; ABS parts would be ~16 % lighter).
 Plan: PLA for the tolerance tests + this prototype, ABS for robot parts (enclosed printer for tall parts, holes
 +0.1–0.2). See `../design-principles.md`, "Print materials".
 
+## Printing module A (2026-11-10)
+- **Tolerance tests first:** `tolerance-tests/README.md` (10 coupons, ~150 g PLA at 20 % infill). Report the best variants, the CAD is
+  updated, then the real parts.
+- **Filament for module A** (both sides, PLA, measured from the CAD solids with 4 perimeters): **~550 g at 40 % infill**
+  (490 g at 20 %, 715 g solid), about 184 m of 1.75 mm. Plan **~600 g** with skirts, brims and a failed start; one
+  1 kg spool covers module A + the tests. Biggest parts: door unit body ×2 (~119 g each), socle (~65 g),
+  top crossbar (~41 g), nut support (~36 g).
+
 ## Changes from v6
+### 2026-11-10 (4): no M4 inserts, no motor pad (Seif)
+- **Nut support (`A_SUPPORT_ECROU`): M4 nuts instead of M4 inserts** (none in stock). Wall 8 → 5 mm (`SUP_WALL`),
+  nut pockets in the wall's back face (7.4 × 8.4 × 3.4). The 2 screws are **the printer's own M4 × 8** (they held
+  the Y belt clamp under this same plate): plate 3 + skin 1.6 + nut 3.2 = full thread. M4 × 10 also fits.
+- **No pad under the motor** (none in stock): the motor hangs from the clamp plate by its 4 screws, 1 mm air gap
+  under it (`MOT_PAD` stays 1.0 as that gap). `REF_PATIN_MOTEUR` removed.
+- Module A now has **only 4 heat-set inserts** (M3, socle). Tolerance coupon T6 is M3-only.
+- Assembly guide: steps 1, 2, 5 updated; layout reduced to title, content and page number.
+- Rest pose: 0 interferences, 0 reserve violations.
+
+### 2026-11-10 (3): door unit + cap rebuilt as option B (Seif)
+Concept, sketches and reasons: `../concepts/aile-redesign/README.md`. `aile()` and `capot_aile()` rewritten from scratch
+(the old box, closing walls, arch walls, cap bosses and nut slides are gone). Kept: plate holes, both 608 seats, servo place.
+- **Spine (`A_AILE`), C-section, 3 mm walls, printed upright, no support:** keel on the plate (x 66–98, y 50.5–60.5,
+  carries the bottom plate M4), web (x 95.2–98) to a **back wall behind the servo** (y 34–37: the 20T tips reach y 38.25),
+  **outer wall** (x 147–150, y 34–66), bottom shelf (z 27–36: bottom 608 + servo floor), top shelf (z 218–226, y ≤ 63:
+  the top arm swings in front of it). Front open: gears visible, servo slides in from the front.
+- **Windows with rounded corners** (flat top ≤ 20 mm bridge): keel (between the M4 rows), back wall and outer wall
+  (z 112–212). No ribs.
+- **Servo: 3 screws** M3 × 8 + nut in a hex recess under a 1.6 mm roof. Outer 2 nut windows open on the **robot's side**
+  (x 150), inner 1 toward the **front**. Ear slots 6.6 tall, open to the front: room for the button heads and a
+  **ball-end hex key from the front at an angle** (straight from above is blocked by the top shelf / keel). Cable slot
+  as before.
+- **Cap (`A_CAPOT_AILE`) z 226–242:** holds the top 608 and **the top plate M4** (z 235, now fully covered), so the top
+  bearing goes to the plate by the shortest path. 2 × M3 × 16 on a diagonal into the top shelf, nuts in pockets under
+  the shelf. Pocket from below (3 mm skins), printed upside down.
+- **Plate M4s:** M4 × 16 from behind the plate, ±1.5 slot (door centering), nut in a pocket in the keel / cap front
+  face (the pocket keeps the ±1.5 slide).
+- **Servo screw access:** each ear has an opening from the ear up to just under the gears (z 77–95.4), open to the
+  front, and for the 2 outer ears on the robot's side too: fingers to start the screws, a hex key at an angle. Inner
+  ear: 4.5 mm flange entry + an opening 15 mm tall around the screw, open to the front; behind it the web stays whole
+  and gets a **rib** (2.5 mm thicker, x 99–100.5, z 57–107) that ties the keel to the back wall around the opening.
+- **One outline, edges continue into the cap:** the walls are one C-section outline (`spine_loop`), 1 mm chamfer on
+  every outside corner, small fillet on the inside ones. The top shelf and the cap share one outline (`top_loop`), so
+  the cap's edges and chamfers continue the body's (as for the socle and the motor plate). The web moved to x 96.2 so
+  its inside fillet stays clear of the plate edge; keel to x 99.
+- **Cable exit:** the channel inside the posts stays open to the front (the servo slides in), but the hole through
+  the outer wall is grommet-size (9 mm wide): the wall keeps ~10 mm at the front instead of 2 mm. Thread the connector
+  through the hole before sliding the servo in.
+- **No inserts left in the door unit.** Mass (solid PLA): spine 146 g + cap 42 g = 188 g per side (was 267 g).
+- Rest pose: 0 interferences, 0 reserve violations. Motion check and FEM not run yet.
+
 ### 2026-11-10 (2): nut support, motor plate, arm ↔ door sheet, rod clamps (Seif)
 - **`A_SUPPORT_ECROU` symmetric:** the locating pin in the butterfly plate's 3rd hole (x 25.8) and the 4.5 mm of wall that
   carried it are gone (from v5; the 2 M4 screws already fix the part). `PIN_X` is no longer used.
@@ -171,7 +241,7 @@ Bill of materials as of 2026-11-08 (after the fastener fixes; source of truth: e
 
 | Qty | Fastener (whole module) |
 |---|---|
-| 22 | M3 heat-set insert (hole Ø4.6 × 7 + 0.5 chamfer) · 2 M4 insert (hole Ø5.6 × 7) (2026-11-10: 6 door post inserts → nuts) |
+| 22 | M3 heat-set insert … (**out of date**: since 2026-11-10 module A has only 4 M3 inserts (socle) and no M4 insert; current list: end of `CAD_FC/report.txt`) |
 | 10 | M3 × 8 button head · 18 M3 × 12 button head · 9 M3 × 16 button head |
 | 4 | M3 × 10 button head into Ø2.5 pilot holes (TR8 nut flange, cut their own thread) |
 | 12 | M3 × 10 socket head · 1 M3 × 12 socket head |

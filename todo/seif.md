@@ -16,14 +16,16 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
+- [ ] **Plan (2026-11-10):** print + test **module A only** first (tolerance coupons → real parts); work on the
+  suction module (B) in parallel with Maatoug's v8; then a **technical-drawing style assembly guide** for module A — Seif
 - [ ] **Clapets v7 before printing** (`mechanical/clapets-v7/`, D-020), in this order: — Seif
   1. Tolerance check of every nut / screw / insert
   2. Redesign the door sheet (tôle porte) + foam pads
   3. Rework the suction cup carrier with the real tube sizes and measurements
   4. Printability check of every part; refine what needs it
   5. Caliper measurements (list at the end of the v7 README), update `class G`
-  6. **Tolerance test prints in the real material (PLA, then ABS):** M3 insert hole Ø4.6, 608 seat Ø22.2, hex nut
-     recess AF 5.7, clamp nut pocket 6.0 × 6.9 (`design-principles.md`, "Print materials") — added 2026-11-10
+  6. **Print the tolerance coupons** (`mechanical/clapets-v7/tolerance-tests/README.md`, 10 coupons incl. the 2 door gears, ~150 g PLA at 20 % infill) and report
+     the best variants back → CAD update — added 2026-11-10
   7. Print, assemble, test in real life
 - [ ] Re-run `fc/motion_v7.py` **in the GUI** (`freecad.exe`) to get the video; expect 0 unexpected collisions, max 347.7 mm — Seif
 - [ ] Add the GrabCAD link of the Two Trees Bluer V2 model to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` — Seif

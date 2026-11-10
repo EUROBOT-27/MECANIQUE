@@ -1,7 +1,8 @@
 # Door unit (`A_AILE` + `A_CAPOT_AILE`) redesign: 4 options
 
-Clapets v7, right door unit (left = mirror). Started 2026-11-10 (Seif + Claude). Status: **Seif prefers B
-(spine + cap)**, details to refine before the CAD.
+Clapets v7, right door unit (left = mirror). Started 2026-11-10 (Seif + Claude). Status: **B built in the CAD**
+(2026-11-10, `../../clapets-v7/README.md`, section "2026-11-10 (3)"): no ribs, rounded windows, cap to z 242,
+3 servo screws. FEM check next.
 
 **Seif's answers (2026-11-10):**
 - **Option B**, the sturdiest. Keeps the gears (so no direct drive; question 4 is closed).

@@ -40,6 +40,32 @@ Main source: Aerobotix INSAT's 2026 robot (2nd at the European final). Details i
   (no part covering the pocket mouth or the head), room for a 5.5 wrench or pliers where a nut sits free, and screws
   long enough to pass the whole nut. Check it in the CAD before printing (`fc/fastener_check_v7.py`).
 
+## Shape and assembly rules for printed parts
+✅ Seif, 2026-11-10, from the clapets v7 door unit rebuild (`concepts/aile-redesign/`). Apply to every printed part.
+
+- **One logic per part.** Build a part from one clear outline (e.g. a C-section), not from patches added fix after fix.
+  3 mm walls, 2 mm ribs, thick zones cored out.
+- **Edges continue across stacked parts.** When one part sits on another (cap on body, motor plate on socle), they
+  share the same outline at the joint, with the same chamfers, so they read as one part. In the generators: one
+  outline function used by both parts (`top_loop()` in `v7_fc.py`).
+- **One edge rule:** 1 mm chamfer on every outside vertical corner, a small fillet on every inside corner (it also
+  protects the layer lines). 45° only where an overhang needs it.
+- **Windows with rounded corners**, flat top ≤ 20 mm (it must bridge when printed upright). No triangular tops.
+- **Nuts go in pockets** (a simple rectangular indent, it does not have to be hex-shaped), like the rod clamps:
+  the nut cannot turn or fall, no wrench needed. Pocket for M3 6.0 × 6.9 × 2.8, M4 7.4 × 8.4 × 3.6; keep any
+  adjustment slide (e.g. ±1.5) in the pocket length. A pocket must open to free air with nothing covering its mouth.
+- **Hand and tool room around every screw head:** room for fingers to start the screw and for the key (straight, or a
+  ball-end key at an angle through a front opening). Check that the head itself does not hit a wall.
+- **Don't fix one problem by making a big opening that thins the wall next to it.** Make the opening the size it
+  needs and add a rib beside it (door unit inner servo ear: opening + 2.5 mm rib on the web).
+- **Holes for cables/parts only as big as the part:** a cable exit the size of the grommet, not a full-width slot
+  (a full slot left a 2 mm strip). Thread the connector before assembly if needed.
+- **Keep-out zones for moving parts** (arm swing, gear tips) are drawn first; no wall goes in them.
+- **Print orientation is chosen from the loads and the precise features:** bearing seats and bores on one axis →
+  print with that axis vertical (round, coaxial). Check that the main loads run along the layers; fillets where walls
+  meet shelves. ABS: tall parts need an enclosed printer.
+- **Size for PLA by default** (tolerances, masses), see "Print materials".
+
 ## Print materials (we have PLA and ABS, no PETG)
 Seif, 2026-11-10. Our CAD so far assumed PETG; nothing in the geometry depends on it, only tolerances and habits.
 
