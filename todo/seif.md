@@ -22,7 +22,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
   3. Rework the suction cup carrier with the real tube sizes and measurements
   4. Printability check of every part; refine what needs it
   5. Caliper measurements (list at the end of the v7 README), update `class G`
-  6. Print, assemble, test in real life
+  6. **Tolerance test prints in the real material (PLA, then ABS):** M3 insert hole Ø4.6, 608 seat Ø22.2, hex nut
+     recess AF 5.7, clamp nut pocket 6.0 × 6.9 (`design-principles.md`, "Print materials") — added 2026-11-10
+  7. Print, assemble, test in real life
 - [ ] Re-run `fc/motion_v7.py` **in the GUI** (`freecad.exe`) to get the video; expect 0 unexpected collisions, max 347.7 mm — Seif
 - [ ] Add the GrabCAD link of the Two Trees Bluer V2 model to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` — Seif
 - [ ] Robot layout: chassis floor height vs the module (z 0 = table in the clapets CAD; floor must stay < z 27; cut profiles, top tie ≤ 350) — Seif

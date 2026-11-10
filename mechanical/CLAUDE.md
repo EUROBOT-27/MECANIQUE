@@ -7,6 +7,9 @@ working on mechanical design.
 - CAD: Seif (lead), Ayoub, Baha, and Maatoug (fabrication CAD). **SolidWorks.**
 - Maatoug's role here: take a mechanism design and make it **ready to fabricate**: printable parts (orientation, tolerances, inserts), laser-cut DXFs, profile cut lists, hole and fastener choices from `parts-library.md`.
 - Manufacturing: 3D printing, laser cutting, aluminium profiles, rods (D-002). Fast turnaround.
+- **Print materials available: PLA and ABS only, no PETG** (Seif, 2026-11-10). The clapets CAD so far assumes PETG
+  (densities, insert temperatures); the geometry does not depend on it. Plan (not a decision yet): PLA for tolerance
+  tests + first prototype, ABS (or PETG if we get some) for robot parts. Details: `design-principles.md`, "Print materials".
 - Electrical design: Hamza Bjaoui. Coordinate on battery, e-stop, wiring routes and board space early.
 - SIMAs (knights): Hamza Sammoud — see `simas/CLAUDE.md`. Coordinate if the robot launches or carries them.
 
@@ -23,6 +26,7 @@ the testing method, …) (D-006).
 - `concepts/stone-gripper.md`: wall pick-up, concepts A (side clamp), B (3 suction cups), C (both). Brainstorm 2026-10-26.
 - `concepts/gate-lintel.md`: space to reserve for the gate (slot on a driving face shared with a stone gripper, D-011 + narrow protrusion for the perimeter budget), concepts compared. Mechanism not chosen.
 - Launcher (flywheel, fixed angle), Grail lift variants: brainstorm in `project/strategy.md`.
+- `concepts/aile-redesign/README.md`: clapets v7 door unit + cap rebuilt from scratch, 4 options (2026-11-10), not chosen yet.
 - `concepts/clapets-redesign.md`: rethink of the clapets modules v1/v2 (quarry-stack grip + 15 mm lift, v2 adds a turning suction head) around our parts library. Proposal, 2026-10-27.
 
 ## Simulations and videos
@@ -38,7 +42,7 @@ subfolder per study, listed in `simulations/INDEX.md`), even when the script tha
   `module_clapets_v2`, `module_clapets_v4`, `module_clapets_poc`, SolidWorks C# API scripts in each `sw/` folder,
   `ANALYSE_mecanisme_*.md`, `simulation/`, `mecanisme1/`). To be added to the repo (`todo/maatoug.md`).
 - `module_clapets_v3`, `base omniwheel 4/CAD/V2_280` (omni base): set aside (Maatoug, 2026-10-27).
-- **Clapets v6 / v7 (Seif, D-019, D-020):** `mechanical/clapets-v6/` (v5 + real horn and servo wires), `mechanical/clapets-v7/` (**the version we print**: door units with M3 inserts Ø4.6 × 6.5, real Two Trees parts, every fastener + BOM, motor on the floor). Same workflow as v5 (`fc/v7_fc.py`, README). Real printer parts: `mechanical/resources/two-trees-bluer-v2-parts/` (the 2 GB download is local only, gitignored).
+- **Clapets v6 / v7 (Seif, D-019, D-020):** `mechanical/clapets-v6/` (v5 + real horn and servo wires), `mechanical/clapets-v7/` (**the version we print**: door units with M3 inserts (hole Ø4.6 × 7 + 0.5 chamfer, see `design-principles.md`), real Two Trees parts, every fastener + BOM, motor on the floor). Same workflow as v5 (`fc/v7_fc.py`, README). Real printer parts: `mechanical/resources/two-trees-bluer-v2-parts/` (the 2 GB download is local only, gitignored).
 - Prompt-to-CAD helpers: `tools/` (FreeCAD + SolidWorks API).
 
 ## Sourcing (Tunisia)

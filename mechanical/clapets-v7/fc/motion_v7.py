@@ -218,7 +218,8 @@ def check(doc, fps=5):
                     # v7: real contacts on the hardware (V-wheels in the slot, lead screw in the nut thread, horn screws
                     # self-tapping into the horns: in the motion the horn stays with the servo body while the pinion turns)
                     real = (("REF_ECROU_T8", "REF_VIS_T8"), ("REF_RAILS_2020", "REF_ROUES_V"), ("FIX_VIS_PIGNON_PORTE", "REF_MG996R"),
-                            ("FIX_VIS_TETE_PIGNON", "REF_MG996R_TETE"))
+                            ("FIX_VIS_TETE_PIGNON", "REF_MG996R_TETE"),
+                            ("FIX_VIS_SUPPORT_ECROU", "A_SUPPORT_ECROU"))   # 2026-11-08: self-tapping into Ø2.5 pilot holes
                     expected = expected or any(any(p.startswith(a) for p in pair) and any(p.startswith(b) for p in pair) for a, b in real)
                     kk = (pair, expected)
                     if kk not in worst or v > worst[kk][0]:

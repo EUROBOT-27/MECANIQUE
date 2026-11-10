@@ -8,9 +8,98 @@ in progress: **Seif**. Design = `fc/v7_fc.py` (dimensions in `class G`); never e
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/v7_fc.py      # parts, STEP/STL/DXF, FCStd, report.txt (~1 min)
 "C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/render_v7.py  # colours + images
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/motion_v7.py  # full-cycle checks (~10 min)
+"C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/fastener_check_v7.py  # every screw/nut/insert: numbers + cut views (~15 min)
 ```
+`fastener_check_v7.py` writes `CAD_FC/fastener_check/report.txt` (thread length in the nut/insert, hole gaps, head
+seat, key access, wall around each nut/insert) and a cut view through each screw (`s_NN_*.png`). Its "nothing to screw
+into" for the horn screws and "key blocked" / "head bears on nothing" next to the motor and V-wheels are false alarms
+(those bought-part models confuse the inside test).
+
+**Material (2026-11-10):** we only have **PLA and ABS** (no PETG). The generator still uses PETG density (1.27 g/cm³):
+masses in `CAD_FC/report.txt` are ~2 % high for PLA (1.24) and ~20 % high for ABS (1.04), so they are on the safe side.
+Plan: PLA for the tolerance tests + this prototype, ABS for robot parts (enclosed printer for tall parts, holes
++0.1–0.2). See `../design-principles.md`, "Print materials".
 
 ## Changes from v6
+### 2026-11-10 (2): nut support, motor plate, arm ↔ door sheet, rod clamps (Seif)
+- **`A_SUPPORT_ECROU` symmetric:** the locating pin in the butterfly plate's 3rd hole (x 25.8) and the 4.5 mm of wall that
+  carried it are gone (from v5; the 2 M4 screws already fix the part). `PIN_X` is no longer used.
+- **`A_PLATINE_MOTEUR` flush with the socle's rail blocks:** same outline and square edges as the blocks under it
+  (y 19..55, x ±56.45), plus the motor's 42 mm square face in the middle (its 4 screws). It no longer sticks out at
+  the back. The socle is unchanged.
+- **Arm ↔ door sheet: M3 × 16 + plain nut** (no inserts). One screw 7 mm under and one 7 mm over each arm (`ARM_SC`),
+  so the nut sits in free air on the tab's inner face with room for a 5.5 wrench or pliers. Tabs 8 deep (`TAB_D`),
+  `FL1` (27, 61), `FL2` (200, 234). Door sheet holes (±1.5 slots) follow: **new DXF**.
+- **Parts clamped on the rods:**
+  - Arms: the hub covered the mouth of the clamp's nut pocket (the nut could not go in): the pocket now runs 8 mm out
+    to free air (`nut_ext`). Clamp screw M3 × 12 (the × 10 ended inside the nut). Key path: 20 mm counterbore (11-08).
+  - 28T gear: its 2 nut pockets overlapped (screws 6 apart in a 14 mm hub): hub **22** tall (`HUB28_H`), screws
+    **11** apart (`hub28_screws_z`): 2.2 mm of plastic above the gear, 4.1 between the pockets, 2.2 at the top. M3 × 12.
+    Nut pockets run 4 mm out through the Ø20 hub (it bulged past the lug face over the pocket mouth); the screw-head
+    holes run 6 mm out the same way (`cb_ext`). Head holes on both rod clamps Ø6.6 (was 6.0) for the Ø5.5 head.
+  - Clamp nut pockets (arms + 28T) roomier: 6.0 × 6.9 for the 5.5 × 6.35 nut (`CLAMP_NUT_W/L`; printed holes come
+    out small). Other pockets unchanged.
+  - Head hub (module B): not changed (Maatoug's v8).
+- Rest pose: 0 interferences, 0 reserve violations. Motion check not re-run.
+- BOM now: 14 M3 inserts, 32 M3 nuts (see `CAD_FC/report.txt`).
+
+### 2026-11-10: insert walls ≥ 1.8 from the real insert Ø6.0 (Seif)
+Measured from the insert's real Ø6.0 (not the hole), the walls were 0.6..1.1. Fixes in `v7_fc.py`:
+- **Door servo posts (3 per door unit): inserts → M3 nuts.** The servo body is 4.3 mm from the ear hole, so an
+  insert could never get more than ~1.1 mm there. Now: a 1.6 mm **roof** under the ear, a **hex recess** under it
+  (AF 5.7, snug, flats facing the servo), and a **window below, open to the front**: push the nut up into its recess,
+  slide the servo in, M3 × 8 from the top. The nut clamps the ear on the roof; the plastic only stops it turning
+  (`POST_ROOF`, `POST_HEX`, `POST_HEX_D`, `POST_WIN`). Inner post 1 mm wider on its free side.
+- **Cap screws (3):** the first moved into the corner of the side wall and the front wall (71, 61) (was (70, 69),
+  0.5 mm wall); the two in the 8 mm front wall moved 1 mm into the box (y 60) with a boss behind them inside the box
+  (`cap_bosses`, 45° underside). The cap is 3 mm longer at the back over the box (x ≥ 95) so the counterbores keep a
+  full edge. Walls **2.0**.
+- **Arm tabs (door sheet screws):** `TAB_SC` 4.0 → 4.8, lower tab `FL1` (37, 53) → (36, 54) (both 18 tall),
+  `TAB_Y0` 128 → 127 (tab 9.5 thick). Walls **1.8**, 2.4 between the two inserts. Door sheet DXF follows.
+- Not changed: head servo posts (module B, 0.9 mm: same problem, the same nut + roof fix applies → Maatoug's v8).
+- Rest pose: 0 interferences, 0 reserve violations. Motion check not re-run (arm tabs: +1 mm in z and y, they sweep
+  at ≥ 51 mm from the rod, the door unit body reaches ≤ 45).
+- Pictures of every insert in its hole: `fc/insert_views_v7.py` → `CAD_FC/fastener_check/inserts/`.
+
+### 2026-11-09: caliper values (Seif)
+- **Servo horn disc top: 47.4 mm** above the servo bottom (measured twice; the GrabCAD model said 45.7, `SV_HORN`).
+  Door gears (pinion + 28T) move up 1.7 together: full 8 mm mesh kept. **Head pinion** (module B): it sits on the horn
+  inside the gear plane (y 94.5..102.5), so its face width drops from 5.8 to **4.1 mm** against the 8 mm 30T. To get
+  it back, the gear plane must move forward (e.g. thinner cup-station flange); module B, Maatoug's v8.
+- **Motor body 37.0 mm** (`MOT_L`, was 38): the motor is the printer's own Z motor, taken from its model (back face to
+  front face 37.0, boss Ø22 × 1.9, shaft 21.9 from the front face). The clamp plate now sits on the motor face (z 38).
+  The shaft tip stays at z 59.9, 0.1 mm under the lead screw (z 60) in the coupler: unchanged.
+- **M3 inserts: outer Ø5.6..6.0 × 6.** Hole Ø stays 4.6 (proven on a print). The fastener check now measures
+  the insert walls from Ø6.0 (they were measured from the hole, ~0.7 mm too optimistic).
+- Confirmed as in the CAD: horn disc Ø × thickness, servo body + ears + grommet, TR8 nut, 2020 profiles, butterfly
+  plate, lead screw Ø8 lead 8, coupler, 608ZZ, Ø8 rods, door sheet 3 mm. Foam pads: none in hand, 8 mm kept.
+- **Insert holes (all 28 M3 + 2 M4): 0.5 × 45° lead-in chamfer** at the mouth (mouth Ø5.6 = the insert's narrow end,
+  so it starts square) and **blind depth 7.0** (= insert 6 + 1 for melted plastic). One helper, `ins_hole()`, makes
+  every insert hole (`INS_CH`). Checked: no hole breaks through a wall. Rules + sources: `../design-principles.md`.
+- Rest pose: 0 interferences, 0 reserve violations. Motion check not re-run.
+
+### 2026-11-08: fastener check, fixes (Seif)
+Found with `fc/fastener_check_v7.py`, fixed in `v7_fc.py`:
+- **Arm clamp screws** (4): the arm hub covered half of the head, so the screw could not go in and no key could reach
+  it. The head counterbore now runs 20 mm out through the hub (`split_clamp_z(cb_ext=20)`).
+- **Arm ↔ door sheet** (8): nut pockets had 0.2–0.5 mm walls → **M3 inserts** set from the tab's outer face, screws
+  **M3 × 12** (were × 16), 4 mm from the tab edges (`TAB_SC`, was 3.5; the door sheet holes follow). Walls 1.7.
+- **Head servo** (4): side-entry nut pockets had 0.5–0.8 mm walls → **M3 inserts** in the post tops, **M3 × 8** (were
+  × 12 + nut). The ±1.5 mesh slots are gone, like the door units. Post edge chamfer 1.5 → 0.5 (it ate the insert wall).
+  This is in `B_SUPPORT_TETE` (module B): Maatoug should carry it into v8.
+- Result: rest pose 0 interferences, 0 reserve violations; insert walls ≥ 1.4 mm (thinnest: one door-unit cap insert;
+  the new ones 1.7). Still thin, not changed: 28T clamp nut 0.9 mm, middle station nuts 0.9 mm (module B). Motion check not re-run (only
+  holes, inserts and screw lengths changed; Seif's call).
+- **Door unit corners** (4): M4 × 8 ended inside the nut (2.6 of 3.2 mm) → **M4 × 10**; notch in the cap for the top
+  one's tip.
+- **TR8 nut support** (4): the M3 inserts left ~0.2 mm of plastic next to the nut-body hole (Ø11) → **Ø2.5 pilot
+  holes**, **M3 × 10** cut their own thread (wall 1.25). They only locate the nut: the lift pushes plastic on brass.
+- **Not changed (module B, Maatoug is reworking it in v8):** wheel bolts M5 × 35 are ~10 mm too short (tip stops
+  inside the head bracket, never reaches the nyloc → **M5 × 45**); the middle cup station's M3 × 16 stops on its nuts
+  and the nut pockets face the 30T gear 0.5 mm away (can't be inserted) → inserts in the flange front face.
+- Assembly order this check showed: door pinion onto the horn **before** the servo goes into the door unit; head
+  pinion **before** the 30T hub; plate → nut-support M4 screws **before** the head bracket.
+
 ### 2026-11-01: door unit body (`A_AILE_D/G`) reworked
 - **M3 heat-set inserts everywhere, hole Ø4.6 × 6.5** (measured from a part that fits Seif's inserts). This changes
   every M3 insert hole in the design (`INS3_R/D`), not only the door units.
@@ -45,13 +134,14 @@ Every number the CAD assumes about a bought part. Measure, then update `class G`
 
 | Part | Check | CAD value |
 |---|---|---|
-| M3 heat-set insert | outer Ø × length (hole is Ø4.6 × 6.5) | fits Ø4.6 × 6.5 |
+| M3 heat-set insert | outer Ø × length (hole is Ø4.6 × 7.0 + 0.5 chamfer) | **measured Ø5.6..6.0 × 6** (hole kept) |
 | M4 insert (if used) | outer Ø × length | not used yet |
-| MG996R + round horn | servo bottom → top of the horn disc | 45.7 |
+| MG996R + round horn | servo bottom → top of the horn disc | **measured 47.4** |
 | | horn disc Ø × thickness; boss Ø; screw holes radius | Ø20.8 × 2.5; Ø9.2; r 7.2 |
 | | body L × W × H; flange height above the bottom; ear hole spacing | 40.4 × 20.4 × 38; 28; ±24.5 from centre, y ±5 |
 | | cable grommet: height above the bottom, how far it sticks out | 3.7–8.3; 5.8 |
-| NEMA 17 | body length; shaft length; centring boss Ø | ~38; ~19; Ø22 |
+| NEMA 17 | body length; shaft length; centring boss Ø; depth of the M3 holes | **37.0; 21.9; Ø22 × 1.9** (printer's model); ≥ 4.5 (M3 × 10 goes 4 in) |
+| M5 T-nut (2020 slot) | thickness (the M5 × 8 rail screws get ~2 mm in a 3 mm model) | 3 |
 | 2020 profiles | length; centre-to-centre spacing on the printer frame | 350; 80.9 |
 | Butterfly plate | thickness; gap rail face → plate | 3.0; 4.5 |
 | V-wheel stack | eccentric spacer hex + height; plain spacer length | hex 10, 8.1 + 1.6 spigot; 9 |
@@ -72,18 +162,22 @@ Every number the CAD assumes about a bought part. Measure, then update `class G`
   screw; wheel bolts on the real wheel axes; eccentric spacer bore centred.
 - Expected contacts (listed apart, not counted): horn screws self-tapping into the horns, motor screws into the motor.
 - Thin spots to know: middle cup station nuts get ~2 mm of thread (M3 × 16 ends in the nut); corner M4 nuts ~2.6 mm.
+  (2026-11-08: the fastener check found the middle station gets 0 mm and the corner M4 is fixed; see above.)
 - Still nuts (pockets) rather than inserts: arm and gear split clamps, door sheet screws, head servo, hub clamp, stations.
   The door-unit nut pockets are gone (inserts).
 - Checks: rest pose 0 interferences, 0 reserve violations. Full cycle not run yet.
 
+Bill of materials as of 2026-11-08 (after the fastener fixes; source of truth: end of `CAD_FC/report.txt`):
+
 | Qty | Fastener (whole module) |
 |---|---|
-| 16 | M3 heat-set insert (hole Ø4.6 × 6.5) · 2 M4 insert (hole Ø5.6 × 7) |
-| 10 | M3 × 8 button head · 10 M3 × 12 button head · 17 M3 × 16 button head |
+| 22 | M3 heat-set insert (hole Ø4.6 × 7 + 0.5 chamfer) · 2 M4 insert (hole Ø5.6 × 7) (2026-11-10: 6 door post inserts → nuts) |
+| 10 | M3 × 8 button head · 18 M3 × 12 button head · 9 M3 × 16 button head |
+| 4 | M3 × 10 button head into Ø2.5 pilot holes (TR8 nut flange, cut their own thread) |
 | 12 | M3 × 10 socket head · 1 M3 × 12 socket head |
-| 30 | M3 nut |
-| 6 | M4 × 8 button head · 4 M4 nut · 4 M4 × (6 + chassis) to the robot base |
-| 4 | M5 × 35 socket head (wheel bolts) · 4 M5 nyloc · 4 M5 × 8 button head + 4 M5 T-nuts (rails) |
+| 24 | M3 nut |
+| 4 | M4 × 10 button head (door unit corners) · 2 M4 × 8 button head (nut support) · 4 M4 nut · 4 M4 × (6 + chassis) to the robot base |
+| 4 | M5 × 35 socket head (wheel bolts; **should be M5 × 45**, module B, not changed yet) · 4 M5 nyloc · 4 M5 × 8 button head + 4 M5 T-nuts (rails) |
 | 12 | M2 self-tapping pan head for the horns: 8 × 10 mm (door pinions), 4 × 6 mm (head pinion) |
 
 ### 2026-11-01: motor on the floor (the v5 socle could not be assembled)
@@ -95,7 +189,7 @@ Every number the CAD assumes about a bought part. Measure, then update `class G`
   through it, so it also braces them. Rail blocks bigger (inserts), floor screws moved outside the blocks.
 - Assembly: socle → pad + motor → clamp plate → rails down through the plate into the socle → carriage → top tie.
 - Coupler and lead screw 11 mm lower: **lead screw 303 mm** (60 → 363). Motor shaft in the coupler: ~13 mm.
-- Measure the motor body length before printing: the blocks are 38 mm + pad (`MOT_L`, `MOT_PAD`).
+- Motor body length: 37.0 from the printer's model (2026-11-09); the blocks are 37 mm + pad (`MOT_L`, `MOT_PAD`).
 
 ## Mounting on the real robot (after the proof of concept)
 - The mechanism is referenced to the **table** (door pads, cups on the middle box at z 165): keep every moving part at

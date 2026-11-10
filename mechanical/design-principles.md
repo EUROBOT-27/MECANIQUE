@@ -36,6 +36,67 @@ Main source: Aerobotix INSAT's 2026 robot (2nd at the European final). Details i
   drive wheels slip (Aerobotix: 3 mm drift after 100 s).
 - ◻ **Bearings as cam followers** wherever a part pushes on another moving part.
 - ◻ **Everything mechanical bolts to one base plate**, and the structure goes up from it via 20×20 profiles.
+- ✅ **Assembly access** (Seif, 2026-11-10): every nut pocket, screw and hex key needs a straight path to free air
+  (no part covering the pocket mouth or the head), room for a 5.5 wrench or pliers where a nut sits free, and screws
+  long enough to pass the whole nut. Check it in the CAD before printing (`fc/fastener_check_v7.py`).
+
+## Print materials (we have PLA and ABS, no PETG)
+Seif, 2026-11-10. Our CAD so far assumed PETG; nothing in the geometry depends on it, only tolerances and habits.
+
+| | PLA | ABS |
+|---|---|---|
+| Use | **tolerance tests + first prototypes** | **robot parts** (or PETG if we can get it) |
+| Good | stiff, accurate, almost no warping: sizes measured on PLA test pieces carry over well | tougher, takes heat |
+| Watch | **creeps** under constant load: rod clamps and nut-under-roof posts loosen, re-tighten after the first runs; brittle on impacts; softens at 55–60 °C (no hot car) | **warps** on big tall parts: print the ~210 mm door unit spine in an **enclosed printer** or it lifts and cracks between layers; **shrinks more**: printed holes come out smaller, plan **+0.1–0.2 mm** on hole sizes |
+| Insert iron | ~225 °C | ~265 °C |
+
+Re-check in the material actually used (that is what the tolerance test prints are for): the Ø4.6 insert hole
+(proven once, material unknown), the 608 seats Ø22.2 (ABS may come out tight), the hex nut recesses (AF 5.7) and the
+clamp nut pockets (6.0 × 6.9).
+
+## 3D-printed parts: holes for heat-set inserts
+✅ Seif, 2026-11-10: apply this to **every** insert hole, in every CAD (FreeCAD scripts and SolidWorks).
+Sources (web research 2026-11-10) are listed at the end of this section. Where they disagree, the choice we made is
+written here.
+
+**Our inserts (M3, measured 2026-11-09):** outer Ø 5.6..6.0 (narrow end first), length 6.0.
+
+| Rule | Value for our M3 insert | Why |
+|---|---|---|
+| Hole Ø | **4.6** (tested on a real print, it fits) | Hole is smaller than the insert so the knurls melt into the plastic. Too small: plastic pushed under the insert, cracks, hard to press. Too big: the insert spins or pulls out. |
+| Hole shape | **straight cylinder**, no taper | CNC Kitchen: straight holes. Spirol: ≤ 1° taper for straight inserts (8° only for tapered inserts). |
+| Lead-in chamfer | **0.5 × 45°** at the mouth (mouth Ø 5.6 = the insert's narrow end) | The insert sits centred and square before you press, so it starts straight. CNC Kitchen says a chamfer is "normally not required"; we add a small one for an easier start. It doesn't weaken anything: it stays inside the insert's real Ø. |
+| Blind hole depth | **insert + 1 mm = 7.0** | Melted plastic needs somewhere to go, and the screw must not hit the bottom (it would push the insert out). CNC Kitchen: +1 mm. Spirol: + 2 thread pitches (M3: +1 mm). |
+| Through hole | no extra depth | Nothing to fill. Install from the side the screw comes in. |
+| Wall around the insert | **≥ 1.6 mm, aim 2 mm**, measured from the insert's **real** outer Ø (6.0), not from the hole | Thin walls crack or bulge when pressing. In the CAD the inserts are drawn at the hole size, so a wall that looks like 2.3 mm is really ~1.6. |
+| Boss Ø (round post around an insert) | **≥ 10 mm** (6.0 + 2 × 2), 12 when there is room | Spirol: 2..3 × the insert Ø (injection moulding); the 3D-printing guides go down to ~2 × the hole Ø. |
+| Slicer | **4 perimeters** around inserts (≥ 1.6 mm with a 0.4 nozzle); infill ≥ 40 % near the insert (modifier) | Knurls held only by sparse infill tear out. |
+| Screw hole in the part on top | bigger than the screw, **smaller than the insert's Ø** | The part then presses on the insert's face, not just the plastic, so the screw can't pull the insert out. |
+| **No room? Use a nut instead** | if a neighbour (servo body, edge) is closer than **insert radius + 1.6 = 4.6 mm** from the hole axis, don't use an insert | e.g. servo ears: the MG996R body is 4.3 mm from its ear hole. Use a plain nut in a hex recess under a thin roof, pushed in through a window: the nut clamps the part, the plastic only stops it turning (clapets v7 door servo posts, 2026-11-10). |
+| Horizontal holes (axis flat while printing) | expect them a bit smaller / oval at the top; test them separately | Overhang at the top of the hole sags. |
+| Load direction | avoid a tall thin post pulled along its print axis (Z) | Pulling layers apart is the weakest case. |
+
+**Installation:**
+1. Soldering iron with an insert tip, **10..20 °C above the print temperature**: PLA ~225 °C, PETG ~245 °C, **ABS ~265 °C**.
+2. Put the insert in the chamfer, narrow end down, tip in the thread. Let it sink with light pressure, don't force it.
+3. Stop at ~90 % of the depth, remove the iron, and press the rest flush (0..0.2 mm below the surface) with a flat
+   metal tool. Hold a few seconds until the plastic sets (otherwise it creeps back up).
+4. Let it cool, then check it's straight with a screw. A crooked insert: heat it, pull it out, put in a new one.
+- Plastic bump under/around the insert or pushed out the back: the hole is too small. Insert spins: too big.
+
+**Test before a new material, printer or insert:** print a small strip in the same material, perimeters and
+orientation as the real part, with holes Ø4.4 / 4.5 / 4.6 / 4.7 / 4.8 (vertical and horizontal). Press an insert in
+each and keep the best size.
+
+**In our FreeCAD scripts:** `ins_hole()` in `mechanical/clapets-v7/fc/v7_fc.py` makes the hole + chamfer
+(`INS3_R`, `INS3_D`, `INS_CH` in `class G`). Use it for every new insert hole. The fastener check
+(`fc/fastener_check_v7.py`) measures walls from the real Ø6.0.
+
+Sources: [CNC Kitchen, tips and tricks](https://www.cnckitchen.com/blog/tips-and-tricks-for-heat-set-inserts) ·
+[Spirol, hole design for heat inserts](https://www.spirol.com/resources/white-papers/how-to-design-the-proper-hole-for-heat-ultrasonic-inserts/) ·
+[takt3d design guide](https://www.takt3d.com/blog/heat-set-inserts-3d-printing-design-guide) ·
+[PrintStack3D design guide](https://printstack3d.nl/en/blog/heat-set-threaded-inserts-design-guide) ·
+[Sovol, screw bosses](https://www.sovol3d.com/blogs/news/3d-printing-with-heat-set-inserts-design-strong-screw-bosses-that-last)
 
 ## Process and testing
 ✅ Seif: *"their methodology of testing to reach a reliable goal"*.
