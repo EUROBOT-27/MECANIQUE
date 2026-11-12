@@ -1,0 +1,13 @@
+base_330_assembly.py - clapets v7 module A on base_330 (moved by 0, 23.0, 18.5)
+
+Closest mechanism parts to the drive (placeholders + lifts):
+     7.5 mm  A_SOCLE-1
+    11.0 mm  REF_NEMA17-1
+    12.0 mm  A_AILE_D-1
+    12.0 mm  A_AILE_G-1
+    14.3 mm  REF_NEMA17-001
+    18.3 mm  A_PLATINE_MOTEUR-1
+Socle: z 18.50..56.50 (plate top 18.5), y 31.5..83.5
+Socle <-> plate overlap volume: 0.000 mm3
+Back wall: y -120.0..-115.0, z 18.5..218.5; overlap with plate 0.000, profiles 0.000 mm3; 70.0 mm from the drive, 136.0 mm from module A
+Profiles: overlap with plate 0.000 mm3, M5 screws vs plate 0.000 mm3
