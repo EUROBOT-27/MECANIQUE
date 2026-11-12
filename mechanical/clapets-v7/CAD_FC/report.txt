@@ -2,8 +2,8 @@ A_SOCLE                  print   A solids 1  mass    89.2 g  size  136.0 x   52.
 A_PLATINE_MOTEUR         print   A solids 1  mass    22.6 g  size  112.9 x   43.0 x    6.0  valid
 A_TRAVERSE_HAUT          print   A solids 1  mass    61.4 g  size  108.9 x   28.0 x   22.0  valid
 A_SUPPORT_ECROU          print   A solids 1  mass    43.1 g  size   50.0 x   27.5 x   60.0  valid
-A_AILE_D                 print   A solids 1  mass   156.4 g  size   84.0 x   62.5 x  199.0  valid
-A_AILE_G                 print   A solids 1  mass   156.4 g  size   84.0 x   62.5 x  199.0  valid
+A_AILE_D                 print   A solids 1  mass   156.1 g  size   84.0 x   62.5 x  199.0  valid
+A_AILE_G                 print   A solids 1  mass   156.1 g  size   84.0 x   62.5 x  199.0  valid
 A_BRAS_PORTE_D_BAS       print   A solids 1  mass    18.0 g  size   48.0 x   68.5 x   34.0  valid
 A_BRAS_PORTE_D_HAUT      print   A solids 1  mass    18.0 g  size   48.0 x   68.5 x   34.0  valid
 A_BRAS_PORTE_G_BAS       print   A solids 1  mass    18.0 g  size   48.0 x   68.5 x   34.0  valid

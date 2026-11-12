@@ -507,8 +507,9 @@ def servo_posts(s, a, c):   # 3 ear posts: M3 nut in a hex recess under a 1.6 mm
     a.append(box(s, xi - 4.8, xi + 3.8, G.PL_Y1, G.FRONT_Y, G.LOW + G.PT, G.SV_FLZ))           # inner post (ear y 57)
     for hx, dy, opening in ((xo, -5, "out"), (xo, 5, "out"), (xi, 5, "front")):
         y = G.SVY + dy
-        if opening == "out":     # outer ears: window open on the robot's side (x 150)
-            c.append(box(s, hx - hw, G.BASE_X + 1, y - 3.3, y + 3.3, zw1 - G.POST_WIN, zw1 + 0.01))
+        if opening == "out":     # outer ears: ONE window for both nuts (2026-11-12: the 3.4 mm wall between them removed),
+            if dy < 0:           # open on the robot's side (x 150)
+                c.append(box(s, hx - hw, G.BASE_X + 1, y - 3.3, y + 10 + 3.3, zw1 - G.POST_WIN, zw1 + 0.01))
         else:                    # inner ear: the plate and the keel block the sides, window open to the front
             c.append(box(s, hx - hw, hx + hw, y - 3.3, G.FRONT_Y + 1, zw1 - G.POST_WIN, zw1 + 0.01))
         c.append(prism(s, [(hx + hexr * math.cos(math.radians(30 + 60 * k)), y + hexr * math.sin(math.radians(30 + 60 * k)))
