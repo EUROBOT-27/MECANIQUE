@@ -60,10 +60,12 @@ See `../design-principles.md`, "Print materials".
 - **Outer ear opening:** the strip in front of it was 2 mm. The outer wall now comes forward to y 69 (`OWB_Y1` 66 → 69,
   28T still 3.2 mm away), so the strip is **5 mm**. The ear tip goes 1 mm into the wall (x 148), so a 3 mm groove at ear
   height lets the servo still slide in from the front.
+- **Arms, door sheet screws:** the nut now sits in a **pocket in the arm tab's inner face** (6.0 × 6.9 × 2.8, same as the
+  28T clamp pockets: it can't turn), walls 1.75 / 1.55 mm; screws **M3 × 12** (were M3 × 16 with the nut in free air).
 - **Web:** the local rib beside the inner ear (z 57–107, with steps at its ends) now runs the **full height**: the web's
   inner face is one flat face (x 100.5).
 - **Cap → body, 3rd screw from the front:** a tab on the cap's front face (x 67.5–78, z 210–242: full cap height, sunk
-  0.5 into the cap so it is one solid) hangs down over the keel's front face (below z 226,
+  0.5 into the cap so it is one solid; chamfers only on its 2 outer edges) hangs down over the keel's front face (below z 226,
   4.2 thick); **M3 × 10 button head** through it into an **M3 insert set horizontally** in the keel front face
   (x 72.75, z 218; walls 3.75 to the side, 4.0 to the plate face). Set the insert with the body lying on its back.
 - **Form lock on the butterfly plate:** 2 flat teeth in the plate's plane (y 47.8–50.5), x 67–76, **0.3 mm** from the two

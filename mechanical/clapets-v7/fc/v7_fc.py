@@ -605,7 +605,10 @@ def capot_aile(s, name):    # 2026-11-10 (option B): cap z 226..242 = top pod: t
     m4_plate(s, c, G.PL_ZC + G.SPRING_V)                                                                 # top plate M4, nut on the front face
     # 2026-11-12: front tab over the keel (M3 x 10 into the body's insert; head on the tab) + top plate-lock tooth
     # the tab runs up the cap's whole front face (z 210..242, on the bed when printed) and sinks 0.5 into the cap: one solid
-    a.append(chbox(s, G.CTAB_X0, G.CTAB_X1, G.K_Y1, G.K_Y1 + G.CTAB_T, G.CTAB_Z0, G.CAP_Z1, 1.0))
+    # 2026-11-12: chamfers only on the 2 outer vertical edges (the 2 at the cap's face left notches)
+    ty1 = G.K_Y1 + G.CTAB_T
+    a.append(prism(s, [(G.CTAB_X0, G.K_Y1), (G.CTAB_X1, G.K_Y1), (G.CTAB_X1, ty1 - 1.0), (G.CTAB_X1 - 1.0, ty1),
+                       (G.CTAB_X0 + 1.0, ty1), (G.CTAB_X0, ty1 - 1.0)], G.CTAB_Z0, G.CAP_Z1))
     a.append(box(s, G.CTAB_X0 + 1.0, G.CTAB_X1 - 1.0, G.K_Y1 - 0.5, G.K_Y1 + 0.1, G.UP, G.CAP_Z1))
     c.append(ycyl(s, G.CTAB_SCR[0], G.K_Y1 - 0.1, G.K_Y1 + G.CTAB_T + 1, G.CTAB_SCR[1], 1.7))
     a.append(lock_tooth(s, True, G.CAP_Z1))
@@ -625,9 +628,11 @@ def bras(s, name, arm, fl):
     ca, cc = split_clamp_z(s, G.PX, G.PY, z0, z1, [(z0 + z1) / 2], cb_ext=20, nut_ext=8)   # key, screw and nut can get in
     a += ca
     c = cc + [vcyl(s, G.PX, G.PY, z0 - 1, z1 + 1, G.ROD_R)]
-    # 2026-11-10: door sheet screws M3 x 16 + plain nut on the tab's inner face, 7 mm above / below the arm (free air)
+    # 2026-11-10: door sheet screws, 7 mm above / below the arm. 2026-11-12: the nut sits in a pocket in the tab's inner
+    # face (same pocket as the 28T clamp, 6.0 x 6.9 x 2.8: it can't turn), M3 x 12 (was x 16 with the nut in free air)
     for z in arm_screws_z(arm):
         c.append(xcyl(s, G.SX0 - G.TAB_D - 1, G.SX0 + 0.1, (G.TAB_Y0 + fy1) / 2, z, 1.7))
+        c.append(nut(s, 0, G.SX0 - G.TAB_D + G.NUT_T / 2, (G.TAB_Y0 + fy1) / 2, z, 0, -1.0, G.CLAMP_NUT_W, G.CLAMP_NUT_L))
     part(name, solid(a, c), G.RHO_PRINT, PETG, "print", "A")
 
 
@@ -969,9 +974,9 @@ def fasteners():
             vis.append(f_screw("SH", 3, 12, (s * (G.PX - 4), G.PY - 9, zc), (s, 0, 0)))   # 2026-11-10: x 10 ended inside the nut
             nuts.append(f_nut(3, (s * (G.PX + 4.7), G.PY - 9, zc), (1, 0, 0)))
             for z in arm_screws_z((z0, z1)):
-                vis.append(f_screw("BH", 3, 16, (s * G.SX1, ym, z), (-s, 0, 0)))
-                nuts.append(f_nut(3, (s * (G.SX0 - G.TAB_D - 1.2), ym, z), (1, 0, 0)))
-        fix("FIX_VIS_BRAS_" + tag, vis, {s3 % 12: 2, b3 % 16: 4}, [(0, 0, 0, "door_" + tag)], "A")
+                vis.append(f_screw("BH", 3, 12, (s * G.SX1, ym, z), (-s, 0, 0)))                # 2026-11-12: x 16 -> x 12
+                nuts.append(f_nut(3, (s * (G.SX0 - G.TAB_D + G.NUT_T / 2), ym, z), (1, 0, 0)))  # in its pocket
+        fix("FIX_VIS_BRAS_" + tag, vis, {s3 % 12: 2, b3 % 12: 4}, [(0, 0, 0, "door_" + tag)], "A")
         fix("FIX_ECROU_BRAS_" + tag, nuts, {N3: 6}, [(0, 0, 0, "door_" + tag)], "A")
     # ---- 28T split clamp (built on the right, translated to the left like the gear) + door pinion horn screws
     hz1 = G.GZB + G.HUB28_H
