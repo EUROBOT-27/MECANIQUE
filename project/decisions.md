@@ -383,8 +383,8 @@ Template:
 ## D-024 — Ayoub joins the hub as a user (beyond the two leads)
 - Date: 2026-11-12
 - Area: project
-- Decided by: Ayoub (proposed — to be confirmed by Seif, who decided D-018)
-- Status: proposed (extends D-018)
+- Decided by: Ayoub; confirmed by Seif 2026-11-12
+- Status: active (extends D-018)
 - Decision: The shared hub is no longer limited to the two tech leads. **Ayoub** (CAD team, SolidWorks) uses it in their
   own clone with Claude, with the same workflow: `/start` pulls and briefs, `/wrap` logs, commits and pushes. Name key
   `ayoub` → `todo/ayoub.md`, `logs/YYYY-MM-DD-ayoub.md`. As a non-lead, Ayoub's decisions are always logged as
@@ -395,3 +395,17 @@ Template:
   tracking them in the hub keeps STATUS, TODOs and logs complete.
 - Consequences: root `CLAUDE.md` ("Who uses this hub", file map), `/start` and `/wrap` skills updated for more than
   two users; `todo/ayoub.md` created. Other team members (e.g. Baha) can join the same way.
+
+## D-025 — Heat-set insert holes: K × 0.9, mouth cone, L + 1 (new reference drawing)
+- Date: 2026-11-12
+- Area: mechanical
+- Decided by: Seif
+- Status: active (replaces the insert-hole rules of 2026-11-10 in `mechanical/design-principles.md`)
+- Decision: every heat-set insert hole follows the reference drawing `mechanical/img/heat_set_insert_hole.png`:
+  hole **K × 0.9**, mouth cone from **K + 0.2** down to the hole over **L × 0.25**, blind depth **L + 1** (K = knurl Ø,
+  L = insert length). Our M3 inserts are straight, K 6.0, L 6.0: **Ø5.4 × 7, cone Ø6.2 × 1.5**.
+- Alternatives considered: the old Ø4.6 × 7 + 0.5 × 45° chamfer: the ABS coupon (T6, Ø4.4 / 4.6 / 4.8) pushed melted
+  plastic into the insert's bore. No new coupon printed (Seif): the drawing is applied directly.
+- Why: the hole was far too small for a 6.0 knurl; the extra plastic had nowhere to go but into the thread.
+- Consequences: `ins_hole()` in `clapets-v7/fc/v7_fc.py` (`INS3_K`, `INS3_L`) regenerated, all M3 insert holes changed
+  (socle ×4, cap tabs ×2, head bracket ×4). Clapets v8 (Maatoug) still uses Ø4.6 × 6.5: to update.

@@ -55,9 +55,13 @@ class G:
     LIFT_CARRY, LIFT_TURN = 15, 75                          # turn: axis 165 + 75 = 240 >= 229.8 (stack half-diagonal) + 10
     BRG_R, BRG_T, BOSS_R = 11.1, 7.2, 14.5                  # 608 seat Ø22.2 (FDM holes print ~0.1 small) + 0.6 lead-in
     ROD_R = 4.1                                             # Ø8.2 bore for the clamps on the Ø8 rods (slides on, clamp closes it)
-    INS3_R, INS3_D = 2.3, 7.0                               # M3 heat-set insert hole Ø4.6 (fits Seif's inserts, OD 5.6..6.0 x 6);
-                                                            # 2026-11-09: blind depth 6.5 -> 7.0 = insert + 1 (design-principles.md)
-    INS_CH = 0.5                                            # 2026-11-09: 0.5 x 45 deg lead-in at every insert hole mouth (Ø5.6 = small end of the insert)
+    # 2026-11-12: M3 insert holes from the reference drawing (mechanical/design-principles.md; T6 in ABS: the Ø4.6 hole pushed
+    # plastic into the insert's bore). Straight knurled insert K = 6.0 (knurl Ø), L = 6.0: hole K x 0.9 = Ø5.4, depth L + 1,
+    # mouth cone from K + 0.2 = Ø6.2 down to the hole Ø over L x 0.25 = 1.5
+    INS3_K, INS3_L = 6.0, 6.0
+    INS3_R, INS3_D = 0.45 * INS3_K, INS3_L + 1.0             # Ø5.4 x 7.0
+    INS3_MR, INS3_MD = (INS3_K + 0.2) / 2, 0.25 * INS3_L     # mouth Ø6.2, cone 1.5 deep
+    INS_CH = 0.5                                            # M4 holes only (not used in module A): 0.5 x 45 deg lead-in
     INS4_R, INS4_D = 2.8, 7.0                               # M4 brass heat-set insert: hole Ø5.6 x 7
     # ---- reserved space for module B (in the carriage frame) ----
     HZ = 165                                                # head axis along y at x 0, z 165 = middle box centre (middle cup on it)
@@ -92,6 +96,7 @@ class G:
     HUB28_H = 22.0                                          # 2026-11-10: 28T clamp hub height (was 14: its 2 nut pockets overlapped)
     HORN_R, HORN_T = 10.4, 2.5                              # v6: real round horn disc (was Ø21 x 2)
     HORN_BOSS_R, HORN_BOSS_T, HORN_HOLE_R = 4.6, 0.8, 7.2   # centre boss Ø9.2 on the disc top; screw holes on r 7.2 (axes)
+    HORN_SCR_R = 1.25                                       # 2026-11-12: M2 holes in the pinion Ø2.2 -> Ø2.5 (ABS coupon T9: too tight)
     SV_SLOT = 2
     OW_X0 = 146.5                                           # v7 door unit: outer wall x 146.5..150, full height
     BW_X0, BW_Y1 = 100.0, 45.0                              # v7: back wall of the box (y 41..45) from x 100; inner closing wall x 100..104
@@ -113,7 +118,8 @@ class G:
     NUT_W, NUT_L, NUT_T = 5.8, 6.6, 2.8                     # M3 nut pocket (nut 5.5 AF x 2.4) +0.3
     CLAMP_NUT_W, CLAMP_NUT_L = 6.0, 6.9                     # 2026-11-10: roomier pockets on the rod clamps (printed holes come out small)
     # 2026-11-10: door servo posts: M3 nut under a roof (an insert can't get > 1.1 mm of wall: servo body 4.3 from the ear hole)
-    POST_ROOF, POST_HEX, POST_HEX_D, POST_WIN = 1.6, 5.7, 2.5, 10.0   # roof over the nut; hex recess AF (snug, prints ~5.55) x depth; window height
+    POST_ROOF, POST_HEX, POST_HEX_D, POST_WIN = 1.6, 5.9, 2.5, 10.0   # roof over the nut; hex recess AF x depth; window height
+                                                            # 2026-11-12: AF 5.7 -> 5.9 = 0.2 per side on the 5.5 nut (Seif, after T3)
     CAB_Z0, CAB_Z1, CAB_OUT = 3.7, 8.3, 5.8                 # grommet height above the bottom, how far it sticks out
     RHO_PRINT = 1240                                        # 2026-11-10: PLA (we print PLA / ABS, no PETG); was 1270 (PETG)
     CAP_Z1 = 242.0                                          # 2026-11-10 (option B): cap UP..242, covers the top plate M4 (z 235)
@@ -123,7 +129,18 @@ class G:
     WEB_X0 = 96.2                                           # web keel <-> back wall; its inside fillet must stay clear of the plate edge (x 95)
     OWB_X0 = 147.0                                          # outer wall x 147..150
     FRONT_Y = 63.0                                          # front of the servo zone (posts, top shelf)
-    OWB_Y1 = 66.0                                           # outer wall front edge (28T stays at y >= 72 there)
+    OWB_Y1 = 69.0                                           # outer wall front edge (28T stays at y >= 72.2 there); 2026-11-12: 66 -> 69,
+                                                            # the strip in front of the ear opening was 2 mm (T8: fragile), now 5 mm
+    EAR_IN_H = 33.0                                         # 2026-11-12: inner ear key opening 15 -> 33 tall above the flange (T8: no room for the key)
+    # 2026-11-12: cap -> body, 3rd screw from the FRONT: a tab hangs from the cap over the keel's front face (x 67.5..78,
+    # z 210..226, 4 mm thick), M3 x 10 through it into an M3 insert set horizontally in the keel's front face
+    CTAB_X0, CTAB_X1, CTAB_Z0, CTAB_T = 67.5, 78.0, 210.0, 4.2
+    CTAB_SCR = (72.75, 218.0)                               # screw axis (x, z), along -y
+    # 2026-11-12: form lock on the butterfly plate: 2 flat teeth in the plate's plane (y 47.8..50.5) against the two
+    # diagonal edges of the plate's wing (bottom tooth on the body, top tooth on the cap). The wing sits between them:
+    # the door clamp reaction (+x) and the stack weight (-z) bear on the plate's edges, not on the M4s' grip.
+    # Mount: push the unit outward (+x) in its M4 slots until the teeth touch, then tighten.
+    LOCK_X0, LOCK_X1, LOCK_GAP, LOCK_Y0 = 67.0, 76.0, 0.3, 47.8   # tooth x range, normal gap to the edge, tooth back face
     TSH_Z0 = 218.0                                          # top shelf z 218..226 (stays at y <= 63: the top arm swings in front)
     WIN_Z0, WIN_Z1 = 112.0, 212.0                           # big windows in the back + outer walls
     # ---- MODULE B: suction head ----
@@ -210,9 +227,10 @@ def zslot(s, x, y, z0, z1, r, dx=0.0, dy=0.0):   # vertical hole r, elongated ±
 
 def ins_hole(s, x, y, z, dirv, d=3):     # heat-set insert hole: face centre (x, y, z), dirv = into the part; + 45 deg lead-in
     r, depth = (G.INS3_R, G.INS3_D) if d == 3 else (G.INS4_R, G.INS4_D)
+    mr, md = (G.INS3_MR, G.INS3_MD) if d == 3 else (r + G.INS_CH, G.INS_CH)    # 2026-11-12: M3 mouth cone Ø6.2 -> Ø5.4 over 1.5
     p, u = Vector(s * x, y, z), Vector(s * dirv[0], dirv[1], dirv[2])
     hole = Part.makeCylinder(r, depth + 1, p - u * 1, u)
-    cone = Part.makeCone(r + G.INS_CH + 0.01, r, G.INS_CH + 0.01, p - u * 0.01, u)
+    cone = Part.makeCone(mr + 0.01 * (mr - r) / md, r, md + 0.01, p - u * 0.01, u)
     return hole.fuse(cone)
 
 
@@ -434,6 +452,26 @@ def support_ecrou():    # behind the plate, between the rails. Print: shelf on t
 
 
 # ---------------------------------------------------------------- MODULE A: door units
+def plate_diag(upper):    # 2026-11-12: the plate wing's diagonal edge (x 45..76), from the real outline: z = a + b * x
+    import json
+    with open(os.path.join(HERE, "plaque_papillon_reelle.json")) as f:
+        pts = [(x, G.PL_ZC + v) for x, v in json.load(f)["outer"] if 45 < x < 76 and abs(v) > 45 and (v > 0) == upper]   # |v| > 45: not the concave outer arc
+    n = len(pts)
+    mx, mz = sum(p[0] for p in pts) / n, sum(p[1] for p in pts) / n
+    b = sum((p[0] - mx) * (p[1] - mz) for p in pts) / sum((p[0] - mx) ** 2 for p in pts)
+    return mz - b * mx, b
+
+
+def lock_tooth(s, upper, z_far):   # flat tooth beside the diagonal edge, LOCK_GAP (normal) from it, out to z_far
+    a, b = plate_diag(upper)
+    dz = G.LOCK_GAP * math.sqrt(1 + b * b) * (1 if upper else -1)
+    x0, x1 = G.LOCK_X0, G.LOCK_X1
+    loop = [(x0, a + b * x0 + dz), (x1, a + b * x1 + dz), (x1, z_far), (x0, z_far)]
+    if not upper:
+        loop.reverse()
+    return prism_xz(s, loop, G.LOCK_Y0, G.PL_Y1 + 0.1)
+
+
 def unit_plate_loop():
     return hull([(G.W_X0, G.PL_Y1), (G.W_X1, G.PL_Y1), (G.W_X0, G.PL_Y1 + 10)] + circle(G.PX, G.PY, G.BOSS_R, 40))
 
@@ -474,8 +512,9 @@ def servo_posts(s, a, c):   # 3 ear posts: M3 nut in a hex recess under a 1.6 mm
     a.append(box(s, xi - 4.8, xi + 3.8, G.PL_Y1, G.FRONT_Y, G.LOW + G.PT, G.SV_FLZ))           # inner post (ear y 57)
     for hx, dy, opening in ((xo, -5, "out"), (xo, 5, "out"), (xi, 5, "front")):
         y = G.SVY + dy
-        if opening == "out":     # outer ears: window open on the robot's side (x 150)
-            c.append(box(s, hx - hw, G.BASE_X + 1, y - 3.3, y + 3.3, zw1 - G.POST_WIN, zw1 + 0.01))
+        if opening == "out":     # outer ears: ONE window for both nuts (2026-11-12: the 3.4 mm wall between them removed),
+            if dy < 0:           # open on the robot's side (x 150)
+                c.append(box(s, hx - hw, G.BASE_X + 1, y - 3.3, y + 10 + 3.3, zw1 - G.POST_WIN, zw1 + 0.01))
         else:                    # inner ear: the plate and the keel block the sides, window open to the front
             c.append(box(s, hx - hw, hx + hw, y - 3.3, G.FRONT_Y + 1, zw1 - G.POST_WIN, zw1 + 0.01))
         c.append(prism(s, [(hx + hexr * math.cos(math.radians(30 + 60 * k)), y + hexr * math.sin(math.radians(30 + 60 * k)))
@@ -485,11 +524,14 @@ def servo_posts(s, a, c):   # 3 ear posts: M3 nut in a hex recess under a 1.6 mm
     # in) and, for the outer ears, on the robot's side too: fingers to start the screws, a hex key at an angle
     zs1 = G.GZA - 1.0
     c.append(box(s, G.SV_X1 - 1, G.BASE_X + 1, G.BWB_Y1 + 3, G.FRONT_Y + 1, G.SV_FLZ - 0.1, zs1))
+    # 2026-11-12: the outer ear tip reaches x 148 (1 mm into the outer wall): a groove at ear height through the 5 mm
+    # strip in front of the opening, so the servo still slides in from the front (1.4 mm of wall stays outside it)
+    c.append(box(s, G.OWB_X0 - 0.1, G.BASE_X - 1.4, G.BWB_Y1 + 3, G.OWB_Y1 + 1, G.SV_FLZ - 0.1, G.SV_FLZ + 2.4 + 0.5))
     # inner ear: 4.5 mm flange entry (full depth) + an opening 15 tall around the screw, open to the front (hand + key);
     # behind it the web stays whole and gets a rib (see aile)
     xi, yi = G.SV_XC - G.SV_EAR, G.SVY + 5
     c.append(box(s, 93.0, G.SV_X0 + 0.2, G.BWB_Y1 + 3, G.FRONT_Y + 1, G.SV_FLZ - 0.1, G.SV_FLZ + 4.5))
-    c.append(box(s, xi - 4.0, G.SV_X0 + 0.2, yi - 4.0, G.FRONT_Y + 1, G.SV_FLZ - 0.1, G.SV_FLZ + 15))
+    c.append(box(s, xi - 4.0, G.SV_X0 + 0.2, yi - 4.0, G.FRONT_Y + 1, G.SV_FLZ - 0.1, G.SV_FLZ + G.EAR_IN_H))
 
 
 def m4_plate(s, c, z):      # M4 from behind the plate (head on the plate's back), slot ±1.5 in x, nut free on the front face
@@ -515,19 +557,23 @@ def aile(s, name):
                 + circle(G.PX, G.PY, G.BOSS_R, 40))
     a.append(prism(s, chamfer_loop(base, 1.0), zb, zp))                                                 # bottom shelf
     a.append(prism(s, chamfer_loop(top_loop(), 1.0), G.TSH_Z0, top))                                   # top shelf
-    # rib: web 2.5 mm thicker beside the inner ear opening (ties the keel to the back wall around it)
-    a.append(box(s, G.K_X1 - 0.1, G.SV_X0 - 0.3, G.BWB_Y1 - 0.1, G.SVY + 1, G.SV_FLZ - 20, G.SV_FLZ + 30))
+    # web 1.5 mm thicker (x 99 -> 100.5) beside the inner ear opening; 2026-11-12: over the full height (it was a local
+    # rib z 57..107 with steps at its ends), so the inner face is one flat face
+    a.append(box(s, G.K_X1 - 0.1, G.SV_X0 - 0.3, G.BWB_Y1 - 0.1, G.SVY + 1, zb, top))
+    a.append(lock_tooth(s, False, zb))                                                                   # 2026-11-12: plate form lock
     servo_posts(s, a, c)
     # bottom 608 seat + rod passage
     c.append(vcyl(s, G.PX, G.PY, zp - G.BRG_T, zp + 0.1, G.BRG_R))
     c.append(lead_in(s, G.PX, G.PY, zp, G.BRG_R, True))
     c.append(vcyl(s, G.PX, G.PY, zb - 1, zp + 1, 5.0))
     # windows: keel (between the two M4 rows), back wall, outer wall
-    c.append(prism_xz(s, rrect(71, 91, 82, 208, 9.9), G.PL_Y1 - 1, G.K_Y1 + 1))
+    # 2026-11-12: 71..91 -> 71..87: 5.5 mm of keel (was 1.5) beside the inner ear key opening
+    c.append(prism_xz(s, rrect(71, 87, 82, 208, 7.9), G.PL_Y1 - 1, G.K_Y1 + 1))
     c.append(prism_xz(s, rrect(101, 143, G.WIN_Z0, G.WIN_Z1, 12), G.BWB_Y0 - 1, G.BWB_Y1 + 1))
     c.append(prism_yz(s, rrect(G.BWB_Y1 + 3, G.OWB_Y1 - 6, G.WIN_Z0, G.WIN_Z1, 9.9), G.OWB_X0 - 1, G.BASE_X + 1))
     # bottom plate M4 + cap screws through the top shelf (free nuts under it)
     m4_plate(s, c, G.PL_ZC - G.SPRING_V)
+    c.append(ins_hole(s, G.CTAB_SCR[0], G.K_Y1, G.CTAB_SCR[1], (0, -1, 0)))                             # 2026-11-12: cap tab insert
     for x, y in cap_screws():
         c.append(vcyl(s, x, y, G.TSH_Z0 - 1, top + 1, 1.7))
         c.append(box(s, x - G.CLAMP_NUT_L / 2, x + G.CLAMP_NUT_L / 2, y - G.CLAMP_NUT_W / 2, y + G.CLAMP_NUT_W / 2,
@@ -562,6 +608,15 @@ def capot_aile(s, name):    # 2026-11-10 (option B): cap z 226..242 = top pod: t
     for x, y in cap_screws():
         c += [vcyl(s, x, y, G.UP - 1, G.CAP_Z1 + 1, 1.7), vcyl(s, x, y, zs, G.CAP_Z1 + 1, 3.3)]
     m4_plate(s, c, G.PL_ZC + G.SPRING_V)                                                                 # top plate M4, nut on the front face
+    # 2026-11-12: front tab over the keel (M3 x 10 into the body's insert; head on the tab) + top plate-lock tooth
+    # the tab runs up the cap's whole front face (z 210..242, on the bed when printed) and sinks 0.5 into the cap: one solid
+    # 2026-11-12: chamfers only on the 2 outer vertical edges (the 2 at the cap's face left notches)
+    ty1 = G.K_Y1 + G.CTAB_T
+    a.append(prism(s, [(G.CTAB_X0, G.K_Y1), (G.CTAB_X1, G.K_Y1), (G.CTAB_X1, ty1 - 1.0), (G.CTAB_X1 - 1.0, ty1),
+                       (G.CTAB_X0 + 1.0, ty1), (G.CTAB_X0, ty1 - 1.0)], G.CTAB_Z0, G.CAP_Z1))
+    a.append(box(s, G.CTAB_X0 + 1.0, G.CTAB_X1 - 1.0, G.K_Y1 - 0.5, G.K_Y1 + 0.1, G.UP, G.CAP_Z1))
+    c.append(ycyl(s, G.CTAB_SCR[0], G.K_Y1 - 0.1, G.K_Y1 + G.CTAB_T + 1, G.CTAB_SCR[1], 1.7))
+    a.append(lock_tooth(s, True, G.CAP_Z1))
     part(name, solid(a, c), G.RHO_PRINT, PETG2, "print", "A")
 
 
@@ -578,9 +633,11 @@ def bras(s, name, arm, fl):
     ca, cc = split_clamp_z(s, G.PX, G.PY, z0, z1, [(z0 + z1) / 2], cb_ext=20, nut_ext=8)   # key, screw and nut can get in
     a += ca
     c = cc + [vcyl(s, G.PX, G.PY, z0 - 1, z1 + 1, G.ROD_R)]
-    # 2026-11-10: door sheet screws M3 x 16 + plain nut on the tab's inner face, 7 mm above / below the arm (free air)
+    # 2026-11-10: door sheet screws, 7 mm above / below the arm. 2026-11-12: the nut sits in a pocket in the tab's inner
+    # face (same pocket as the 28T clamp, 6.0 x 6.9 x 2.8: it can't turn), M3 x 12 (was x 16 with the nut in free air)
     for z in arm_screws_z(arm):
         c.append(xcyl(s, G.SX0 - G.TAB_D - 1, G.SX0 + 0.1, (G.TAB_Y0 + fy1) / 2, z, 1.7))
+        c.append(nut(s, 0, G.SX0 - G.TAB_D + G.NUT_T / 2, (G.TAB_Y0 + fy1) / 2, z, 0, -1.0, G.CLAMP_NUT_W, G.CLAMP_NUT_L))
     part(name, solid(a, c), G.RHO_PRINT, PETG, "print", "A")
 
 
@@ -600,7 +657,7 @@ def pignon_porte():
     a = [prism(1, gear(G.PX, G.SVY, G.GM, G.GZ1, 90, 0.15), G.GZA, G.GZB), vcyl(1, G.PX, G.SVY, G.GZA - G.HORN_T, G.GZA, G.HORN_R + 3)]
     c = [vcyl(1, G.PX, G.SVY, G.GZA - G.HORN_T - 1, G.GZA, G.HORN_R + 0.3), vcyl(1, G.PX, G.SVY, G.GZA - 1, G.GZB + 1, 3.2),
          vcyl(1, G.PX, G.SVY, G.GZA - 1, G.GZA + G.HORN_BOSS_T + 0.5, G.HORN_BOSS_R + 0.3)]
-    c += [vcyl(1, G.PX + G.HORN_HOLE_R * math.cos(math.pi / 2 * k), G.SVY + G.HORN_HOLE_R * math.sin(math.pi / 2 * k), G.GZA - 1, G.GZB + 1, 1.1) for k in range(4)]   # v7: M2 clearance
+    c += [vcyl(1, G.PX + G.HORN_HOLE_R * math.cos(math.pi / 2 * k), G.SVY + G.HORN_HOLE_R * math.sin(math.pi / 2 * k), G.GZA - 1, G.GZB + 1, G.HORN_SCR_R) for k in range(4)]   # v7: M2 clearance
     part("A_PIGNON_PORTE_20T", solid(a, c), G.RHO_PRINT, PETG2, "print", "A")
 
 
@@ -845,7 +902,7 @@ HEADS = {("BH", 3): (5.7, 1.65), ("BH", 4): (7.6, 2.2), ("BH", 5): (9.5, 2.75),
          ("SH", 3): (5.5, 3.0), ("SH", 4): (7.0, 4.0), ("SH", 5): (8.5, 5.0), ("PAN", 2): (3.8, 1.3)}
 HNAME = {"BH": "button head (ISO 7380)", "SH": "socket head (ISO 4762)", "PAN": "pan head self-tapping (servo horn)"}
 NUTS = {3: (5.5, 2.4), 4: (7.0, 3.2), 5: (8.0, 4.0)}
-INSERTS = {3: (4.6, 6.0), 4: (5.6, 6.0)}   # modelled at the hole Ø; M3 length 6.0 measured 2026-11-09
+INSERTS = {3: (5.4, 6.0), 4: (5.6, 6.0)}   # modelled at the hole Ø; M3 length 6.0 measured 2026-11-09 (hole Ø5.4 since 2026-11-12)
 
 
 def _put(sh, p, d, spin=0.0):
@@ -896,7 +953,7 @@ def fix(name, shapes, bom, places, module):
 def fasteners():
     L = -2 * G.PX
     s3, b3 = "M3 x %d " + HNAME["SH"], "M3 x %d " + HNAME["BH"]
-    N3, I3 = "M3 nut (ISO 4032)", "M3 heat-set insert (hole dia 4.6 x 7 + 0.5 chamfer)"
+    N3, I3 = "M3 nut (ISO 4032)", "M3 heat-set insert, straight knurl 6.0 x 6 (hole dia 5.4 x 7, mouth cone dia 6.2 x 1.5)"
     for s, tag in ((1, "D"), (-1, "G")):
         # ---- door unit (option B, 2026-11-10): servo flange 3x M3 x 8 + nut under the post roof; cap 2x M3 x 16 + nut in
         # a pocket under the top shelf; plate corners 2x M4 x 16 from behind the plate + nut in a pocket in the keel / cap front face
@@ -905,11 +962,13 @@ def fasteners():
         zn = G.SV_FLZ - G.POST_ROOF - 1.2                                         # 2026-11-10: nut pushed up against the roof
         nuts = [f_nut(3, (s * x, G.SVY + dy, zn), (0, 0, 1), 30) for x, dy in sv]
         vis += [f_screw("BH", 3, 16, (s * x, y, G.CAP_Z1 - 9.6), (0, 0, -1)) for x, y in cap_screws()]
+        vis.append(f_screw("BH", 3, 10, (s * G.CTAB_SCR[0], G.K_Y1 + G.CTAB_T, G.CTAB_SCR[1]), (0, -1, 0)))   # 2026-11-12: cap tab
         nuts += [f_nut(3, (s * x, y, G.TSH_Z0 + 1.4), (0, 0, 1)) for x, y in cap_screws()]           # in its pocket
         corners = (G.PL_ZC - G.SPRING_V, G.PL_ZC + G.SPRING_V)
         vis += [f_screw("BH", 4, 16, (s * G.SPRING_U, G.PL_Y0, bz), (0, 1, 0)) for bz in corners]
         nuts += [f_nut(4, (s * G.SPRING_U, G.K_Y1 - 1.8, bz), (0, 1, 0)) for bz in corners]            # in its pocket
-        fix("FIX_VIS_AILE_" + tag, vis, {b3 % 8: 3, b3 % 16: 2, "M4 x 16 " + HNAME["BH"]: 2}, [(0, 0, 0, "carriage")], "A")
+        fix("FIX_VIS_AILE_" + tag, vis, {b3 % 8: 3, b3 % 16: 2, b3 % 10: 1, "M4 x 16 " + HNAME["BH"]: 2}, [(0, 0, 0, "carriage")], "A")
+        fix("FIX_INSERT_AILE_" + tag, [f_insert(3, (s * G.CTAB_SCR[0], G.K_Y1, G.CTAB_SCR[1]), (0, -1, 0))], {I3: 1}, [(0, 0, 0, "carriage")], "A")
         fix("FIX_ECROU_AILE_" + tag, nuts, {N3: 5, "M4 nut (ISO 4032)": 2}, [(0, 0, 0, "carriage")], "A")
         # ---- arms: split clamp (M3 x 12 socket head + nut) + 2x M3 x 16 through the door sheet + nut on the tab (2026-11-10)
         fy1 = G.BOX_Y0 - 3.5
@@ -920,9 +979,9 @@ def fasteners():
             vis.append(f_screw("SH", 3, 12, (s * (G.PX - 4), G.PY - 9, zc), (s, 0, 0)))   # 2026-11-10: x 10 ended inside the nut
             nuts.append(f_nut(3, (s * (G.PX + 4.7), G.PY - 9, zc), (1, 0, 0)))
             for z in arm_screws_z((z0, z1)):
-                vis.append(f_screw("BH", 3, 16, (s * G.SX1, ym, z), (-s, 0, 0)))
-                nuts.append(f_nut(3, (s * (G.SX0 - G.TAB_D - 1.2), ym, z), (1, 0, 0)))
-        fix("FIX_VIS_BRAS_" + tag, vis, {s3 % 12: 2, b3 % 16: 4}, [(0, 0, 0, "door_" + tag)], "A")
+                vis.append(f_screw("BH", 3, 12, (s * G.SX1, ym, z), (-s, 0, 0)))                # 2026-11-12: x 16 -> x 12
+                nuts.append(f_nut(3, (s * (G.SX0 - G.TAB_D + G.NUT_T / 2), ym, z), (1, 0, 0)))  # in its pocket
+        fix("FIX_VIS_BRAS_" + tag, vis, {s3 % 12: 2, b3 % 12: 4}, [(0, 0, 0, "door_" + tag)], "A")
         fix("FIX_ECROU_BRAS_" + tag, nuts, {N3: 6}, [(0, 0, 0, "door_" + tag)], "A")
     # ---- 28T split clamp (built on the right, translated to the left like the gear) + door pinion horn screws
     hz1 = G.GZB + G.HUB28_H

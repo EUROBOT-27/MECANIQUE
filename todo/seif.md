@@ -17,9 +17,10 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 
 ## Mechanical
 - [ ] **Clapets v7 module A: print and test** (`mechanical/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
-  1. Print the **tolerance coupons** (`tolerance-tests/README.md`, 10 coupons incl. the 2 door gears, ~150 g PLA,
-     4 perimeters, 20 % infill) and report the best variant of each → update `class G`, regenerate CAD + assembly guide
-  2. Print module A (~600 g PLA, 40 % infill), assemble with `assembly/clapets_v7_moduleA_assembly.pdf`, test
+  2. Print module A in **ABS** (~510 g, 40 % infill, parts regenerated 2026-11-12), assemble, test. The assembly guide
+     is out of date for the cap tab, the plate teeth and the arm nut pockets: regenerate it (ask Claude) or follow the README
+     - Set the inserts with the new holes (D-025): let them sink under the iron's weight
+     - Mount each door unit: push it outward in its M4 slots until the plate teeth touch, then tighten
   3. Door sheet foam pads: none in hand (CAD keeps 8 mm); get some or decide another pad
   4. Optional: FEM check of the new door unit (gear force ~90 N + door squeeze)
 - [ ] Decide: "PLA for tests / prototype, ABS (or PETG) for robot parts" → log it as a decision or not — Seif
@@ -59,6 +60,8 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Confirmed D-024 (Ayoub joins the hub) — 2026-11-12
+- [x] ABS tolerance coupons printed + checked; clapets v7 fixes (pinion holes, servo nut recess, ear openings, flat web, cap front tab + insert, plate form-lock teeth, arm nut pockets); insert holes redesigned (D-025) — 2026-11-12
 - [x] Clapets v7 module A ready to print: caliper values, insert holes + walls, nuts instead of inserts, rod clamps, door unit + cap rebuilt (option B, D-022), PLA sizing, no M4 inserts / no pad, tolerance coupons, assembly guide PDF, fast door sweep + GIFs — 2026-11-10
 - [x] Tolerance check of every nut / screw / insert (fastener check + insert views) — 2026-11-10
 - [x] Motion video of v7 → `mechanical/simulations/clapets_v7/` (door GIF + module A cycle GIF) — 2026-11-10

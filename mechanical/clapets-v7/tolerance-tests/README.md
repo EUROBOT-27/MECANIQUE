@@ -32,6 +32,16 @@ T9 and T10 are the real gears (the same as in `../CAD_FC/STL/`): if they fit, ke
 **Filament for the tests: ~127 g of ABS** at 20 % infill (~139 g at 40 %). T8 is ~39 g, the two gears ~15 g; the 7
 small coupons alone take ~73 g. Volumes per coupon: `volumes.txt`. (ABS ≈ 1.045 g/cm³, ~16 % lighter than PLA.)
 
+## Results (2026-11-12, ABS, Seif)
+- **T1** 608 seat: **Ø22.2** (variant 2) good, no change.
+- **T2, T4, T5, T7, T10:** good, no change.
+- **T3** servo nut recess: opened to **AF 5.9** (0.2 per side).
+- **T6** insert holes: **all bad**, plastic pushed into the insert's thread. Holes redesigned from a reference drawing
+  (D-025, `../../design-principles.md`): **Ø5.4 × 7 + mouth cone Ø6.2 × 1.5**. Not re-tested.
+- **T8** cradle: inner ear key opening taller, 5 mm strip in front of the outer ears, one window for the 2 outer nuts.
+- **T9** pinion: M2 holes **Ø2.5** (were Ø2.2, too tight).
+The coupon files here are kept as printed (old values). Details: `../README.md`, "2026-11-12".
+
 ## What to report back
 For each test: the variant number that fits best (1, 2 or 3), or "all too tight" / "all too loose". Example:
 `T1: 2 · T2: 3 (8.1 and 8.2 too tight) · T3: 2 · T4: 2 · T5: 1 · T6: 2 · T7: 2 · T8: ok · T9/T10: mesh a bit tight`.

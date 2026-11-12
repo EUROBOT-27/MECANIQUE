@@ -28,7 +28,7 @@ def log(msg):
 
 ENGAGE = ("nut", "insert", "tnut")
 TOOL_R = {2: 1.5, 3: 2.0, 4: 2.5, 5: 3.0}      # radius of the key / driver shaft that has to reach the head
-INS3_OD = 6.0   # 2026-11-09: real M3 insert outer Ø (5.6..6.0); the CAD models inserts at the hole size (Ø4.6)
+INS3_OD = 6.0   # 2026-11-09: real M3 insert outer Ø (5.6..6.0); the CAD models inserts at the hole size (Ø5.4 since 2026-11-12)
 
 
 def kind(label):
