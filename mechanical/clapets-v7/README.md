@@ -49,6 +49,31 @@ See `../design-principles.md`, "Print materials".
   top crossbar (~35 g), nut support (~31 g). Brim on the door unit bodies (tall, ABS warps).
 
 ## Changes from v6
+### 2026-11-12: fixes after the ABS coupons (T8, T9) + plate form lock (Seif)
+- **Pinion (`A_PIGNON_PORTE_20T`):** M2 horn screw holes Ø2.2 → **Ø2.5** (`HORN_SCR_R`): too tight in T9.
+- **Inner ear (3rd servo screw):** key opening above the ear 15 → **33 mm** tall (`EAR_IN_H`); the keel window is
+  narrower (x 71–91 → **71–87**), so 5.5 mm of keel stays between them (was 1.5).
+- **Outer ear opening:** the strip in front of it was 2 mm. The outer wall now comes forward to y 69 (`OWB_Y1` 66 → 69,
+  28T still 3.2 mm away), so the strip is **5 mm**. The ear tip goes 1 mm into the wall (x 148), so a 3 mm groove at ear
+  height lets the servo still slide in from the front.
+- **Web:** the local rib beside the inner ear (z 57–107, with steps at its ends) now runs the **full height**: the web's
+  inner face is one flat face (x 100.5).
+- **Cap → body, 3rd screw from the front:** a tab hangs from the cap over the keel's front face (x 67.5–78, z 210–226,
+  4.2 thick); **M3 × 10 button head** through it into an **M3 insert set horizontally** in the keel front face
+  (x 72.75, z 218; walls 3.75 to the side, 4.0 to the plate face). Set the insert with the body lying on its back.
+- **Form lock on the butterfly plate:** 2 flat teeth in the plate's plane (y 47.8–50.5), x 67–76, **0.3 mm** from the two
+  diagonal edges of the plate's wing: the bottom tooth on the body (below the lower edge, from the bed), the top tooth
+  on the cap (above the upper edge). The wing sits between them, so the door clamp reaction (outward) and the stack
+  weight (down) bear on the plate's edges instead of only on the M4s' grip. Edges fitted on the real plate outline
+  (`plate_diag()`; the outer edge between the lobes is a concave arc, not used).
+  **Mounting is unchanged:** the teeth sit outside the plate outline, so the unit still goes onto the plate straight
+  from the front, and the cap still comes down from above. Then **push the unit outward in its M4 slots until the
+  teeth touch** and tighten the 2 M4.
+- Masses (PLA figures from the generator): body 146 → 157 g, cap 42 → 43 g (ABS ≈ ×0.84).
+- Rest check: 0 interferences, 0 reserve violations. Fast door sweep clean after the outer wall change (run before the
+  tab and teeth, which are far from the doors). Not re-run: full motion check, fastener check, images,
+  assembly guide (the guide's cap and plate steps are now out of date).
+
 ### 2026-11-10 (4): no M4 inserts, no motor pad (Seif)
 - **Nut support (`A_SUPPORT_ECROU`): M4 nuts instead of M4 inserts** (none in stock). Wall 8 → 5 mm (`SUP_WALL`),
   nut pockets in the wall's back face (7.4 × 8.4 × 3.4). The 2 screws are **the printer's own M4 × 8** (they held

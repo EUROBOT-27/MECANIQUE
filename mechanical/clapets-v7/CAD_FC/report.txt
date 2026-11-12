@@ -2,8 +2,8 @@ A_SOCLE                  print   A solids 1  mass    89.2 g  size  136.0 x   52.
 A_PLATINE_MOTEUR         print   A solids 1  mass    22.6 g  size  112.9 x   43.0 x    6.0  valid
 A_TRAVERSE_HAUT          print   A solids 1  mass    61.4 g  size  108.9 x   28.0 x   22.0  valid
 A_SUPPORT_ECROU          print   A solids 1  mass    43.1 g  size   50.0 x   27.5 x   60.0  valid
-A_AILE_D                 print   A solids 1  mass   146.1 g  size   84.0 x   62.5 x  199.0  valid
-A_AILE_G                 print   A solids 1  mass   146.1 g  size   84.0 x   62.5 x  199.0  valid
+A_AILE_D                 print   A solids 1  mass   156.5 g  size   84.0 x   62.5 x  199.0  valid
+A_AILE_G                 print   A solids 1  mass   156.5 g  size   84.0 x   62.5 x  199.0  valid
 A_BRAS_PORTE_D_BAS       print   A solids 1  mass    18.0 g  size   48.0 x   68.5 x   34.0  valid
 A_BRAS_PORTE_D_HAUT      print   A solids 1  mass    18.0 g  size   48.0 x   68.5 x   34.0  valid
 A_BRAS_PORTE_G_BAS       print   A solids 1  mass    18.0 g  size   48.0 x   68.5 x   34.0  valid
@@ -11,8 +11,8 @@ A_BRAS_PORTE_G_HAUT      print   A solids 1  mass    18.0 g  size   48.0 x   68.
 A_ROUE_PORTE_28T         print   A solids 1  mass    16.5 g  size   37.3 x   37.3 x   30.0  valid
 A_PIGNON_PORTE_20T       print   A solids 1  mass     4.8 g  size   27.5 x   27.5 x   10.5  valid
 A_TOLE_PORTE             mdf     A solids 1  mass    25.1 g  size    3.0 x   56.0 x  245.0  valid
-A_CAPOT_AILE_D           print   A solids 1  mass    41.8 g  size   84.0 x   62.5 x   16.0  valid
-A_CAPOT_AILE_G           print   A solids 1  mass    41.8 g  size   84.0 x   62.5 x   16.0  valid
+A_CAPOT_AILE_D           print   A solids 1  mass    42.9 g  size   84.0 x   62.5 x   32.0  valid
+A_CAPOT_AILE_G           print   A solids 1  mass    42.9 g  size   84.0 x   62.5 x   32.0  valid
 A_ENTRETOISE_608_BAS     print   A solids 1  mass     0.2 g  size   12.0 x   12.0 x    3.0  valid
 A_ENTRETOISE_608_HAUT    print   A solids 1  mass     0.3 g  size   12.0 x   12.0 x    4.0  valid
 B_ENTRETOISE_TETE        print   B solids 1  mass     3.4 g  size   22.0 x   18.0 x   22.0  valid
@@ -55,11 +55,13 @@ RES_TETE_ROTATION        reserve - solids 1  mass     2.0 g  size  280.0 x   32.
 RES_TETE_FIXE            reserve - solids 1  mass     0.7 g  size  124.0 x   57.5 x  100.0  valid
 RES_TETE_CABLES          reserve - solids 1  mass     0.2 g  size  124.0 x   57.5 x   30.0  valid
 RES_TETE_REPOS           reserve - solids 1  mass     0.4 g  size   60.0 x   32.0 x  216.0  valid
-FIX_VIS_AILE_D           ref     A solids 28  mass     8.4 g  size   67.1 x   25.4 x  177.6  valid
+FIX_VIS_AILE_D           ref     A solids 32  mass     9.2 g  size   78.4 x   28.2 x  177.6  valid
+FIX_INSERT_AILE_D        ref     A solids 1  mass     0.4 g  size    4.6 x    6.0 x    4.6  valid
 FIX_ECROU_AILE_D         ref     A solids 7  mass     3.3 g  size   67.3 x   22.1 x  177.0  valid
 FIX_VIS_BRAS_D           ref     A solids 22  mass     6.7 g  size   48.7 x   64.3 x  202.7  valid
 FIX_ECROU_BRAS_D         ref     A solids 6  mass     2.2 g  size   25.5 x   64.2 x  203.4  valid
-FIX_VIS_AILE_G           ref     A solids 28  mass     8.4 g  size   67.1 x   25.4 x  177.6  valid
+FIX_VIS_AILE_G           ref     A solids 32  mass     9.2 g  size   78.4 x   28.2 x  177.6  valid
+FIX_INSERT_AILE_G        ref     A solids 1  mass     0.4 g  size    4.6 x    6.0 x    4.6  valid
 FIX_ECROU_AILE_G         ref     A solids 7  mass     3.3 g  size   67.3 x   22.1 x  177.0  valid
 FIX_VIS_BRAS_G           ref     A solids 22  mass     6.7 g  size   48.7 x   64.3 x  202.7  valid
 FIX_ECROU_BRAS_G         ref     A solids 6  mass     2.2 g  size   25.5 x   64.2 x  203.4  valid
@@ -103,8 +105,9 @@ Expected contacts (real on the hardware, not counted):
 Fasteners (bill of materials, whole module, both door units):
     8 x  M2 x 10 pan head self-tapping (servo horn)
     4 x  M2 x 6 pan head self-tapping (servo horn)
-    8 x  M3 heat-set insert (hole dia 4.6 x 7 + 0.5 chamfer)
+   10 x  M3 heat-set insert (hole dia 4.6 x 7 + 0.5 chamfer)
    36 x  M3 nut (ISO 4032)
+    2 x  M3 x 10 button head (ISO 7380)
     4 x  M3 x 10 button head (ISO 7380), into a dia 2.5 pilot hole (cuts its own thread)
     4 x  M3 x 10 socket head (ISO 4762)
     4 x  M3 x 12 button head (ISO 7380)
