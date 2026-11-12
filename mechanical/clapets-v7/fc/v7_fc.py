@@ -114,7 +114,8 @@ class G:
     NUT_W, NUT_L, NUT_T = 5.8, 6.6, 2.8                     # M3 nut pocket (nut 5.5 AF x 2.4) +0.3
     CLAMP_NUT_W, CLAMP_NUT_L = 6.0, 6.9                     # 2026-11-10: roomier pockets on the rod clamps (printed holes come out small)
     # 2026-11-10: door servo posts: M3 nut under a roof (an insert can't get > 1.1 mm of wall: servo body 4.3 from the ear hole)
-    POST_ROOF, POST_HEX, POST_HEX_D, POST_WIN = 1.6, 5.7, 2.5, 10.0   # roof over the nut; hex recess AF (snug, prints ~5.55) x depth; window height
+    POST_ROOF, POST_HEX, POST_HEX_D, POST_WIN = 1.6, 5.9, 2.5, 10.0   # roof over the nut; hex recess AF x depth; window height
+                                                            # 2026-11-12: AF 5.7 -> 5.9 = 0.2 per side on the 5.5 nut (Seif, after T3)
     CAB_Z0, CAB_Z1, CAB_OUT = 3.7, 8.3, 5.8                 # grommet height above the bottom, how far it sticks out
     RHO_PRINT = 1240                                        # 2026-11-10: PLA (we print PLA / ABS, no PETG); was 1270 (PETG)
     CAP_Z1 = 242.0                                          # 2026-11-10 (option B): cap UP..242, covers the top plate M4 (z 235)

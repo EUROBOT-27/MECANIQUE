@@ -51,6 +51,8 @@ See `../design-principles.md`, "Print materials".
 ## Changes from v6
 ### 2026-11-12: fixes after the ABS coupons (T8, T9) + plate form lock (Seif)
 - **Pinion (`A_PIGNON_PORTE_20T`):** M2 horn screw holes Ø2.2 → **Ø2.5** (`HORN_SCR_R`): too tight in T9.
+- **Servo ear nuts (3 posts):** hex recess AF 5.7 → **5.9** (`POST_HEX`) = 0.2 per side on the 5.5 nut (was 0.1). The
+  wall between the recess and the servo pocket goes 0.95 → 0.85 mm.
 - **Inner ear (3rd servo screw):** key opening above the ear 15 → **33 mm** tall (`EAR_IN_H`); the keel window is
   narrower (x 71–91 → **71–87**), so 5.5 mm of keel stays between them (was 1.5).
 - **Outer ear opening:** the strip in front of it was 2 mm. The outer wall now comes forward to y 69 (`OWB_Y1` 66 → 69,
