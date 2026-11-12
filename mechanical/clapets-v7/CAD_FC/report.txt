@@ -11,8 +11,8 @@ A_BRAS_PORTE_G_HAUT      print   A solids 1  mass    18.0 g  size   48.0 x   68.
 A_ROUE_PORTE_28T         print   A solids 1  mass    16.5 g  size   37.3 x   37.3 x   30.0  valid
 A_PIGNON_PORTE_20T       print   A solids 1  mass     4.8 g  size   27.5 x   27.5 x   10.5  valid
 A_TOLE_PORTE             mdf     A solids 1  mass    25.1 g  size    3.0 x   56.0 x  245.0  valid
-A_CAPOT_AILE_D           print   A solids 1  mass    42.9 g  size   84.0 x   62.5 x   32.0  valid
-A_CAPOT_AILE_G           print   A solids 1  mass    42.9 g  size   84.0 x   62.5 x   32.0  valid
+A_CAPOT_AILE_D           print   A solids 1  mass    43.7 g  size   84.0 x   62.5 x   32.0  valid
+A_CAPOT_AILE_G           print   A solids 1  mass    43.7 g  size   84.0 x   62.5 x   32.0  valid
 A_ENTRETOISE_608_BAS     print   A solids 1  mass     0.2 g  size   12.0 x   12.0 x    3.0  valid
 A_ENTRETOISE_608_HAUT    print   A solids 1  mass     0.3 g  size   12.0 x   12.0 x    4.0  valid
 B_ENTRETOISE_TETE        print   B solids 1  mass     3.4 g  size   22.0 x   18.0 x   22.0  valid

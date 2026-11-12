@@ -58,7 +58,8 @@ See `../design-principles.md`, "Print materials".
   height lets the servo still slide in from the front.
 - **Web:** the local rib beside the inner ear (z 57–107, with steps at its ends) now runs the **full height**: the web's
   inner face is one flat face (x 100.5).
-- **Cap → body, 3rd screw from the front:** a tab hangs from the cap over the keel's front face (x 67.5–78, z 210–226,
+- **Cap → body, 3rd screw from the front:** a tab on the cap's front face (x 67.5–78, z 210–242: full cap height, sunk
+  0.5 into the cap so it is one solid) hangs down over the keel's front face (below z 226,
   4.2 thick); **M3 × 10 button head** through it into an **M3 insert set horizontally** in the keel front face
   (x 72.75, z 218; walls 3.75 to the side, 4.0 to the plate face). Set the insert with the body lying on its back.
 - **Form lock on the butterfly plate:** 2 flat teeth in the plate's plane (y 47.8–50.5), x 67–76, **0.3 mm** from the two

@@ -602,7 +602,9 @@ def capot_aile(s, name):    # 2026-11-10 (option B): cap z 226..242 = top pod: t
         c += [vcyl(s, x, y, G.UP - 1, G.CAP_Z1 + 1, 1.7), vcyl(s, x, y, zs, G.CAP_Z1 + 1, 3.3)]
     m4_plate(s, c, G.PL_ZC + G.SPRING_V)                                                                 # top plate M4, nut on the front face
     # 2026-11-12: front tab over the keel (M3 x 10 into the body's insert; head on the tab) + top plate-lock tooth
-    a.append(chbox(s, G.CTAB_X0, G.CTAB_X1, G.K_Y1, G.K_Y1 + G.CTAB_T, G.CTAB_Z0, G.UP + 0.1, 1.0))
+    # the tab runs up the cap's whole front face (z 210..242, on the bed when printed) and sinks 0.5 into the cap: one solid
+    a.append(chbox(s, G.CTAB_X0, G.CTAB_X1, G.K_Y1, G.K_Y1 + G.CTAB_T, G.CTAB_Z0, G.CAP_Z1, 1.0))
+    a.append(box(s, G.CTAB_X0 + 1.0, G.CTAB_X1 - 1.0, G.K_Y1 - 0.5, G.K_Y1 + 0.1, G.UP, G.CAP_Z1))
     c.append(ycyl(s, G.CTAB_SCR[0], G.K_Y1 - 0.1, G.K_Y1 + G.CTAB_T + 1, G.CTAB_SCR[1], 1.7))
     a.append(lock_tooth(s, True, G.CAP_Z1))
     part(name, solid(a, c), G.RHO_PRINT, PETG2, "print", "A")
