@@ -2,7 +2,7 @@
 
 _Last updated: 2026-11-12 (Seif)_
 
-**Phase:** Strategy partly fixed → **clapets v7 module A: ABS coupons done, CAD updated, ready to print**; module B (suction) reworked by Maatoug in v8. Hub shared by Seif, Maatoug and Ayoub (D-018, D-024 proposed).
+**Phase:** Strategy partly fixed → **clapets v7 module A: ABS coupons done, CAD updated, ready to print**; module B (suction) reworked by Maatoug in v8. Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
 **Next deadline:** Strategy chosen (internal), 2026-11-08 (**4 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (10 days) · CAD freeze 2026-12-13 (31 days) · Mechanical built and assembled, 2026-12-31 (49 days)
 **Qualifier:** end of March 2027
 
@@ -32,7 +32,7 @@ _Last updated: 2026-11-12 (Seif)_
 
 ## Waiting on
 - Seif: module A print (clapets v7), order stones + foam balls, robot and roof layout sketches, refined
-  timeline, confirmation of the D-008 location, confirm/reject D-021 and D-024 (Ayoub joins the hub).
+  timeline, confirmation of the D-008 location, confirm/reject D-021.
 - Maatoug: back up personal files before the next pull; push the generators that only exist on his PC; carry v7's
   module A into v8; remove the ~470 software build files committed in `a746ea1`; fix the head servo posts; update v8's insert holes to D-025.
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.

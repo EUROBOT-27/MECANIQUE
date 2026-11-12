@@ -383,8 +383,8 @@ Template:
 ## D-024 — Ayoub joins the hub as a user (beyond the two leads)
 - Date: 2026-11-12
 - Area: project
-- Decided by: Ayoub (proposed — to be confirmed by Seif, who decided D-018)
-- Status: proposed (extends D-018)
+- Decided by: Ayoub; confirmed by Seif 2026-11-12
+- Status: active (extends D-018)
 - Decision: The shared hub is no longer limited to the two tech leads. **Ayoub** (CAD team, SolidWorks) uses it in their
   own clone with Claude, with the same workflow: `/start` pulls and briefs, `/wrap` logs, commits and pushes. Name key
   `ayoub` → `todo/ayoub.md`, `logs/YYYY-MM-DD-ayoub.md`. As a non-lead, Ayoub's decisions are always logged as
