@@ -379,3 +379,17 @@ Template:
 - Consequences: masses ~16 % lower than the PLA figures (ABS ≈ 1.04–1.05 g/cm³): coupons ~127 g, module A ~510 g with
   margin. Heat-set inserts (T6, socle) at ~245–265 °C. The generator `clapets-v7/fc/v7_fc.py` still uses
   `RHO_PRINT` = 1.24 (PLA), so its reported masses are high until changed.
+
+## D-024 — Heat-set insert holes: K × 0.9, mouth cone, L + 1 (new reference drawing)
+- Date: 2026-11-12
+- Area: mechanical
+- Decided by: Seif
+- Status: active (replaces the insert-hole rules of 2026-11-10 in `mechanical/design-principles.md`)
+- Decision: every heat-set insert hole follows the reference drawing `mechanical/img/heat_set_insert_hole.png`:
+  hole **K × 0.9**, mouth cone from **K + 0.2** down to the hole over **L × 0.25**, blind depth **L + 1** (K = knurl Ø,
+  L = insert length). Our M3 inserts are straight, K 6.0, L 6.0: **Ø5.4 × 7, cone Ø6.2 × 1.5**.
+- Alternatives considered: the old Ø4.6 × 7 + 0.5 × 45° chamfer: the ABS coupon (T6, Ø4.4 / 4.6 / 4.8) pushed melted
+  plastic into the insert's bore. No new coupon printed (Seif): the drawing is applied directly.
+- Why: the hole was far too small for a 6.0 knurl; the extra plastic had nowhere to go but into the thread.
+- Consequences: `ins_hole()` in `clapets-v7/fc/v7_fc.py` (`INS3_K`, `INS3_L`) regenerated, all M3 insert holes changed
+  (socle ×4, cap tabs ×2, head bracket ×4). Clapets v8 (Maatoug) still uses Ø4.6 × 6.5: to update.

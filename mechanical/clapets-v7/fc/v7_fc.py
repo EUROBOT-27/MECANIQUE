@@ -55,9 +55,13 @@ class G:
     LIFT_CARRY, LIFT_TURN = 15, 75                          # turn: axis 165 + 75 = 240 >= 229.8 (stack half-diagonal) + 10
     BRG_R, BRG_T, BOSS_R = 11.1, 7.2, 14.5                  # 608 seat Ø22.2 (FDM holes print ~0.1 small) + 0.6 lead-in
     ROD_R = 4.1                                             # Ø8.2 bore for the clamps on the Ø8 rods (slides on, clamp closes it)
-    INS3_R, INS3_D = 2.3, 7.0                               # M3 heat-set insert hole Ø4.6 (fits Seif's inserts, OD 5.6..6.0 x 6);
-                                                            # 2026-11-09: blind depth 6.5 -> 7.0 = insert + 1 (design-principles.md)
-    INS_CH = 0.5                                            # 2026-11-09: 0.5 x 45 deg lead-in at every insert hole mouth (Ø5.6 = small end of the insert)
+    # 2026-11-12: M3 insert holes from the reference drawing (mechanical/design-principles.md; T6 in ABS: the Ø4.6 hole pushed
+    # plastic into the insert's bore). Straight knurled insert K = 6.0 (knurl Ø), L = 6.0: hole K x 0.9 = Ø5.4, depth L + 1,
+    # mouth cone from K + 0.2 = Ø6.2 down to the hole Ø over L x 0.25 = 1.5
+    INS3_K, INS3_L = 6.0, 6.0
+    INS3_R, INS3_D = 0.45 * INS3_K, INS3_L + 1.0             # Ø5.4 x 7.0
+    INS3_MR, INS3_MD = (INS3_K + 0.2) / 2, 0.25 * INS3_L     # mouth Ø6.2, cone 1.5 deep
+    INS_CH = 0.5                                            # M4 holes only (not used in module A): 0.5 x 45 deg lead-in
     INS4_R, INS4_D = 2.8, 7.0                               # M4 brass heat-set insert: hole Ø5.6 x 7
     # ---- reserved space for module B (in the carriage frame) ----
     HZ = 165                                                # head axis along y at x 0, z 165 = middle box centre (middle cup on it)
@@ -223,9 +227,10 @@ def zslot(s, x, y, z0, z1, r, dx=0.0, dy=0.0):   # vertical hole r, elongated ±
 
 def ins_hole(s, x, y, z, dirv, d=3):     # heat-set insert hole: face centre (x, y, z), dirv = into the part; + 45 deg lead-in
     r, depth = (G.INS3_R, G.INS3_D) if d == 3 else (G.INS4_R, G.INS4_D)
+    mr, md = (G.INS3_MR, G.INS3_MD) if d == 3 else (r + G.INS_CH, G.INS_CH)    # 2026-11-12: M3 mouth cone Ø6.2 -> Ø5.4 over 1.5
     p, u = Vector(s * x, y, z), Vector(s * dirv[0], dirv[1], dirv[2])
     hole = Part.makeCylinder(r, depth + 1, p - u * 1, u)
-    cone = Part.makeCone(r + G.INS_CH + 0.01, r, G.INS_CH + 0.01, p - u * 0.01, u)
+    cone = Part.makeCone(mr + 0.01 * (mr - r) / md, r, md + 0.01, p - u * 0.01, u)
     return hole.fuse(cone)
 
 
@@ -897,7 +902,7 @@ HEADS = {("BH", 3): (5.7, 1.65), ("BH", 4): (7.6, 2.2), ("BH", 5): (9.5, 2.75),
          ("SH", 3): (5.5, 3.0), ("SH", 4): (7.0, 4.0), ("SH", 5): (8.5, 5.0), ("PAN", 2): (3.8, 1.3)}
 HNAME = {"BH": "button head (ISO 7380)", "SH": "socket head (ISO 4762)", "PAN": "pan head self-tapping (servo horn)"}
 NUTS = {3: (5.5, 2.4), 4: (7.0, 3.2), 5: (8.0, 4.0)}
-INSERTS = {3: (4.6, 6.0), 4: (5.6, 6.0)}   # modelled at the hole Ø; M3 length 6.0 measured 2026-11-09
+INSERTS = {3: (5.4, 6.0), 4: (5.6, 6.0)}   # modelled at the hole Ø; M3 length 6.0 measured 2026-11-09 (hole Ø5.4 since 2026-11-12)
 
 
 def _put(sh, p, d, spin=0.0):
@@ -948,7 +953,7 @@ def fix(name, shapes, bom, places, module):
 def fasteners():
     L = -2 * G.PX
     s3, b3 = "M3 x %d " + HNAME["SH"], "M3 x %d " + HNAME["BH"]
-    N3, I3 = "M3 nut (ISO 4032)", "M3 heat-set insert (hole dia 4.6 x 7 + 0.5 chamfer)"
+    N3, I3 = "M3 nut (ISO 4032)", "M3 heat-set insert, straight knurl 6.0 x 6 (hole dia 5.4 x 7, mouth cone dia 6.2 x 1.5)"
     for s, tag in ((1, "D"), (-1, "G")):
         # ---- door unit (option B, 2026-11-10): servo flange 3x M3 x 8 + nut under the post roof; cap 2x M3 x 16 + nut in
         # a pocket under the top shelf; plate corners 2x M4 x 16 from behind the plate + nut in a pocket in the keel / cap front face

@@ -50,6 +50,11 @@ See `../design-principles.md`, "Print materials".
 
 ## Changes from v6
 ### 2026-11-12: fixes after the ABS coupons (T8, T9) + plate form lock (Seif)
+- **Insert holes (D-024):** the ABS coupon T6 pushed plastic into the insert's thread. Every M3 insert hole now follows
+  the reference drawing in `../design-principles.md`: **Ø5.4 × 7, mouth cone Ø6.2 × 1.5** (was Ø4.6 × 7 + 0.5 × 45°).
+  Socle ×4, cap tabs ×2 (and the head bracket ×4, module B). No new coupon.
+- **Coupon results (ABS, Seif):** T1 608 seat: Ø22.2 (variant 2) good. T2, T4, T5, T7, T10: good, no change. T3 / T8 /
+  T9: the changes below. T6: see above.
 - **Pinion (`A_PIGNON_PORTE_20T`):** M2 horn screw holes Ø2.2 → **Ø2.5** (`HORN_SCR_R`): too tight in T9.
 - **Servo ear nuts (3 posts):** hex recess AF 5.7 → **5.9** (`POST_HEX`) = 0.2 per side on the 5.5 nut (was 0.1). The
   wall between the recess and the servo pocket goes 0.95 → 0.85 mm.
