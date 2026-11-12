@@ -7,12 +7,17 @@ priorities in view and pushes back when work drifts away from the critical path.
 
 ## Who uses this hub
 
-The hub is **shared** by the two tech leads, each with Claude, all year long (D-018):
+The hub is **shared** by the two tech leads, each with Claude, all year long (D-018), plus team members who join it:
 - **Seif**: overall tech lead, mechanical design + computer vision. Started the hub on 2026-10-25.
 - **Mohamed Ali Maatoug**: software lead; also turns mechanical designs into fabrication-ready CAD
   (FreeCAD / SolidWorks prompt-to-CAD scripts).
+- **Ayoub**: CAD team (SolidWorks), with Seif and Baha. Joined the hub on 2026-11-10. Not a lead: their decisions
+  are logged as `proposed` until the area lead confirms.
 
-It is one git repo (GitHub org **EUROBOT-27**, repo `MECANIQUE`); each of them works in their own clone.
+Every user runs `/start` and `/wrap` with their own name key (`seif`, `maatoug`, `ayoub`) for
+`todo/<name>.md` and `logs/YYYY-MM-DD-<name>.md`.
+
+It is one git repo (GitHub org **EUROBOT-27**, repo `MECANIQUE`); each user works in their own clone.
 **Who you are talking to** comes from the personal memory (`claude-workspace/memory/user-profile.md`, not committed).
 If it's missing or unclear, ask before assuming.
 
@@ -61,7 +66,7 @@ Hardware availability in Tunisia is limited, and imports take time (orders from 
 ## How we work (session workflow)
 
 - **`/start`** at the beginning of a session → `git pull`, then briefing from `STATUS.md`, your own `todo/<name>.md`,
-  the last logs (yours and the other lead's), timeline.
+  the last logs (yours and the other users'), timeline.
 - **`/wrap`** at the end → write `logs/YYYY-MM-DD-<name>.md`, update your `todo/<name>.md` and `STATUS.md`,
   then **commit and push**.
 - **Git:** everyone works on `main`. Pull before you start and before logging a decision; commit + push at wrap
@@ -88,7 +93,7 @@ Hardware availability in Tunisia is limited, and imports take time (orders from 
 | Path | What |
 |---|---|
 | `STATUS.md` | One page: where the team is right now (shared; updated at each wrap) |
-| `todo/seif.md`, `todo/maatoug.md` | Each lead's task list + follow-ups with others |
+| `todo/seif.md`, `todo/maatoug.md`, `todo/ayoub.md` | Each user's task list + follow-ups with others |
 | `commands.txt` | Cheat sheet of commands |
 | `Docs/` | Official documents — **never edit** |
 | `project/rules-digest.md` | All constraints that matter, with rule references + open FAQ questions |

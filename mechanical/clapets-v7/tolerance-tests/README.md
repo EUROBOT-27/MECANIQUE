@@ -37,7 +37,7 @@ small coupons alone take ~73 g. Volumes per coupon: `volumes.txt`. (ABS ≈ 1.04
 - **T2, T4, T5, T7, T10:** good, no change.
 - **T3** servo nut recess: opened to **AF 5.9** (0.2 per side).
 - **T6** insert holes: **all bad**, plastic pushed into the insert's thread. Holes redesigned from a reference drawing
-  (D-024, `../../design-principles.md`): **Ø5.4 × 7 + mouth cone Ø6.2 × 1.5**. Not re-tested.
+  (D-025, `../../design-principles.md`): **Ø5.4 × 7 + mouth cone Ø6.2 × 1.5**. Not re-tested.
 - **T8** cradle: inner ear key opening taller, 5 mm strip in front of the outer ears, one window for the 2 outer nuts.
 - **T9** pinion: M2 holes **Ø2.5** (were Ø2.2, too tight).
 The coupon files here are kept as printed (old values). Details: `../README.md`, "2026-11-12".

@@ -12,7 +12,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Where did you download the Two Trees Bluer V2 model? Add the link to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` if Seif hasn't — Maatoug
 
 ## From Seif (2026-11-12)
-- [ ] **Insert holes changed (D-024):** the Ø4.6 hole pushed plastic into the insert's thread in the ABS test. New
+- [ ] **Insert holes changed (D-025):** the Ø4.6 hole pushed plastic into the insert's thread in the ABS test. New
   reference: `mechanical/design-principles.md` (drawing `mechanical/img/heat_set_insert_hole.png`): our M3 inserts →
   **Ø5.4 × 7, mouth cone Ø6.2 × 1.5**. Clapets v8 still has Ø4.6 × 6.5: please update — Maatoug
 

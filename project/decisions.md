@@ -380,7 +380,23 @@ Template:
   margin. Heat-set inserts (T6, socle) at ~245–265 °C. The generator `clapets-v7/fc/v7_fc.py` still uses
   `RHO_PRINT` = 1.24 (PLA), so its reported masses are high until changed.
 
-## D-024 — Heat-set insert holes: K × 0.9, mouth cone, L + 1 (new reference drawing)
+## D-024 — Ayoub joins the hub as a user (beyond the two leads)
+- Date: 2026-11-12
+- Area: project
+- Decided by: Ayoub (proposed — to be confirmed by Seif, who decided D-018)
+- Status: proposed (extends D-018)
+- Decision: The shared hub is no longer limited to the two tech leads. **Ayoub** (CAD team, SolidWorks) uses it in their
+  own clone with Claude, with the same workflow: `/start` pulls and briefs, `/wrap` logs, commits and pushes. Name key
+  `ayoub` → `todo/ayoub.md`, `logs/YYYY-MM-DD-ayoub.md`. As a non-lead, Ayoub's decisions are always logged as
+  `proposed` until the area lead confirms.
+- Alternatives considered: keep the hub to the two leads and have Ayoub's work go through Seif (slower, and their CAD
+  work and tasks would not be tracked in the hub).
+- Why: Ayoub has CAD tasks for the 2026-12-31 mechanical milestone (stone gripper concepts, second face, Grail lift);
+  tracking them in the hub keeps STATUS, TODOs and logs complete.
+- Consequences: root `CLAUDE.md` ("Who uses this hub", file map), `/start` and `/wrap` skills updated for more than
+  two users; `todo/ayoub.md` created. Other team members (e.g. Baha) can join the same way.
+
+## D-025 — Heat-set insert holes: K × 0.9, mouth cone, L + 1 (new reference drawing)
 - Date: 2026-11-12
 - Area: mechanical
 - Decided by: Seif
