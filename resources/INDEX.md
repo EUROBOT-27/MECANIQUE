@@ -77,8 +77,8 @@ Source: github.com/Barbatronic/CDR-2027, commit `91f057e` (2026-10-28), committe
 | `DOCS/_posts/` | journal: game elements, gate/tower tests, ball launchers | game-element behaviour | `stacking` `launcher` | [studied](_notes/cdr-2027-barbatronic.md) (posts to 2026-09-29) |
 | `FRW/Differential-Robot-Firmware/` | robot firmware (PlatformIO) + FreeCAD simulator macro | software reference | `navigation` | *not skimmed* |
 
-## Local only (not committed): Aerobotix INSAT 2023 main robot
+## Local only (not committed): GROSBOT, 2023 main robot of a French club
 
 | Resource | What it is | Useful for | Tags | Notes |
 |---|---|---|---|---|
-| `mechanical/resources/2023_GROSBOT.STEP` (246 MB, gitignored) | Aerobotix's Eurobot 2023 main robot, full STEP: 290 × 250 × 350, mast Ø100 350–430, battery high + central, boards on the side walls, mirrored front/back flippers | chassis layout reference | `chassis` `beacon` `electronics` | [studied](_notes/aerobotix-2023-grosbot.md) |
+| `mechanical/resources/2023_GROSBOT.STEP` (246 MB, gitignored) | Eurobot 2023 main robot of a French club (not Aerobotix; club name to add), full STEP: 290 × 250 × 350, mast Ø100 350–430, battery high + central, boards on the side walls, mirrored front/back flippers | chassis layout reference | `chassis` `beacon` `electronics` | [studied](_notes/grosbot-2023.md) |

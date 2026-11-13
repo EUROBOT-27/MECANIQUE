@@ -1,4 +1,4 @@
-ROBOT LAYOUT v1 - back module: mirror   (mechanical/layout/fc/layout_fc.py)
+ROBOT LAYOUT v1 - back module: mirror   (mechanical/layout-v1/fc/layout_fc.py)
 Body X ±150, front face Y +146, back face Y -146 -> box 300 x 292 (a plain box = perimeter 1184)
 
 == Perimeter (convex hull of the vertical projection, carried stones not counted: FAQ Q1) [GR F.3]

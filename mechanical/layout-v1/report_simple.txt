@@ -1,17 +1,17 @@
-ROBOT LAYOUT v1 - back module: flip6   (mechanical/layout/fc/layout_fc.py)
-Body X ±150, front face Y +146, back face Y -140 -> box 300 x 286 (a plain box = perimeter 1172)
+ROBOT LAYOUT v1 - back module: simple   (mechanical/layout-v1/fc/layout_fc.py)
+Body X ±150, front face Y +146, back face Y -110 -> box 300 x 256 (a plain box = perimeter 1112)
 
 == Perimeter (convex hull of the vertical projection, carried stones not counted: FAQ Q1) [GR F.3]
-  start (doors folded)                       1172.2  (limit 1200, margin +27.8)  hull X -153.6..153.6 Y -140.0..146.0
-  front start_folded                          1172.2  (limit 1400, margin +227.8)
-  front approach_open                         1339.9  (limit 1400, margin +60.1)
-  front clamp                                 1295.1  (limit 1400, margin +104.9)
-  front open_release                          1338.3  (limit 1400, margin +61.7)
-  front lift75_turn90                         1338.3  (limit 1400, margin +61.7)
-  worst with ONE module working (other folded): 1339.9 (front approach_open)
+  start (doors folded)                       1112.2  (limit 1200, margin +87.8)  hull X -153.6..153.6 Y -110.0..146.0
+  front start_folded                          1112.2  (limit 1400, margin +287.8)
+  front approach_open                         1281.5  (limit 1400, margin +118.5)
+  front clamp                                 1235.2  (limit 1400, margin +164.8)
+  front open_release                          1280.5  (limit 1400, margin +119.5)
+  front lift75_turn90                         1280.5  (limit 1400, margin +119.5)
+  worst with ONE module working (other folded): 1281.5 (front approach_open)
 
 == Start area 500 x 500 with the Grail on the floor at the right [G D.3, G E.2]
-  robot + Grail: 378.6 (X) x 286.0 (Y) -> fits (Grail 70.0 x 70.0, 5 mm from the body)
+  robot + Grail: 378.6 (X) x 256.0 (Y) -> fits (Grail 70.0 x 70.0, 5 mm from the body)
 
 == Height [GR F.3: <= 350; beacon support top 430 ± 5 GR F.6; e-stop <= 375 GR F.4.c]
   module start_folded     max 273.0 (B_PLATEAU_TETE); rails / top tie / lead screw 366.0 (cut to <= 350 on the robot)
@@ -37,8 +37,7 @@ Body X ±150, front face Y +146, back face Y -140 -> box 300 x 286 (a plain box 
       F:REF_VIS_T8 [start_folded 103, approach_open 103, clamp 103, open_release 103, lift75_turn90 103]
 
 == Overlaps between blocks (> 1 mm3)
-  CASTER_B x BACK_FLIP6_LINKS: 320 mm3
-  FLOOR x BACK_FLIP6_LINKS: 43500 mm3
+  none
 
 == Reserved volumes (mm)
   WHEEL_R            real X   106.0..150.0   Y   -37.0..37.0    Z    0.0..74.0    0.19 L  JSUMO JS7444 Ø74 (width assumed 44)
@@ -46,8 +45,8 @@ Body X ±150, front face Y +146, back face Y -140 -> box 300 x 286 (a plain box 
   WHEEL_L            real X  -150.0..-106.0  Y   -37.0..37.0    Z    0.0..74.0    0.19 L  JSUMO JS7444 Ø74 (width assumed 44)
   DRIVE_MOTOR_L      real X  -100.0..-32.0   Y   -18.5..18.5    Z   18.5..55.5    0.07 L  Pololu 37D, 37 x 68
   CASTER_F           real X   -12.0..12.0    Y   108.0..132.0   Z    0.0..21.0    0.01 L  KSM15-FL ball transfer
-  CASTER_B           real X   -12.0..12.0    Y  -126.0..-102.0  Z    0.0..21.0    0.01 L  KSM15-FL ball transfer
-  FLOOR              real X  -150.0..150.0   Y  -140.0..146.0   Z   21.0..26.0    0.36 L  floor plate, cut-outs below
+  CASTER_B           real X   -12.0..12.0    Y   -96.0..-72.0   Z    0.0..21.0    0.01 L  KSM15-FL ball transfer
+  FLOOR              real X  -150.0..150.0   Y  -110.0..146.0   Z   21.0..26.0    0.31 L  floor plate, cut-outs below
   SHOOTER_L          res  X  -150.0..-66.0   Y   -40.0..40.0    Z   78.0..300.0   1.49 L  cannonball launcher + magazine (left)
   GRAIL_LIFT_R       res  X    66.0..150.0   Y   -40.0..40.0    Z   78.0..300.0   1.49 L  Grail pickup + lift to the roof (right)
   CORE               res  X   -64.0..64.0    Y   -18.0..18.0    Z   60.0..300.0   1.11 L  centre slab: battery + electronics + pumps
@@ -56,6 +55,4 @@ Body X ±150, front face Y +146, back face Y -140 -> box 300 x 286 (a plain box 
   BEACON_SUPPORT     real X   -40.0..40.0    Y   -40.0..40.0    Z  350.0..430.0   0.40 L  GR F.6, on a bridge over the 2 top ties
   ESTOP              real X  -135.0..-95.0   Y   -20.0..20.0    Z  306.0..360.0   0.07 L  GR F.4.c, on the roof strip, left
   LIDAR_IN_MAST      res  X   -20.0..20.0    Y   -20.0..20.0    Z  375.0..410.0   0.04 L  LD06-class inside the beacon support: allowed, opening < 2 cm tall, not see-through (GR F.6)
-  BACK_FLIP6_LINKS   res  X  -145.0..145.0   Y  -140.0..-110.0  Z   20.0..330.0   2.70 L  column + crank/rocker + cup plate (plate turns in XZ: ±145)
-  BACK_FLIP6_MOTOR   res  X   -53.5..-16.5   Y  -110.0..-33.0   Z   31.5..68.5    0.08 L  JGB37-520 on the crank, 77 long
-  BACK_FLIP6_PUMPS   res  X  -110.0..110.0   Y  -110.0..-70.0   Z  120.0..240.0   1.06 L  6 pumps + 6 valves (Ayoub: one per cup)
+  BACK_SIMPLE_PICK   res  X  -120.0..120.0   Y  -110.0..-40.0   Z   30.0..330.0   5.04 L  pick without turning (suction plate + small lift), 70 deep

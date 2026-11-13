@@ -100,6 +100,6 @@ out to x ±153.6: they cost 7 mm of perimeter; routing them inside gives the mar
 - Grail 70 × 70 × 100; battery and electronics sizes not chosen yet.
 
 ## References used
-Barbatronic 2027 chassis (`resources/CDR-2027/MCAD/differential-structure.FCStd`) and Aerobotix 2023 GROSBOT
+Barbatronic 2027 chassis (`resources/CDR-2027/MCAD/differential-structure.FCStd`) and GROSBOT 2023 (French club)
 (`mechanical/resources/2023_GROSBOT.STEP`, local only): notes in `resources/_notes/`. Both: centred mast Ø80–100 at
 350–430, battery high and central, boards standing on walls, drive axle through the centre.

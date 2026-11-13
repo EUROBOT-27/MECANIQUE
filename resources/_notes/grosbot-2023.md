@@ -1,7 +1,7 @@
-# Aerobotix INSAT — 2023 main robot "GROSBOT" (STEP), notes
+# GROSBOT — 2023 main robot of a French club (STEP), notes
 
 Source: `mechanical/resources/2023_GROSBOT.STEP` (246 MB, **local only, not committed**: ask Seif for the file).
-Eurobot 2023 (cakes + cherries). Read with FreeCAD 1.1 on 2026-11-13 (loads in ~3 min, ~2100 solids). The STEP is
+Eurobot 2023 (cakes + cherries). **From a French club, not Aerobotix** (club name to add; Seif, 2026-11-13). Read with FreeCAD 1.1 on 2026-11-13 (loads in ~3 min, ~2100 solids). The STEP is
 **Y up**: below, "height" = STEP y, footprint = STEP x × z.
 
 ## Overall

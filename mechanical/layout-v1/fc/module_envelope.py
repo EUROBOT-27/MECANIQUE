@@ -1,6 +1,6 @@
 # module_envelope.py - footprint (2D convex hull) + height of the clapets v7 module A+B in its key poses,
 #   for the robot layout. No collision check, no motion study: one placement per pose (a few seconds).
-# Run: "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/module_envelope.py   (from mechanical/layout/)
+# Run: "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/module_envelope.py   (from mechanical/layout-v1/)
 # Output: envelopes/clapets_v7_AB.json  (module frame: x right, y towards the stack, z 0 = table; y 140 = stack face)
 import json, math, os
 import FreeCAD as App

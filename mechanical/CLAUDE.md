@@ -30,8 +30,8 @@ the testing method, …) (D-006).
 - `concepts/clapets-redesign.md`: rethink of the clapets modules v1/v2 (quarry-stack grip + 15 mm lift, v2 adds a turning suction head) around our parts library. Proposal, 2026-10-27.
 
 ## Robot layout
-- `layout/` (Seif, 2026-11-13, proposal): robot 300 × 292 around the real v7 module, front = module A+B, back =
-  mirror / flip6 / simple, right = Grail, left = launcher, axle at the centre. Script `layout/fc/layout_fc.py` reports
+- `layout-v1/` (Seif, 2026-11-13, proposal): robot 300 × 292 around the real v7 module, front = module A+B, back =
+  mirror / flip6 / simple, right = Grail, left = launcher, axle at the centre. Script `layout-v1/fc/layout_fc.py` reports
   perimeter (start 1184 / deployed 1352 with a mirrored back), height, start area, overlaps, free volumes.
   **Check every new mechanism against its reserved volume there** (README "What the layout taught us").
 

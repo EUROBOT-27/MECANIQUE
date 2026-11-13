@@ -4,7 +4,7 @@
 #           without turning, a reserved box).
 #   Right = Grail pickup (lift + roof spot), Left = cannonball launcher, middle = drive (JSUMO JS7444 + Pololu 37D),
 #   floor + 2 ball transfers, electronics, battery, pumps, roof (L4), beacon support, e-stop.
-# Run (headless, ~1 min), from mechanical/layout/:
+# Run (headless, ~1 min), from mechanical/layout-v1/:
 #   "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/layout_fc.py
 #   set LAYOUT_BACK=flip6 (or simple) before it to try another back module.
 # Output: CAD/LAYOUT_<back>.FCStd (open it in FreeCAD to look), report_<back>.txt (perimeters, height, start area,
@@ -241,7 +241,7 @@ def robot_perimeter(fp, bp):
 
 
 L = []
-L.append("ROBOT LAYOUT v1 - back module: %s   (mechanical/layout/fc/layout_fc.py)" % BACK_MODE)
+L.append("ROBOT LAYOUT v1 - back module: %s   (mechanical/layout-v1/fc/layout_fc.py)" % BACK_MODE)
 L.append("Body X ±%.0f, front face Y +%.0f, back face Y -%.0f -> box %.0f x %.0f (a plain box = perimeter %.0f)" % (
     S, FR, BK, 2 * S, FR + BK, 2 * (2 * S + FR + BK)))
 L.append("")

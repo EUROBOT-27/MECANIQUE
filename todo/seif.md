@@ -16,7 +16,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
-- [ ] **Refine the robot layout** (`mechanical/layout/`, v1 2026-11-13 = first rough pass: boxes around the real v7 module, Seif finds it too primitive); choose the back option (mirror / flip6 / simple) — Seif
+- [ ] **Refine the robot layout** (`mechanical/layout-v1/`, v1 2026-11-13 = first rough pass: boxes around the real v7 module, Seif finds it too primitive); choose the back option (mirror / flip6 / simple) — Seif
 - [ ] **Clapets v7 module A: print and test** — CAD passed 2026-11-13, now printing (plates sliced in `CAD_FC/STL/PRINT.3mf`) (`mechanical/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
   2. Print module A in **ABS** (~510 g, 40 % infill, parts regenerated 2026-11-12), assemble, test. The assembly guide
      is out of date for the cap tab, the plate teeth and the arm nut pockets: regenerate it (ask Claude) or follow the README
