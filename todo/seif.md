@@ -7,12 +7,15 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 ## Now (current focus)
 - [ ] **Fix the rest of the strategy** (gripper layout, launcher yes/no after PAMI test, PAMI count) → `project/decisions.md` — Seif — due 2026-11-08
 - [ ] Choose the PAMI size with Hamza Sammoud: 4 × 140 × 160 mm or 6 × 90 × 185 mm (see `simas/CLAUDE.md`) — Seif, Hamza Sammoud
-- [ ] Draw the roof layout sketch (beacon support, e-stop, Grail spot, launcher; the gate is on a driving face now, D-011) — Seif
+- [ ] Roof layout: first version in `mechanical/layout-v1/` (strip between the lifts, L4 Grail right end); refine — Seif
 - [ ] Refine the internal milestones in `project/timeline.md` (CAD freeze etc.) — Seif
 - [ ] **Order real stones from France** (RAJA BLFA01 or equivalent) — now blocks gripper tests — Seif — ASAP
 - [ ] **Order 45 mm compressible foam balls** — Seif — ASAP
 - [ ] Get JSUMO wheels — Seif
 - [ ] Go through `mechanical/design-principles.md`: keep or drop the ◻ items — Seif
+- [ ] Add the name of the French club behind GROSBOT 2023 to `resources/_notes/grosbot-2023.md` — Seif
+- [ ] **suction-v1 concept** (`mechanical/suction-v1/`): decide valves vs pump-off, pumps on head vs fixed — Seif
+- [ ] Review Ayoub's `flip-6cups` and `base_330` (base perimeter 1220 > 1200) — Seif
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
@@ -61,6 +64,10 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Clapets v7 module A CAD passed (README, STATUS), effort estimate ~45–65 h logged — 2026-11-13
+- [x] D-021 confirmed with rework; `mechanical/suction-v1/` created — 2026-11-13
+- [x] Parts photos + library (KSM15-FL, VS2-S30, VW7-M5, vacuum pumps); Barbatronic chassis + GROSBOT 2023 notes — 2026-11-13
+- [x] Robot layout v1 (rough) `mechanical/layout-v1/` — 2026-11-13
 - [x] Confirmed D-024 (Ayoub joins the hub) — 2026-11-12
 - [x] ABS tolerance coupons printed + checked; clapets v7 fixes (pinion holes, servo nut recess, ear openings, flat web, cap front tab + insert, plate form-lock teeth, arm nut pockets); insert holes redesigned (D-025) — 2026-11-12
 - [x] Clapets v7 module A ready to print: caliper values, insert holes + walls, nuts instead of inserts, rod clamps, door unit + cap rebuilt (option B, D-022), PLA sizing, no M4 inserts / no pad, tolerance coupons, assembly guide PDF, fast door sweep + GIFs — 2026-11-10
