@@ -1,0 +1,179 @@
+{
+ "name": "v1",
+ "fcstd": "GRAIL_LIFT_V1.FCStd",
+ "lift": {
+  "objects": [
+   "REAL_PINION_20T_1M",
+   "REAL_SERVO_MG996R",
+   "APPROX_SUPPORT_FIXATION_grey",
+   "APPROX_NEMA14",
+   "REAL_NEMA14_SHAFT",
+   "REAL_COUPLING_liaison",
+   "APPROX_SUPPORT_U_blue",
+   "REAL_MAGNET_5KG",
+   "REAL_HORN_4PAD",
+   "REAL_NUT_M6"
+  ],
+  "base": 0.0,
+  "min": -215.0,
+  "max": 24.0,
+  "label": "Lift (mm from model pose)"
+ },
+ "flip": {
+  "objects": [
+   "APPROX_SUPPORT_U_blue",
+   "REAL_MAGNET_5KG",
+   "REAL_HORN_4PAD",
+   "REAL_NUT_M6"
+  ],
+  "axis_point": [
+   102.46020305712321,
+   21.20266046760127,
+   252.25137784642484
+  ],
+  "axis_dir": [
+   0,
+   -1,
+   0
+  ],
+  "base": 0.0,
+  "min": -120.0,
+  "max": 120.0,
+  "label": "Tilt about the servo shaft (deg)"
+ },
+ "grail": {
+  "objects": [
+   "GRAIL_80"
+  ],
+  "start_offset": [
+   0,
+   0,
+   0
+  ]
+ },
+ "actuators": [
+  "REAL_PINION_20T_1M",
+  "REAL_SERVO_MG996R",
+  "APPROX_SUPPORT_FIXATION_grey",
+  "APPROX_NEMA14",
+  "REAL_NEMA14_SHAFT",
+  "REAL_COUPLING_liaison",
+  "APPROX_SUPPORT_U_blue",
+  "REAL_MAGNET_5KG",
+  "REAL_HORN_4PAD",
+  "REAL_NUT_M6"
+ ],
+ "fixed": [
+  "APPROX_PROFILE_2020_280",
+  "REAL_RACK_1M_280",
+  "ENV_TABLE"
+ ],
+ "limits": {
+  "h_max": 350.0,
+  "roof": 305.0,
+  "edge_x": null
+ },
+ "colors": {
+  "APPROX_SUPPORT_U_blue": [
+   0.15,
+   0.35,
+   0.85
+  ],
+  "APPROX_SUPPORT_FIXATION_grey": [
+   0.75,
+   0.75,
+   0.75
+  ],
+  "REAL_MAGNET_5KG": [
+   0.6,
+   0.6,
+   0.6
+  ],
+  "GRAIL_80": [
+   0.95,
+   0.75,
+   0.1
+  ],
+  "ENV_TABLE": [
+   0.3,
+   0.55,
+   0.3
+  ],
+  "APPROX_NEMA14": [
+   0.15,
+   0.15,
+   0.15
+  ],
+  "REAL_SERVO_MG996R": [
+   0.1,
+   0.1,
+   0.1
+  ],
+  "APPROX_PROFILE_2020_280": [
+   0.8,
+   0.8,
+   0.85
+  ]
+ },
+ "transparent": {
+  "ENV_TABLE": 60
+ },
+ "sequence": [
+  [
+   0,
+   0.0,
+   0.0,
+   0,
+   0,
+   "model pose (as saved in SOLIDWORKS)"
+  ],
+  [
+   2.0,
+   -215.0,
+   0.0,
+   0,
+   0,
+   "lift down to the Grail"
+  ],
+  [
+   0.5,
+   -215.0,
+   0.0,
+   1,
+   0,
+   "magnet ON"
+  ],
+  [
+   2.5,
+   24.0,
+   0.0,
+   1,
+   0,
+   "lift to the top of the rack"
+  ],
+  [
+   1.5,
+   24.0,
+   -90.0,
+   1,
+   0,
+   "tilt -90 deg"
+  ],
+  [
+   1.5,
+   24.0,
+   90.0,
+   1,
+   0,
+   "tilt +90 deg"
+  ],
+  [
+   1.0,
+   24.0,
+   0.0,
+   1,
+   0,
+   "back to 0"
+  ]
+ ]
+}

@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+  EXCALIBOT, hub FreeCAD model: the sim's generic robot (eb27_robot.urdf.xacro) + the robot's moving parts.
+  Copied next to robot.yaml by mechanical/robot/fc/build_robot.py (robot.yaml has `urdf: robot.urdf.xacro`).
+  Moving parts come from robot.yaml `actuators:` (generated): one link + one position-controlled joint each.
+    command : /<ns>/<actuator>/cmd   (std_msgs/Float64: metres for prismatic, radians for revolute)
+    state   : /<ns>/joint_states     (joint <actuator>_joint)
+  Zero = start pose (clapets doors folded, Grail lift folded under the roof).
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="excalibot_fc">
+  <xacro:arg name="robot_dir" default="$(find eb27_description)/robots/excalibot_fc"/>
+  <xacro:arg name="ns" default="robot"/>
+  <xacro:arg name="team" default="yellow"/>
+  <xacro:arg name="config" default=""/>
+
+  <xacro:property name="robot_dir" value="$(arg robot_dir)"/>
+  <xacro:property name="ns" value="$(arg ns)"/>
+  <xacro:property name="team" value="$(arg team)"/>
+  <xacro:property name="config" value="$(arg config)"/>
+  <xacro:property name="cfg" value="${xacro.load_yaml(config if config else robot_dir + '/robot.yaml')}"/>
+
+  <xacro:include filename="$(find eb27_description)/urdf/macros/common.xacro"/>
+  <xacro:include filename="$(find eb27_description)/urdf/macros/body.xacro"/>
+  <xacro:include filename="$(find eb27_description)/urdf/macros/drive.xacro"/>
+  <xacro:include filename="$(find eb27_description)/urdf/macros/sensors.xacro"/>
+
+  <!-- colours: every part is drawn in its FreeCAD colour. build_robot.py writes one mesh per colour:
+       body.visuals and each actuator's visuals = [{mesh, rgba}]. The single `mesh` files stay for the sim's
+       collision boxes (eb27_bringup/mechanisms.py). -->
+  <xacro:macro name="ex_visuals" params="items prefix robot_dir index:=0">
+    <xacro:if value="${len(items) > 0}">
+      <xacro:property name="v" value="${items[0]}"/>
+      <visual name="${prefix}_visual_${index}">
+        <geometry><mesh filename="file://${robot_dir}/${v['mesh']}" scale="0.001 0.001 0.001"/></geometry>
+        <material name="${prefix}_color_${index}"><color rgba="${' '.join(str(c) for c in v['rgba'])}"/></material>
+      </visual>
+      <xacro:ex_visuals items="${items[1:]}" prefix="${prefix}" robot_dir="${robot_dir}" index="${index + 1}"/>
+    </xacro:if>
+  </xacro:macro>
+
+  <!-- body: the sim's eb27_body, but with the coloured visuals (falls back to eb27_body without them) -->
+  <xacro:macro name="ex_body" params="cfg robot_dir">
+    <xacro:property name="b" value="${cfg['body']}"/>
+    <xacro:if value="${'visuals' in b}">
+      <link name="base_footprint"/>
+      <link name="base_link">
+        <inertial>
+          <origin xyz="${' '.join(str(v) for v in b['com'])}" rpy="0 0 0"/>
+          <mass value="${b['mass']}"/>
+          <inertia ixx="${b['inertia']['ixx']}" ixy="0" ixz="0"
+                   iyy="${b['inertia']['iyy']}" iyz="0" izz="${b['inertia']['izz']}"/>
+        </inertial>
+        <xacro:ex_visuals items="${b['visuals']}" prefix="body" robot_dir="${robot_dir}"/>
+        <xacro:eb27_collision_list items="${b['collisions']}"/>
+      </link>
+      <xacro:property name="shift" value="${-cfg['drive'].get('wheel_x', 0.0) if cfg['drive']['type'] == 'diff' else 0.0}"/>
+      <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="${shift} 0 0" rpy="0 0 0"/>
+      </joint>
+    </xacro:if>
+    <xacro:unless value="${'visuals' in b}">
+      <xacro:eb27_body cfg="${cfg}" robot_dir="${robot_dir}"/>
+    </xacro:unless>
+  </xacro:macro>
+
+  <xacro:eb27_team_materials team="${team}"/>
+  <xacro:ex_body cfg="${cfg}" robot_dir="${robot_dir}"/>
+  <xacro:eb27_diff_drive drive="${cfg['drive']}" ns="${ns}"/>
+  <xacro:eb27_sensor_list sensors="${cfg.get('sensors', None) or []}" ns="${ns}"/>
+  <xacro:eb27_sim_common ns="${ns}"/>
+
+  <!-- one actuator: link (mesh in mm, scaled) + joint + JointPositionController -->
+  <xacro:macro name="ex_actuators" params="items ns robot_dir index:=0">
+    <xacro:if value="${len(items) > 0}">
+      <xacro:property name="a" value="${items[0]}"/>
+      <xacro:property name="prism" value="${a['type'] == 'prismatic'}"/>
+      <link name="${a['name']}">
+        <inertial>
+          <mass value="${a.get('mass', 0.15)}"/>
+          <inertia ixx="2e-4" ixy="0" ixz="0" iyy="2e-4" iyz="0" izz="2e-4"/>
+        </inertial>
+        <xacro:if value="${len(a.get('visuals') or []) > 0}">
+          <xacro:ex_visuals items="${a['visuals']}" prefix="${a['name']}" robot_dir="${robot_dir}"/>
+        </xacro:if>
+        <xacro:unless value="${len(a.get('visuals') or []) > 0}">
+          <visual>
+            <geometry><mesh filename="file://${robot_dir}/${a['mesh']}" scale="0.001 0.001 0.001"/></geometry>
+            <material name="actuator"/>
+          </visual>
+        </xacro:unless>
+      </link>
+      <joint name="${a['name']}_joint" type="${a['type']}">
+        <parent link="${a['parent']}"/>
+        <child link="${a['name']}"/>
+        <origin xyz="${' '.join(str(v) for v in a['xyz'])}" rpy="0 0 0"/>
+        <axis xyz="${' '.join(str(v) for v in a['axis'])}"/>
+        <limit lower="${a['lower']}" upper="${a['upper']}" effort="${30.0 if prism else 3.0}" velocity="${0.3 if prism else 4.0}"/>
+        <dynamics damping="${5.0 if prism else 0.05}" friction="0.0"/>
+      </joint>
+      <gazebo>
+        <plugin filename="gz-sim-joint-position-controller-system"
+                name="gz::sim::systems::JointPositionController">
+          <joint_name>${a['name']}_joint</joint_name>
+          <topic>/${ns}/${a['name']}/cmd</topic>
+          <p_gain>${300.0 if prism else 4.0}</p_gain>
+          <i_gain>${10.0 if prism else 0.1}</i_gain>
+          <d_gain>${5.0 if prism else 0.1}</d_gain>
+          <cmd_max>${30.0 if prism else 3.0}</cmd_max>
+          <cmd_min>${-30.0 if prism else -3.0}</cmd_min>
+        </plugin>
+      </gazebo>
+      <xacro:ex_actuators items="${items[1:]}" ns="${ns}" robot_dir="${robot_dir}" index="${index + 1}"/>
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:ex_actuators items="${cfg.get('actuators', None) or []}" ns="${ns}" robot_dir="${robot_dir}"/>
+</robot>

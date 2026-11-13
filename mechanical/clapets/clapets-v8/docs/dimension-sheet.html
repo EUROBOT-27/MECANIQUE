@@ -1,0 +1,563 @@
+<title>Clapets v8 Dimension Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one drawing sheet per view, stacked in a single column under a title block, like a CAD drawing set.
+   Colours follow the CAD renders: orange = printed parts, blue = door units, tan = stones, green = pads, violet = head. */
+:root {
+  --bg: #eceff0; --paper: #fbfcfc; --ink: #1b242c; --muted: #5a6670; --line: #c3ccd2; --grid: #e1e6e9;
+  --accent: #c95a17; --door: #2c62ad; --stone: #a98149; --pad: #2f8a55; --head: #7550ad;
+  --warn: #c0392b; --warn-bg: #fbe9e6; --ok: #2b7a4b; --ok-bg: #e5f3ea; --note-bg: #fff3e6;
+  --f-head: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11161a; --paper: #182026; --ink: #e3e9ee; --muted: #98a5b0; --line: #34424d; --grid: #222c34;
+  --accent: #ee8a45; --door: #6c9de3; --stone: #cfa76c; --pad: #5fbf86; --head: #a986e0;
+  --warn: #f0705f; --warn-bg: #3a1f1c; --ok: #62c58f; --ok-bg: #18301f; --note-bg: #33261a; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #11161a; --paper: #182026; --ink: #e3e9ee; --muted: #98a5b0; --line: #34424d; --grid: #222c34;
+  --accent: #ee8a45; --door: #6c9de3; --stone: #cfa76c; --pad: #5fbf86; --head: #a986e0;
+  --warn: #f0705f; --warn-bg: #3a1f1c; --ok: #62c58f; --ok-bg: #18301f; --note-bg: #33261a; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 28px; }
+h1, h2, h3 { font-family: var(--f-head); font-weight: 700; letter-spacing: .01em; text-wrap: balance; margin: 0; }
+h1 { font-size: 40px; line-height: 1.05; }
+h2 { font-size: 26px; line-height: 1.1; }
+h3 { font-size: 18px; }
+p { margin: 0; max-width: 72ch; }
+.mono, .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.label { font: 600 11px/1.2 var(--f-body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+
+/* title block */
+.titleblock { background: var(--paper); border: 1.5px solid var(--ink); display: grid;
+  grid-template-columns: 2fr 1fr 1fr; }
+.titleblock > div { padding: 12px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.titleblock .main { grid-row: span 2; justify-content: center; gap: 8px; }
+.titleblock .main p { color: var(--muted); }
+@media (max-width: 720px) { .titleblock { grid-template-columns: 1fr 1fr; } .titleblock .main { grid-column: 1 / -1; grid-row: auto; } }
+
+/* spec strip */
+.spec { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line);
+  border: 1px solid var(--line); }
+.spec > div { background: var(--paper); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.spec .v { font: 500 20px/1.2 var(--f-mono); font-variant-numeric: tabular-nums; }
+.spec .s { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 760px) { .spec { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.sheet { background: var(--paper); border: 1px solid var(--line); padding: 18px 18px 14px; display: flex;
+  flex-direction: column; gap: 12px; min-width: 0; }
+.sheet header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+.sheet header p { color: var(--muted); font-size: 14px; }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.scroll svg { display: block; width: 100%; min-width: 620px; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border: 1px solid currentColor; display: inline-block; }
+.notes { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.notes li { max-width: 80ch; }
+ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+/* svg styling */
+svg text { font-family: var(--f-mono); font-size: 11px; fill: var(--ink); }
+svg .m { fill: var(--muted); }
+svg .w { fill: var(--warn); }
+svg .hd { font-family: var(--f-body); font-weight: 600; font-size: 11.5px; }
+.stone { fill: var(--stone); fill-opacity: .2; stroke: var(--stone); stroke-width: 1.2; }
+.door { fill: var(--door); fill-opacity: .25; stroke: var(--door); stroke-width: 1.2; }
+.doorS { fill: var(--door); fill-opacity: .8; stroke: var(--door); stroke-width: 1; }
+.pad { fill: var(--pad); fill-opacity: .85; stroke: var(--pad); }
+.head { fill: var(--head); fill-opacity: .18; stroke: var(--head); stroke-width: 1.2; }
+.cup { fill: var(--head); fill-opacity: .55; stroke: var(--head); }
+.alu { fill: var(--muted); fill-opacity: .55; stroke: var(--muted); stroke-width: 1; }
+.prt { fill: var(--accent); fill-opacity: .75; stroke: var(--accent); stroke-width: 1; }
+.ghost { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 5 4; }
+.ghostA { fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 5 4; }
+.axis { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 12 3 2 3; fill: none; }
+.limit { stroke: var(--warn); stroke-width: 1.4; stroke-dasharray: 7 4; fill: none; }
+.ref { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+.table { stroke: var(--ink); stroke-width: 2; }
+.dim { stroke: var(--ink); stroke-width: .8; fill: none; }
+.lead { stroke: var(--muted); stroke-width: .7; fill: none; }
+.gridl { stroke: var(--grid); stroke-width: 1; }
+.bar { stroke-width: 0; }
+
+/* controls */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; flex-wrap: wrap; }
+.seg button { font: 500 13px var(--f-body); padding: 7px 12px; background: var(--paper); color: var(--ink);
+  border: 0; border-right: 1px solid var(--line); cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sim { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 760px) { .sim { grid-template-columns: 1fr; } }
+.sim svg { width: 100%; height: auto; display: block; }
+.ctrl { display: flex; flex-direction: column; gap: 14px; }
+.ctrl label { display: flex; justify-content: space-between; font-size: 13.5px; }
+.ctrl input[type=range] { width: 100%; accent-color: var(--accent); }
+.read { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 13.5px; align-items: center; }
+.read .num { text-align: right; }
+.pill { font: 600 11.5px var(--f-body); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.ok { background: var(--ok-bg); color: var(--ok); }
+.pill.bad { background: var(--warn-bg); color: var(--warn); }
+.status { font-size: 13.5px; padding: 10px 12px; border-left: 3px solid var(--line); background: var(--bg); }
+
+/* flags */
+.flags { display: flex; flex-direction: column; gap: 10px; }
+.flag { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; padding: 12px 14px;
+  border: 1px solid var(--line); background: var(--paper); }
+.flag .pill { align-self: start; margin-top: 2px; }
+.flag p { font-size: 14px; color: var(--muted); }
+.flag h3 { font-family: var(--f-body); font-size: 15px; font-weight: 600; }
+.pill.mid { background: var(--note-bg); color: var(--accent); }
+
+.renders { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 700px) { .renders { grid-template-columns: 1fr; } }
+figure { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+figure img { background: #ffffff; border: 1px solid var(--line); aspect-ratio: 16 / 11; object-fit: cover; width: 100%; }
+figcaption { font-size: 13px; color: var(--muted); }
+.foot { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+</style>
+
+<div class="wrap">
+
+<section class="titleblock" aria-label="Title block">
+  <div class="main">
+    <span class="label">IEEE RAS INSAT · Eurobot 2027 · stack gripper</span>
+    <h1>Clapets v8: dimensions and heights</h1>
+    <p>Every height is measured from the table. Module A (lift + doors) is Seif's v7; module B is the v8 suction head, which strikes 8 mm forward. Status: <b>proposed</b> (D-021).</p>
+  </div>
+  <div><span class="label">Frame (CAD)</span><span class="mono" style="font-size:13px">z 0 = table · y → stack · x right</span></div>
+  <div><span class="label">Stack face</span><span class="mono" style="font-size:13px">y = 140 (cup faces touch it)</span></div>
+  <div><span class="label">Source</span><span class="mono" style="font-size:12px">clapets-v8/fc/v8_fc.py (class G)</span></div>
+  <div><span class="label">Sheet date</span><span class="mono" style="font-size:13px">2026-11-13</span></div>
+</section>
+
+<section class="spec" aria-label="Key numbers">
+  <div><span class="label">Stack (3 stones)</span><span class="v">320 × 110 × 330</span><span class="s">x · y · z, mm, on the table</span></div>
+  <div><span class="label">Head axis</span><span class="v">z 165</span><span class="s">centre of the middle stone</span></div>
+  <div><span class="label">Cup centres</span><span class="v">85 · 165 · 245</span><span class="s">one DP-S30 cup per stone, z</span></div>
+  <div><span class="label">Door pads</span><span class="v">35–75 · 145–185 · 225–265</span><span class="s">z bands, press the stone ends</span></div>
+  <div><span class="label">Lift travel</span><span class="v">15 / 75</span><span class="s">carry / turn the stack (mm)</span></div>
+  <div><span class="label">Doors</span><span class="v">−38° · +3° · +90°</span><span class="s">open · clamp · folded (start)</span></div>
+  <div><span class="label">Highest part</span><span class="v">347.7</span><span class="s">head carrier at lift 75 · 2.3 mm margin to 350</span></div>
+  <div><span class="label">Strike</span><span class="v">+8 mm</span><span class="s">cups press from y 140 to 148</span></div>
+</section>
+
+<section class="sheet" aria-labelledby="h-front">
+  <header><h2 id="h-front">Front view: heights from the table</h2><p>Looking at the stack face, rest pose, doors clamped on the stack.</p></header>
+  <div class="scroll"><svg id="front" viewBox="-330 -480 690 560" role="img" aria-label="Front view of the clapets module with heights from the table"></svg></div>
+  <div class="legend">
+    <span><i class="sw" style="color:var(--stone);background:color-mix(in srgb,var(--stone) 25%,transparent)"></i>stones</span>
+    <span><i class="sw" style="color:var(--door);background:color-mix(in srgb,var(--door) 30%,transparent)"></i>door units (fixed)</span>
+    <span><i class="sw" style="color:var(--door);background:var(--door)"></i>door sheets</span>
+    <span><i class="sw" style="color:var(--pad);background:var(--pad)"></i>pads</span>
+    <span><i class="sw" style="color:var(--head);background:color-mix(in srgb,var(--head) 40%,transparent)"></i>suction head + cups</span>
+    <span><i class="sw" style="color:var(--muted);background:color-mix(in srgb,var(--muted) 50%,transparent)"></i>2020 rails, rods, motor</span>
+    <span><i class="sw" style="color:var(--accent);background:var(--accent)"></i>printed lift parts</span>
+  </div>
+</section>
+
+<section class="sheet" aria-labelledby="h-ladder">
+  <header>
+    <h2 id="h-ladder">Height chart: every part's z range</h2>
+    <div class="seg" role="group" aria-label="Reference">
+      <button id="b-design" aria-pressed="true">As designed (socle on the table)</button>
+      <button id="b-robot" aria-pressed="false">In the robot model now (+25 mm)</button>
+    </div>
+  </header>
+  <p id="ladder-note" style="font-size:14px;color:var(--muted)"></p>
+  <div class="scroll"><svg id="ladder" viewBox="0 0 760 560" role="img" aria-label="Height range of each part"></svg></div>
+</section>
+
+<section class="sheet" aria-labelledby="h-top">
+  <header><h2 id="h-top">Top view: footprint and door swing</h2><p>Right door shown in its three poses; the left door is its mirror.</p></header>
+  <div class="scroll"><svg id="top" viewBox="-330 -300 660 500" role="img" aria-label="Top view with door poses"></svg></div>
+  <div class="legend">
+    <span><i class="sw" style="color:var(--door);background:var(--door)"></i>clamped (+3°)</span>
+    <span><i class="sw" style="color:var(--muted);border-style:dashed"></i>folded at start (+90°)</span>
+    <span><i class="sw" style="color:var(--accent);border-style:dashed"></i>open (−38°)</span>
+  </div>
+  <ul class="notes">
+    <li>Folded, the door tips stop at <span class="num">x ±30</span>, inside the 300 × 300 base: start perimeter <span class="num">1200.0 mm</span> (GR F.3 limit 1200).</li>
+    <li>Open, each door reaches <span class="num">x ≈ ±225</span> but stays behind the stack face (<span class="num">y ≤ 137</span>), so the robot can drive up to a quarry with the doors open. Deployed perimeter ≈ <span class="num">1367 mm</span> (limit 1400).</li>
+    <li>On the robot, CAD x is the robot's Y (sideways) and CAD y is the robot's X (driving direction). Modules sit on the front and back faces.</li>
+  </ul>
+</section>
+
+<section class="sheet" aria-labelledby="h-depth">
+  <header><h2 id="h-depth">Depth stack-up along y</h2><p>From the lift rails to the stack, rest pose. The strike moves everything from the bearing tube forward by 8 mm.</p></header>
+  <div class="scroll"><svg id="depth" viewBox="0 0 760 420" role="img" aria-label="Positions of parts along y"></svg></div>
+</section>
+
+<section class="sheet" aria-labelledby="h-sim">
+  <header><h2 id="h-sim">Turning the stack: heights live</h2><p>Lift the stack, then turn it about the head axis. Doors are open (−38°) and the cups hold the stack.</p></header>
+  <div class="sim">
+    <svg id="turn" viewBox="-300 -520 600 560" role="img" aria-label="Stack turning simulation"></svg>
+    <div class="ctrl">
+      <div><label for="lift"><span>Lift</span><span class="num" id="lift-v">75 mm</span></label>
+        <input id="lift" type="range" min="0" max="75" step="1" value="75"></div>
+      <div><label for="ang"><span>Head angle</span><span class="num" id="ang-v">45°</span></label>
+        <input id="ang" type="range" min="0" max="90" step="1" value="45"></div>
+      <div class="read">
+        <span>Head axis</span><span class="num" id="r-axis"></span>
+        <span>Stack top</span><span class="num" id="r-top"></span>
+        <span>Stack lowest corner</span><span class="num" id="r-low"></span>
+        <span>Head carrier top</span><span class="num" id="r-car"></span>
+      </div>
+      <div class="status" id="r-status"></div>
+    </div>
+  </div>
+  <p style="font-size:13.5px;color:var(--muted)">The turn needs 75 mm of lift so the stack corners (half-diagonal 229.8 mm) clear the table by 10 mm at 45°. The stack then reaches z 470, above 350. GR F.3 limits manipulated objects to 350 mm; G E.1 lets game elements exceed it in construction zones. Turning is only legal there if FAQ Q9 is answered "yes".</p>
+</section>
+
+<section class="sheet" aria-labelledby="h-cycle">
+  <header><h2 id="h-cycle">Match cycle: perimeter and highest part</h2><p>From the motion study (88 frames). It was run on v5; v7/v8 keep the same envelope but the full cycle has not been re-run.</p></header>
+  <div class="scroll"><svg id="cycle" viewBox="0 0 760 330" role="img" aria-label="Perimeter and highest part at each step"></svg></div>
+</section>
+
+<section class="sheet" aria-labelledby="h-flags">
+  <header><h2 id="h-flags">To check before the robot CAD freeze (2026-12-13)</h2></header>
+  <div class="flags">
+    <div class="flag"><span class="pill bad">new</span><div><h3>The full robot model places the clapets 25 mm too high</h3>
+      <p>The clapets are designed with the socle on the table (z 0 = table). <span class="mono">robot/fc/layout.py</span> sets <span class="mono">CLAPETS_Z0 = 25</span> (socle on the base plate), so in <span class="mono">ROBOT.FCStd</span> the cups sit at z 110 / 190 / 270 instead of 85 / 165 / 245, off the stone centres. The top of the turn lift becomes 372.7, over 350. Either the socle goes down through the base plate (motor and socle on the table side), or the module is redesigned 25 mm shorter. Switch the height chart to "in the robot model" to see it.</p></div></div>
+    <div class="flag"><span class="pill bad">open</span><div><h3>Rails and top tie must be cut</h3>
+      <p>The 2020 rails reach z 356 and the top tie z 366 (381 and 391 in the robot model). They also clash with the beacon support in <span class="mono">robot_report.txt</span>. The lift needs about 75 mm of travel above the carriage, so check the cut length against the lift.</p></div></div>
+    <div class="flag"><span class="pill mid">check</span><div><h3>Start perimeter in the robot report: 1200.3 mm</h3>
+      <p>The report prints "OK" but 1200.3 is 0.3 mm over the GR F.3 limit, and the overall box is y ±153.6, so something sticks out past the 300 × 300 footprint.</p></div></div>
+    <div class="flag"><span class="pill mid">open</span><div><h3>Lift travel: 75 mm or under 20 mm?</h3>
+      <p>The cycle uses 75 mm to turn the stack; Seif mentioned less than 20 mm. Decide before cutting the lead screw (303 mm now, z 60–363).</p></div></div>
+    <div class="flag"><span class="pill mid">sync</span><div><h3>v8 still uses some old v7 numbers</h3>
+      <p>v8's class G still has the horn top at 45.7 (measured 47.4 in v7, door gears +1.7 mm), motor body 38 (measured 37) and insert holes 6.5 deep (v7: 7.0). Module A changes from v7 (2026-11-08 to 11-10) are not carried into v8 yet.</p></div></div>
+    <div class="flag"><span class="pill mid">rules</span><div><h3>FAQ Q1 and Q9 still open</h3>
+      <p>Q1: does a carried stack count in the perimeter? The design assumes no. Q9: may a held stone go above 350 mm in a construction zone? Turning the stack depends on it.</p></div></div>
+  </div>
+</section>
+
+<section class="sheet" aria-labelledby="h-renders">
+  <header><h2 id="h-renders">CAD renders (v8)</h2><p>From <span class="mono">fc/render_v8.py</span>. The violet disc is the head's turning space (R 140) reserved inside module A.</p></header>
+  <div class="renders">
+    <figure><img src="img/v8_iso.png" alt="Isometric render of the clapets v8 module"><figcaption>Isometric: lift rails and lead screw in the middle, door units left and right, doors clamped.</figcaption></figure>
+    <figure><img src="img/v8_top.png" alt="Top render of the clapets v8 module"><figcaption>Top: doors clamped with the green pads on the stone ends, head behind the stack face.</figcaption></figure>
+  </div>
+</section>
+
+<footer class="foot">
+  <span>Numbers from <span class="mono">mechanical/clapets/clapets-v8/fc/v8_fc.py</span>, <span class="mono">clapets-v7/README.md</span>, <span class="mono">clapets-v8/docs/RULES.md</span>, <span class="mono">robot/fc/layout.py</span>, <span class="mono">robot/CAD_FC/robot_report.txt</span>.</span>
+  <span>Some outlines are simplified (socle, butterfly plate, top tie width); heights and the dimensioned values come from the CAD parameters.</span>
+</footer>
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const f = (n) => (Math.round(n * 10) / 10).toString();
+
+  // ---------- helpers (model coords: up = +z or +y; SVG y = -value) ----------
+  const R = (x0, x1, v0, v1, c) => `<rect x="${x0}" y="${-v1}" width="${x1 - x0}" height="${v1 - v0}" class="${c}"/>`;
+  const L = (x0, v0, x1, v1, c) => `<line x1="${x0}" y1="${-v0}" x2="${x1}" y2="${-v1}" class="${c}"/>`;
+  const T = (x, v, s, c = "", a = "start") => `<text x="${x}" y="${-v}" text-anchor="${a}" class="${c}">${s}</text>`;
+  const C = (x, v, r, c) => `<circle cx="${x}" cy="${-v}" r="${r}" class="${c}"/>`;
+  // vertical dimension at x, from v0 to v1, label to the side
+  function dimV(x, v0, v1, label, side = 1) {
+    const tick = (v) => L(x - 4, v, x + 4, v, "dim");
+    return L(x, v0, x, v1, "dim") + tick(v0) + tick(v1) +
+      T(x + side * 7, (v0 + v1) / 2 - 4, label, "", side > 0 ? "start" : "end");
+  }
+  function dimH(x0, x1, v, label) {
+    const tick = (x) => L(x, v - 4, x, v + 4, "dim");
+    return L(x0, v, x1, v, "dim") + tick(x0) + tick(x1) + T((x0 + x1) / 2, v + 5, label, "", "middle");
+  }
+  // label with a leader line
+  const tag = (x, v, tx, tv, s, a = "start", c = "") => L(x, v, tx, tv, "lead") + T(tx + (a === "start" ? 3 : -3), tv - 4, s, c, a);
+
+  // ---------- FRONT VIEW ----------
+  (function front() {
+    let s = "";
+    // grid + ruler
+    for (let z = 0; z <= 450; z += 50) {
+      s += L(-300, z, 330, z, "gridl") + T(-306, z - 4, z, "m", "end");
+    }
+    s += T(-306, 462, "z", "m", "end");
+    s += L(-300, 350, 330, 350, "limit") + T(330, 354, "350 max · GR F.3", "w", "end");
+    s += L(-300, 430, 330, 430, "ref") + T(330, 434, "430 beacon top (robot)", "m", "end");
+    // stack
+    const st = [[0, 110, "stone 1"], [110, 220, "stone 2"], [220, 330, "stone 3"]];
+    st.forEach(([a, b, n]) => { s += R(-160, 160, a, b, "stone") + T(-150, b - 16, n, "m"); });
+    // lift: socle, motor, coupler, lead screw, rails, top tie
+    s += R(-56.5, 56.5, 0, 6, "prt");
+    s += R(-21, 21, 1, 38, "alu") + R(-10, 10, 47, 72, "alu") + R(-4, 4, 60, 363, "alu");
+    s += R(30.45, 50.45, 6, 356, "alu") + R(-50.45, -30.45, 6, 356, "alu");
+    s += R(-62, 62, 344, 366, "prt");
+    // door units (fixed) + rods
+    s += R(66, 150, 27, 244, "door") + R(-150, -66, 27, 244, "door");
+    s += R(127, 135, 30, 233, "alu") + R(-135, -127, 30, 233, "alu");
+    // door sheets + pads (clamped)
+    s += R(168, 171, 20, 265, "doorS") + R(-171, -168, 20, 265, "doorS");
+    [[35, 75], [145, 185], [225, 265]].forEach(([a, b]) => { s += R(160, 168, a, b, "pad") + R(-168, -160, a, b, "pad"); });
+    // head
+    s += C(0, 165, 140, "ghost");
+    s += R(-28, 28, 57, 273, "head");
+    [85, 165, 245].forEach((z) => { s += C(0, z, 15, "cup"); });
+    s += L(-215, 165, 215, 165, "axis");
+    // left dimensions: cups, axis, lift
+    s += dimV(-200, 0, 85, "85", -1) + dimV(-225, 0, 165, "165 head axis", -1) + dimV(-250, 0, 245, "245", -1);
+    s += T(-200, 98, "cup 1", "m", "middle") + T(-250, 258, "cup 3", "m", "middle");
+    s += tag(-41, 356, -110, 395, "rails 2020 → z 356", "end");
+    s += tag(-50, 366, -110, 418, "top tie 344–366", "end");
+    s += tag(0, 300, -110, 312, "lead screw Ø8 z 60–363", "end");
+    s += tag(-18, 20, -100, -26, "NEMA17 z 1–38", "end");
+    s += tag(-120, 270, -175, 300, "turning space R 140", "end", "m");
+    // right dimensions: pads, door sheet, door units
+    s += dimV(205, 35, 75, "35–75") + dimV(205, 145, 185, "145–185") + dimV(205, 225, 265, "225–265");
+    s += T(212, 282, "pads", "hd");
+    s += dimV(268, 20, 265, "door sheet 20–265");
+    s += tag(108, 244, 150, 318, "door unit z 27–244", "start");
+    // widths below the table
+    s += dimH(-160, 160, -22, "320 stack");
+    s += dimH(-171, 171, -44, "342 doors clamped (outer)");
+    s += dimH(-150, 150, -66, "300 base");
+    // table
+    s += L(-300, 0, 330, 0, "table") + T(-296, 6, "TABLE", "hd", "start");
+    // 347.7 marker
+    s += L(-28, 347.7, 28, 347.7, "ghostA") + tag(28, 347.7, 70, 372, "347.7 head top at lift 75", "start");
+    $("front").innerHTML = s;
+  })();
+
+  // ---------- HEIGHT CHART (Gantt along z) ----------
+  const rows = [
+    { g: "Lift", n: "Socle", r: [[0, 6]], c: "prt", m: 1 },
+    { g: "Lift", n: "NEMA17 motor", r: [[1, 38]], c: "alu", m: 1 },
+    { g: "Lift", n: "Coupler 5×8", r: [[47, 72]], c: "alu", m: 1 },
+    { g: "Lift", n: "Lead screw Ø8", r: [[60, 363]], c: "alu", m: 1 },
+    { g: "Lift", n: "2020 rails", r: [[6, 356]], c: "alu", m: 1 },
+    { g: "Lift", n: "Top tie", r: [[344, 366]], c: "prt", m: 1 },
+    { g: "Doors", n: "Door units (fixed)", r: [[27, 244]], c: "door", m: 1 },
+    { g: "Doors", n: "Door rods Ø8", r: [[30, 233]], c: "alu", m: 1 },
+    { g: "Doors", n: "Door sheets", r: [[20, 265]], c: "doorS", m: 1 },
+    { g: "Doors", n: "Pads", r: [[35, 75], [145, 185], [225, 265]], c: "pad", m: 1 },
+    { g: "Head", n: "Head carrier (rest)", r: [[57, 273]], c: "head", m: 1 },
+    { g: "Head", n: "Cups Ø30", r: [[70, 100], [150, 180], [230, 260]], c: "cup", m: 1 },
+    { g: "Head", n: "Head carrier, lift 75", r: [[132, 347.7]], c: "head", m: 1 },
+    { g: "Stack", n: "Stones on the table", r: [[0, 110], [110, 220], [220, 330]], c: "stone", m: 0 },
+    { g: "Stack", n: "Stack carried (lift 15)", r: [[15, 345]], c: "stone", m: 2 },
+    { g: "Stack", n: "Stack turning (lift 75)", r: [[10.2, 469.8]], c: "stone", m: 2 },
+  ];
+  function ladder(offset) {
+    const x0 = 210, x1 = 735, zmin = -10, zmax = 480, top = 30, rh = 28;
+    const X = (z) => x0 + (z - zmin) / (zmax - zmin) * (x1 - x0);
+    let s = "";
+    const H = top + rows.length * rh + 40;
+    $("ladder").setAttribute("viewBox", `0 0 760 ${H}`);
+    for (let z = 0; z <= 450; z += 50) {
+      s += `<line x1="${X(z)}" y1="${top - 8}" x2="${X(z)}" y2="${top + rows.length * rh}" class="gridl"/>`;
+      s += `<text x="${X(z)}" y="${top + rows.length * rh + 16}" text-anchor="middle" class="m">${z}</text>`;
+    }
+    s += `<text x="${x1}" y="${top + rows.length * rh + 32}" text-anchor="end" class="m">height above the table (mm)</text>`;
+    const refs = [[350, "350 limit", "limit", "w"], [430, "430 beacon", "ref", "m"]];
+    if (offset) refs.push([25, "base plate top", "ref", "m"], [305, "roof", "ref", "m"]);
+    refs.forEach(([z, t, c, tc]) => {
+      s += `<line x1="${X(z)}" y1="${top - 14}" x2="${X(z)}" y2="${top + rows.length * rh}" class="${c}"/>`;
+      s += `<text x="${X(z) + 3}" y="${top - 16}" class="${tc}">${t}</text>`;
+    });
+    let lastG = "";
+    rows.forEach((row, i) => {
+      const y = top + i * rh;
+      if (row.g !== lastG) {
+        if (i) s += `<line x1="0" y1="${y}" x2="760" y2="${y}" stroke="var(--line)" stroke-width="1"/>`;
+        s += `<text x="0" y="${y + 18}" class="hd m">${row.g.toUpperCase()}</text>`;
+        lastG = row.g;
+      }
+      s += `<text x="${x0 - 8}" y="${y + 18}" text-anchor="end">${row.n}</text>`;
+      const dz = row.m === 1 ? offset : 0;
+      row.r.forEach(([a, b]) => {
+        const A = a + dz, B = b + dz;
+        s += `<rect x="${X(A)}" y="${y + 7}" width="${Math.max(2, X(B) - X(A))}" height="${rh - 13}" class="${row.c}"/>`;
+      });
+      const hi = Math.max(...row.r.map((p) => p[1])) + dz;
+      const over = hi > 350 && !/rails|tie|screw/i.test(row.n) ? "w" : "m";
+      const lo = Math.min(...row.r.map((p) => p[0])) + dz;
+      s += `<text x="${Math.min(X(hi) + 5, 758)}" y="${y + 18}" class="${over}" text-anchor="${X(hi) > 700 ? "end" : "start"}">${X(hi) > 700 ? "" : f(lo) + "–" + f(hi)}</text>`;
+      if (X(hi) > 700) s += `<text x="${X(lo) + 4}" y="${y + 18}" class="${over}">${f(lo)}–${f(hi)}</text>`;
+    });
+    $("ladder").innerHTML = s;
+    $("ladder-note").innerHTML = offset
+      ? "Module parts moved up 25 mm, as <span class='mono'>layout.py</span> places them now (<span class='mono'>CLAPETS_Z0 = 25</span>). Stones stay on the table, so the cups miss the stone centres (55 · 165 · 275) and the head at lift 75 reaches 372.7."
+      : "As designed: the socle stands on the table, so the cups line up with the stones. Rails, top tie and lead screw are still full length and get cut for the robot. Red values pass 350.";
+  }
+  ladder(0);
+  const bD = $("b-design"), bR = $("b-robot");
+  bD.onclick = () => { bD.setAttribute("aria-pressed", "true"); bR.setAttribute("aria-pressed", "false"); ladder(0); };
+  bR.onclick = () => { bR.setAttribute("aria-pressed", "true"); bD.setAttribute("aria-pressed", "false"); ladder(25); };
+
+  // ---------- TOP VIEW ----------
+  (function top() {
+    // geometry in model coords (x right, y up = towards the stack); the group flips y
+    let g = "";
+    const rr = (x0, x1, y0, y1, c) => `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" class="${c}"/>`;
+    g += rr(-150, 150, -160, 140, "ghost");
+    g += rr(-160, 160, 140, 250, "stone");
+    g += rr(-21, 21, 16, 58, "alu");
+    g += rr(-56.5, 56.5, 19, 55, "ghost");
+    g += rr(30.45, 50.45, 23, 43, "alu") + rr(-50.45, -30.45, 23, 43, "alu");
+    g += rr(-70, 70, 47.5, 50.5, "prt");
+    g += rr(-17, 17, 50.5, 86, "head") + rr(-18.75, 18.75, 86.5, 102.5, "head") + rr(-28, 28, 103, 109, "head");
+    g += rr(-28, 28, 109, 115, "head") + rr(-15, 15, 122, 140, "cup");
+    g += rr(-15, 15, 140, 148, "ghostA");
+    g += rr(66, 150, 34, 96, "door") + rr(-150, -66, 34, 96, "door");
+    // one door (right), drawn at its clamp position, then rotated
+    const door = (cls, padCls) =>
+      `<line x1="131" y1="82" x2="164" y2="131" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>` +
+      rr(160, 168, 145, 182, padCls) + rr(168, 171, 141, 183, cls);
+    const pose = (ang, color, cls, padCls, op) =>
+      `<g transform="rotate(${ang} 131 82)" style="color:${color};opacity:${op}">${door(cls, padCls)}</g>`;
+    const both = (inner) => inner + `<g transform="scale(-1 1)">${inner}</g>`;
+    g += both(pose(90, "var(--muted)", "ghost", "ghost", 1));
+    g += both(pose(-38, "var(--accent)", "ghostA", "ghostA", 1));
+    g += both(pose(0, "var(--door)", "doorS", "pad", 1));
+    g += both(`<circle cx="131" cy="82" r="4" class="alu"/><circle cx="131" cy="82" r="17.5" class="ghost"/>`);
+    // swing arc of the outer door corner (171,183) from -38 to +90
+    const arc = () => {
+      const rx = 40, ry = 101, rad = Math.hypot(rx, ry);
+      const p = (a) => { const t = Math.atan2(ry, rx) + a * Math.PI / 180; return [131 + rad * Math.cos(t), 82 + rad * Math.sin(t)]; };
+      const [ax, ay] = p(-38), [bx, by] = p(90);
+      return `<path d="M${ax} ${ay} A${rad} ${rad} 0 0 1 ${bx} ${by}" class="lead" stroke-dasharray="2 3"/>`;
+    };
+    g += arc();
+    let s = `<g transform="scale(1 -1)">${g}</g>`;
+    // text (y negated by helpers)
+    s += T(-150, -175, "base 300 × 300 (x ±150, y −160…140)", "m");
+    s += T(0, 260, "stack (3 stones) 320 × 110", "", "middle");
+    s += dimV(-185, 140, 250, "110", -1);
+    s += L(-300, 140, 300, 140, "ref") + T(-300, 144, "y 140 stack face", "m");
+    s += dimH(-160, 160, 278, "320");
+    s += tag(131, 82, 205, 40, "door rod (±131, 82)", "start");
+    s += tag(213, 126, 255, 95, "open −38°", "start");
+    s += T(258, 81, "tip x ≈ 225", "m");
+    s += tag(178, 170, 238, 200, "clamped +3°", "start");
+    s += T(241, 186, "pads x 160–168", "m");
+    s += tag(40, 122, 70, -40, "folded +90°: tip x 30", "start", "m");
+    s += tag(40, 33, 100, 5, "rails 2020", "start", "m");
+    s += tag(-17, 70, -90, 5, "head: tube, gears, carrier", "end", "m");
+    s += tag(-15, 144, -95, 118, "strike +8", "end");
+    s += tag(-21, 30, -60, -60, "NEMA17 (under)", "end", "m");
+    s += tag(-108, 50, -230, 60, "door unit (fixed)", "end", "m");
+    $("top").innerHTML = s;
+  })();
+
+  // ---------- DEPTH STACK-UP (Gantt along y) ----------
+  (function depth() {
+    const d = [
+      ["2020 rails", 23, 43, "alu"], ["Butterfly plate", 47.5, 50.5, "prt"], ["Bearing tube (2 × 608)", 50.5, 86, "head"],
+      ["Shaft clamp hub", 86.5, 94.5, "head"], ["Gears 20T / 30T", 94.5, 102.5, "head"], ["Flange Ø56", 103, 109, "head"],
+      ["MDF carrier", 109, 115, "head"], ["TPU spring disc", 112, 122, "head"], ["DP-S30 cup", 122, 140, "cup"],
+      ["Strike travel", 140, 148, "ghostA"], ["Door sheet (clamped)", 141, 183, "doorS"], ["Pads", 145, 182, "pad"],
+      ["Stack", 140, 250, "stone"],
+    ];
+    const x0 = 200, x1 = 740, a = 0, b = 260, top = 24, rh = 26;
+    const X = (y) => x0 + (y - a) / (b - a) * (x1 - x0);
+    let s = "";
+    for (let y = 0; y <= 250; y += 25) {
+      s += `<line x1="${X(y)}" y1="${top - 6}" x2="${X(y)}" y2="${top + d.length * rh}" class="gridl"/>`;
+      s += `<text x="${X(y)}" y="${top + d.length * rh + 16}" text-anchor="middle" class="m">${y}</text>`;
+    }
+    s += `<text x="${x1}" y="${top + d.length * rh + 32}" text-anchor="end" class="m">y (mm), towards the stack</text>`;
+    s += `<line x1="${X(140)}" y1="${top - 14}" x2="${X(140)}" y2="${top + d.length * rh}" class="limit"/>`;
+    s += `<text x="${X(140) + 3}" y="${top - 16}" class="w">stack face y 140</text>`;
+    s += `<line x1="${X(82)}" y1="${top - 14}" x2="${X(82)}" y2="${top + d.length * rh}" class="ref"/>`;
+    s += `<text x="${X(82) - 3}" y="${top - 16}" text-anchor="end" class="m">door rods y 82</text>`;
+    d.forEach(([n, y0, y1, c], i) => {
+      const y = top + i * rh;
+      s += `<text x="${x0 - 8}" y="${y + 17}" text-anchor="end">${n}</text>`;
+      s += `<rect x="${X(y0)}" y="${y + 6}" width="${X(y1) - X(y0)}" height="${rh - 12}" class="${c}"/>`;
+      const lab = `${y0}–${y1}`;
+      s += X(y1) < 690 ? `<text x="${X(y1) + 5}" y="${y + 17}" class="m">${lab}</text>`
+                       : `<text x="${X(y0) - 5}" y="${y + 17}" text-anchor="end" class="m">${lab}</text>`;
+    });
+    $("depth").setAttribute("viewBox", `0 0 760 ${top + d.length * rh + 40}`);
+    $("depth").innerHTML = s;
+  })();
+
+  // ---------- TURN SIMULATION ----------
+  (function turn() {
+    const svg = $("turn"), li = $("lift"), an = $("ang");
+    function draw() {
+      const lift = +li.value, ang = +an.value, c = 165 + lift, t = ang * Math.PI / 180;
+      const ext = 160 * Math.abs(Math.sin(t)) + 165 * Math.abs(Math.cos(t));
+      const top = c + ext, low = c - ext;
+      const car = c + 28 * Math.abs(Math.sin(t)) + 108 * Math.abs(Math.cos(t));
+      let s = "";
+      for (let z = 0; z <= 500; z += 50) s += L(-270, z, 280, z, "gridl") + T(-276, z - 4, z, "m", "end");
+      s += L(-270, 350, 280, 350, "limit") + T(280, 354, "350", "w", "end");
+      s += C(0, c, 229.8, "ghost");
+      let g = "";
+      [[-165, -55], [-55, 55], [55, 165]].forEach(([a, b]) => { g += R(-160, 160, a, b, "stone"); });
+      g += R(-28, 28, -108, 108, "head");
+      [-80, 0, 80].forEach((z) => { g += C(0, z, 15, "cup"); });
+      s += `<g transform="translate(0 ${-c}) rotate(${-ang})">${g}</g>`;
+      s += C(0, c, 4, "prt") + L(-260, c, 260, c, "axis");
+      s += L(-270, 0, 280, 0, "table") + T(-266, 8, "TABLE", "hd");
+      s += L(-200, top, 200, top, "ref") + T(-200, top + 4, "top " + f(top), top > 350 ? "w" : "m");
+      s += L(-200, low, 200, low, "ref") + T(-200, low - 14, "lowest " + f(low), low < 0 ? "w" : "m");
+      svg.innerHTML = s;
+      $("lift-v").textContent = lift + " mm"; $("ang-v").textContent = ang + "°";
+      $("r-axis").textContent = "z " + f(c);
+      const pill = (ok, txt) => `<span class="pill ${ok ? "ok" : "bad"}">${txt}</span>`;
+      $("r-top").innerHTML = "z " + f(top) + " " + pill(top <= 350, top <= 350 ? "≤ 350" : "> 350");
+      $("r-low").innerHTML = "z " + f(low) + " " + pill(low >= 5, low >= 5 ? "clear" : low >= 0 ? "touching" : "hits table");
+      $("r-car").innerHTML = "z " + f(car) + " " + pill(car <= 350, car <= 350 ? "≤ 350" : "> 350");
+      let msg;
+      if (low < 0) msg = "The stack corners would hit the table: lift more before turning.";
+      else if (top > 350) msg = "Actuators stay under 350, but the held stack is above it. Only legal inside a construction zone, and only if FAQ Q9 = yes.";
+      else msg = "Everything is under 350 and clear of the table.";
+      $("r-status").textContent = msg;
+    }
+    li.oninput = draw; an.oninput = draw; draw();
+  })();
+
+  // ---------- CYCLE CHART (dot plots) ----------
+  (function cycle() {
+    const st = [
+      ["Start: doors folded", 1200.0, 273.0], ["Doors open", 1367.3, 273.0], ["Clamp the stack", 1364.8, 273.0],
+      ["Carry: lift 15", 1322.6, 288.0], ["Cups hold, doors open", 1367.0, 273.0], ["Lift 75 with the stack", 1365.4, 344.2],
+      ["Turn the stack 90°", 1365.4, 347.7], ["Lower, release, fold", 1365.4, 335.0],
+    ];
+    const top = 40, rh = 30, lab = 190;
+    const P = { x0: lab + 10, x1: 470, a: 1150, b: 1450 }, Hh = { x0: 510, x1: 740, a: 250, b: 360 };
+    const sx = (p, v) => p.x0 + (v - p.a) / (p.b - p.a) * (p.x1 - p.x0);
+    let s = `<text x="${P.x0}" y="16" class="hd">Perimeter (mm)</text><text x="${Hh.x0}" y="16" class="hd">Highest part (mm)</text>`;
+    const bottom = top + st.length * rh;
+    [[P, [1200, 1300, 1400]], [Hh, [250, 300, 350]]].forEach(([p, ticks]) => {
+      ticks.forEach((v) => {
+        s += `<line x1="${sx(p, v)}" y1="${top - 10}" x2="${sx(p, v)}" y2="${bottom}" class="gridl"/>`;
+        s += `<text x="${sx(p, v)}" y="${bottom + 16}" text-anchor="middle" class="m">${v}</text>`;
+      });
+    });
+    s += `<line x1="${sx(P, 1200)}" y1="${top - 10}" x2="${sx(P, 1200)}" y2="${bottom}" class="ref"/>`;
+    s += `<text x="${sx(P, 1200) - 3}" y="${top - 14}" text-anchor="end" class="m">start 1200</text>`;
+    s += `<line x1="${sx(P, 1400)}" y1="${top - 10}" x2="${sx(P, 1400)}" y2="${bottom}" class="limit"/>`;
+    s += `<text x="${sx(P, 1400) - 3}" y="${top - 14}" text-anchor="end" class="w">deployed 1400</text>`;
+    s += `<line x1="${sx(Hh, 350)}" y1="${top - 10}" x2="${sx(Hh, 350)}" y2="${bottom}" class="limit"/>`;
+    s += `<text x="${sx(Hh, 350) - 3}" y="${top - 14}" text-anchor="end" class="w">350</text>`;
+    st.forEach(([n, p, h], i) => {
+      const y = top + i * rh + rh / 2;
+      s += `<text x="${lab}" y="${y + 4}" text-anchor="end">${n}</text>`;
+      s += `<line x1="${P.x0}" y1="${y}" x2="${sx(P, p)}" y2="${y}" stroke="var(--line)" stroke-width="1"/>`;
+      s += `<circle cx="${sx(P, p)}" cy="${y}" r="5" fill="var(--door)"/>`;
+      s += `<text x="${sx(P, p) - 9}" y="${y + 4}" text-anchor="end" class="m">${p.toFixed(1)}</text>`;
+      s += `<line x1="${Hh.x0}" y1="${y}" x2="${sx(Hh, h)}" y2="${y}" stroke="var(--line)" stroke-width="1"/>`;
+      s += `<circle cx="${sx(Hh, h)}" cy="${y}" r="5" fill="${h > 340 ? "var(--accent)" : "var(--head)"}"/>`;
+      s += `<text x="${sx(Hh, h) - 9}" y="${y + 4}" text-anchor="end" class="m">${h.toFixed(1)}</text>`;
+    });
+    s += `<text x="${lab}" y="${bottom + 32}" text-anchor="end" class="m">robot parts only, stack not included</text>`;
+    $("cycle").setAttribute("viewBox", `0 0 760 ${bottom + 40}`);
+    $("cycle").innerHTML = s;
+  })();
+})();
+</script>

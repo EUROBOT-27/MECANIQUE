@@ -48,6 +48,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Plan the 3 PAMI versions (basic, ejector, attack) and their tests with Hamza Sammoud. Ejector result needed before CAD freeze 2026-12-13 — Seif, Hamza Sammoud
 - [ ] Decide ArUco tags on our SIMAs (IDs > 90 suggested) — Seif, Hamza Sammoud
 
+## From Ayoub
+- [ ] **Review Ayoub's new idea: grooved central hub on base_330** (walls + towers from one mechanism, 6 suction shafts, front stones → left, rear → right). Concept: `mechanical/concepts/central-hub-builder.md`; GIF: `mechanical/simulations/central_hub/hub_base330.gif`. Keep / drop / test? It competes with clapets v7 for the faces (D-010, D-011) and needs base_330's back wall gone — Seif — before 2026-11-22
+
 ## Follow-ups with others
 - [x] Confirmed D-021 with a module B rework (simpler, standalone, pneumatics designed in) — 2026-11-13
 - [ ] **Review Maatoug's clapets work (D-014 → D-017)**: v5 is being printed and tested as v7 (D-019, D-020); A/B/C not dropped, the real test decides. Close this after the test — Seif, Maatoug — before 2026-11-22
@@ -74,7 +77,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [x] Tolerance check of every nut / screw / insert (fastener check + insert views) — 2026-11-10
 - [x] Motion video of v7 → `mechanical/simulations/clapets_v7/` (door GIF + module A cycle GIF) — 2026-11-10
 - [x] Full-cycle check of clapets v7: no real collision, deployed ≤ 1367.3 mm — 2026-11-01
-- [x] Clapets v6 (real horn + wires) and v7 (door units reworked, real Two Trees parts, all fasteners + BOM, motor on the floor) → `mechanical/clapets-v6/`, `mechanical/clapets-v7/` (D-019, D-020) — 2026-11-01
+- [x] Clapets v6 (real horn + wires) and v7 (door units reworked, real Two Trees parts, all fasteners + BOM, motor on the floor) → `mechanical/clapets/clapets-v6/`, `mechanical/clapets/clapets-v7/` (D-019, D-020) — 2026-11-01
 - [x] Real Two Trees Bluer V2 parts extracted → `mechanical/resources/two-trees-bluer-v2-parts/` — 2026-11-01
 - [x] Claude removed from GitHub contributors; attribution off in `.claude/settings.json` — 2026-11-01
 - [x] Shared hub: merged Seif's and Maatoug's copies into the git repo EUROBOT-27/MECANIQUE, Git LFS for CAD/images, per-person TODO and logs (D-018) — 2026-11-01

@@ -1,0 +1,13 @@
+Grail lift v2 - motion check over the planned sequence (13.0 s, 261 steps of 0.05 s)
+
+Highest actuator point: 348.2 mm at t 2.80 s (unfold over the edge (no Grail))  -> OK (limit 350)
+Max protrusion beyond the face (actuators): x 53.8 mm
+
+Collisions of moving parts (volume > 0.5 mm3, worst moment):
+  none
+
+Grail against the robot / a free Grail hit by the arm (volume > 0.5 mm3):
+  GRAIL_80     x MAGNET_P25              18.1 mm3 at t 12.00 (arm leaves the Grail)
+
+End (park: Grail free on the roof (L4)): magnet OFF, Grail bottom z 305.50 (roof 305.0), Grail x -164.0..-82.5, nearest actuator 2.83 mm
+L4 end state: OK - Grail free on the roof, nothing touching it

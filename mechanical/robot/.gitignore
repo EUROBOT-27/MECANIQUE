@@ -1,0 +1,4 @@
+# FreeCAD backups, run logs
+*.FCBak
+*.log
+__pycache__/

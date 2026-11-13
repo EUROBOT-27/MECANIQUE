@@ -1,0 +1,31 @@
+ROBOT (start pose: clapets doors folded, Grail lift folded) - fc/build_robot.py
+
+Layout: footprint 300 x 300, drive track 252.0 (wheel Ø74 x 44), clapets clapets-v8 front + back (z0 25), Grail lift v3 on the left side
+Start perimeter (convex hull of the vertical projection): 1200.3 mm  -> OK (limit 1200)
+Overall box: x -150.0..150.0  y -153.6..153.6  z 0.0..430.0
+
+Parts above 350 mm (beacon support excluded, allowed up to 430):
+  CLAPETS_FRONT_A_TRAVERSE_HAUT_1               z max 391.0
+  CLAPETS_BACK_A_TRAVERSE_HAUT_1                z max 391.0
+  CLAPETS_FRONT_REF_VIS_T8_1                    z max 388.0
+  CLAPETS_FRONT_REF_608ZZ_1                     z max 388.0
+  CLAPETS_BACK_REF_VIS_T8_1                     z max 388.0
+  CLAPETS_BACK_REF_608ZZ_1                      z max 388.0
+  CLAPETS_FRONT_REF_RAILS_2020_1                z max 381.0
+  CLAPETS_BACK_REF_RAILS_2020_1                 z max 381.0
+  CLAPETS_FRONT_FIX_TNUT_RAILS_1                z max 380.0
+  CLAPETS_BACK_FIX_TNUT_RAILS_1                 z max 380.0
+  CLAPETS_FRONT_FIX_VIS_RAILS_1                 z max 379.8
+  CLAPETS_BACK_FIX_VIS_RAILS_1                  z max 379.8
+Parts below the table (z < 0):
+  none
+
+Interferences BETWEEN modules / with reserves (> 1 mm3):
+  CLAPETS_FRONT_A_TRAVERSE_HAUT_1          x BEACON_SUPPORT                              2587.9 mm3
+  CLAPETS_FRONT_REF_RAILS_2020_1           x BEACON_SUPPORT                               690.9 mm3
+  CLAPETS_FRONT_FIX_VIS_RAILS_1            x BEACON_SUPPORT                               265.0 mm3
+  CLAPETS_FRONT_FIX_TNUT_RAILS_1           x BEACON_SUPPORT                                20.0 mm3
+  CLAPETS_BACK_A_TRAVERSE_HAUT_1           x BEACON_SUPPORT                              2587.9 mm3
+  CLAPETS_BACK_REF_RAILS_2020_1            x BEACON_SUPPORT                               690.7 mm3
+  CLAPETS_BACK_FIX_VIS_RAILS_1             x BEACON_SUPPORT                               265.1 mm3
+  CLAPETS_BACK_FIX_TNUT_RAILS_1            x BEACON_SUPPORT                                20.0 mm3

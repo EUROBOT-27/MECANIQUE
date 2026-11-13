@@ -1,16 +1,24 @@
 #pragma once
 #include <stdint.h>
 
+// Les réglages entourés de #ifndef sont surchargés par les environnements
+// PlatformIO (-D dans platformio.ini) : [env:match], [env:match_nowifi].
+// Les valeurs ci-dessous sont celles du développement.
+
 // ─── WIFI LOG ────────────────────────────────────────────────────────────────
 // 0 = désactivé (compétition — zéro overhead WiFi)
 // 1 = actif — interface web disponible
+#ifndef WIFI_LOG_ENABLED
 #define WIFI_LOG_ENABLED    1
+#endif
 
 // Mode de connexion WiFi :
 // 0 = AP (compétition) — crée le réseau "Karibous", IP fixe 192.168.4.1
 // 1 = STA (développement) — se connecte au réseau domestique, IP par DHCP
 //     → l'IP s'affiche au démarrage sur le moniteur série
+#ifndef WIFI_USE_STA
 #define WIFI_USE_STA        1
+#endif
 
 // ─── LOGS ────────────────────────────────────────────────────────────────────
 // Les macros LOG_E/W/I/D sont définies dans log.h et wrappent Serial.printf.
@@ -41,8 +49,10 @@
 
 #define ENC_PPR             2048
 #define ENC_COUNTS_PER_REV  (ENC_PPR * 4)
-#define ENC_WHEEL_DIAM_MM   50.58f
-#define ENC_WHEELBASE_MM    189.0f  // distance entre les deux roues codeuses
+#define ENC_WHEEL_DIAM_MM   50.5821f // diamètre MOYEN des deux roues codeuses (ligne droite, 7/11/2026)
+#define ENC_WHEEL_RATIO     1.0f    // diamètre droit / diamètre gauche (carré, lot 2)
+#define ENC_WHEELBASE_MM    187.727f // entre roues codeuses (tours sur place, 7/11/2026 ;
+                                     // roue droite asymétrique ±0,4 % selon le sens, roues imprimées)
 #define MM_PER_COUNT        (3.14159265f * ENC_WHEEL_DIAM_MM / ENC_COUNTS_PER_REV)
 #define ENC_LEFT_INVERT     false   // inverser sens encodeur gauche
 #define ENC_RIGHT_INVERT    true    // inverser sens encodeur droit
@@ -61,13 +71,14 @@
 #define STEPS_PER_MM        ((float)STEPPER_STEPS_REV / (3.14159265f * DRIVE_WHEEL_DIAM_MM))
 
 // ─── GÉOMÉTRIE ROBOT ─────────────────────────────────────────────────────────
-#define WHEELBASE_MM            145.60f  // distance entre roues motrices (à mesurer)
+#define WHEELBASE_MM            146.07f  // entre roues motrices (tours sur place, 7/11/2026)
 
 // ─── DIMENSIONS ROBOT ────────────────────────────────────────────────────────
 // Sabot inversé en 2027. Avant mesuré bras bas ouverts : bras fermés/repos, ils
 // dépassent et butent contre les bordures → bras ouverts près des bordures.
 #define ROBOT_BACK_TO_CENTER_MM   134.82f  // arrière du robot → axe des roues
 #define ROBOT_FRONT_TO_CENTER_MM   80.9f   // avant du robot (bras ouverts) → axe des roues
+#define ROBOT_WIDTH_MM            232.0f   // largeur hors tout (cible cliquée bornée à ± la moitié)
 
 // ─── CALAGE (coin du fond, même endroit qu'en 2026) ─────────────────────────
 // Poser le robot arrière vers la bordure latérale, flanc à 7-25 cm de la
@@ -92,8 +103,11 @@
 #define TIR_ROUE_D_PCT           30.0f  // roue canal 1 (%)
 #define TIR_DUREE_MS             3000   // durée d'alimentation du ventilateur (ms)
 // 1 = attendre la phase d'attaque (85 s) avant de tirer — obligatoire en match
+//     (forcé à 1 par [env:match] et [env:match_nowifi])
 // 0 = tir immédiat (essais)
+#ifndef TIR_ATTENDRE_PHASE_ATTAQUE
 #define TIR_ATTENDRE_PHASE_ATTAQUE  0
+#endif
 
 // ─── CINÉMATIQUE ─────────────────────────────────────────────────────────────
 #define DEFAULT_SPEED_MMS   2000.0f    // mm/s
@@ -105,6 +119,16 @@
 #define TABLE_WIDTH_MM      3000.0f   // axe X (horizontal)
 #define TABLE_HEIGHT_MM     2000.0f   // axe Y (vertical, vers le bas)
 #define TABLE_MARGIN_MM     100.0f    // épaisseur marge bord (filtre points LIDAR = murs)
+
+// ─── TERRAIN D'ESSAI ─────────────────────────────────────────────────────────
+// Petite table de l'atelier, même repère (origine coin du fond gauche).
+// Activable depuis l'interface (hors match) ; TERRAIN_ESSAI fixe l'état au
+// démarrage. En mode essai : calage puis parking au centre, pas de stratégie.
+#define ESSAI_WIDTH_MM      1000.0f
+#define ESSAI_HEIGHT_MM      700.0f
+#ifndef TERRAIN_ESSAI
+#define TERRAIN_ESSAI       0
+#endif
 
 // ─── ORIENTATIONS CARDINALES (repère table : 0°=Est, 90°=Nord, sens positif=CCW)
 #define ANGLE_NORTH         90.0f
@@ -133,31 +157,58 @@
 #define OBS_STOP_ACCEL_MMS2 4000.0f   // décélération d'urgence (freinage agressif)
 #define LIDAR_LED_DIST_MM   OBS_DETECT_DIST_MM  // seuil LEDs = seuil détection robot
 
-// ─── ASSERVISSEMENT EN POSITION — double PID indépendant (roue D / roue G) ────
+// ─── ASSERVISSEMENT — profil + boucles distance et angle (lot 3) ────────────
 //
-//  Chaque roue a son propre PID : consigne_position → erreur → PID → vitesse moteur.
-//  Les deux boucles sont indépendantes : elles se synchronisent naturellement
-//  (la roue en retard reçoit une consigne de vitesse plus élevée).
+//  Chaque mouvement suit un profil trapézoïdal calculé dans le temps : à
+//  chaque cycle, il donne la position et la vitesse attendues (ref).
 //
-//  RÉGLAGE — procédure recommandée :
-//    1. KI=0, KD=0. Augmenter KP jusqu'à décelération nette sans dépassement.
-//       Valeur de départ : KP = savedAccel / savedSpeed (≈ 0.5 avec les défauts).
-//    2. Si le robot s'arrête systématiquement avant la cible (friction statique) :
-//       augmenter KI prudemment. Surveiller I_MAX.
-//    3. Si oscillations en fin de course : augmenter KD.
+//      v = v_ref + KP_DIST · (d_ref − d_mes) + KI · ∫(d_ref − d_mes)
+//      ω = ω_ref + KP_ANG  · (θ_ref − θ_mes) + KI · ∫(θ_ref − θ_mes)
+//      roue G = v − ω · entraxe/2      roue D = v + ω · entraxe/2
 //
-//  Symptômes → actions :
-//    Dépassement          → baisser KP
-//    Undershoot / calage  → augmenter KI ou MIN_SPD
-//    Oscillations finales → augmenter KD
+//  (entraxe des roues MOTRICES ; d et θ mesurés par les roues codeuses).
+//  Les moteurs pas à pas exécutent presque exactement v_ref et ω_ref : les
+//  boucles ne corrigent que le petit écart restant (pas sautés, glissement).
 //
-#define ENC_P1_KP         1.8f    // proportionnel : mm/s par mm d'erreur position
-#define ENC_P1_KI         0.01f    // intégral      : mm/s par (mm · s) — anti-trainage
-#define ENC_P1_KD         0.2f   // dérivé        : amortissement en fin de course
-#define ENC_P1_I_MAX     100.0f    // anti-windup   : saturation intégrale (mm/s)
-#define ENC_P1_STOP_MM    5.0f    // seuil d'arrêt translation : erreur avg < valeur → stop (mm)
-#define ENC_P1_STOP_DEG   2.0f    // seuil d'arrêt rotation    : erreur avg < valeur → stop (°)
-#define ENC_P1_MIN_SPD    8.0f    // vitesse min   : en dessous → stopMove() (mm/s)
+//  RÉGLAGE : regarder l'onglet MOTION (« Dernier mouvement »).
+//    Erreur qui grandit pendant le mouvement → augmenter KP
+//    Oscillation autour de la consigne       → baisser KP
+//    Résidu constant en fin de mouvement      → un peu de KI, ou V min
+//
+#define MOTION_PERIOD_MS     10       // cadence de la boucle (100 Hz)
+#define MOTION_KP_DIST       6.0f     // 1/s : mm/s par mm d'erreur de distance
+#define MOTION_KP_ANG        8.0f     // 1/s : rad/s par rad d'erreur d'angle
+#define MOTION_KI            0.0f     // 1/s² : intégrale, sur les deux boucles
+#define MOTION_I_MAX        50.0f     // mm/s : saturation de l'intégrale (anti-windup)
+#define MOTION_STOP_MM       1.0f     // tolérance d'arrivée en distance (mm)
+#define MOTION_STOP_DEG      0.5f     // tolérance d'arrivée en angle (°)
+#define MOTION_MIN_SPD       8.0f     // mm/s : vitesse mini de correction du résidu
+#define MOTION_SETTLE_CYCLES 3        // cycles consécutifs dans la tolérance → arrivé
+#define MOTION_SETTLE_MS   1500U      // après la fin du profil : abandon si non convergé
+#define MOTION_HEADING_FREEZE_MM 50.0f // en ligne droite : cap figé sous cette distance restante
+#define MOTION_ACT_LAG_MS      35     // retard commande → mouvement des pas à pas (file de la
+                                       // bibliothèque + mécanique, mesuré sur table) : la vitesse
+                                       // envoyée est celle du profil à t + ce retard
+#define STEP_LINEAR_ACCEL_MM   2.0f   // démarrage adouci : montée progressive de l'accélération
+                                       // sur ces premiers mm depuis l'arrêt
+#define STEP_MIN_SPEED_MMS     4.0f   // sous cette vitesse : arrêt. Une vitesse plus faible met en
+                                       // file un pas très long (1 mm/s → 113 ms) qui retarde
+                                       // d'autant la commande suivante
+#define MOTION_CORR_MAX_MMS    150.0f // correction maxi par roue autour de la vitesse du profil
+#define MOTION_STEPPER_ACCEL_K   1.2f  // accélération des pas à pas = K × celle du profil,
+#define MOTION_STEPPER_ACCEL_MIN 1000.0f // … au moins ceci (mm/s²) : à vitesse lente, les
+                                         // corrections de cap doivent rester applicables
+#define MOTION_MAX_ERR_MM      50.0f   // garde-fou : écart à la référence au-delà → arrêt
+#define MOTION_MAX_ERR_DEG     20.0f   //   (dérive du centre en rotation : 0,6 × MAX_ERR_MM)
+#define MOTION_MAX_HEADING_DEG 45.0f   //   en ligne droite (> MOTION_BLEND_MAX_DEG)
+#define MOTION_CORNER_MM       50.0f   // point de passage : vitesse limitée pour que le robot
+                                       // avance d'au plus 2 × cette distance pendant le virage
+#define MOTION_SLIP_MM         15.0f   // glissement : écart roue codeuse ↔ pas émis toléré…
+#define MOTION_SLIP_CYCLES     20      // … sur cette fenêtre (cycles de MOTION_PERIOD_MS)
+#define MOTION_W_SLEW           8.0f   // rad/s² : variation maxi de la correction de cap en ligne droite
+#define MOTION_PASS_MAX_DEG    60.0f   // parcours : coin franchi sans arrêt jusqu'à cet angle
+                                       // (virage planifié en roulant ; au-delà, arrêt + rotation)
+#define MOTION_BLEND_MAX_DEG     30.0f // nouvelle cible en roulant : enchaînée sans arrêt si l'écart de cap est sous ce seuil
 
 // ─── DÉTECTION STALL ─────────────────────────────────────────────────────────
 // Durée minimale de non-mouvement encodeur pour valider un stall.
@@ -253,6 +304,7 @@
 #define BTN_TIRETTE_PIN     14    // pull-up externe — LOW = tirette en place
 #define BTN_TEAM_PIN        17    // pull-up interne — LOW = pressé
 #define BTN_INIT_PIN         3    // pull-up interne — LOW = pressé
+#define TIRETTE_STABLE_MS  150    // anti-rebond tirette : état stable avant prise en compte
 
 // ─── NEOPIXEL ────────────────────────────────────────────────────────────────
 #define NEO_PIN             46
