@@ -12,6 +12,19 @@
 >   15 A4 sheets, made from the CAD. Regenerate after the tolerance tests (see `assembly/README.md`).
 > - Concept history of the door unit: [`../concepts/aile-redesign/README.md`](../concepts/aile-redesign/README.md).
 
+## Effort to reach "CAD passed" (estimate, 2026-11-13)
+Rough figure from commit and log timestamps: time at the PC, not focused work time. Printer and FreeCAD run time
+are not counted. Baseline for planning the next modules.
+
+| Who / what | When | Hours |
+|---|---|---|
+| Maatoug: clapets v1 → v5 design (base of v6/v7), mostly on his PC before the hub | up to 2026-10-29 | ~15–25 (guess, to confirm with Maatoug) |
+| Seif: v6 + v7 (real horn, wires, Two Trees parts, every fastener + BOM, motion check) | 2026-11-01 | ~8–9 |
+| Seif: caliper values, door unit rebuilt (4 concepts, option B), tolerance coupons, assembly PDF, door sweep + GIFs | 2026-11-09 → 11-10 | ~10–14 |
+| Seif: switch to ABS (D-023), print + measure the coupons | 2026-11-10 → 11-12 | ~2–3 |
+| Seif: fixes from the coupons, insert holes (D-025), top crossbar without 608, slicing | 2026-11-12 → 11-13 | ~10–12 |
+| **Total** | | **~45–65 person-hours** (Seif ~30–38 h) |
+
 Copy of [clapets v6](../clapets-v6/README.md) (v5 + real horn + real servo wires). v5 and v6 stay untouched. Owner while
 in progress: **Seif**. Design = `fc/v7_fc.py` (dimensions in `class G`); never edit the `.FCStd` by hand.
 
