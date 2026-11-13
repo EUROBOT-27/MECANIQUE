@@ -6,10 +6,12 @@
 #include "log.h"
 #include "wifi/log_server.h"
 #include "lidar/ld06.h"
+#include "lidar/obstacle.h"
 #include "motion/step_control.h"
 #include "motion/motion_ctrl.h"
 #include "strategy/robot.h"
 #include "strategy/strategy.h"
+#include "strategy/calib_routines.h"
 #include "display/oled.h"
 #include "io/buttons.h"
 #include "io/leds.h"
@@ -22,7 +24,7 @@ static LD06         lidar(Serial1, LIDAR_RX_PIN, LIDAR_PWM_PIN);
 static StepControl  motion;
 static QuadEncoder  encRight;
 static QuadEncoder  encLeft;
-static Robot        robot(motion, lidar, gMotionCtrl);
+static Robot        robot(motion, gMotionCtrl);
 
 static LidarPoint   scanBuf[LD06_SCAN_BUF_SIZE];
 
@@ -63,8 +65,8 @@ static void taskEncoders(void *) {
         lastL = curL;
         lastR = curR;
 
-        float leftMm  = (float)dL * gCalib.mmPerCount;
-        float rightMm = (float)dR * gCalib.mmPerCount;
+        float leftMm  = (float)dL * gCalib.mmPerCountL;
+        float rightMm = (float)dR * gCalib.mmPerCountR;
         float dDist   = (leftMm + rightMm) * 0.5f;
         float dTheta  = (rightMm - leftMm) / gCalib.encWheelbase;
         float mid     = encTheta + dTheta * 0.5f;
@@ -88,6 +90,7 @@ static void taskLidar(void *) {
     gDisplay.lidar_ok = true;
     for (;;) {
         lidar.update();
+        obstacleUpdate(lidar);   // surveillance demandée par le mouvement
         vTaskDelay(1);
     }
 }
@@ -98,8 +101,107 @@ static void taskLidar(void *) {
 
 QueueHandle_t gStateCmd = nullptr;
 
+// Demandes d'arrêt traitées par taskMatchGuard, y compris pendant la stratégie
+// (la file gStateCmd n'est lue qu'avant et après runStrategy*()).
+static volatile bool sStopMotorsReq   = false;
+static volatile bool sEnableMotorsReq = false;
+
 void sendStateCmd(StateCmd cmd) {
+    // Appelé depuis la tâche WiFi : les arrêts sont délégués à taskMatchGuard
+    // (Core 1), qui ne s'exécute jamais en même temps que motion / stratégie.
+    if (cmd == StateCmd::STOP_MOTORS)   { sStopMotorsReq = true; sEnableMotorsReq = false; calibAbort(); }
+    if (cmd == StateCmd::ENABLE_MOTORS) { sEnableMotorsReq = true; sStopMotorsReq = false; }
+    if (cmd == StateCmd::STOP_MATCH && gDisplay.match_start_ms > 0) {
+        uint32_t forced = millis() - MATCH_DURATION_MS;
+        gDisplay.match_start_ms = forced ? forced : 1;   // 0 = « pas de match »
+    }
     if (gStateCmd) xQueueSend(gStateCmd, &cmd, 0);
+}
+
+// ─── Tâche chrono de match (Core 1, prio 5) ──────────────────────────────────
+// Garantit l'arrêt à MATCH_DURATION_MS, quoi que fasse la stratégie (tir en
+// cours, bras, recul obstacle...). Même cœur que motion et stratégie, priorité
+// supérieure : elle les préempte sans jamais s'exécuter en parallèle, comme le
+// reste du code qui pilote FastAccelStepper depuis plusieurs tâches.
+// À 100 s : arrêt des roues, lanceur et ventilateur à 0, puis verrouillage
+// (ESC, ventilateur, activation steppers) pour qu'un appel tardif de la
+// stratégie ne relance rien. Le verrou est levé par resetMatchState().
+
+static volatile bool sMatchKilled = false;
+
+static void stopAllActuators() {
+    stopFlywheels();
+    feeder.stop();
+}
+
+static void taskMatchGuard(void *) {
+    uint32_t killedAt = 0;
+    bool     disabled = false;
+    for (;;) {
+        uint32_t now   = millis();
+        uint32_t start = gDisplay.match_start_ms;
+
+        if (sStopMotorsReq) {
+            sStopMotorsReq = false;
+            gMotionCtrl.release();
+            motion.stop();
+            motion.disableMotors();
+            LOG_W("GUARD", "Moteurs coupes (UI)");
+        }
+        if (sEnableMotorsReq) {
+            sEnableMotorsReq = false;
+            motion.enableMotors();      // sans effet si verrou de fin de match
+            LOG_I("GUARD", "Moteurs actives (UI)");
+        }
+
+        if (!sMatchKilled && start > 0 && now - start >= MATCH_DURATION_MS) {
+            sMatchKilled = true;
+            killedAt     = now;
+            disabled     = false;
+            Esc::setLocked(true);
+            PwmFan::setLocked(true);
+            motion.setLocked(true);
+            gMotionCtrl.release();
+            motion.stop();              // arrêt net, moteurs encore alimentés
+            stopAllActuators();
+            gDisplay.robot_state = RobotState::DONE;
+            gDisplay.match_phase = MatchPhase::DONE;
+            LOG_W("GUARD", "Fin de match : tout est coupe");
+        }
+
+        if (sMatchKilled && Esc::isLocked()) {
+            // Coupure des steppers après l'arrêt net (sinon roue libre lancée)
+            if (!disabled && now - killedAt >= 300) {
+                motion.disableMotors();
+                disabled = true;
+            }
+            // Une consigne écrite juste avant le verrou peut avoir survécu
+            if (flywheelLeft.getSpeed() > 0 || flywheelRight.getSpeed() > 0 ||
+                feeder.getSpeed() > 0)
+                stopAllActuators();
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+// Remise à zéro avant une relance sans redémarrage (retour WAIT_INIT ou
+// RESTART_MATCH) : chrono, mode endgame et verrous de fin de match.
+// Stratégie terminée (état DONE) : plus aucun appel tardif possible, les
+// verrous sont levés pour permettre les essais depuis l'UI (goto, moteurs).
+// sMatchKilled reste vrai : le chrono ne recoupe pas.
+static void unlockAfterMatch() {
+    Esc::setLocked(false);
+    PwmFan::setLocked(false);
+    motion.setLocked(false);
+}
+
+static void resetMatchState() {
+    robot.resetMatch();         // match_start_ms = 0 d'abord : le chrono ne recoupe pas
+    sMatchKilled = false;
+    Esc::setLocked(false);
+    PwmFan::setLocked(false);
+    motion.setLocked(false);
 }
 
 // ─── Tâche Strategy (Core 1, prio 2) ─────────────────────────────────────────
@@ -114,7 +216,7 @@ static void taskStrategy(void *) {
 
     // taskMotionControl : 50 Hz sur Core 1, prio 3 — démarre une fois que les
     // encodeurs sont prêts (la tâche les lit dès le premier tick).
-    gMotionCtrl.begin(&motion, &encLeft, &encRight, &lidar);
+    gMotionCtrl.begin(&motion, &encLeft, &encRight);
 
 #if BOOT_SELFTEST_ENABLED
     runSelfTest();
@@ -125,9 +227,11 @@ static void taskStrategy(void *) {
 
 restart:   // point de retour pour GOTO_WAIT_INIT / RESTART_MATCH
     robot.disableMotors();
+    resetMatchState();
     gDisplay.team = teamSwitch();
     ledsSetTeam(gDisplay.team);
     gDisplay.robot_state = RobotState::WAIT_INIT;
+    gDisplay.match_phase = MatchPhase::WAIT_INIT;
 
     // États : WAIT_INIT → WAIT_TIRETTE_IN → WAIT_TIRETTE_OUT → match
     enum class Phase : uint8_t { WAIT_INIT, WAIT_TIRETTE_IN, WAIT_TIRETTE_OUT };
@@ -149,12 +253,17 @@ restart:   // point de retour pour GOTO_WAIT_INIT / RESTART_MATCH
             }
             if (cmd == StateCmd::RESTART_INIT)  {
                 gDisplay.robot_state = RobotState::INIT;
+                gDisplay.match_phase = MatchPhase::CALAGE;
                 if (gDisplay.team == Team::YELLOW) runInitYellow(robot);
                 else                               runInitBlue(robot);
                 phase = Phase::WAIT_TIRETTE_IN;
                 gDisplay.robot_state = RobotState::WAIT_TIRETTE_IN;
+                gDisplay.match_phase = MatchPhase::WAIT_TIRETTE_IN;
             }
         }
+
+        // Routine de calibration demandée depuis l'interface (attente d'init)
+        if (phase == Phase::WAIT_INIT) pollCalibRun(robot, encLeft, encRight);
 
         // Switch d'équipe lu en continu ; changement = init à refaire
         Team t = teamSwitch();
@@ -163,22 +272,26 @@ restart:   // point de retour pour GOTO_WAIT_INIT / RESTART_MATCH
             ledsSetTeam(t);
             phase = Phase::WAIT_INIT;
             gDisplay.robot_state = RobotState::WAIT_INIT;
+            gDisplay.match_phase = MatchPhase::WAIT_INIT;
         }
 
         switch (phase) {
         case Phase::WAIT_INIT:
             if (initPressed()) {
                 gDisplay.robot_state = RobotState::INIT;
+                gDisplay.match_phase = MatchPhase::CALAGE;
                 if (gDisplay.team == Team::YELLOW) runInitYellow(robot);
                 else                               runInitBlue(robot);
                 phase = Phase::WAIT_TIRETTE_IN;
                 gDisplay.robot_state = RobotState::WAIT_TIRETTE_IN;
+                gDisplay.match_phase = MatchPhase::WAIT_TIRETTE_IN;
             }
             break;
         case Phase::WAIT_TIRETTE_IN:
             if (!tirette()) {
                 phase = Phase::WAIT_TIRETTE_OUT;
                 gDisplay.robot_state = RobotState::WAIT_TIRETTE_OUT;
+                gDisplay.match_phase = MatchPhase::READY;
             }
             break;
         case Phase::WAIT_TIRETTE_OUT:
@@ -191,9 +304,11 @@ restart:   // point de retour pour GOTO_WAIT_INIT / RESTART_MATCH
     // ── Match ─────────────────────────────────────────────────────────────────
 match_start:
     robot.startMatch();
+    gDisplay.match_phase = MatchPhase::MATCH;
 
-    if (gDisplay.team == Team::YELLOW) runStrategyYellow(robot);
-    else                               runStrategyBlue(robot);
+    if (gTable.essai) LOG_W("MAIN", "Table d'essai : strategie sautee");
+    else if (gDisplay.team == Team::YELLOW) runStrategyYellow(robot);
+    else                                    runStrategyBlue(robot);
 
     // ── Attente endgame (vérifie aussi RESTART_MATCH) ────────────────────────
     while (!robot.isEndgame() && !robot.isMatchOver()) {
@@ -201,7 +316,7 @@ match_start:
         if (xQueueReceive(gStateCmd, &cmd, 0) == pdTRUE) {
             if (cmd == StateCmd::STOP_MOTORS)    { robot.disableMotors(); }
             if (cmd == StateCmd::ENABLE_MOTORS)  { robot.enableMotors(); }
-            if (cmd == StateCmd::STOP_MATCH)     { gDisplay.match_start_ms = millis() - MATCH_DURATION_MS; }
+            // STOP_MATCH : traité dans sendStateCmd (chrono avancé → taskMatchGuard)
             if (cmd == StateCmd::RESTART_MATCH)  { robot.disableMotors(); goto restart; }
             if (cmd == StateCmd::GOTO_WAIT_INIT) { robot.disableMotors(); goto restart; }
         }
@@ -209,9 +324,10 @@ match_start:
     }
 
     // ── Repli fin de match ────────────────────────────────────────────────────
-    if (!robot.isMatchOver()) {
+    if (!robot.isMatchOver() && !gTable.essai) {
         robot.startNearEnd();
         gDisplay.robot_state = RobotState::ENDGAME;
+        gDisplay.match_phase = MatchPhase::ENDGAME;
         if (gDisplay.team == Team::YELLOW) runNearEndYellow(robot);
         else                               runNearEndBlue(robot);
     }
@@ -220,6 +336,8 @@ match_start:
     robot.disableMotors();
     actuatorsDisable();
     gDisplay.robot_state = RobotState::DONE;
+    gDisplay.match_phase = MatchPhase::DONE;
+    unlockAfterMatch();
     LOG_I("MAIN", "Match termine");
 
     // ── Après match : attente commande UI pour relancer ───────────────────────
@@ -230,7 +348,7 @@ match_start:
             if (cmd == StateCmd::ENABLE_MOTORS)  { robot.enableMotors(); }
             if (cmd == StateCmd::GOTO_WAIT_INIT) { goto restart; }
             if (cmd == StateCmd::RESTART_MATCH ||
-                cmd == StateCmd::START_MATCH)    { robot.enableMotors(); goto match_start; }
+                cmd == StateCmd::START_MATCH)    { resetMatchState(); robot.enableMotors(); goto match_start; }
         }
         vTaskDelay(pdMS_TO_TICKS(100));
     }
@@ -243,6 +361,10 @@ void setup() {
     Serial.begin(115200);
     delay(200);
     Serial.println("=== DifferentialRobot ===");
+
+    // Calibration sauvegardée (onglet CALIBRATION → Enregistrer), sinon config.h
+    if (calibLoad()) LOG_I("CALIB", "Calibration chargee depuis la NVS");
+    else             LOG_I("CALIB", "Calibration par defaut (config.h)");
 
     Wire.begin(DISPLAY_SDA_PIN, DISPLAY_SCL_PIN);
     Wire.setClock(400000);
@@ -265,6 +387,9 @@ void setup() {
 
     xTaskCreatePinnedToCore(taskEncoders, "encoders", 2048,
                             nullptr, 3,                  nullptr, 0);   // Core 0, prio 3
+
+    xTaskCreatePinnedToCore(taskMatchGuard, "guard", 3072,
+                            nullptr, 5,                  nullptr, 1);   // Core 1, prio 5
 
     xTaskCreatePinnedToCore(taskStrategy, "strategy", TASK_STRATEGY_STACK,
                             nullptr, TASK_STRATEGY_PRIO, nullptr, TASK_STRATEGY_CORE);
@@ -297,20 +422,29 @@ void loop() {
                       (double)gDisplay.enc_pose_theta_deg);
     }
 
-    // LEDs + LIDAR WiFi — 100 ms (LIDAR WiFi seulement en pré-match)
+    // LEDs + LIDAR WiFi — 100 ms. Trames LIDAR construites seulement si une
+    // page est connectée : radar en pré-match uniquement, points absolus
+    // ralentis à 2 Hz pendant le match (le WiFi ne doit pas peser sur le match).
     if (now - lastLed >= 100) {
+        static uint32_t lastAbs = 0;
         lastLed = now;
         uint16_t n = lidar.getScan(scanBuf, LD06_SCAN_BUF_SIZE);
         gDisplay.lidar_pts = n;
         ledsUpdateLidar(scanBuf, n);
-        RobotState st = gDisplay.robot_state;
-        if (st == RobotState::WAIT_INIT      || st == RobotState::INIT ||
-            st == RobotState::WAIT_TIRETTE_IN || st == RobotState::WAIT_TIRETTE_OUT)
-            wifiLogLidar(scanBuf, n);
-        // LIDAR absolu toujours envoyé (coordonnées table, filtré en JS)
-        wifiLogLidarAbs(scanBuf, n,
-                        gDisplay.enc_pose_x_mm, gDisplay.enc_pose_y_mm,
-                        gDisplay.enc_pose_theta_rad);
+        if (wifiLogHasClient()) {
+            RobotState st = gDisplay.robot_state;
+            if (st == RobotState::WAIT_INIT      || st == RobotState::INIT ||
+                st == RobotState::WAIT_TIRETTE_IN || st == RobotState::WAIT_TIRETTE_OUT)
+                wifiLogLidar(scanBuf, n);
+            MatchPhase mp = gDisplay.match_phase;
+            bool inMatch = (mp == MatchPhase::MATCH || mp == MatchPhase::ENDGAME);
+            if (!inMatch || now - lastAbs >= 500) {
+                lastAbs = now;
+                wifiLogLidarAbs(scanBuf, n,
+                                gDisplay.enc_pose_x_mm, gDisplay.enc_pose_y_mm,
+                                gDisplay.enc_pose_theta_rad);
+            }
+        }
     }
 
     // Pose + actionneurs + motion debug + commandes WiFi — 200 ms
@@ -326,12 +460,15 @@ void loop() {
         wifiLogUpdatePose(gDisplay.enc_pose_x_mm, gDisplay.enc_pose_y_mm, gDisplay.enc_pose_theta_deg,
                           robotStateStr(gDisplay.robot_state),
                           gDisplay.nav_dist_mm, gDisplay.nav_delta_deg, team, canClick);
+        uint32_t elapsed = gDisplay.match_start_ms ? now - gDisplay.match_start_ms : 0;
+        wifiLogUpdateStatus((uint8_t)gDisplay.match_phase, elapsed,
+                            motion.isEnabled(), motion.isLocked());
         wifiLogUpdateActuators(flywheelLeft.getSpeed(), flywheelRight.getSpeed(), feeder.getSpeed(),
                                servoBasGauche.getPercent(), servoBasDroit.getPercent());
         wifiLogUpdateMotion((uint8_t)gMotionCtrl.getState(),
                             (uint8_t)gMotionCtrl.getPhase(),
                             gMotionCtrl.getDistMm(),
-                            gMotionCtrl.getSpeedCap(),
+                            gMotionCtrl.getRefSpeed(),
                             gMotionCtrl.getCmdL(),
                             gMotionCtrl.getCmdR(),
                             gMotionCtrl.getTargetX(),
@@ -348,13 +485,48 @@ void loop() {
         bool postInit = (st != RobotState::WAIT_INIT) && (st != RobotState::INIT);
         bool inMatch  = (gDisplay.match_start_ms > 0) &&
                         (millis() - gDisplay.match_start_ms < MATCH_DURATION_MS);
-        if (postInit && !inMatch) {
+        // Cible bornée à la table, moins la demi-largeur du robot
+        const float m = ROBOT_WIDTH_MM * 0.5f;
+        const bool inTable = fcX >= m && fcX <= gTable.w() - m &&
+                             fcY >= m && fcY <= gTable.h() - m;
+        if (!inTable) {
+            LOG_W("UI", "Goto refuse : (%.0f, %.0f) hors table (marge %.0f mm)",
+                  (double)fcX, (double)fcY, (double)m);
+        } else if (postInit && !inMatch) {
             robot.enableMotors();
             robot.setTarget(fcX, fcY, fcTheta);   // fcTheta = NAN si pas de drag
             if (isnanf(fcTheta)) LOG_I("UI", "Goto click: %.0f,%.0f", (double)fcX, (double)fcY);
             else                 LOG_I("UI", "Goto click: %.0f,%.0f theta=%.0f", (double)fcX, (double)fcY, (double)fcTheta);
         } else {
             LOG_W("UI", "Goto ignore (etat %d, inMatch=%d)", (int)st, (int)inMatch);
+        }
+    }
+
+    // Parcours cliqué (mode Parcours de l'interface) : mêmes conditions, chaque
+    // point doit être dans la table
+    float pxs[8], pys[8], pTheta;
+    uint8_t pn = 0;
+    if (wifiPollPath(pxs, pys, pn, pTheta)) {
+        RobotState st = gDisplay.robot_state;
+        bool postInit = (st != RobotState::WAIT_INIT) && (st != RobotState::INIT);
+        bool inMatch  = (gDisplay.match_start_ms > 0) &&
+                        (millis() - gDisplay.match_start_ms < MATCH_DURATION_MS);
+        const float m = ROBOT_WIDTH_MM * 0.5f;
+        bool inTable = true;
+        Vec2 pts[8];
+        for (uint8_t i = 0; i < pn; i++) {
+            inTable &= pxs[i] >= m && pxs[i] <= gTable.w() - m &&
+                       pys[i] >= m && pys[i] <= gTable.h() - m;
+            pts[i] = Vec2(pxs[i], pys[i]);
+        }
+        if (!inTable) {
+            LOG_W("UI", "Parcours refuse : un point hors table (marge %.0f mm)", (double)m);
+        } else if (postInit && !inMatch) {
+            robot.enableMotors();
+            robot.setPath(pts, pn, pTheta);
+            LOG_I("UI", "Parcours de %u points", (unsigned)pn);
+        } else {
+            LOG_W("UI", "Parcours ignore (etat %d, inMatch=%d)", (int)st, (int)inMatch);
         }
     }
 

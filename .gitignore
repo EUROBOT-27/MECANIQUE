@@ -18,6 +18,10 @@ venv*/
 *.SLDPRT.bak
 ~$*
 *.log
+# robot sync state (tools/sync_robot.py)
+mechanical/robot/CAD_FC/.sync.lock
+mechanical/robot/CAD_FC/.sync.failed
+mechanical/robot/CAD_FC/.sync.notified
 
 # graft's local graph cache: regenerable, not committed (run `graft build`).
 /graft/

@@ -35,9 +35,9 @@ class G:
     PL_Y1 = PL_Y0 + PL_T
     PL_ZC = 150
     WH_X, WH_DZ = 60.0, 37.5
-    # v7: real Two Trees parts (../../resources/two-trees-bluer-v2-parts, printer coordinates). Printer -> module:
+    # v7: real Two Trees parts (../../../resources/two-trees-bluer-v2-parts, printer coordinates). Printer -> module:
     # X = TT_X0 - x, Y = z - TT_ZR + RAIL_YC, Z = y - (printer y of the reference) + (module z of the reference)
-    TT_DIR = os.path.join(HERE, "..", "..", "resources", "two-trees-bluer-v2-parts")
+    TT_DIR = os.path.join(HERE, "..", "..", "..", "resources", "two-trees-bluer-v2-parts")
     TT_X0, TT_ZR, TT_YR0, TT_YW = 120.75, 54.0, 115.1, 290.1   # axis x, rail centre plane, rail bottom end, wheel centre
     TT_ZAX = (263.0, 191.2)                                 # printer Z axis (motor, coupler, nut): x, y
     TT_CPL_Z0, TT_NUT_FL = 50.5, 263.1                      # printer coupler bottom; nut flange face on the long-body side
@@ -79,7 +79,7 @@ class G:
     # centre, y ±5. Cable grommet: shaft-end face, centred, 3.7..8.3 above the bottom, sticks out 5.8.
     SV_L, SV_W, SV_H, SV_FL, SV_OUT, SV_HORN = 40.4, 20.4, 38.0, 28.0, 10.2, 47.4   # 2026-11-09: measured horn disc top (v6 model: 45.7)
     SV_EAR = 24.5
-    SV_DIR = os.path.join(HERE, "..", "..", "resources", "mg996r-servo-3.snapshot.9")   # real GrabCAD model (body + horns)
+    SV_DIR = os.path.join(HERE, "..", "..", "..", "resources", "mg996r-servo-3.snapshot.9")   # real GrabCAD model (body + horns)
     SV_STEP = os.path.join(SV_DIR, "mg996R_v2.step")
     HORN_STEP = os.path.join(SV_DIR, "mg996_arm_round.step")   # round horn: hub Ø9 x 3, disc Ø20.8 x 2.5, boss Ø9.2 x 0.8
     SV_X1 = PX + SV_OUT
@@ -751,7 +751,7 @@ def tete_bague():       # clamp ring over the TPU rim; a notch lets the tube lea
 
 # ---------------------------------------------------------------- references + reserved space
 def refs():
-    # v7: real Two Trees Bluer V2 parts (see ../../resources/two-trees-bluer-v2-parts/SOURCE.md)
+    # v7: real Two Trees Bluer V2 parts (see ../../../resources/two-trees-bluer-v2-parts/SOURCE.md)
     def tt(name):
         return Part.read(os.path.join(G.TT_DIR, name + ".step"))
     def tt_axis(shape, y_ref, z_ref):           # Y-axis parts: printer y along the rails -> module z

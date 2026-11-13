@@ -114,7 +114,7 @@ written here.
 orientation as the real part, with holes Ø4.4 / 4.5 / 4.6 / 4.7 / 4.8 (vertical and horizontal). Press an insert in
 each and keep the best size.
 
-**In our FreeCAD scripts:** `ins_hole()` in `mechanical/clapets-v7/fc/v7_fc.py` makes the hole + chamfer
+**In our FreeCAD scripts:** `ins_hole()` in `mechanical/clapets/clapets-v7/fc/v7_fc.py` makes the hole + chamfer
 (`INS3_R`, `INS3_D`, `INS_CH` in `class G`). Use it for every new insert hole. The fastener check
 (`fc/fastener_check_v7.py`) measures walls from the real Ø6.0.
 

@@ -6,7 +6,7 @@ part for the assembly direction), a 2D detail (section or orthographic view, 10 
 fasteners, tools, title block. English, PLA. Made 2026-11-10 from the CAD.
 
 ## Regenerate (after any CAD change, e.g. after the tolerance tests)
-From `mechanical/clapets-v7`:
+From `mechanical/clapets/clapets-v7`:
 ```
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/v7_fc.py              # the CAD (if it changed)
 "C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/assembly_images_v7.py # images -> assembly/img/ (~3 min, GUI)

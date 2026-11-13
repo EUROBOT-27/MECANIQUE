@@ -19,6 +19,13 @@ bool StepControl::begin() {
     _stepR->setEnablePin(STEPPER_EN_PIN, true);
     _stepL->enableOutputs();
     _stepR->enableOutputs();
+    _enabled = true;
+
+    // Démarrage adouci : depuis l'arrêt, l'accélération monte progressivement
+    // sur les premiers mm au lieu d'arriver d'un coup (glissement, basculement)
+    const uint32_t linSteps = (uint32_t)(STEP_LINEAR_ACCEL_MM * gCalib.stepsPerMm);
+    _stepL->setLinearAcceleration(linSteps);
+    _stepR->setLinearAcceleration(linSteps);
 
     // Drive strength maximale (40 mA) sur tous les pins de commande moteur
     gpio_set_drive_capability((gpio_num_t)STEPPER_L_STEP_PIN, GPIO_DRIVE_CAP_3);
@@ -42,6 +49,12 @@ void StepControl::go(float mm) {
 
 void StepControl::turn(float deg) {
     startTurn(deg);
+    _waitDone();
+    syncPose();
+}
+
+void StepControl::turnAt(float deg, float speedMmS, float accelMmS2) {
+    startTurn(deg, speedMmS, accelMmS2);
     _waitDone();
     syncPose();
 }
@@ -87,7 +100,7 @@ void StepControl::setMotorSpeeds(float leftMmS, float rightMmS) {
 
 void StepControl::setMotorVelocities(float leftMmS, float rightMmS) {
     auto apply = [](FastAccelStepper *s, float mmS) {
-        if (fabsf(mmS) < 0.5f) { s->stopMove(); return; }
+        if (fabsf(mmS) < STEP_MIN_SPEED_MMS) { s->stopMove(); return; }
         s->setSpeedInHz((uint32_t)(fabsf(mmS) * gCalib.stepsPerMm));
         if (mmS > 0) s->runForward();
         else         s->runBackward();
@@ -97,16 +110,16 @@ void StepControl::setMotorVelocities(float leftMmS, float rightMmS) {
 }
 
 
-void StepControl::startTurn(float deg) {
+void StepControl::startTurn(float deg, float speedMmS, float accelMmS2) {
     // Arc = (wheelbase × π × |deg|) / 360 pour chaque roue
     float arc = gCalib.wheelbase * 3.14159265f * fabsf(deg) / 360.0f;
     int32_t arcSteps = _mmToSteps(arc);
     int32_t sign = (deg >= 0) ? 1 : -1;   // positif = CCW = gauche
 
-    _stepL->setSpeedInHz(_mmSToHz(TURN_SPEED_MMS));
-    _stepR->setSpeedInHz(_mmSToHz(TURN_SPEED_MMS));
-    _stepL->setAcceleration((uint32_t)(TURN_ACCEL_MMS2 * gCalib.stepsPerMm));
-    _stepR->setAcceleration((uint32_t)(TURN_ACCEL_MMS2 * gCalib.stepsPerMm));
+    _stepL->setSpeedInHz(_mmSToHz(speedMmS));
+    _stepR->setSpeedInHz(_mmSToHz(speedMmS));
+    _stepL->setAcceleration((uint32_t)(accelMmS2 * gCalib.stepsPerMm));
+    _stepR->setAcceleration((uint32_t)(accelMmS2 * gCalib.stepsPerMm));
 
     _refL = _stepL->getCurrentPosition();
     _refR = _stepR->getCurrentPosition();
@@ -126,11 +139,14 @@ void StepControl::stop() {
 void StepControl::disableMotors() {
     _stepL->disableOutputs();
     _stepR->disableOutputs();
+    _enabled = false;
 }
 
 void StepControl::enableMotors() {
+    if (_locked) return;
     _stepL->enableOutputs();
     _stepR->enableOutputs();
+    _enabled = true;
 }
 
 void StepControl::softStop(float accelOverride) {
@@ -169,6 +185,15 @@ void StepControl::setSpeed(float mmS)        { _speed = mmS; }
 void StepControl::setAcceleration(float mmS2) { _accel = mmS2; }
 void StepControl::pushAcceleration() {
     uint32_t a = (uint32_t)(_accel * gCalib.stepsPerMm);
+    _stepL->setAcceleration(a);
+    _stepR->setAcceleration(a);
+}
+
+float StepControl::motorMmL() const { return (float)_stepL->getCurrentPosition() / gCalib.stepsPerMm; }
+float StepControl::motorMmR() const { return (float)_stepR->getCurrentPosition() / gCalib.stepsPerMm; }
+
+void StepControl::setStepperAccel(float mmS2) {
+    uint32_t a = (uint32_t)(fmaxf(mmS2, 10.0f) * gCalib.stepsPerMm);
     _stepL->setAcceleration(a);
     _stepR->setAcceleration(a);
 }

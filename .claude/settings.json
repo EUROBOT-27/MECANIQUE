@@ -3,5 +3,18 @@
     "commit": "",
     "pr": ""
   },
-  "includeCoAuthoredBy": false
+  "includeCoAuthoredBy": false,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/tools/hooks/sync_bg.py\" --claude || true",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
 }

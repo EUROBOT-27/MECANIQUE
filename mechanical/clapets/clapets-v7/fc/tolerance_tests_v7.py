@@ -2,7 +2,7 @@
 # Each coupon repeats one feature of the real parts (same size, same print orientation) in 3 variants:
 # smaller / CAD value / bigger. Variant marks: 1, 2 or 3 small grooves on the top face next to each feature
 # (1 = smaller, 2 = the CAD value, 3 = bigger).
-# Run (from mechanical/clapets-v7, after fc/v7_fc.py):
+# Run (from mechanical/clapets/clapets-v7, after fc/v7_fc.py):
 #   "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/tolerance_tests_v7.py
 # Output: tolerance-tests/stl/T*.stl  (+ tolerance-tests/volumes.txt). Print every coupon as it lies (z up).
 # Picture: "C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/tolerance_image_v7.py -> tolerance-tests/coupons.png

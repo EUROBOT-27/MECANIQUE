@@ -1,0 +1,20 @@
+GRAIL LIFT v1 (Baha, essai mecanisme 1) - rebuilt 2026-11-10
+profile bottom assumed 5 mm above the table (not given by the assembly)
+moving block (everything but profile + rack): x -4.2..158.5  y -45.0..34.0  z 217.0..287.0  -> height 70.0 mm
+lift travel on the rack, from the model pose: -215.0 .. +24.0 mm  (total 239.0 mm)
+magnet centre z at model pose 257.0 -> range 42.0 .. 281.0
+servo shaft (tilt axis) at x 102.46 z 252.25 ; 4-pad horn centre x 105.42 z 252.71 -> horn off the shaft by 3.00 mm
+
+interferences at the model pose (common volume > 1 mm3):
+  REAL_RACK_1M_280                 x REAL_PINION_20T_1M                   52.1 mm3
+  REAL_PINION_20T_1M               x REAL_COUPLING_liaison                 4.8 mm3
+  REAL_HORN_4PAD                   x REAL_SERVO_MG996R                    31.0 mm3
+  REAL_HORN_4PAD                   x APPROX_SUPPORT_U_blue                 7.7 mm3
+  REAL_MAGNET_5KG                  x APPROX_SUPPORT_U_blue                11.2 mm3
+  REAL_SERVO_MG996R                x APPROX_SUPPORT_FIXATION_grey         13.9 mm3
+  REAL_SERVO_MG996R                x APPROX_SUPPORT_U_blue                86.5 mm3
+  REAL_SERVO_MG996R                x APPROX_NEMA14                       139.1 mm3
+  APPROX_SUPPORT_FIXATION_grey     x APPROX_NEMA14                      1488.0 mm3
+  REAL_NEMA14_SHAFT                x REAL_COUPLING_liaison               163.0 mm3
+
+Grail 80 cube gripped at 42.0 above its bottom (magnet at the lowest lift). Highest Grail bottom with the lift alone: 239.0 mm (L4 needs > 300)

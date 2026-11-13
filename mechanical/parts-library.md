@@ -33,6 +33,7 @@ Source: **Ender** = the disassembled printer. **Correction 2026-10-27: it is a T
 | Bent steel bracket, blue, slotted | flat strip with 2 bent tabs, 2 countersunk holes + 1 centre hole | 1 | Ender | seen | 5a5d6677 | | Belt/tensioner or display part; light bracket |
 | Bent steel bracket, black, long L/Z | ~150 mm strip, bent ends, 2 screws | 1 | Ender | seen | 83f4534a | | Probably spool holder / display mount; makes a light arm or hook |
 | Aluminium U-bracket | ~2 mm, central hole + 4-hole pattern on 2 faces | 1 | Lab | seen | c2979d5a | | Looks like a small motor/servo mount bracket |
+| Servo U-bracket, long, black (steel?) | for MG996R-size servos: 2 round ends with Ø~8 centre hole + horn hole pattern, holes along the arm | ≥ 1 | Lab | seen | `parts-photos/u-servo-bracket-steel.png` (2026-11-10) | Grail lift v2 (concept): flip arm, horn on one side + pivot pin on the other | Maybe the same part type as the "Aluminium U-bracket" line above. **Measure:** arm length (centre hole → inside of the strip), inner width, thickness |
 | Aluminium flat links | 3 pieces: long link (~150 mm), short link (~60 mm), cross hub plate; big end holes + small holes | 3 | Lab | seen | chat photo 2026-10-27 | | Robot-kit links: arms, levers, linkages |
 
 ## 2. Linear motion
@@ -69,6 +70,8 @@ Source: **Ender** = the disassembled printer. **Correction 2026-10-27: it is a T
 |---|---|---|---|---|---|---|---|
 | Stepper NEMA 17 | 42 × 42, length ? | 4 | Ender | unverified | | | Read labels (current, length). Lifts, rotating stages |
 | DC gear motors **JGB** | model ? (JGB37-520 ?), voltage ?, rpm ? | "a bunch" | Lab | unverified (no photo) | | | Read the label: voltage, rpm, encoder yes/no. Good for arms, flippers, flywheel? (check rpm) |
+| DC motor **Crouzet**, label "SP 1448 10" | 5000 rpm (per label; probably no-load). Likely 32 mm Crouzet 82860-type brushed, 12 V, ~3700 rpm / ~7.7 mNm / ~3 W at nominal load (from similar datasheets, unconfirmed). Shaft Ø **2 mm** likely (RS listings of 82860 direct-drive variants; geared variants are Ø8), 2 ball bearings, encoder: none ? | ? (≥ 2 needed) | Lab | unverified | | Cannonball launcher (proposed) | Measure shaft Ø + body Ø/length + mounting holes. Check the no-load rpm on the bench at 12 V |
+| Wheel Ø66 mm, yellow hub + rubber tyre ("TT motor" wheel, seli.tn ROB002) | Ø66 mm, double-D bore for the TT gear motor shaft (≈ Ø5.4 round, ≈ 3.7 across flats — to measure) | ? | Lab | unverified | | Cannonball launcher test (proposed) | Made for ~200 rpm: glue the tyre to the rim and check runout before running at 5000 rpm |
 | N20 micro gear motor | 12 mm, metal gearbox, D shaft 3 mm, ratio ? | ≥ 1 | Lab | seen | 8c208708 | | Small light actuators, PAMIs |
 | Servo TowerPro **MG996R** | standard size, metal gears, ~10 kg·cm class | ≥ 1 | Lab | seen | 3fe67375 | | Count them |
 | Servo TowerPro **MG90S** | micro, metal gears, ~2 kg·cm class | ≥ 1 | Lab | seen | 3fe67375 | | |

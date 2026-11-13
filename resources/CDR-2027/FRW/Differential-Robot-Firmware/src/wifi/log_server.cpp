@@ -9,6 +9,9 @@
 #include "../config.h"
 #include "../live_config.h"
 #include "../display/oled.h"
+#include "../log.h"
+#include "../motion/recorder.h"
+#include "../strategy/calib_routines.h"
 
 LogServer logServer;
 
@@ -18,6 +21,18 @@ void wifiLogBegin()  { logServer.begin(); }
 
 void wifiLogPush(char level, const char* tag, const char* msg) {
     logServer.push(level, tag, msg);
+}
+
+void wifiLogUpdateStatus(uint8_t phase, uint32_t elapsedMs, bool motorsOn, bool motorsLocked) {
+    logServer.updateStatus(phase, elapsedMs, motorsOn, motorsLocked);
+}
+
+void wifiLogCalibResult(const char* json) { logServer.calibResult(json); }
+
+void LogServer::calibResult(const char* json) {
+    strncpy(_calresJson, json, sizeof(_calresJson) - 1);
+    _calresJson[sizeof(_calresJson) - 1] = '\0';
+    _calresNew = true;
 }
 
 void wifiLogUpdatePose(float x, float y, float theta_deg, const char* state,
@@ -50,12 +65,35 @@ bool wifiPollFieldClick(float& x_mm, float& y_mm, float& theta_deg) {
 }
 
 bool LogServer::pollFieldClick(float& x_mm, float& y_mm, float& theta_deg) {
-    if (!_fcPending) return false;
-    x_mm = _fcX;
-    y_mm = _fcY;
-    theta_deg = _fcHasTheta ? _fcTheta : NAN;
-    _fcPending = false;
-    return true;
+    portENTER_CRITICAL(&_mux);
+    const bool pending = _fcPending;
+    if (pending) {
+        x_mm = _fcX;
+        y_mm = _fcY;
+        theta_deg = _fcHasTheta ? _fcTheta : NAN;
+        _fcPending = false;
+    }
+    portEXIT_CRITICAL(&_mux);
+    return pending;
+}
+
+bool wifiLogHasClient() { return logServer.clientCount() > 0; }
+
+bool wifiPollPath(float* xs, float* ys, uint8_t& n, float& theta_deg) {
+    return logServer.pollPath(xs, ys, n, theta_deg);
+}
+
+bool LogServer::pollPath(float* xs, float* ys, uint8_t& n, float& theta_deg) {
+    portENTER_CRITICAL(&_mux);
+    const bool pending = _pathPending;
+    if (pending) {
+        n = _pathN;
+        for (uint8_t i = 0; i < n; i++) { xs[i] = _pathX[i]; ys[i] = _pathY[i]; }
+        theta_deg = _pathTheta;
+        _pathPending = false;
+    }
+    portEXIT_CRITICAL(&_mux);
+    return pending;
 }
 
 bool wifiPollCmd(ServoCmd& out) {
@@ -71,15 +109,35 @@ void LogServer::begin() {
     WiFi.setTxPower(WIFI_POWER_19_5dBm);
 
 #if WIFI_USE_STA
+    // Réseaux connus par ordre de priorité : le premier visible est utilisé.
+    // WIFI_STATION_SSID (optionnel, réseau du bureau) passe avant WIFI_STA_SSID.
+    struct KnownNet { const char *ssid, *pass; };
+    static const KnownNet nets[] = {
+#ifdef WIFI_STATION_SSID
+        { WIFI_STATION_SSID, WIFI_STATION_PASSWORD },
+#endif
+        { WIFI_STA_SSID, WIFI_STA_PASS },
+    };
     WiFi.mode(WIFI_STA);
-    WiFi.begin(WIFI_STA_SSID, WIFI_STA_PASS);
-    Serial.printf("[I][WIFI] Connexion à %s ...\n", WIFI_STA_SSID);
-    uint32_t t0 = millis();
-    while (WiFi.status() != WL_CONNECTED && millis() - t0 < 10000)
-        vTaskDelay(pdMS_TO_TICKS(500));
+    int found = WiFi.scanNetworks();
+    for (const KnownNet &n : nets) {
+        bool visible = false;
+        for (int i = 0; i < found && !visible; i++)
+            visible = (WiFi.SSID(i) == n.ssid);
+        if (!visible) continue;
+        Serial.printf("[I][WIFI] Connexion à %s ...\n", n.ssid);
+        WiFi.begin(n.ssid, n.pass);
+        uint32_t t0 = millis();
+        while (WiFi.status() != WL_CONNECTED && millis() - t0 < 10000)
+            vTaskDelay(pdMS_TO_TICKS(500));
+        if (WiFi.status() == WL_CONNECTED) break;
+        WiFi.disconnect();
+    }
+    WiFi.scanDelete();
     if (WiFi.status() == WL_CONNECTED) {
         String ip = WiFi.localIP().toString();
-        Serial.printf("[I][WIFI] Connecté — http://%s\n", ip.c_str());
+        Serial.printf("[I][WIFI] Connecté à %s — http://%s\n",
+                      WiFi.SSID().c_str(), ip.c_str());
         strncpy(gDisplay.wifi_ip, ip.c_str(), sizeof(gDisplay.wifi_ip) - 1);
     } else {
         Serial.println("[W][WIFI] STA échoué — repli en mode AP");
@@ -109,6 +167,8 @@ void LogServer::begin() {
     _http.on("/field.jpg", [this]() {
         File f = LittleFS.open("/field.jpg", "r");
         if (!f) { _http.send(404, "text/plain", "Not found"); return; }
+        // Image fixe d'environ 200 Ko : gardée un jour par le navigateur
+        _http.sendHeader("Cache-Control", "max-age=86400");
         _http.streamFile(f, "image/jpeg");
         f.close();
     });
@@ -121,10 +181,40 @@ void LogServer::begin() {
     _http.onNotFound([this]() { _http.send(404, "text/plain", "Not found"); });
     _http.begin();
 
-    _ws.onEvent([this](uint8_t, WStype_t type, uint8_t* payload, size_t len) {
-        if (type == WStype_CONNECTED) { _buildCalibJson(); _calibNew = true; }
-        else if (type == WStype_TEXT && len > 4) _handleWsMsg(payload, len);
+    // Origine : une page servie par le robot uniquement (ou un outil sans
+    // en-tête Origin, comme un script de test). Bloque une page d'un autre
+    // site ouverte dans le navigateur qui tenterait de piloter le robot.
+    _ws.onValidateHttpHeader([this](String name, String value) {
+        if (!name.equalsIgnoreCase("Origin")) return true;
+        bool ok = _originOk(value);
+        if (!ok) LOG_W("WIFI", "Connexion refusee : origine %s", value.c_str());
+        return ok;
+    }, nullptr, 0);
+
+    _ws.onEvent([this](uint8_t num, WStype_t type, uint8_t* payload, size_t len) {
+        if (type == WStype_CONNECTED) {
+#ifdef WS_TOKEN
+            // Jeton simple dans l'URL : ws://robot:81/?t=JETON
+            if (!payload || !strstr((const char*)payload, "t=" WS_TOKEN)) {
+                const char* deny = "{\"type\":\"auth\",\"ok\":0}";
+                _ws.sendTXT(num, deny);
+                _ws.disconnect(num);
+                LOG_W("WIFI", "Connexion refusee : jeton absent ou faux");
+                return;
+            }
+#endif
+            _clients = _clients + 1;
+            _sendConfig(num);
+            _buildCalibJson(); _calibNew = true;
+        } else if (type == WStype_DISCONNECTED) {
+            if (_clients > 0) _clients = _clients - 1;
+        } else if (type == WStype_TEXT && len > 4) {
+            _handleWsMsg(payload, len);
+        }
     });
+    // Ping toutes les 5 s : une page disparue (téléphone en veille, WiFi
+    // perdu) est déconnectée après deux pongs manqués
+    _ws.enableHeartbeat(5000, 3000, 2);
     _ws.begin();
 
     xTaskCreatePinnedToCore(_task, "logwifi", TASK_WIFI_STACK, this,
@@ -141,6 +231,86 @@ void LogServer::_handleWsMsg(uint8_t* payload, size_t len) {
     // ── Calibration live ─────────────────────────────────────────────────────
     if (strstr(p, "\"calib\"")) { _handleCalibMsg(p); return; }
 
+    // ── Calibration : sauvegarde NVS / retour aux valeurs de config.h ────────
+    if (strstr(p, "\"calib_save\"") || strstr(p, "\"calib_reset\"")) {
+        MatchPhase ph = gDisplay.match_phase;
+        if (ph == MatchPhase::CALAGE || ph == MatchPhase::MATCH || ph == MatchPhase::ENDGAME) {
+            LOG_W("CALIB", "Refuse : calage ou match en cours");
+        } else if (strstr(p, "\"calib_save\"")) {
+            if (calibSave()) LOG_I("CALIB", "Calibration enregistree (NVS)");
+            else             LOG_E("CALIB", "Echec d'ecriture NVS");
+        } else {
+            calibRestoreDefaults();
+            LOG_I("CALIB", "Valeurs de config.h restaurees (non enregistrees)");
+        }
+        _buildCalibJson();
+        _calibNew = true;
+        return;
+    }
+
+    // ── Routine de calibration : {"type":"calrun","id":"turns","p":10} ──────
+    if (strstr(p, "\"calrun\"")) {
+        const char* pp = strstr(p, "\"p\":");
+        float param = pp ? (float)atof(pp + 4) : 0.0f;
+        bool ok = false;
+        if      (strstr(p, "\"line\"")   && param >= 100 && param <= 2500) ok = requestCalibRun(CalibRoutine::LINE, param);
+        else if (strstr(p, "\"turns\"")  && param >= 1   && param <= 20)   ok = requestCalibRun(CalibRoutine::TURNS, param);
+        else if (strstr(p, "\"sq_cw\"")  && param >= 150 && param <= 1200) ok = requestCalibRun(CalibRoutine::SQUARE_CW, param);
+        else if (strstr(p, "\"sq_ccw\"") && param >= 150 && param <= 1200) ok = requestCalibRun(CalibRoutine::SQUARE_CCW, param);
+        else if (strstr(p, "\"accel\"")  && param >= 1000 && param <= 8000) ok = requestCalibRun(CalibRoutine::ACCEL, param);
+        if (ok) LOG_I("CALRUN", "Routine demandee (param %.0f)", (double)param);
+        else    LOG_W("CALRUN", "Routine refusee (etat ou parametre)");
+        return;
+    }
+
+    // ── Renvoi du dernier mouvement enregistré : {"type":"rec_req"} ─────────
+    if (strstr(p, "\"rec_req\"")) { gRecorder.resend(); _recGen = 0; return; }
+
+    // ── Choix de la table : {"type":"table","essai":1} ───────────────────────
+    // Refusé pendant calage et match : les filtres LIDAR et le calage en
+    // dépendent.
+    if (strstr(p, "\"table\"")) {
+        const char* ep = strstr(p, "\"essai\":");
+        if (!ep) return;
+        MatchPhase ph = gDisplay.match_phase;
+        if (ph != MatchPhase::WAIT_INIT && ph != MatchPhase::DONE) {
+            LOG_W("UI", "Changement de table refuse hors attente init / fin de match");
+            return;
+        }
+        gTable.essai = atoi(ep + 8) != 0;
+        LOG_I("UI", "Table : %s (%.0f x %.0f mm)", gTable.essai ? "essai" : "match",
+              (double)gTable.w(), (double)gTable.h());
+        return;
+    }
+
+    // ── Parcours cliqué : {"type":"path","pts":[[x,y],...],"t":90} ───────────
+    if (strstr(p, "\"path\"")) {
+        const char* q = strstr(p, "\"pts\":[");
+        if (!q) return;
+        q += 7;
+        float xs[8], ys[8];
+        uint8_t n = 0;
+        while (n < 8) {
+            const char* o = strchr(q, '[');
+            const char* end = strchr(q, ']');
+            if (!o || !end || o > end) break;     // plus de couple [x,y]
+            char* e1;
+            xs[n] = strtof(o + 1, &e1);
+            if (*e1 != ',') break;
+            ys[n] = strtof(e1 + 1, nullptr);
+            n++;
+            q = strchr(o, ']') + 1;
+        }
+        const char* tp = strstr(p, "\"t\":");
+        const float t = tp ? (float)atof(tp + 4) : NAN;
+        if (n == 0) return;
+        portENTER_CRITICAL(&_mux);
+        for (uint8_t i = 0; i < n; i++) { _pathX[i] = xs[i]; _pathY[i] = ys[i]; }
+        _pathN = n; _pathTheta = t; _pathPending = true;
+        portEXIT_CRITICAL(&_mux);
+        return;
+    }
+
     // ── Click utilisateur sur le terrain ──────────────────────────────────────
     // Format : {"type":"goto","x":1234,"y":567}        (sans orientation)
     //        : {"type":"goto","x":1234,"y":567,"t":90}  (avec orientation finale)
@@ -149,15 +319,14 @@ void LogServer::_handleWsMsg(uint8_t* payload, size_t len) {
         const char* yp = strstr(p, "\"y\":");
         const char* tp = strstr(p, "\"t\":");
         if (xp && yp) {
-            _fcX = (float)atof(xp + 4);
-            _fcY = (float)atof(yp + 4);
-            if (tp) {
-                _fcTheta    = (float)atof(tp + 4);
-                _fcHasTheta = true;
-            } else {
-                _fcHasTheta = false;
-            }
-            _fcPending = true;
+            const float x = (float)atof(xp + 4), y = (float)atof(yp + 4);
+            const float t = tp ? (float)atof(tp + 4) : NAN;
+            portENTER_CRITICAL(&_mux);
+            _fcX = x; _fcY = y;
+            _fcTheta    = t;
+            _fcHasTheta = tp != nullptr;
+            _fcPending  = true;
+            portEXIT_CRITICAL(&_mux);
         }
         return;
     }
@@ -209,7 +378,15 @@ void LogServer::push(char level, const char* tag, const char* msg) {
     e.ts    = millis();
     strncpy(e.tag, tag, sizeof(e.tag) - 1);  e.tag[sizeof(e.tag) - 1] = '\0';
     strncpy(e.msg, msg, sizeof(e.msg) - 1);  e.msg[sizeof(e.msg) - 1] = '\0';
-    for (char* c = e.msg; *c; ++c) if (*c == '"') *c = '\'';
+    // Le message part tel quel dans une chaîne JSON : guillemet, antislash et
+    // caractères de contrôle la rendraient invalide
+    for (char* c = e.msg; *c; ++c) {
+        if (*c == '"') *c = '\'';
+        else if (*c == '\\') *c = '/';
+        else if ((unsigned char)*c < 0x20) *c = ' ';
+    }
+    for (char* c = e.tag; *c; ++c)
+        if (*c == '"' || *c == '\\' || (unsigned char)*c < 0x20) *c = '_';
     xQueueSend(_logQueue, &e, 0);
 }
 
@@ -217,6 +394,7 @@ void LogServer::push(char level, const char* tag, const char* msg) {
 
 void LogServer::updatePose(float x, float y, float theta_deg, const char* state,
                            float nav_dist_mm, float nav_delta_deg, char team, bool canClick) {
+    portENTER_CRITICAL(&_mux);
     _px = x; _py = y; _ptheta = theta_deg;
     _navDist = nav_dist_mm; _navDelta = nav_delta_deg;
     _team = team;
@@ -224,6 +402,17 @@ void LogServer::updatePose(float x, float y, float theta_deg, const char* state,
     strncpy(_pstate, state, sizeof(_pstate) - 1);
     _pstate[sizeof(_pstate) - 1] = '\0';
     _poseNew = true;
+    portEXIT_CRITICAL(&_mux);
+}
+
+void LogServer::updateStatus(uint8_t phase, uint32_t elapsedMs,
+                             bool motorsOn, bool motorsLocked) {
+    portENTER_CRITICAL(&_mux);
+    _phase        = phase;
+    _elapsedMs    = elapsedMs;
+    _motorsOn     = motorsOn;
+    _motorsLocked = motorsLocked;
+    portEXIT_CRITICAL(&_mux);
 }
 
 // ─── updateLidar ─────────────────────────────────────────────────────────────
@@ -238,14 +427,19 @@ void LogServer::updateLidar(const LidarPoint* buf, uint16_t n) {
         if (buf[i].distance_mm < (uint16_t)LIDAR_BODY_DIST_MM)     continue;
         if (buf[i].distance_mm > 3000)                              continue;
         if (pos >= (int)sizeof(local) - 20)                         break;
+        // Angle en repère ROBOT (0° = avant, 90° = gauche, sens CCW), même
+        // conversion que la détection d'obstacle : 270° − brut + offset calib.
+        float rDeg = fmodf(270.0f - buf[i].angle_deg + gCalib.lidarOffsetDeg + 720.0f, 360.0f);
         pos += snprintf(local + pos, sizeof(local) - pos, "%s[%d,%d]",
                         first ? "" : ",",
-                        (int)buf[i].angle_deg, (int)buf[i].distance_mm);
+                        (int)(rDeg + 0.5f) % 360, (int)buf[i].distance_mm);
         first = false;
     }
     pos += snprintf(local + pos, sizeof(local) - pos, "]}");
+    portENTER_CRITICAL(&_mux);
     memcpy(_lidarJson, local, pos + 1);
     _lidarNew = true;
+    portEXIT_CRITICAL(&_mux);
 }
 
 // ─── updateLidarAbs ───────────────────────────────────────────────────────────
@@ -275,37 +469,43 @@ void LogServer::updateLidarAbs(const LidarPoint* buf, uint16_t n,
         float wy = robot_y - d * sinf(a);
 
         // Filtre : uniquement les points dans les limites de la table
-        if (wx < 0 || wx > TABLE_WIDTH_MM)  continue;
-        if (wy < 0 || wy > TABLE_HEIGHT_MM) continue;
+        if (wx < 0 || wx > gTable.w()) continue;
+        if (wy < 0 || wy > gTable.h()) continue;
 
         pos += snprintf(local + pos, sizeof(local) - pos, "%s[%d,%d]",
                         first ? "" : ",", (int)wx, (int)wy);
         first = false;
     }
     pos += snprintf(local + pos, sizeof(local) - pos, "]}");
+    portENTER_CRITICAL(&_mux);
     memcpy(_lidarAbsJson, local, pos + 1);
     _lidarAbsNew = true;
+    portEXIT_CRITICAL(&_mux);
 }
 
 // ─── updateActuators ──────────────────────────────────────────────────────────
 
 void LogServer::updateActuators(float fwL, float fwR, float fd, float sbg, float sbd) {
     // Servo jamais commandé → NAN : envoyé comme -1 (NAN rendrait le JSON invalide)
+    portENTER_CRITICAL(&_mux);
     _actFwL = fwL; _actFwR = fwR; _actFd = fd;
     _actSbg = isnan(sbg) ? -1.0f : sbg;
     _actSbd = isnan(sbd) ? -1.0f : sbd;
     _actNew = true;
+    portEXIT_CRITICAL(&_mux);
 }
 
 void LogServer::updateMotion(uint8_t state, uint8_t phase,
                               float distMm, float speedCap,
                               float vL, float vR,
                               float tgtX, float tgtY, float tgtTheta) {
+    portENTER_CRITICAL(&_mux);
     _motSt = state; _motPh = phase;
     _motDist = distMm; _motCap = speedCap;
     _motVL = vL; _motVR = vR;
     _motTgtX = tgtX; _motTgtY = tgtY; _motTgtTheta = tgtTheta;
     _motNew = true;
+    portEXIT_CRITICAL(&_mux);
 }
 
 // ─── pollCmd ─────────────────────────────────────────────────────────────────
@@ -326,7 +526,7 @@ void LogServer::_loop() {
         // Logs
         LogEntry e;
         while (xQueueReceive(_logQueue, &e, 0) == pdTRUE) {
-            char buf[140];
+            char buf[192];
             snprintf(buf, sizeof(buf),
                      "{\"l\":\"%c\",\"t\":\"%s\",\"m\":\"%s\",\"ts\":%lu}",
                      e.level, e.tag, e.msg, (unsigned long)e.ts);
@@ -335,37 +535,51 @@ void LogServer::_loop() {
 
         // Pose
         if (_poseNew) {
+            char buf[240];
+            portENTER_CRITICAL(&_mux);
             _poseNew = false;
-            char buf[160];
             snprintf(buf, sizeof(buf),
                      "{\"type\":\"pose\",\"x\":%.1f,\"y\":%.1f,\"a\":%.1f,"
-                     "\"state\":\"%s\",\"nd\":%.0f,\"na\":%.1f,\"tm\":\"%c\",\"cc\":%d}",
+                     "\"state\":\"%s\",\"nd\":%.0f,\"na\":%.1f,\"tm\":\"%c\",\"cc\":%d,"
+                     "\"ph\":%u,\"el\":%lu,\"mo\":%d,\"ml\":%d,\"te\":%d}",
                      (double)_px, (double)_py, (double)_ptheta,
                      _pstate, (double)_navDist, (double)_navDelta, (char)_team,
-                     _canClick ? 1 : 0);
+                     _canClick ? 1 : 0,
+                     (unsigned)_phase, (unsigned long)_elapsedMs,
+                     _motorsOn ? 1 : 0, _motorsLocked ? 1 : 0,
+                     gTable.essai ? 1 : 0);
+            portEXIT_CRITICAL(&_mux);
             _ws.broadcastTXT(buf);
         }
 
         // LIDAR radar (relatif)
         if (_lidarNew) {
+            portENTER_CRITICAL(&_mux);
             _lidarNew = false;
-            _ws.broadcastTXT(_lidarJson);
+            memcpy(_sendBuf, _lidarJson, sizeof(_sendBuf));
+            portEXIT_CRITICAL(&_mux);
+            _ws.broadcastTXT(_sendBuf);
         }
 
         // LIDAR absolu (coordonnées table)
         if (_lidarAbsNew) {
+            portENTER_CRITICAL(&_mux);
             _lidarAbsNew = false;
-            _ws.broadcastTXT(_lidarAbsJson);
+            memcpy(_sendBuf, _lidarAbsJson, sizeof(_sendBuf));
+            portEXIT_CRITICAL(&_mux);
+            _ws.broadcastTXT(_sendBuf);
         }
 
         // Actionneurs
         if (_actNew) {
-            _actNew = false;
             char buf[128];
+            portENTER_CRITICAL(&_mux);
+            _actNew = false;
             snprintf(buf, sizeof(buf),
                      "{\"type\":\"act\",\"fwL\":%.1f,\"fwR\":%.1f,\"fd\":%.1f,\"sbg\":%.1f,\"sbd\":%.1f}",
                      (double)_actFwL, (double)_actFwR, (double)_actFd,
                      (double)_actSbg, (double)_actSbd);
+            portEXIT_CRITICAL(&_mux);
             _ws.broadcastTXT(buf);
         }
 
@@ -374,11 +588,16 @@ void LogServer::_loop() {
             _calibNew = false;
             _ws.broadcastTXT(_calibJson);
         }
+        if (_calresNew) {
+            _calresNew = false;
+            _ws.broadcastTXT(_calresJson);
+        }
 
         // Motion debug + cible
         if (_motNew) {
-            _motNew = false;
             char buf[256];
+            portENTER_CRITICAL(&_mux);
+            _motNew = false;
             // Note : tgtTheta peut être NaN → on envoie -9999 comme sentinelle
             float tT = isnanf((float)_motTgtTheta) ? -9999.0f : (float)_motTgtTheta;
             snprintf(buf, sizeof(buf),
@@ -389,34 +608,113 @@ void LogServer::_loop() {
                 (double)_motDist, (double)_motCap,
                 (double)_motVL, (double)_motVR,
                 (double)_motTgtX, (double)_motTgtY, (double)tT);
+            portEXIT_CRITICAL(&_mux);
             _ws.broadcastTXT(buf);
         }
 
+        // Dernier mouvement enregistré : un bloc par tour, seulement si une
+        // page est connectée (sinon il attend la prochaine connexion)
+        if (gRecorder.ready() && _clients > 0) _sendRecChunk();
+
         vTaskDelay(pdMS_TO_TICKS(10));
     }
+}
+
+// ─── Envoi de l'enregistrement de mouvement ──────────────────────────────────
+// {"type":"rec","g":gen,"i":premier,"n":total,"tr":tronqué,"d":[[t,st,ph,x,y,
+//  th,cmdL,cmdR,vL,vR,errD,errA,cap],...]} — unités de RecSample (recorder.h).
+// L'interface assemble les blocs d'un même g et ignore un g incomplet.
+
+static constexpr uint16_t REC_CHUNK = 32;   // ~3 Ko par message
+
+void LogServer::_sendRecChunk() {
+    static char buf[REC_CHUNK * 96 + 128];  // hors pile : tâche WiFi 8 Ko
+
+    const uint32_t gen = gRecorder.gen();
+    if (gen != _recGen) { _recGen = gen; _recIdx = 0; }
+    const uint16_t n = gRecorder.count();
+    if (_recIdx >= n) { gRecorder.markSent(); return; }
+
+    int pos = snprintf(buf, sizeof(buf),
+                       "{\"type\":\"rec\",\"g\":%lu,\"i\":%u,\"n\":%u,\"tr\":%d,\"d\":[",
+                       (unsigned long)gen, (unsigned)_recIdx, (unsigned)n,
+                       gRecorder.truncated() ? 1 : 0);
+    uint16_t end = _recIdx + REC_CHUNK;
+    if (end > n) end = n;
+    for (uint16_t i = _recIdx; i < end; i++) {
+        const RecSample& s = gRecorder.at(i);
+        pos += snprintf(buf + pos, sizeof(buf) - pos,
+                        "%s[%u,%u,%u,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]",
+                        i == _recIdx ? "" : ",",
+                        (unsigned)s.t, (unsigned)s.state, (unsigned)s.phase,
+                        s.x, s.y, s.th, s.cmdL, s.cmdR, s.vL, s.vR,
+                        s.errD, s.errA, s.cap);
+    }
+    snprintf(buf + pos, sizeof(buf) - pos, "]}");
+
+    // Écrasé par un nouveau mouvement pendant la copie : on repartira de zéro
+    if (gRecorder.gen() != gen) return;
+    _ws.broadcastTXT(buf);
+    _recIdx = end;
+    if (_recIdx >= n && gRecorder.gen() == gen) gRecorder.markSent();
+}
+
+// ─── Configuration envoyée à la connexion ─────────────────────────────────────
+// Source unique : l'interface prend ces valeurs dans config.h au lieu d'en
+// garder des copies (zone de détection, zones aveugles, dimensions, noms).
+
+void LogServer::_sendConfig(uint8_t num) {
+    char buf[640];
+    snprintf(buf, sizeof(buf),
+        "{\"type\":\"config\",\"obsDetect\":%.0f,\"obsWidth\":%.0f,\"obsMin\":%.0f,"
+        "\"body\":%.0f,\"blind\":[[%.0f,%.0f],[%.0f,%.0f]],"
+        "\"tw\":%.0f,\"th\":%.0f,\"ew\":%.0f,\"eh\":%.0f,"
+        "\"rf\":%.2f,\"rb\":%.2f,\"rw\":%.1f,"
+        "\"matchMs\":%lu,\"endgameMs\":%lu,"
+        "\"motState\":[\"IDLE\",\"MOVING\",\"HOLD\",\"OBSTACLE\"],"
+        "\"motPhase\":[\"NONE\",\"ALIGN\",\"TRANSLATE\",\"FINAL_TURN\"]}",
+        (double)OBS_DETECT_DIST_MM, (double)OBS_WIDTH_MM, (double)OBS_MIN_DIST_MM,
+        (double)LIDAR_BODY_DIST_MM,
+        (double)LIDAR_BLIND_L_START, (double)LIDAR_BLIND_L_END,
+        (double)LIDAR_BLIND_R_START, (double)LIDAR_BLIND_R_END,
+        (double)TABLE_WIDTH_MM, (double)TABLE_HEIGHT_MM,
+        (double)ESSAI_WIDTH_MM, (double)ESSAI_HEIGHT_MM,
+        (double)ROBOT_FRONT_TO_CENTER_MM, (double)ROBOT_BACK_TO_CENTER_MM,
+        (double)ROBOT_WIDTH_MM,
+        (unsigned long)MATCH_DURATION_MS, (unsigned long)MATCH_ENDGAME_MS);
+    _ws.sendTXT(num, buf);
+}
+
+// Origine admise : http://<adresse du robot>[:80]
+bool LogServer::_originOk(const String& origin) const {
+    String o = origin;
+    o.trim();
+    if (o.endsWith(":80")) o.remove(o.length() - 3);
+    const String sta = "http://" + WiFi.localIP().toString();
+    const String ap  = "http://" + WiFi.softAPIP().toString();
+    return o == sta || o == ap;
 }
 
 // ─── Calibration ─────────────────────────────────────────────────────────────
 
 void LogServer::_buildCalibJson() {
     snprintf(_calibJson, sizeof(_calibJson),
-        "{\"type\":\"calib_state\","
-        "\"encWheelDiam\":%.3f,\"encWheelbase\":%.2f,\"wheelbase\":%.2f,"
+        "{\"type\":\"calib_state\",\"saved\":%d,\"encWheelRatio\":%.5f,"
+        "\"encWheelDiam\":%.4f,\"encWheelbase\":%.3f,\"wheelbase\":%.3f,"
         "\"driveWheelDiam\":%.3f,\"lidarOffset\":%.2f,"
-        "\"kp\":%.4f,\"ki\":%.5f,\"kd\":%.4f,\"iMax\":%.1f,"
-        "\"stopMm\":%.2f,\"minSpd\":%.2f,"
+        "\"kpDist\":%.3f,\"kpAng\":%.3f,\"ki\":%.4f,\"iMax\":%.1f,"
+        "\"stopMm\":%.2f,\"stopDeg\":%.2f,\"minSpd\":%.2f,"
         "\"defaultSpeed\":%.0f,\"defaultAccel\":%.0f}",
+        calibIsSaved() ? 1 : 0, (double)gCalib.encWheelRatio,
         (double)gCalib.encWheelDiamMm,   (double)gCalib.encWheelbase,
         (double)gCalib.wheelbase,         (double)gCalib.driveWheelDiamMm,
         (double)gCalib.lidarOffsetDeg,
-        (double)gCalib.kp,  (double)gCalib.ki,  (double)gCalib.kd, (double)gCalib.iMax,
-        (double)gCalib.stopMm,  (double)gCalib.minSpd,
+        (double)gCalib.kpDist, (double)gCalib.kpAng, (double)gCalib.ki, (double)gCalib.iMax,
+        (double)gCalib.stopMm, (double)gCalib.stopDeg, (double)gCalib.minSpd,
         (double)gCalib.defaultSpeed, (double)gCalib.defaultAccel);
 }
 
 void LogServer::_handleCalibMsg(const char* p) {
-    static constexpr float PI_F = 3.14159265f;
-
     char key[32] = {};
     const char* kp = strstr(p, "\"key\":\"");
     if (kp) {
@@ -428,18 +726,48 @@ void LogServer::_handleCalibMsg(const char* p) {
     if (!vp || !key[0]) return;
     float val = (float)atof(vp + 6);
 
-    if      (strcmp(key, "encWheelDiam")   == 0) {
-        gCalib.encWheelDiamMm = val;
-        gCalib.mmPerCount     = PI_F * val / (ENC_PPR * 4.0f);
-    } else if (strcmp(key, "encWheelbase")  == 0) { gCalib.encWheelbase     = val; }
+    // Plages admises (mêmes bornes que les champs min/max de data/index.html).
+    // Hors plage ou non numérique → refus, et l'UI est resynchronisée.
+    struct Range { const char* key; float lo, hi; };
+    static const Range ranges[] = {
+        {"encWheelDiam",   45.0f,   55.0f}, {"encWheelbase", 170.0f,  210.0f},
+        {"encWheelRatio",   0.97f,   1.03f},
+        {"wheelbase",     130.0f,  160.0f}, {"driveWheelDiam", 52.0f,  62.0f},
+        {"lidarOffset",   -15.0f,   15.0f}, {"kpDist",         0.0f,   30.0f},
+        {"kpAng",           0.0f,   30.0f}, {"ki",             0.0f,   20.0f},
+        {"iMax",            0.0f,  200.0f}, {"stopMm",         0.2f,   10.0f},
+        {"stopDeg",         0.1f,    5.0f},
+        {"minSpd",          4.0f,   50.0f}, {"defaultSpeed", 200.0f, 5000.0f},
+        {"defaultAccel",  200.0f, 8000.0f},
+    };
+    const Range* r = nullptr;
+    for (const Range& it : ranges) if (strcmp(key, it.key) == 0) { r = &it; break; }
+    if (!r) return;
+
+    // Pas de changement pendant le calage ni pendant le match : la pose et
+    // l'asservissement en dépendent. Autorisé avant et après le match.
+    MatchPhase ph = gDisplay.match_phase;
+    bool busy = (ph == MatchPhase::CALAGE || ph == MatchPhase::MATCH ||
+                 ph == MatchPhase::ENDGAME);
+    if (busy || !isfinite(val) || val < r->lo || val > r->hi) {
+        if (busy) LOG_W("CALIB", "%s refuse : calage ou match en cours", key);
+        else      LOG_W("CALIB", "%s=%.3f refuse : hors [%.3g, %.3g]", key,
+                        (double)val, (double)r->lo, (double)r->hi);
+        _buildCalibJson();     // renvoie les valeurs réelles → l'UI se corrige
+        _calibNew = true;
+        return;
+    }
+
+    if      (strcmp(key, "encWheelDiam")   == 0) { gCalib.encWheelDiamMm = val; gCalib.recompute(); }
+    else if   (strcmp(key, "encWheelRatio") == 0) { gCalib.encWheelRatio  = val; gCalib.recompute(); }
+    else if   (strcmp(key, "encWheelbase")  == 0) { gCalib.encWheelbase     = val; }
     else if   (strcmp(key, "wheelbase")     == 0) { gCalib.wheelbase        = val; }
-    else if   (strcmp(key, "driveWheelDiam") == 0) {
-        gCalib.driveWheelDiamMm = val;
-        gCalib.stepsPerMm       = (float)STEPPER_STEPS_REV / (PI_F * val);
-    } else if (strcmp(key, "lidarOffset")   == 0) { gCalib.lidarOffsetDeg   = val; }
-    else if   (strcmp(key, "kp")            == 0) { gCalib.kp               = val; }
+    else if   (strcmp(key, "driveWheelDiam") == 0) { gCalib.driveWheelDiamMm = val; gCalib.recompute(); }
+    else if   (strcmp(key, "lidarOffset")   == 0) { gCalib.lidarOffsetDeg   = val; }
+    else if   (strcmp(key, "kpDist")        == 0) { gCalib.kpDist           = val; }
+    else if   (strcmp(key, "kpAng")         == 0) { gCalib.kpAng            = val; }
     else if   (strcmp(key, "ki")            == 0) { gCalib.ki               = val; }
-    else if   (strcmp(key, "kd")            == 0) { gCalib.kd               = val; }
+    else if   (strcmp(key, "stopDeg")       == 0) { gCalib.stopDeg          = val; }
     else if   (strcmp(key, "iMax")          == 0) { gCalib.iMax             = val; }
     else if   (strcmp(key, "stopMm")        == 0) { gCalib.stopMm           = val; }
     else if   (strcmp(key, "minSpd")        == 0) { gCalib.minSpd           = val; }

@@ -293,7 +293,7 @@ Template:
 - Decided by: Seif
 - Status: active
 - Decision: The first stone gripper we print and test on real stones is **clapets v5**, refined for printing by Seif
-  as **clapets v6** in `mechanical/clapets-v6/` (scripts copied from v5, renamed v6; outputs go to `clapets-v6/CAD_FC/`).
+  as **clapets v6** in `mechanical/clapets/clapets-v6/` (scripts copied from v5, renamed v6; outputs go to `clapets-v6/CAD_FC/`).
   v5 stays as Maatoug left it. Concepts A/B/C (`mechanical/concepts/stone-gripper.md`) are **not dropped**; the real
   test decides.
 - Alternatives considered: editing v5 in place (would overwrite Maatoug's reference outputs); prototyping A/B first.
@@ -305,7 +305,7 @@ Template:
 - Area: mechanical
 - Decided by: Seif
 - Status: active (updates D-019: v7 replaces v6 as the print target; v5 and v6 stay as references)
-- Decision: The proof of concept is printed from `mechanical/clapets-v7/`. Choices made in it:
+- Decision: The proof of concept is printed from `mechanical/clapets/clapets-v7/`. Choices made in it:
   - **M3 heat-set inserts, hole Ø4.6 × 6.5** (sized from a part that fits Seif's inserts) instead of nut pockets in the
     door units; **nuts are kept** in split clamps, door sheet screws, head servo, hub clamp and cup stations.
   - **Door unit reworked:** full-height outer wall + closed box above the gears, servo held by 3 screws into inserts
@@ -319,7 +319,7 @@ Template:
 - Alternatives considered: printing v6 (nut pockets, open door unit frame, impossible motor mount).
 - Why: make the first print match the real parts in hand, with nothing left to guess.
 - Consequences: before printing: tolerance check of every fastener, door sheet + foam redesign, suction carrier with real
-  tube sizes, printability check, caliper measurements (`mechanical/clapets-v7/README.md`). Full-cycle check not run yet.
+  tube sizes, printability check, caliper measurements (`mechanical/clapets/clapets-v7/README.md`). Full-cycle check not run yet.
 
 ## D-021 — Clapets v8: the suction head strikes forward on its own
 - Date: 2026-11-03
@@ -327,7 +327,7 @@ Template:
 - Decided by: Maatoug
 - Status: **proposed** (Seif to confirm; v7 stays the print target until then)
 - Decision: The cups must press firmly onto the boxes to attach reliably, with a forward movement inside module B only,
-  while the doors hold the stack. In `mechanical/clapets-v8/` (copy of v7, owned by Maatoug), module B is split into a
+  while the doors hold the stack. In `mechanical/clapets/clapets-v8/` (copy of v7, owned by Maatoug), module B is split into a
   **fixed base** (2 bars on the 4 wheel bolts, each holding a Ø8 guide rod) and a **sliding carriage** (bearing tube,
   head servo, gears, carrier, cups). A **3rd MG996R** on the carriage turns a crank whose pin runs in a slot of the base
   (scotch yoke): +90° → the carriage goes **8 mm forward**, at dead centre so it holds. Rest pose = v7 (cups touching
@@ -345,7 +345,7 @@ Template:
 - Area: mechanical
 - Decided by: Seif
 - Status: active (updates D-020: door unit, inserts, motor pad)
-- Decision: In `mechanical/clapets-v7/`, the door unit (`A_AILE`) and its cap are rebuilt from scratch as **option B**
+- Decision: In `mechanical/clapets/clapets-v7/`, the door unit (`A_AILE`) and its cap are rebuilt from scratch as **option B**
   (`mechanical/concepts/aile-redesign/README.md`): a **C-section spine** (keel on the plate, back wall behind the servo,
   outer wall, bottom + top shelves, 3 mm walls, rounded windows, one outline whose chamfers continue into the cap) and a
   **cap to z 242** that carries the top 608 and the top plate M4. Print upright. Servo: **3 screws**, plain M3 nut under a

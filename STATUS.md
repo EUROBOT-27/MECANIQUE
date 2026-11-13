@@ -12,8 +12,8 @@ _Last updated: 2026-11-10 (Seif)_
 - **Gate:** shares a driving face (front/back) with a stone gripper, no side face (D-011). Space to reserve and
   concepts in `mechanical/concepts/gate-lintel.md`. Mechanism not chosen.
 - **Stone gripper:** concepts A (side clamp), B (suction), C (both) in `mechanical/concepts/stone-gripper.md` (Seif).
-  In parallel, Maatoug designed **clapets v5** (`mechanical/clapets-v5/`, D-014 → D-017): doors + lift + a suction head
-  that turns the 3-box stack. **First prototype = clapets v7** (`mechanical/clapets-v7/`, D-019, D-020, **D-022**):
+  In parallel, Maatoug designed **clapets v5** (`mechanical/clapets/clapets-v5/`, D-014 → D-017): doors + lift + a suction head
+  that turns the 3-box stack. **First prototype = clapets v7** (`mechanical/clapets/clapets-v7/`, D-019, D-020, **D-022**):
   **module A (lift + doors) is ready to print**: door unit + cap rebuilt (option B, C-section spine), nuts in pockets
   instead of inserts (only 4 M3 inserts left), sized for PLA, rest check + fast door sweep clean. **Next: print the
   tolerance coupons** (`tolerance-tests/`, ~150 g), update the fits, then module A (~600 g PLA) with the assembly guide

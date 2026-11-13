@@ -12,6 +12,8 @@ public:
     // ── Déplacements bloquants ────────────────────────────────────────────────
     void go(float mm);              // relatif, positif = avant
     void turn(float deg);           // relatif, positif = gauche (CCW)
+    // Rotation en boucle ouverte à vitesse / accélération données (calibration)
+    void turnAt(float deg, float speedMmS, float accelMmS2);
 
     // ── Déplacements non-bloquants ────────────────────────────────────────────
     void startGo(float mm);
@@ -19,12 +21,22 @@ public:
     void startTurnOpen(float deg);          // rotation continue (roues opposées), arrêt géré par l'appelant
     void setMotorSpeeds(float leftMmS, float rightMmS);      // magnitude seule (direction inchangée)
     void setMotorVelocities(float leftMmS, float rightMmS);  // vitesse signée, gère la direction
-    void startTurn(float deg);
+    void startTurn(float deg, float speedMmS = TURN_SPEED_MMS, float accelMmS2 = TURN_ACCEL_MMS2);
     bool isMoving() const;
     void stop();                            // arrêt immédiat (force)
     void softStop(float accelOverride = 0); // arrêt avec décélération
     void disableMotors();
-    void enableMotors();
+    void enableMotors();                    // sans effet tant que verrouillé
+    // Verrou posé par le chrono de match à 100 s : les moteurs restent coupés
+    // quoi que demande la stratégie, jusqu'à la relance d'un match.
+    void setLocked(bool locked) { _locked = locked; }
+    bool isLocked()  const      { return _locked; }
+    bool isEnabled() const      { return _enabled; }   // sorties EN actives
+
+    // Position des roues motrices d'après les pas émis (mm, + = avant) : sert
+    // à comparer aux roues codeuses (glissement, blocage, pas perdus)
+    float motorMmL() const;
+    float motorMmR() const;
 
     // ── Mise à jour pose depuis les pas ──────────────────────────────────────
     void syncPose();
@@ -40,6 +52,9 @@ public:
     void  setSpeed(float mmS);
     void  setAcceleration(float mmS2);
     void  pushAcceleration();   // applique _accel sur les steppers (après softStop)
+    // Accélération des pas à pas pour la commande en vitesse (MotionController),
+    // sans toucher au réglage _accel de la stratégie
+    void  setStepperAccel(float mmS2);
     float getSpeed()        const { return _speed; }
     float getAcceleration() const { return _accel; }
 
@@ -52,6 +67,8 @@ private:
     float   _speed = DEFAULT_SPEED_MMS;
     float   _accel = DEFAULT_ACCEL_MMS2;
     int32_t _refL = 0, _refR = 0;
+    volatile bool _locked  = false;
+    volatile bool _enabled = false;
 
     void     _applySpeed();
     void     _waitDone();

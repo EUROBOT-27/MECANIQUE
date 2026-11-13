@@ -39,6 +39,18 @@ Rules: pull before you start, push at wrap, never force-push, one owner per CAD 
 Not committed (personal): claude-workspace/ (Claude memory, scratch), eurobot2027/ (separate repo).
 
 
+FULL ROBOT + GAZEBO MODEL (mechanical/robot, details in mechanical/robot/README.md)
+----------------------------------------------------------------------------------
+Automatic, LOCAL ONLY: after each Claude turn / git commit / git pull where a mechanism file changed, the robot is
+rebuilt (~3 min, background) and copied into eurobot2027/Simulation-Euro27. Nothing goes to GitHub by itself.
+! python tools/sync_robot.py --check   is the robot up to date?
+! python tools/sync_robot.py           rebuild if needed + copy into the local sim clone
+! python tools/sync_robot.py --force   rebuild even if nothing changed
+! python tools/sync_robot.py --push    publish the model to Simulation-Euro27 on GitHub (commit the hub first)
+! python tools/install_hooks.py        once per clone, and again when tools/hooks/post-* change
+Log: mechanical/robot/CAD_FC/sync.log
+
+
 USEFUL BUILT-IN CLAUDE CODE COMMANDS
 ------------------------------------
 /clear      Start a fresh conversation (do /wrap first!)

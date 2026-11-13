@@ -9,7 +9,7 @@
 > - **In parallel:** module B (suction head) with Maatoug in `../clapets-v8/`; it must take module A from here.
 > - **Assembly guide (v1):** [`assembly/clapets_v7_moduleA_assembly.pdf`](assembly/clapets_v7_moduleA_assembly.pdf),
 >   15 A4 sheets, made from the CAD. Regenerate after the tolerance tests (see `assembly/README.md`).
-> - Concept history of the door unit: [`../concepts/aile-redesign/README.md`](../concepts/aile-redesign/README.md).
+> - Concept history of the door unit: [`../../concepts/aile-redesign/README.md`](../../concepts/aile-redesign/README.md).
 
 Copy of [clapets v6](../clapets-v6/README.md) (v5 + real horn + real servo wires). v5 and v6 stay untouched. Owner while
 in progress: **Seif**. Design = `fc/v7_fc.py` (dimensions in `class G`); never edit the `.FCStd` by hand.
@@ -60,7 +60,7 @@ Plan: PLA for the tolerance tests + this prototype, ABS for robot parts (enclose
 - Rest pose: 0 interferences, 0 reserve violations.
 
 ### 2026-11-10 (3): door unit + cap rebuilt as option B (Seif)
-Concept, sketches and reasons: `../concepts/aile-redesign/README.md`. `aile()` and `capot_aile()` rewritten from scratch
+Concept, sketches and reasons: `../../concepts/aile-redesign/README.md`. `aile()` and `capot_aile()` rewritten from scratch
 (the old box, closing walls, arch walls, cap bosses and nut slides are gone). Kept: plate holes, both 608 seats, servo place.
 - **Spine (`A_AILE`), C-section, 3 mm walls, printed upright, no support:** keel on the plate (x 66–98, y 50.5–60.5,
   carries the bottom plate M4), web (x 95.2–98) to a **back wall behind the servo** (y 34–37: the 20T tips reach y 38.25),

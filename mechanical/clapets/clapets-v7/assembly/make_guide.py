@@ -1,5 +1,5 @@
 # make_guide.py - builds the module A assembly guide (A4 PDF) from assembly/steps.py and the images rendered by
-# fc/assembly_images_v7.py.   Run: python mechanical/clapets-v7/assembly/make_guide.py
+# fc/assembly_images_v7.py.   Run: python mechanical/clapets/clapets-v7/assembly/make_guide.py
 import importlib.util
 import json
 import os

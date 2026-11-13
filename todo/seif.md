@@ -16,7 +16,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
-- [ ] **Clapets v7 module A: print and test** (`mechanical/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
+- [ ] **Clapets v7 module A: print and test** (`mechanical/clapets/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
   1. Print the **tolerance coupons** (`tolerance-tests/README.md`, 10 coupons incl. the 2 door gears, ~150 g PLA,
      4 perimeters, 20 % infill) and report the best variant of each → update `class G`, regenerate CAD + assembly guide
   2. Print module A (~600 g PLA, 40 % infill), assemble with `assembly/clapets_v7_moduleA_assembly.pdf`, test
@@ -63,7 +63,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [x] Tolerance check of every nut / screw / insert (fastener check + insert views) — 2026-11-10
 - [x] Motion video of v7 → `mechanical/simulations/clapets_v7/` (door GIF + module A cycle GIF) — 2026-11-10
 - [x] Full-cycle check of clapets v7: no real collision, deployed ≤ 1367.3 mm — 2026-11-01
-- [x] Clapets v6 (real horn + wires) and v7 (door units reworked, real Two Trees parts, all fasteners + BOM, motor on the floor) → `mechanical/clapets-v6/`, `mechanical/clapets-v7/` (D-019, D-020) — 2026-11-01
+- [x] Clapets v6 (real horn + wires) and v7 (door units reworked, real Two Trees parts, all fasteners + BOM, motor on the floor) → `mechanical/clapets/clapets-v6/`, `mechanical/clapets/clapets-v7/` (D-019, D-020) — 2026-11-01
 - [x] Real Two Trees Bluer V2 parts extracted → `mechanical/resources/two-trees-bluer-v2-parts/` — 2026-11-01
 - [x] Claude removed from GitHub contributors; attribution off in `.claude/settings.json` — 2026-11-01
 - [x] Shared hub: merged Seif's and Maatoug's copies into the git repo EUROBOT-27/MECANIQUE, Git LFS for CAD/images, per-person TODO and logs (D-018) — 2026-11-01

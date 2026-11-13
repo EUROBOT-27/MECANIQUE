@@ -68,7 +68,7 @@ class G:
     # centre, y ±5. Cable grommet: shaft-end face, centred, 3.7..8.3 above the bottom, sticks out 5.8.
     SV_L, SV_W, SV_H, SV_FL, SV_OUT, SV_HORN = 40.4, 20.4, 38.0, 28.0, 10.2, 45.7   # v6: real horn disc top (was 43.5)
     SV_EAR = 24.5
-    SV_DIR = os.path.join(HERE, "..", "..", "resources", "mg996r-servo-3.snapshot.9")   # real GrabCAD model (body + horns)
+    SV_DIR = os.path.join(HERE, "..", "..", "..", "resources", "mg996r-servo-3.snapshot.9")   # real GrabCAD model (body + horns)
     SV_STEP = os.path.join(SV_DIR, "mg996R_v2.step")
     HORN_STEP = os.path.join(SV_DIR, "mg996_arm_round.step")   # round horn: hub Ø9 x 3, disc Ø20.8 x 2.5, boss Ø9.2 x 0.8
     SV_X1 = PX + SV_OUT

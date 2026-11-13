@@ -1,0 +1,9 @@
+# FreeCAD backups and caches
+*.FCBak
+__pycache__/
+*.pyc
+# motion frames (the GIF is kept) and run logs
+CAD_FC/motion/frames_*/
+*.log
+# copies of files already in mechanical/resources/mg996r-servo-3.snapshot.9/
+sw/servo-duplicates/

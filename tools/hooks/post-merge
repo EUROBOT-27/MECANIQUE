@@ -1,0 +1,8 @@
+#!/bin/sh
+# Installed by tools/install_hooks.py. Git LFS's own hook first, then the robot sync in the background.
+# post-merge (git pull): rebuild if a mechanism changed + copy into the LOCAL sim clone (no GitHub push)
+command -v git-lfs >/dev/null 2>&1 && git lfs post-merge "$@"
+HUB="$(git rev-parse --show-toplevel)"
+PY=""; for c in python3 python py; do "$c" -c "" >/dev/null 2>&1 && PY="$c" && break; done   # skips the Windows Store stubs
+[ -n "$PY" ] && "$PY" "$HUB/tools/hooks/sync_bg.py" >/dev/null 2>&1
+exit 0
