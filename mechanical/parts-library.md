@@ -58,6 +58,7 @@ Source: **Ender** = the disassembled printer. **Correction 2026-10-27: it is a T
 | Flange bearing KFL08 ? | 2-bolt oval flange, Ø8 bore | 1 | Lab | seen (on a shaft) | 314f82e3, 71b33ca8 | | Lead-screw end support |
 | Small ball bearings | ~Ø10–13 mm OD, plain + flanged (MR/623/F623 ?) | ~8 | Lab | seen | b6e9494c, a45eb9fd | | Read the codes on the shields |
 | Larger ball bearings | 2RS, ~Ø22–35 mm OD (608 / 6000 / 6201 ?) | 2 | Lab | seen | a45eb9fd | | Read codes |
+| **Ball transfer KSM15-FL** (with screw rod) | ball Ø15.875, 21 tall from ball top to the base face, ball ~4 above the body, threaded stud 18 long; rated 40–50 kg (seller drawing) | 4 | order (Seif, 2026-11-13) | seen | parts-photos/ksm15fl-ball-transfer.png | robot layout (casters) | Measure body Ø and stud thread on arrival |
 | Rod + pressed bearing | Ø8 rod with a ~Ø22 bearing on the end | 1 | Lab | seen | fb47ae7a | | Ready idler / roller |
 | Flexible coupler (beam/slotted) | 5 → 8 mm ? | 2 | Ender + Lab | seen | a45eb9fd, c4f8640e | | Motor → lead screw |
 | Brass hex coupler | small, set screw, ~3–4 mm bore | 1 | Lab | seen | b6e9494c | | For N20 motor shafts (wheels/arms) |
@@ -79,7 +80,9 @@ Source: **Ender** = the disassembled printer. **Correction 2026-10-27: it is a T
 | Part | Spec | Qty | Source | Status | Photo | Used in | Notes |
 |---|---|---|---|---|---|---|---|
 | Mini air pump | 9.6–14.4 V (12 V typ.), air, 6.0 L/min, Ø31.8 × 66 mm | 6 | Lextronic order (2026-10) | planned (arriving) | | Stone gripper B (suction) | Vacuum level not given → test on real cardboard stones |
-| Suction cup **DP S30** | size ? | ? | to source | planned | | Stone gripper B | Holder printed in **TPU** (decision of Maatoug, 2026-10-27). Note cup Ø and thread when they arrive |
+| **12 V vacuum pump (370 motor)** + 0.8 m tube | 12 V, 370-size motor, vacuum −60 kPa, pressure 120 kPa (seller) | 6 | order (Seif, 2026-11-13) | seen | parts-photos/12v-vacuum-pump-370.png | suction-v1 | One pump per cup. Measure body size and port Ø on arrival |
+| Suction cup **VS2-S30 (DP-S30)** | bellows cup Ø30, ~18 tall (seller drawing), white silicone | 10 (1 pack) | order (Seif, 2026-11-13) | seen | parts-photos/vs2-s30-dp-s30-suction-cup.png | Stone gripper B, suction-v1 | Holder printed in **TPU** (Maatoug, 2026-10-27). Measure the neck / thread on arrival |
+| Cup connector **VW7-M5** | M5 external thread, hex, ~12.5 long (seller drawing) | 10 (1 pack) | order (Seif, 2026-11-13) | seen | parts-photos/vw7-m5-cup-connector.png | suction-v1 | Joins the cup to an M5 port / fitting. Measure hex AF and tube barb on arrival |
 | Push-in elbow fitting | blue collar, threaded body + swivel | ≥ 1 | Lab | seen | d5063d8b | | Check tube Ø (4 or 6 mm) and thread |
 
 ## 6. Fasteners

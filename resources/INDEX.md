@@ -73,6 +73,12 @@ Source: github.com/Barbatronic/CDR-2027, commit `91f057e` (2026-10-28), committe
 |---|---|---|---|---|
 | `MCAD/actuator-parts/suction-cup-prototype.FCStd` | 1 cup per box, 3 drop-in stations at 110 mm pitch, TPU spiral-spring disc + clamp ring + M5 adapter | suction head design | `gripper` | [studied](_notes/cdr-2027-barbatronic.md) |
 | `MCAD/actuator-parts/box-manipulator.FCStd` (+ 3mf, laser svg) | servo arm with a roller on the box | — | `gripper` | [studied](_notes/cdr-2027-barbatronic.md) |
-| `MCAD/` (other) | differential chassis, launchers, electronics supports | chassis / launcher reference | `chassis` `launcher` | *not skimmed* |
+| `MCAD/differential-structure.FCStd` (+ `mechanical-parts/Semelle`, `electronical-parts/MatBalise`, `actuator-parts/ball-launcher`) | differential chassis: central column 220 × 80 × 320 (10 mm MakerBeam), sole 232 × 80, NEMA 17 drive, Ø58 wheels, odometry blocks at the sides, battery on top inside the column, beacon mast 80 × 80 with an **LD06 LiDAR inside**; 10-ball launcher 220 × 52 × 260 | chassis / launcher / beacon reference | `chassis` `launcher` `beacon` | [skimmed](_notes/cdr-2027-barbatronic.md) |
 | `DOCS/_posts/` | journal: game elements, gate/tower tests, ball launchers | game-element behaviour | `stacking` `launcher` | [studied](_notes/cdr-2027-barbatronic.md) (posts to 2026-09-29) |
 | `FRW/Differential-Robot-Firmware/` | robot firmware (PlatformIO) + FreeCAD simulator macro | software reference | `navigation` | *not skimmed* |
+
+## Local only (not committed): Aerobotix INSAT 2023 main robot
+
+| Resource | What it is | Useful for | Tags | Notes |
+|---|---|---|---|---|
+| `mechanical/resources/2023_GROSBOT.STEP` (246 MB, gitignored) | Aerobotix's Eurobot 2023 main robot, full STEP: 290 × 250 × 350, mast Ø100 350–430, battery high + central, boards on the side walls, mirrored front/back flippers | chassis layout reference | `chassis` `beacon` `electronics` | [studied](_notes/aerobotix-2023-grosbot.md) |
