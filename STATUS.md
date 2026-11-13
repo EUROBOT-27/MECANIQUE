@@ -1,8 +1,8 @@
 # Status
 
-_Last updated: 2026-11-12 (Seif)_
+_Last updated: 2026-11-13 (Seif)_
 
-**Phase:** Strategy partly fixed → **clapets v7 module A: ABS coupons done, CAD updated, ready to print**; module B (suction) reworked by Maatoug in v8. Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
+**Phase:** Strategy partly fixed → **clapets v7 module A: CAD passed (2026-11-13), now printing + testing**; module B (suction) reworked by Maatoug in v8. Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
 **Next deadline:** Strategy chosen (internal), 2026-11-08 (**4 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (10 days) · CAD freeze 2026-12-13 (31 days) · Mechanical built and assembled, 2026-12-31 (49 days)
 **Qualifier:** end of March 2027
 
@@ -16,8 +16,9 @@ _Last updated: 2026-11-12 (Seif)_
   that turns the 3-box stack. **First prototype = clapets v7** (`mechanical/clapets-v7/`, D-019, D-020, **D-022**):
   **ABS tolerance coupons done (2026-11-12)**: fits fixed in the CAD (pinion holes, servo nut recesses, ear openings,
   flat web), cap front tab + insert, teeth that lock the door units on the butterfly plate, nut pockets in the arm tabs,
-  insert holes redesigned (D-025: Ø5.4 × 7 + cone). **Next: print module A in ABS** (~510 g); the assembly guide is out
-  of date for the new features. Module B: Maatoug's **v8** (D-021, proposed: cups strike 8 mm forward),
+  insert holes redesigned (D-025: Ø5.4 × 7 + cone); top crossbar without a 608 (lead screw through a Ø15 hole).
+  **Module A passed CAD on 2026-11-13: printing in ABS (plates sliced), then assembly + test**; the assembly guide is
+  out of date for the new features. Module B: Maatoug's **v8** (D-021, proposed: cups strike 8 mm forward),
   which must take v7's module A. A/B/C not dropped; the test decides.
 - Parts library from the disassembled Ender 3 V2, lines still unverified (D-012).
 - Software: simulation repo (ROS 2 Jazzy + Gazebo), clone separately into `eurobot2027/`. `software/` area exists.

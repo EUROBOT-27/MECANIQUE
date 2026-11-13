@@ -51,7 +51,7 @@ class G:
     BLK_Y1, BLK_YI = 58.5 + LIFT_DY - 0.5 + 10 + 12, 58.5 + LIFT_DY - 0.5 + 10 + 6   # rail blocks to y 55; inserts at y 49
     CPL_Z0, CPL_Z1, SCREW_Z0, SCREW_Z1 = 47, 72, 60, 363    # v7: coupler 2 mm over the clamp plate; lead screw 303 mm
     NUT_Z = 110
-    TOP_Z0, TOP_Z1 = 344, 366                              # 608 from below, 2.8 mm roof over it
+    TOP_Z0, TOP_Z1 = 344, 366                              # top crossbar; 2026-11-12: Ø15 through hole for the lead screw, no 608
     LIFT_CARRY, LIFT_TURN = 15, 75                          # turn: axis 165 + 75 = 240 >= 229.8 (stack half-diagonal) + 10
     BRG_R, BRG_T, BOSS_R = 11.1, 7.2, 14.5                  # 608 seat Ø22.2 (FDM holes print ~0.1 small) + 0.6 lead-in
     ROD_R = 4.1                                             # Ø8.2 bore for the clamps on the Ø8 rods (slides on, clamp closes it)
@@ -423,7 +423,8 @@ def platine_moteur():   # v7: clamp plate on the motor's top face AND both rail 
 def haut():
     top = G.RAIL_Z0 + G.RAIL_L
     a = [box(1, -G.RAIL_DX - 14, G.RAIL_DX + 14, RY0 - 4, RY1 + 4, G.TOP_Z0, G.TOP_Z1)]
-    c = [vcyl(1, 0, YC, G.TOP_Z0 - 1, top + G.BRG_T, G.BRG_R)]
+    # 2026-11-12 (Seif): no 608 at the top any more; the lead screw passes through a plain Ø15 hole (free end)
+    c = [vcyl(1, 0, YC, G.TOP_Z0 - 1, G.TOP_Z1 + 1, 7.5)]
     for s in (1, -1):
         c += [box(s, G.RAIL_DX - 10.2, G.RAIL_DX + 10.2, RY0 - 0.2, RY1 + 0.2, G.TOP_Z0 - 1, top), ycyl(s, G.RAIL_DX, RY0 - 5, RY0 + 1, G.TOP_Z0 + 6, 2.75)]
     part("A_TRAVERSE_HAUT", solid(a, c), G.RHO_PRINT, PETG, "print", "A")
@@ -1052,7 +1053,6 @@ def placements():
     L = -2 * G.PX
     p = [("A_SOCLE", 0, 0, 0, "fixed"), ("A_PLATINE_MOTEUR", 0, 0, 0, "fixed"), ("A_TRAVERSE_HAUT", 0, 0, 0, "fixed"), ("REF_NEMA17", 0, 0, 0, "fixed"),
          ("REF_COUPLEUR_5x8", 0, 0, 0, "fixed"), ("REF_VIS_T8", 0, 0, 0, "fixed"),
-         ("REF_608ZZ", -G.PX, YC - G.PY, G.RAIL_Z0 + G.RAIL_L - (G.LOW + G.PT - 7), "fixed"),
          ("REF_RAILS_2020", 0, 0, 0, "fixed"), ("REF_ROUES_V", 0, 0, 0, "carriage"), ("REF_ENTRETOISES_M5", 0, 0, 0, "carriage"),
          ("REF_ENTRETOISES_EXC", 0, 0, 0, "carriage"), ("REF_RONDELLES_BRONZE", 0, 0, 0, "carriage"),
          ("REF_PLAQUE_PAPILLON", 0, 0, 0, "carriage"), ("A_SUPPORT_ECROU", 0, 0, 0, "carriage"), ("REF_ECROU_T8", 0, 0, 0, "carriage"),

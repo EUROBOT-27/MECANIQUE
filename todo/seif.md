@@ -16,7 +16,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
-- [ ] **Clapets v7 module A: print and test** (`mechanical/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
+- [ ] **Clapets v7 module A: print and test** — CAD passed 2026-11-13, now printing (plates sliced in `CAD_FC/STL/PRINT.3mf`) (`mechanical/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
   2. Print module A in **ABS** (~510 g, 40 % infill, parts regenerated 2026-11-12), assemble, test. The assembly guide
      is out of date for the cap tab, the plate teeth and the arm nut pockets: regenerate it (ask Claude) or follow the README
      - Set the inserts with the new holes (D-025): let them sink under the iron's weight

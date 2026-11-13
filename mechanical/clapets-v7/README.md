@@ -1,11 +1,12 @@
 # Clapets v7: v6 with reworked door units (Seif)
 
-> **Where we are (2026-11-10)**
-> - **Module A (lift + doors) design: done for the first prototype.** Door unit + cap rebuilt (option B, section
->   "2026-11-10 (3)" below), all fasteners checked, rest check clean, door sweep clean.
-> - **Now: print the tolerance tests** → [`tolerance-tests/README.md`](tolerance-tests/README.md) (10 coupons,
->   ~127 g ABS, D-023). Report the best variant of each, the CAD values get updated.
-> - **Then:** print module A for real (~510 g ABS, list in "Printing module A" below), assemble, test.
+> **Where we are (2026-11-13): module A has PASSED CAD → printing + testing phase.**
+> - **Module A (lift + doors) CAD: closed for the first prototype.** Door unit + cap rebuilt (option B, D-022), every
+>   fastener checked, ABS tolerance coupons done and fed back (2026-11-12), insert holes per D-025.
+> - **Now: printing module A in ABS** on the Bambu X1 Carbon: sliced plates in `CAD_FC/STL/PRINT.3mf`
+>   (`PRINT_plate_1/2.gcode.3mf`). Then assemble and test. CAD changes from here on come only from what the test shows.
+> - Assembly guide PDF is out of date for the cap tab, the plate teeth, the arm nut pockets and the top crossbar.
+> - Done before: ABS tolerance tests → [`tolerance-tests/README.md`](tolerance-tests/README.md) (D-023).
 > - **In parallel:** module B (suction head) with Maatoug in `../clapets-v8/`; it must take module A from here.
 > - **Assembly guide (v1):** [`assembly/clapets_v7_moduleA_assembly.pdf`](assembly/clapets_v7_moduleA_assembly.pdf),
 >   15 A4 sheets, made from the CAD. Regenerate after the tolerance tests (see `assembly/README.md`).
@@ -49,6 +50,12 @@ See `../design-principles.md`, "Print materials".
   top crossbar (~35 g), nut support (~31 g). Brim on the door unit bodies (tall, ABS warps).
 
 ## Changes from v6
+### 2026-11-12 (late): top crossbar without a 608 (Seif)
+- **Top crossbar (`A_TRAVERSE_HAUT`):** no 608 at the top any more. The lead screw passes through a plain **Ø15 hole**
+  (free top end). The 608 seat and its 2.8 mm roof are gone; the part is
+  solid there (61.4 → 65.8 g, PLA density). BOM: one 608ZZ less.
+- Print plates sliced for the Bambu X1 Carbon: `CAD_FC/STL/PRINT.3mf`, `PRINT_plate_1.gcode.3mf`, `PRINT_plate_2.gcode.3mf`.
+
 ### 2026-11-12: fixes after the ABS coupons (T8, T9) + plate form lock (Seif)
 - **Insert holes (D-025):** the ABS coupon T6 pushed plastic into the insert's thread. Every M3 insert hole now follows
   the reference drawing in `../design-principles.md`: **Ø5.4 × 7, mouth cone Ø6.2 × 1.5** (was Ø4.6 × 7 + 0.5 × 45°).
