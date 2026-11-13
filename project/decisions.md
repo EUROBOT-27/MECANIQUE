@@ -327,15 +327,18 @@ Template:
 - Decided by: Maatoug
 - Status: **confirmed by Seif on 2026-11-13, with a rework of module B (below)**
 - Confirmation (Seif, 2026-11-13): the principle is kept (the cups press onto the stack by a forward movement inside
-  module B, while the doors hold it). Seif's requirements for the module B rework:
+  module B, while the doors hold it). **The rework is done by Seif in a new folder `mechanical/suction-v1/`** (not a
+  clapets version; v8 stays as Maatoug's reference, no Maatoug review needed). Seif's requirements for the module B rework:
   1. **Simpler:** fewer parts and fewer special parts; nothing that needs fine tuning to work.
   2. **Reliable:** no binding guides, no fragile press fits, no loads that depend on print tolerances.
   3. **Buildable in real life:** every part printable or in hand / local, every fastener reachable with a tool, an
      assembly order that works (same standard as v7 module A, `mechanical/design-principles.md`).
-  4. **Works without module A:** module B has its own frame, can be assembled and tested on the bench alone, and fixes
-     to module A through one simple, defined interface.
+  4. **Works without the doors:** module B is still mounted on module A's butterfly plate (rides the lift), but it must
+     hold, lift and turn the stack **by suction alone** if the doors are removed (fallback if the perimeter budget
+     forces them out). Own frame, bench-testable, one simple interface to the butterfly plate.
   5. **Pneumatics, cables and fixings designed in, not left open:** pumps and valves placed and fixed, tube routing to
      the cups through the head's rotation and the strike travel, servo cables with strain relief, zip-tie anchors.
+     Open for now (Seif): valves or pump-off release; pumps on the turning head or fixed with tubes through the rotation.
   6. Takes the current v7 module A (2026-11-12 state), insert holes per D-025, height margin re-checked with the 3rd
      servo and the carriage, strike force tuned on real stones.
 - Decision: The cups must press firmly onto the boxes to attach reliably, with a forward movement inside module B only,

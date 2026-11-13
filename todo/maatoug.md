@@ -12,9 +12,10 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Where did you download the Two Trees Bluer V2 model? Add the link to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` if Seif hasn't — Maatoug
 
 ## From Seif (2026-11-13)
-- [ ] **D-021 confirmed, with a rework of module B:** simpler, reliable, buildable, works and tests **without module A**
-  (own frame + one simple interface to module A), pneumatics (pumps, valves, tubes through the rotation + strike),
-  cables and fixings designed in. Full list in `project/decisions.md`, D-021 — Maatoug, Seif
+- [ ] **D-021 confirmed (FYI):** your strike principle is kept. Seif reworks module B himself in a new folder
+  `mechanical/suction-v1/` (simpler, reliable, works without the doors, pneumatics designed in; list in
+  `project/decisions.md`, D-021). v8 stays as your reference: the v8 tasks below (carry module A in, D-025 holes,
+  head servo posts) are no longer needed — Maatoug
 
 ## From Seif (2026-11-12)
 - [ ] **Insert holes changed (D-025):** the Ø4.6 hole pushed plastic into the insert's thread in the ABS test. New
