@@ -29,3 +29,6 @@ mechanical/robot/CAD_FC/.sync.notified
 # Downloaded printer model (GBs): keep local, never commit. Extracted parts go in their own folders.
 mechanical/resources/3d-printer-two-trees-bluer-v2-1.snapshot.4/
 mechanical/resources/*.zip
+
+# Big reference CAD (hundreds of MB): local only, notes in resources/_notes/
+mechanical/resources/2023_GROSBOT.STEP

@@ -11,6 +11,17 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Note: Seif owns `mechanical/clapets/clapets-v6/` and `clapets-v7/` for now (v5 untouched). v7 = the version we print (D-020); have a look at its README (fasteners, real printer parts, motor on the floor) — Maatoug
 - [ ] Where did you download the Two Trees Bluer V2 model? Add the link to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` if Seif hasn't — Maatoug
 
+## From Seif (2026-11-13)
+- [ ] **D-021 confirmed (FYI):** your strike principle is kept. Seif reworks module B himself in a new folder
+  `mechanical/suction-v1/` (simpler, reliable, works without the doors, pneumatics designed in; list in
+  `project/decisions.md`, D-021). v8 stays as your reference: the v8 tasks below (carry module A in, D-025 holes,
+  head servo posts) are no longer needed — Maatoug
+
+## From Seif (2026-11-12)
+- [ ] **Insert holes changed (D-025):** the Ø4.6 hole pushed plastic into the insert's thread in the ABS test. New
+  reference: `mechanical/design-principles.md` (drawing `mechanical/img/heat_set_insert_hole.png`): our M3 inserts →
+  **Ø5.4 × 7, mouth cone Ø6.2 × 1.5**. Clapets v8 still has Ø4.6 × 6.5: please update — Maatoug
+
 ## From Seif (2026-11-10)
 - [ ] Your commit `a746ea1` added ~470 **software build outputs** (STM32 / micro-ROS `Debug/`, `.elf`, `.hex`, `.map`,
   a 7 MB `libmicroros.a`): build outputs usually stay out of git (`.gitignore`). Can you remove them from the repo? — Maatoug

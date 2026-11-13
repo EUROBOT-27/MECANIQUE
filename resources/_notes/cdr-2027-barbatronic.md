@@ -23,3 +23,13 @@ studied 2026-10-28 for the suction head. CAD is FreeCAD (`MCAD/`), docs are a Je
 
 ## What we take for our head (clapets module)
 1 cup per box at 110 mm pitch, identical drop-in cup stations, TPU spiral-spring disc clamped by a ring, M5 cup adapter.
+
+## Chassis (`MCAD/differential-structure.FCStd`, skimmed 2026-11-13 for the robot layout)
+- **Central column** 220 (x) × 80 (y) × 320 tall of 10 × 10 mm MakerBeam profiles; sole plate 232 × 80 × 5. Front and
+  back of the robot stay free for the actuators.
+- Drive: 2 × NEMA 17 (17HS24) along x, Ø58 wheels at x ±64..86; odometry blocks (encoder wheels) at x ±88..116.
+- Battery block 80 × 136 × 70 on top, inside the column; electronics supports on the column sides.
+- **Beacon mast (`MatBalise`) 80 × 80 × 98 on the top, with an LD06 LiDAR inside it** (window in the mast, opponent
+  beacon plate on top). Allowed by [GR F.6]: the support may hold sensors, and for a rotating device the cut-out must
+  be < 2 cm tall and not see-through.
+- Ball launcher (`ball-launcher.FCStd`): 220 wide × 52 deep × 260 tall, 10-ball and 6-ball cannon variants.

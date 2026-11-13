@@ -325,7 +325,22 @@ Template:
 - Date: 2026-11-03
 - Area: mechanical
 - Decided by: Maatoug
-- Status: **proposed** (Seif to confirm; v7 stays the print target until then)
+- Status: **confirmed by Seif on 2026-11-13, with a rework of module B (below)**
+- Confirmation (Seif, 2026-11-13): the principle is kept (the cups press onto the stack by a forward movement inside
+  module B, while the doors hold it). **The rework is done by Seif in a new folder `mechanical/suction-v1/`** (not a
+  clapets version; v8 stays as Maatoug's reference, no Maatoug review needed). Seif's requirements for the module B rework:
+  1. **Simpler:** fewer parts and fewer special parts; nothing that needs fine tuning to work.
+  2. **Reliable:** no binding guides, no fragile press fits, no loads that depend on print tolerances.
+  3. **Buildable in real life:** every part printable or in hand / local, every fastener reachable with a tool, an
+     assembly order that works (same standard as v7 module A, `mechanical/design-principles.md`).
+  4. **Works without the doors:** module B is still mounted on module A's butterfly plate (rides the lift), but it must
+     hold, lift and turn the stack **by suction alone** if the doors are removed (fallback if the perimeter budget
+     forces them out). Own frame, bench-testable, one simple interface to the butterfly plate.
+  5. **Pneumatics, cables and fixings designed in, not left open:** pumps and valves placed and fixed, tube routing to
+     the cups through the head's rotation and the strike travel, servo cables with strain relief, zip-tie anchors.
+     Open for now (Seif): valves or pump-off release; pumps on the turning head or fixed with tubes through the rotation.
+  6. Takes the current v7 module A (2026-11-12 state), insert holes per D-025, height margin re-checked with the 3rd
+     servo and the carriage, strike force tuned on real stones.
 - Decision: The cups must press firmly onto the boxes to attach reliably, with a forward movement inside module B only,
   while the doors hold the stack. In `mechanical/clapets/clapets-v8/` (copy of v7, owned by Maatoug), module B is split into a
   **fixed base** (2 bars on the 4 wheel bolts, each holding a Ø8 guide rod) and a **sliding carriage** (bearing tube,
@@ -362,3 +377,50 @@ Template:
 - Consequences: tolerance coupons first (`tolerance-tests/`, 10 coupons, ~150 g), then module A (~600 g PLA);
   assembly guide `assembly/clapets_v7_moduleA_assembly.pdf`. FEM check of B not run yet. Module A of v8 (D-021) must
   take these changes.
+
+## D-023 — Printed parts in ABS on the Bambu X1 Carbon, tolerance coupons included
+- Date: 2026-11-10
+- Area: mechanical
+- Decided by: Seif
+- Status: active (updates D-022: "sized for PLA")
+- Decision: The robot's printed parts are printed in **ABS** on a **Bambu X1 Carbon** (enclosed, door and lid closed,
+  AMS). The clapets v7 **tolerance coupons are printed in ABS too**, on the same printer and filament, so the fits they
+  give carry over to the real parts. Coupon settings: 0.2 mm layers, 4 walls, 15–20 % infill, as the STL lies, no
+  supports. Real parts: 4 walls, 40 % infill, brim on tall parts.
+- Alternatives considered: PLA coupons + PLA prototype, ABS later (the earlier plan): fits measured on PLA don't carry
+  over to ABS (ABS shrinks more, holes come out smaller). PETG: not available.
+- Why: an enclosed printer is available, so ABS warping on tall parts (~210 mm door unit spine) is manageable; ABS is
+  tougher, takes heat and doesn't creep like PLA under the rod clamps and nut posts.
+- Consequences: masses ~16 % lower than the PLA figures (ABS ≈ 1.04–1.05 g/cm³): coupons ~127 g, module A ~510 g with
+  margin. Heat-set inserts (T6, socle) at ~245–265 °C. The generator `clapets-v7/fc/v7_fc.py` still uses
+  `RHO_PRINT` = 1.24 (PLA), so its reported masses are high until changed.
+
+## D-024 — Ayoub joins the hub as a user (beyond the two leads)
+- Date: 2026-11-12
+- Area: project
+- Decided by: Ayoub; confirmed by Seif 2026-11-12
+- Status: active (extends D-018)
+- Decision: The shared hub is no longer limited to the two tech leads. **Ayoub** (CAD team, SolidWorks) uses it in their
+  own clone with Claude, with the same workflow: `/start` pulls and briefs, `/wrap` logs, commits and pushes. Name key
+  `ayoub` → `todo/ayoub.md`, `logs/YYYY-MM-DD-ayoub.md`. As a non-lead, Ayoub's decisions are always logged as
+  `proposed` until the area lead confirms.
+- Alternatives considered: keep the hub to the two leads and have Ayoub's work go through Seif (slower, and their CAD
+  work and tasks would not be tracked in the hub).
+- Why: Ayoub has CAD tasks for the 2026-12-31 mechanical milestone (stone gripper concepts, second face, Grail lift);
+  tracking them in the hub keeps STATUS, TODOs and logs complete.
+- Consequences: root `CLAUDE.md` ("Who uses this hub", file map), `/start` and `/wrap` skills updated for more than
+  two users; `todo/ayoub.md` created. Other team members (e.g. Baha) can join the same way.
+
+## D-025 — Heat-set insert holes: K × 0.9, mouth cone, L + 1 (new reference drawing)
+- Date: 2026-11-12
+- Area: mechanical
+- Decided by: Seif
+- Status: active (replaces the insert-hole rules of 2026-11-10 in `mechanical/design-principles.md`)
+- Decision: every heat-set insert hole follows the reference drawing `mechanical/img/heat_set_insert_hole.png`:
+  hole **K × 0.9**, mouth cone from **K + 0.2** down to the hole over **L × 0.25**, blind depth **L + 1** (K = knurl Ø,
+  L = insert length). Our M3 inserts are straight, K 6.0, L 6.0: **Ø5.4 × 7, cone Ø6.2 × 1.5**.
+- Alternatives considered: the old Ø4.6 × 7 + 0.5 × 45° chamfer: the ABS coupon (T6, Ø4.4 / 4.6 / 4.8) pushed melted
+  plastic into the insert's bore. No new coupon printed (Seif): the drawing is applied directly.
+- Why: the hole was far too small for a 6.0 knurl; the extra plastic had nowhere to go but into the thread.
+- Consequences: `ins_hole()` in `clapets-v7/fc/v7_fc.py` (`INS3_K`, `INS3_L`) regenerated, all M3 insert holes changed
+  (socle ×4, cap tabs ×2, head bracket ×4). Clapets v8 (Maatoug) still uses Ø4.6 × 6.5: to update.

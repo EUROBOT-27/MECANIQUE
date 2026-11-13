@@ -1,15 +1,29 @@
 # Clapets v7: v6 with reworked door units (Seif)
 
-> **Where we are (2026-11-10)**
-> - **Module A (lift + doors) design: done for the first prototype.** Door unit + cap rebuilt (option B, section
->   "2026-11-10 (3)" below), all fasteners checked, rest check clean, door sweep clean.
-> - **Now: print the tolerance tests** → [`tolerance-tests/README.md`](tolerance-tests/README.md) (10 coupons,
->   ~150 g PLA). Report the best variant of each, the CAD values get updated.
-> - **Then:** print module A for real (~600 g PLA, list in "Printing module A" below), assemble, test.
+> **Where we are (2026-11-13): module A has PASSED CAD → printing + testing phase.**
+> - **Module A (lift + doors) CAD: closed for the first prototype.** Door unit + cap rebuilt (option B, D-022), every
+>   fastener checked, ABS tolerance coupons done and fed back (2026-11-12), insert holes per D-025.
+> - **Now: printing module A in ABS** on the Bambu X1 Carbon: sliced plates in `CAD_FC/STL/PRINT.3mf`
+>   (`PRINT_plate_1/2.gcode.3mf`). Then assemble and test. CAD changes from here on come only from what the test shows.
+> - Assembly guide PDF is out of date for the cap tab, the plate teeth, the arm nut pockets and the top crossbar.
+> - Done before: ABS tolerance tests → [`tolerance-tests/README.md`](tolerance-tests/README.md) (D-023).
 > - **In parallel:** module B (suction head) with Maatoug in `../clapets-v8/`; it must take module A from here.
 > - **Assembly guide (v1):** [`assembly/clapets_v7_moduleA_assembly.pdf`](assembly/clapets_v7_moduleA_assembly.pdf),
 >   15 A4 sheets, made from the CAD. Regenerate after the tolerance tests (see `assembly/README.md`).
 > - Concept history of the door unit: [`../../concepts/aile-redesign/README.md`](../../concepts/aile-redesign/README.md).
+
+## Effort to reach "CAD passed" (estimate, 2026-11-13)
+Rough figure from commit and log timestamps: time at the PC, not focused work time. Printer and FreeCAD run time
+are not counted. Baseline for planning the next modules.
+
+| Who / what | When | Hours |
+|---|---|---|
+| Maatoug: clapets v1 → v5 design (base of v6/v7), mostly on his PC before the hub | up to 2026-10-29 | ~15–25 (guess, to confirm with Maatoug) |
+| Seif: v6 + v7 (real horn, wires, Two Trees parts, every fastener + BOM, motion check) | 2026-11-01 | ~8–9 |
+| Seif: caliper values, door unit rebuilt (4 concepts, option B), tolerance coupons, assembly PDF, door sweep + GIFs | 2026-11-09 → 11-10 | ~10–14 |
+| Seif: switch to ABS (D-023), print + measure the coupons | 2026-11-10 → 11-12 | ~2–3 |
+| Seif: fixes from the coupons, insert holes (D-025), top crossbar without 608, slicing | 2026-11-12 → 11-13 | ~10–12 |
+| **Total** | | **~45–65 person-hours** (Seif ~30–38 h) |
 
 Copy of [clapets v6](../clapets-v6/README.md) (v5 + real horn + real servo wires). v5 and v6 stay untouched. Owner while
 in progress: **Seif**. Design = `fc/v7_fc.py` (dimensions in `class G`); never edit the `.FCStd` by hand.
@@ -35,20 +49,63 @@ seat, key access, wall around each nut/insert) and a cut view through each screw
 into" for the horn screws and "key blocked" / "head bears on nothing" next to the motor and V-wheels are false alarms
 (those bought-part models confuse the inside test).
 
-**Material (2026-11-10):** we only have **PLA and ABS** (no PETG). Everything is sized for **PLA**: the generator
-uses PLA density for every printed part (`RHO_PRINT` = 1.24 g/cm³; ABS parts would be ~16 % lighter).
-Plan: PLA for the tolerance tests + this prototype, ABS for robot parts (enclosed printer for tall parts, holes
-+0.1–0.2). See `../design-principles.md`, "Print materials".
+**Material (D-023, 2026-11-10):** coupons and real parts in **ABS on the Bambu X1 Carbon** (enclosed). The generator
+still uses PLA density for every printed part (`RHO_PRINT` = 1.24 g/cm³), so its reported masses are ~16 % high;
+the figures below are converted to ABS (≈ 1.045 g/cm³). Fits come from the ABS coupons (ABS shrinks more than PLA).
+See `../design-principles.md`, "Print materials".
 
 ## Printing module A (2026-11-10)
-- **Tolerance tests first:** `tolerance-tests/README.md` (10 coupons, ~150 g PLA at 20 % infill). Report the best variants, the CAD is
+- **Tolerance tests first:** `tolerance-tests/README.md` (10 coupons, ~127 g ABS at 20 % infill). Report the best variants, the CAD is
   updated, then the real parts.
-- **Filament for module A** (both sides, PLA, measured from the CAD solids with 4 perimeters): **~550 g at 40 % infill**
-  (490 g at 20 %, 715 g solid), about 184 m of 1.75 mm. Plan **~600 g** with skirts, brims and a failed start; one
-  1 kg spool covers module A + the tests. Biggest parts: door unit body ×2 (~119 g each), socle (~65 g),
-  top crossbar (~41 g), nut support (~36 g).
+- **Filament for module A** (both sides, ABS, from the CAD solids with 4 perimeters): **~465 g at 40 % infill**
+  (415 g at 20 %, 605 g solid), about 184 m of 1.75 mm. Plan **~510 g** with skirts, brims and a failed start; one
+  1 kg spool covers module A + the tests. Biggest parts: door unit body ×2 (~101 g each), socle (~55 g),
+  top crossbar (~35 g), nut support (~31 g). Brim on the door unit bodies (tall, ABS warps).
 
 ## Changes from v6
+### 2026-11-12 (late): top crossbar without a 608 (Seif)
+- **Top crossbar (`A_TRAVERSE_HAUT`):** no 608 at the top any more. The lead screw passes through a plain **Ø15 hole**
+  (free top end). The 608 seat and its 2.8 mm roof are gone; the part is
+  solid there (61.4 → 65.8 g, PLA density). BOM: one 608ZZ less.
+- Print plates sliced for the Bambu X1 Carbon: `CAD_FC/STL/PRINT.3mf`, `PRINT_plate_1.gcode.3mf`, `PRINT_plate_2.gcode.3mf`.
+
+### 2026-11-12: fixes after the ABS coupons (T8, T9) + plate form lock (Seif)
+- **Insert holes (D-025):** the ABS coupon T6 pushed plastic into the insert's thread. Every M3 insert hole now follows
+  the reference drawing in `../design-principles.md`: **Ø5.4 × 7, mouth cone Ø6.2 × 1.5** (was Ø4.6 × 7 + 0.5 × 45°).
+  Socle ×4, cap tabs ×2 (and the head bracket ×4, module B). No new coupon.
+- **Coupon results (ABS, Seif):** T1 608 seat: Ø22.2 (variant 2) good. T2, T4, T5, T7, T10: good, no change. T3 / T8 /
+  T9: the changes below. T6: see above.
+- **Pinion (`A_PIGNON_PORTE_20T`):** M2 horn screw holes Ø2.2 → **Ø2.5** (`HORN_SCR_R`): too tight in T9.
+- **Servo ear nuts (3 posts):** hex recess AF 5.7 → **5.9** (`POST_HEX`) = 0.2 per side on the 5.5 nut (was 0.1). The
+  wall between the recess and the servo pocket goes 0.95 → 0.85 mm.
+  The 2 outer-ear nut windows are now **one window** (y 43.7–60.3): the 3.4 mm wall between them is gone; its ceiling is a
+  16.6 mm bridge (was 2 × 6.6).
+- **Inner ear (3rd servo screw):** key opening above the ear 15 → **33 mm** tall (`EAR_IN_H`); the keel window is
+  narrower (x 71–91 → **71–87**), so 5.5 mm of keel stays between them (was 1.5).
+- **Outer ear opening:** the strip in front of it was 2 mm. The outer wall now comes forward to y 69 (`OWB_Y1` 66 → 69,
+  28T still 3.2 mm away), so the strip is **5 mm**. The ear tip goes 1 mm into the wall (x 148), so a 3 mm groove at ear
+  height lets the servo still slide in from the front.
+- **Arms, door sheet screws:** the nut now sits in a **pocket in the arm tab's inner face** (6.0 × 6.9 × 2.8, same as the
+  28T clamp pockets: it can't turn), walls 1.75 / 1.55 mm; screws **M3 × 12** (were M3 × 16 with the nut in free air).
+- **Web:** the local rib beside the inner ear (z 57–107, with steps at its ends) now runs the **full height**: the web's
+  inner face is one flat face (x 100.5).
+- **Cap → body, 3rd screw from the front:** a tab on the cap's front face (x 67.5–78, z 210–242: full cap height, sunk
+  0.5 into the cap so it is one solid; chamfers only on its 2 outer edges) hangs down over the keel's front face (below z 226,
+  4.2 thick); **M3 × 10 button head** through it into an **M3 insert set horizontally** in the keel front face
+  (x 72.75, z 218; walls 3.75 to the side, 4.0 to the plate face). Set the insert with the body lying on its back.
+- **Form lock on the butterfly plate:** 2 flat teeth in the plate's plane (y 47.8–50.5), x 67–76, **0.3 mm** from the two
+  diagonal edges of the plate's wing: the bottom tooth on the body (below the lower edge, from the bed), the top tooth
+  on the cap (above the upper edge). The wing sits between them, so the door clamp reaction (outward) and the stack
+  weight (down) bear on the plate's edges instead of only on the M4s' grip. Edges fitted on the real plate outline
+  (`plate_diag()`; the outer edge between the lobes is a concave arc, not used).
+  **Mounting is unchanged:** the teeth sit outside the plate outline, so the unit still goes onto the plate straight
+  from the front, and the cap still comes down from above. Then **push the unit outward in its M4 slots until the
+  teeth touch** and tighten the 2 M4.
+- Masses (PLA figures from the generator): body 146 → 157 g, cap 42 → 43 g (ABS ≈ ×0.84).
+- Rest check: 0 interferences, 0 reserve violations. Fast door sweep clean after the outer wall change (run before the
+  tab and teeth, which are far from the doors). Not re-run: full motion check, fastener check, images,
+  assembly guide (the guide's cap and plate steps are now out of date).
+
 ### 2026-11-10 (4): no M4 inserts, no motor pad (Seif)
 - **Nut support (`A_SUPPORT_ECROU`): M4 nuts instead of M4 inserts** (none in stock). Wall 8 → 5 mm (`SUP_WALL`),
   nut pockets in the wall's back face (7.4 × 8.4 × 3.4). The 2 screws are **the printer's own M4 × 8** (they held

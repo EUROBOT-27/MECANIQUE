@@ -17,7 +17,7 @@ STEPS = [
         new=[("A_SOCLE", None, (0, 0, 0), "Socle"), ("FIX_INSERT_SOCLE", None, (0, 0, 18), "M3 insert x4")],
         view=ISO,
         detail=dict(axis="x", labels=["A_SOCLE", "FIX_INSERT_SOCLE"], section=(33.45, 0, 0),
-                    box=(20, 60, 30, 62, 0, 40), caption="Section through an M3 insert hole: 4.6 x 7 deep, 0.5 x 45 deg lead-in"),
+                    box=(20, 60, 30, 62, 0, 40), caption="Section through an M3 insert hole: 5.4 x 7 deep, mouth cone 6.2 x 1.5"),
         parts=[("4", "M3 heat-set insert")],
         tools="Soldering iron with an insert tip (~225 C for PLA), flat metal tool to press them flush",
     ),

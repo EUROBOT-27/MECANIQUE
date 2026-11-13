@@ -1,0 +1,23 @@
+6-cup flip - kinematic report (flip6_check.py)
+
+Four-bar: crank 91.0, rocker 149.2, coupler 104.2, ground link 204.1 mm; crank travel 120.0 deg
+Ground pivots O1 (crank/motor) (-34.8, 50.4), O2 (rocker) (-97.2, 244.7) [x, z mm]
+Start pose: stack centre (0.0, 165.0), 0 deg.  End pose: (5.2, 168.8), 90.0 deg
+
+Case A, 3 stones held from the middle (2 cups per stone), FLIP ALLOWED:
+  min floor clearance during the flip  7.2 mm (rule of thumb >= 4)
+  stones upright: bottom 8.8 mm above the table, top 328.8 mm
+  max height of the stones during the flip  470.3 mm  (> 350: see README, GR F.3)
+  min transmission angle  49.2 deg (V2: 44)
+  peak torque at the crank = at the JGB37-520 (direct)  0.97 N.m; rated 1.0 -> margin x1.0, stall 2.5 -> x2.6
+  flip time at 30 rpm (120 deg crank)  0.67 s
+  ejector push (MG90S, 29 mm to the roller)  7.4 N (stone weight 0.9 N)
+
+Case B, 6 stones (2 stacks end to end, gap 10 mm), each held by 3 cups off-centre, NO FLIP:
+  each stone held 85 mm off its middle; load span 650 mm
+  holding torque at the crank = at the motor (start pose)  0.65 N.m (rated 1.0 -> x1.5)
+  height 330 mm (stack on the table)
+
+Pin crossings (links in separate layers, pins cross the other layer):
+  crank pin (P1) vs rocker bar centre line: min 78.9 mm (needs > 17.0)  OK
+  rocker ground pin (O2) vs crank bar centre line: min 113.1 mm (needs > 17.0)  OK

@@ -8,8 +8,8 @@ working on mechanical design.
 - Maatoug's role here: take a mechanism design and make it **ready to fabricate**: printable parts (orientation, tolerances, inserts), laser-cut DXFs, profile cut lists, hole and fastener choices from `parts-library.md`.
 - Manufacturing: 3D printing, laser cutting, aluminium profiles, rods (D-002). Fast turnaround.
 - **Print materials available: PLA and ABS only, no PETG** (Seif, 2026-11-10). The clapets CAD so far assumes PETG
-  (densities, insert temperatures); the geometry does not depend on it. Plan (not a decision yet): PLA for tolerance
-  tests + first prototype, ABS (or PETG if we get some) for robot parts. Details: `design-principles.md`, "Print materials".
+  (densities, insert temperatures); the geometry does not depend on it. **D-023: printed parts and their
+  tolerance tests in ABS on the Bambu X1 Carbon** (enclosed); PLA only for quick fit checks. Details: `design-principles.md`, "Print materials".
 - Electrical design: Hamza Bjaoui. Coordinate on battery, e-stop, wiring routes and board space early.
 - SIMAs (knights): Hamza Sammoud — see `simas/CLAUDE.md`. Coordinate if the robot launches or carries them.
 
@@ -27,7 +27,14 @@ the testing method, …) (D-006).
 - `concepts/gate-lintel.md`: space to reserve for the gate (slot on a driving face shared with a stone gripper, D-011 + narrow protrusion for the perimeter budget), concepts compared. Mechanism not chosen.
 - Launcher (flywheel, fixed angle), Grail lift variants: brainstorm in `project/strategy.md`.
 - `concepts/aile-redesign/README.md`: clapets v7 door unit + cap rebuilt from scratch, 4 options (2026-11-10), not chosen yet.
+- `concepts/central-hub-builder.md`: Ayoub's idea (2026-11-13), Ø100 grooved hub on base_330 (bridge over the drive motors), 6 suction shafts (3 front → left, 3 rear → right); each sleeve rides its groove (turn 90° + reach the spin-safe height in one move), then spins the stone upright. Walls + towers. GIF in `simulations/central_hub/`. Idea only, for Seif to review.
 - `concepts/clapets-redesign.md`: rethink of the clapets modules v1/v2 (quarry-stack grip + 15 mm lift, v2 adds a turning suction head) around our parts library. Proposal, 2026-10-27.
+
+## Robot layout
+- `layout-v1/` (Seif, 2026-11-13, proposal): robot 300 × 292 around the real v7 module, front = module A+B, back =
+  mirror / flip6 / simple, right = Grail, left = launcher, axle at the centre. Script `layout-v1/fc/layout_fc.py` reports
+  perimeter (start 1184 / deployed 1352 with a mirrored back), height, start area, overlaps, free volumes.
+  **Check every new mechanism against its reserved volume there** (README "What the layout taught us").
 
 ## Simulations and videos
 **Every mechanism animation, motion study or simulation video is saved in `mechanical/simulations/`** (one
@@ -69,6 +76,9 @@ Nothing goes loose in `mechanical/` itself: a new SolidWorks file goes into its 
 - `module_clapets_v3`, `base omniwheel 4/CAD/V2_280` (omni base): set aside (Maatoug, 2026-10-27).
 - **Clapets v6 / v7 (Seif, D-019, D-020, D-022):** `mechanical/clapets/clapets-v6/` (v5 + real horn and servo wires), `mechanical/clapets/clapets-v7/` (**the version we print**: door unit + cap rebuilt as option B (C-section spine, D-022), nuts in pockets instead of inserts except 4 M3 in the socle, real Two Trees parts, every fastener + BOM, sized for PLA; tolerance coupons in `tolerance-tests/`, assembly guide PDF in `assembly/`, status box at the top of its README). Same workflow as v5 (`fc/v7_fc.py`, README). Real printer parts: `mechanical/resources/two-trees-bluer-v2-parts/` (the 2 GB download is local only, gitignored).
 - **Clapets v8 (Maatoug, D-021, proposed):** `mechanical/clapets/clapets-v8/` = v7 + a suction head that strikes 8 mm forward on its own (fixed base bars + sliding carriage on 2 Ø8 rods, 3rd MG996R, scotch yoke). Module A = v7 (v7's module A changed a lot on 2026-11-08 → 11-10: to be carried into v8).
+- **Clapets v6 / v7 (Seif, D-019, D-020, D-022):** `mechanical/clapets-v6/` (v5 + real horn and servo wires), `mechanical/clapets-v7/` (**the version we print**: door unit + cap rebuilt as option B (C-section spine, D-022), nuts in pockets instead of inserts except 4 M3 in the socle, real Two Trees parts, every fastener + BOM, sized for PLA; tolerance coupons in `tolerance-tests/`, assembly guide PDF in `assembly/`, status box at the top of its README). Same workflow as v5 (`fc/v7_fc.py`, README). Real printer parts: `mechanical/resources/two-trees-bluer-v2-parts/` (the 2 GB download is local only, gitignored).
+- **Clapets v8 (Maatoug, D-021, proposed):** `mechanical/clapets-v8/` = v7 + a suction head that strikes 8 mm forward on its own (fixed base bars + sliding carriage on 2 Ø8 rods, 3rd MG996R, scotch yoke). Module A = v7 (v7's module A changed a lot on 2026-11-08 → 11-10: to be carried into v8).
+- **Suction v1 (Seif, D-021 confirmed 2026-11-13):** `mechanical/suction-v1/` = module B reworked from v8's strike: simpler, works without the doors (suction alone), pneumatics + cables designed in. v8 stays as reference.
 - Prompt-to-CAD helpers: `tools/` (FreeCAD + SolidWorks API).
 
 ## Sourcing (Tunisia)

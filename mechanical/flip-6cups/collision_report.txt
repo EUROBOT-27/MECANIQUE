@@ -1,0 +1,7 @@
+6-cup flip - solid overlap check (flip6_fc.py), crank progress s = 0..1 in 0.05 steps
+Expected contacts ignored: pins in links/plate, cup holders in the plate, motor shaft in the crank hub,
+servo brackets on the plate, column brackets.
+
+1 stack(s): 0 unexpected overlaps over 21 poses
+2 stack(s): 0 unexpected overlaps over 1 poses
+plate (3 mm aluminium) mass 344 g
