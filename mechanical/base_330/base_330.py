@@ -69,6 +69,40 @@ CASTER_D = 33.0
 CASTER_SCREW_X = 20.0
 CASTER_SCREW_D = 4.0
 
+# Clapets v7 module A (mechanical/clapets-v7, mechanism unchanged): A_SOCLE bolts down with 4 x M4 (socle holes Ø4.4
+# at x ±63, y 18 / 53 in the module frame; module frame x = base x, y 140 = stack face). On this base the module sits
+# CLAP_DY further forward, so the stack face is CLAP_DY in front of the plate edge. Why 23: at 0 the socle, motor
+# plate, rails and NEMA sit on the drive motors / lifts (|y| <= 24) and the door units hit the wheels; >= 19 clears
+# them by 3 mm (FreeCAD check); 23 also keeps the socle 2 mm off the lift strap slots (outer edge y 29.5), so the
+# straps stay free. Holes mirrored to -Y too (plate stays symmetric: the module can go on either end).
+CLAP_DY = 23.0
+CLAP_X = 63.0
+CLAP_Y = (18.0, 53.0)      # module frame
+CLAP_D = 4.8               # M4 loose clearance (ISO 273 coarse): absorbs the printed socle's hole error and
+                           # PLA shrink over the 126 mm pitch (~0.4 mm). Washer under the head and the nut.
+
+# Back wall for the electronics + LiPo (2026-11-12, test robot: no side walls on the corner holes).
+# 2 vertical 2020 profiles stand on the rear edge (outer face flush with the plate edge), each held by one M5 x 12
+# from under the plate into its tapped centre bore. Two, not one: one M5 lets a profile turn, and one 20 mm face
+# can't hold a wall with a LiPo on it. Holes mirrored to +Y (symmetric plate; under the clapets they're just holes).
+PROF_X = 100.0             # profile centres at x ±100: clear of the caster (x ±20 screws) and the corner holes
+PROF_Y = 130.0             # profile y -140..-120 (rear)
+PROF_D = 5.5               # M5 clearance (ISO 273 medium)
+PROF_L = 200.0             # profile length = wall height
+# The wall (MDF 5 mm, laser cut) bolts on the profiles' inner face (y -120), so it covers y -120..-115.
+# Wall frame: u = base x, v = height above the plate top.
+BW_T = 5.0
+BW_U = 130.0               # wall x -130..130 (260 wide)
+BW_H = PROF_L              # 200 tall -> top 218.5 above the table
+BW_R = 5.0                 # top corner radius
+BW_NOTCH = (30.0, 10.0)    # bottom notch half-width x height: clears the rear caster flange + its 2 screws (x ±20)
+BW_PROF_V = (25.0, 175.0)  # M5 + T-nut into each profile, 2 per profile
+BW_PROF_SLOT = 1.5         # wall screw holes = horizontal slots ±1.5 (base / wall / profile position tolerance)
+BW_TIE_D = 4.5             # zip-tie pegboard: Ø4.5 holes (ties up to 3.6 wide; also M4 screws / PCB standoffs)
+BW_TIE_P = 20.0            # pitch, u -120..120, v 20..180 (any 2 holes = a tie pair 20/40/60.. mm apart)
+BW_STRAP = (70.0, (30.0, 110.0), 22.0, 3.0)   # LiPo strap slots: u ±70 (140 apart), centres at v 30 / 110,
+                                              # 22 long x 3 wide (20 mm Velcro strap), vertical
+
 # ---------------------------------------------------------------- derived
 W2, L2 = W / 2, L / 2
 TYRE_IN = WHEEL_BOSS_X + WHEEL_BOSS                  # 83.8
@@ -126,6 +160,9 @@ def geometry():
     quad(ROD_X, ROD_Y, ROD_D)
     quad(W2 - CORNER_INSET, L2 - CORNER_INSET, CORNER_D)
     quad(CASTER_SCREW_X, CASTER_Y, CASTER_SCREW_D)
+    for cy in CLAP_Y:
+        quad(CLAP_X, cy + CLAP_DY, CLAP_D)
+    quad(PROF_X, PROF_Y, PROF_D)
     for sy in (1, -1):
         circles.append((0.0, sy * CASTER_Y, CASTER_D))
 
@@ -150,6 +187,62 @@ def lift_geometry():
     return outline, circles, []
 
 
+def wall_geometry():
+    """Back wall, flat, in its own frame (u = base x, v = height above the plate). Returns (outline, circles, slots,
+    free_slots); free_slots = (cu, cv, half length between end centres, width, vertical)."""
+    U, H, R = BW_U, BW_H, BW_R
+    nx, nh = BW_NOTCH
+    outline = [
+        ("line", (-U, 0), (-nx, 0)),
+        ("line", (-nx, 0), (-nx, nh)),
+        ("line", (-nx, nh), (nx, nh)),
+        ("line", (nx, nh), (nx, 0)),
+        ("line", (nx, 0), (U, 0)),
+        ("line", (U, 0), (U, H - R)),
+        ("arc", (U - R, H - R), R, 0, 90),
+        ("line", (U - R, H), (-U + R, H)),
+        ("arc", (-U + R, H - R), R, 90, 180),
+        ("line", (-U, H - R), (-U, 0)),
+    ]
+    free = []
+    for su in (1, -1):
+        for v in BW_PROF_V:
+            free.append((su * PROF_X, v, BW_PROF_SLOT, PROF_D, False))
+    su0, vs, ln, w = BW_STRAP
+    for su in (1, -1):
+        for v in vs:
+            free.append((su * su0, v, (ln - w) / 2, w, True))
+    circles = []
+    n = int(round(120 / BW_TIE_P))
+    for i in range(-n, n + 1):
+        u = i * BW_TIE_P
+        if abs(abs(u) - PROF_X) < 15:            # behind it is the profile
+            continue
+        v = BW_TIE_P
+        while v <= H - BW_TIE_P + 1e-6:
+            circles.append((u, v, BW_TIE_D))
+            v += BW_TIE_P
+    return outline, circles, [], free
+
+
+def free_slot_segments(cu, cv, h, w, vertical):
+    r = w / 2
+    if not vertical:
+        return [("line", (cu - h, cv - r), (cu + h, cv - r)), ("arc", (cu + h, cv), r, 270, 90),
+                ("line", (cu + h, cv + r), (cu - h, cv + r)), ("arc", (cu - h, cv), r, 90, 270)]
+    return [("line", (cu + r, cv - h), (cu + r, cv + h)), ("arc", (cu, cv + h), r, 0, 180),
+            ("line", (cu - r, cv + h), (cu - r, cv - h)), ("arc", (cu, cv - h), r, 180, 360)]
+
+
+def all_slot_segments(geom):
+    segs = []
+    for hx, y, w in geom[2]:
+        segs += slot_segments(hx, y, w)
+    for fs in (geom[3] if len(geom) > 3 else []):
+        segs += free_slot_segments(*fs)
+    return segs
+
+
 def slot_segments(hx, y, w):
     r = w / 2
     return [
@@ -167,7 +260,7 @@ def build(doc, name, geom, thickness, z0=0.0):
     import Sketcher  # noqa: F401
 
     V = App.Vector
-    outline, circles, slots = geom
+    outline, circles = geom[0], geom[1]
     body = doc.addObject("PartDesign::Body", name)
     body.Placement.Base = V(0, 0, z0)
     sk = body.newObject("Sketcher::SketchObject", name + "_Sketch")
@@ -187,9 +280,8 @@ def build(doc, name, geom, thickness, z0=0.0):
         add(s)
     for x, y, d in circles:
         sk.addGeometry(Part.Circle(V(x, y, 0), V(0, 0, 1), d / 2))
-    for hx, y, w in slots:
-        for s in slot_segments(hx, y, w):
-            add(s)
+    for s in all_slot_segments(geom):
+        add(s)
 
     pad = body.newObject("PartDesign::Pad", name + "_Pad")
     pad.Profile = sk
@@ -202,7 +294,7 @@ def build(doc, name, geom, thickness, z0=0.0):
 
 # ---------------------------------------------------------------- DXF (R12, mm) for laser cutting
 def write_dxf(path, geom):
-    outline, circles, slots = geom
+    outline, circles = geom[0], geom[1]
     out = ["0", "SECTION", "2", "HEADER", "9", "$INSUNITS", "70", "4", "0", "ENDSEC",
            "0", "SECTION", "2", "ENTITIES"]
 
@@ -219,9 +311,8 @@ def write_dxf(path, geom):
         seg(s)
     for x, y, d in circles:
         out.extend(["0", "CIRCLE", "8", "0", "10", "%.4f" % x, "20", "%.4f" % y, "30", "0", "40", "%.4f" % (d / 2)])
-    for hx, y, w in slots:
-        for s in slot_segments(hx, y, w):
-            seg(s)
+    for s in all_slot_segments(geom):
+        seg(s)
     out.extend(["0", "ENDSEC", "0", "EOF"])
     with open(path, "w") as f:
         f.write("\n".join(out) + "\n")
@@ -231,7 +322,7 @@ def main():
     import FreeCAD as App
     import Part  # noqa: F401
     here = os.path.dirname(os.path.abspath(__file__))
-    for n in ("base_330", "lift"):
+    for n in ("base_330", "lift", "back_wall"):
         if n in App.listDocuments():
             App.closeDocument(n)
 
@@ -259,6 +350,16 @@ def main():
     write_dxf(os.path.join(here, "lift_layer.dxf"), lift_geometry())
     print("lift: %.0f x %.0f mm, layers %s mm = %.1f mm" % (
         LIFT_X1 - LIFT_X0, 2 * LIFT_Y1, " + ".join("%g" % t for t in LIFT_LAYERS), LIFT_H))
+
+    # back wall: flat in its own frame (u, v) -> back_wall.FCStd / .step / .dxf
+    doc = App.newDocument("back_wall")
+    wg = wall_geometry()
+    shape = build(doc, "BackWall", wg, BW_T).Shape
+    doc.saveAs(os.path.join(here, "back_wall.FCStd"))
+    shape.exportStep(os.path.join(here, "back_wall.step"))
+    write_dxf(os.path.join(here, "back_wall.dxf"), wg)
+    print("back wall: %.0f x %.0f x %.0f mm, %d tie holes, %d slots" % (
+        2 * BW_U, BW_H, BW_T, len(wg[1]), len(wg[3])))
 
 
 if __name__ in ("__main__", "base_330"):
