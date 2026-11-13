@@ -2,7 +2,7 @@
 
 > **Where we are (2026-11-13):** first full layout of the robot around the real clapets v7 module, with every rule
 > check computed (perimeter, height, start area) and the free volume left for each mechanism. **Proposal, nothing
-> decided yet.** The back of the robot has 3 options (below); Seif chooses.
+> decided yet. Rough first pass (reserved boxes only); Seif will refine it.** The back of the robot has 3 options (below); Seif chooses.
 
 Front = clapets v7 **module A + B** (same space with or without module B). Back = **mirror** of the front, or
 Ayoub's **flip-6cups**, or a **simple pick** (no turning). Right = **Grail pickup**. Left = **cannonball launcher**.
