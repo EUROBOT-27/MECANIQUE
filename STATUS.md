@@ -27,7 +27,7 @@ _Last updated: 2026-11-13 (Seif, Ayoub)_
   **Module A passed CAD on 2026-11-13: printing in ABS (plates sliced), then assembly + test**; the assembly guide is
   out of date for the new features. Module B: D-021 confirmed 2026-11-13; Seif reworks it in `mechanical/suction-v1/` (simpler, works by
   suction alone without the doors, pneumatics + cables designed in; valves and pump placement still open); Maatoug's v8 stays as reference. A/B/C not dropped; the test decides.
-- **Robot layout v1** (`mechanical/layout-v1/`, 2026-11-13, rough first pass): body 300 × 292 around the real v7 module; front = module A+B, back = mirror / Ayoub's flip6 / simple (not chosen), Grail right, launcher left. Start perimeter 1184 / 1172 / 1112, deployed worst 1352 / 1340 / 1282 (never both doors at once: 1491). Seif will refine it.
+- **Robot layout v1 refined** (`mechanical/layout-v1/`, 2026-11-13, proposal): v7 module on the floor (+26), 30 mm chamfers, 4 corner casters, front A+B or B only, back mirror / flip6 / simple. Start / deployed perimeter: A+B mirror 1114 / 1318, A+B simple 1042 / 1248, B only mirror 1060 / 1063. Open: choose front + back; A+B motors clash the socle by 4 mm; B only has 44 mm side bays; door sheets 366 at lift 75 and cups 26 mm too high go to the module B rework (Seif).
 - Parts in hand added: KSM15-FL ball transfers, VS2-S30 cups, VW7-M5 connectors, 6 × 12 V vacuum pumps. Ayoub: `base_330` (330 × 280 temporary base, perimeter 1220 > 1200: not the final footprint) and `flip-6cups` concept (not reviewed).
 - **Ayoub's new idea, not reviewed (2026-11-13):** `mechanical/concepts/central-hub-builder.md`: round Ø300 robot, central hub, 6 suction shafts (3 front, 3 rear) that rotate 90° to the side on elastics + micro-servo latches, then spin the stone upright (walls and towers, ~2 lifts + 6 micro servos). Open: height step, layout vs layout v1 (needs a round body and the robot centre), suction on cardboard, FAQ Q1, gate lintel. Not a decision.
 - Parts library from the disassembled Ender 3 V2, lines still unverified (D-012).
@@ -41,7 +41,7 @@ _Last updated: 2026-11-13 (Seif, Ayoub)_
 3. **Perimeter budget:** layout v1 leaves 16 mm at start with a mirrored back (88 mm with a simple back) and 48 mm deployed; side-clamp jaws and the gate protrusion compete for it. FAQ Q1 (does a carried stone count?) unconfirmed.
 
 ## Waiting on
-- Seif: module A print (clapets v7), order stones + foam balls, refine the layout + choose the back option, review Ayoub's flip-6cups and central-hub-builder (concepts due 2026-11-22), refined
+- Seif: module A print (clapets v7), order stones + foam balls, choose front/back of the refined layout, review Ayoub's flip-6cups and central-hub-builder (concepts due 2026-11-22), refined
   timeline, confirmation of the D-008 location, name of the GROSBOT 2023 club.
 - Maatoug: back up personal files before the next pull; push the generators that only exist on his PC; remove the ~470 software build files committed in `a746ea1`. (v8 tasks dropped: Seif reworks module B in suction-v1.)
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.

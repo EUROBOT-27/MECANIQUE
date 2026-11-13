@@ -19,7 +19,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
 ## Mechanical
-- [ ] **Refine the robot layout** (`mechanical/layout-v1/`, v1 2026-11-13 = first rough pass: boxes around the real v7 module, Seif finds it too primitive); choose the back option (mirror / flip6 / simple) — Seif
+- [ ] **Layout refined 2026-11-13** (`mechanical/layout-v1/`: module on the floor, chamfers, 4 casters, B-only front). Choose front (A+B / B only), back (mirror / flip6 / simple), chamfer size; fix the motor/socle 4 mm clash (front +6, shorter motor or socle notch); measure the Pololu #4742 length — Seif
 - [ ] **Clapets v7 module A: print and test** — CAD passed 2026-11-13, now printing (plates sliced in `CAD_FC/STL/PRINT.3mf`) (`mechanical/clapets-v7/`, D-022; module B in parallel in Maatoug's v8) — Seif
   2. Print module A in **ABS** (~510 g, 40 % infill, parts regenerated 2026-11-12), assemble, test. The assembly guide
      is out of date for the cap tab, the plate teeth and the arm nut pockets: regenerate it (ask Claude) or follow the README
@@ -29,7 +29,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
   4. Optional: FEM check of the new door unit (gear force ~90 N + door squeeze)
 - [ ] Decide: "PLA for tests / prototype, ABS (or PETG) for robot parts" → log it as a decision or not — Seif
 - [ ] Add the GrabCAD link of the Two Trees Bluer V2 model to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` — Seif
-- [ ] Robot layout: chassis floor height vs the module (z 0 = table in the clapets CAD; floor must stay < z 27; cut profiles, top tie ≤ 350) — Seif
+- [ ] Module B rework: with the module on the floor, door sheets/foam reach 366 at lift 75 and the cups sit 26 mm above the stone centres (head must come down 26 mm); profiles / top tie get trimmed — Seif
+- [ ] Sprung drive wheels (4 corner casters make 6 contact points) — Seif
+- [ ] Check the clapets folder move after the pull: `layout_fc.py` still reads `mechanical/clapets-v7/` — Seif
 - [ ] Prototype and test stone gripper concepts A (side clamp) and B (suction) → `mechanical/concepts/stone-gripper.md` — Seif, Ayoub, Baha — due 2026-11-22
 - [ ] Robot layout sketch: drive base vs. ~380 mm open jaws (concept A), pockets, perimeter at start / deployed, **shared gate slot on face A or B** (D-011, `mechanical/concepts/gate-lintel.md`) — Seif
 - [ ] Concepts for the second face: single-stone pick + flip (towers, gate uprights) — Seif, Ayoub, Baha
@@ -67,6 +69,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Layout v1 refined: module on the floor, chamfers, 4 casters, B-only variant, 5 reports + README — 2026-11-13
 - [x] Clapets v7 module A CAD passed (README, STATUS), effort estimate ~45–65 h logged — 2026-11-13
 - [x] D-021 confirmed with rework; `mechanical/suction-v1/` created — 2026-11-13
 - [x] Parts photos + library (KSM15-FL, VS2-S30, VW7-M5, vacuum pumps); Barbatronic chassis + GROSBOT 2023 notes — 2026-11-13
