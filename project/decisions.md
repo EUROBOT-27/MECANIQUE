@@ -325,7 +325,19 @@ Template:
 - Date: 2026-11-03
 - Area: mechanical
 - Decided by: Maatoug
-- Status: **proposed** (Seif to confirm; v7 stays the print target until then)
+- Status: **confirmed by Seif on 2026-11-13, with a rework of module B (below)**
+- Confirmation (Seif, 2026-11-13): the principle is kept (the cups press onto the stack by a forward movement inside
+  module B, while the doors hold it). Seif's requirements for the module B rework:
+  1. **Simpler:** fewer parts and fewer special parts; nothing that needs fine tuning to work.
+  2. **Reliable:** no binding guides, no fragile press fits, no loads that depend on print tolerances.
+  3. **Buildable in real life:** every part printable or in hand / local, every fastener reachable with a tool, an
+     assembly order that works (same standard as v7 module A, `mechanical/design-principles.md`).
+  4. **Works without module A:** module B has its own frame, can be assembled and tested on the bench alone, and fixes
+     to module A through one simple, defined interface.
+  5. **Pneumatics, cables and fixings designed in, not left open:** pumps and valves placed and fixed, tube routing to
+     the cups through the head's rotation and the strike travel, servo cables with strain relief, zip-tie anchors.
+  6. Takes the current v7 module A (2026-11-12 state), insert holes per D-025, height margin re-checked with the 3rd
+     servo and the carriage, strike force tuned on real stones.
 - Decision: The cups must press firmly onto the boxes to attach reliably, with a forward movement inside module B only,
   while the doors hold the stack. In `mechanical/clapets-v8/` (copy of v7, owned by Maatoug), module B is split into a
   **fixed base** (2 bars on the 4 wheel bolts, each holding a Ø8 guide rod) and a **sliding carriage** (bearing tube,

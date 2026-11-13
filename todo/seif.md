@@ -45,7 +45,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Decide ArUco tags on our SIMAs (IDs > 90 suggested) — Seif, Hamza Sammoud
 
 ## Follow-ups with others
-- [ ] **Confirm or reject D-021** (Maatoug's clapets v8: suction head strikes 8 mm forward, 3rd servo; proposed 2026-11-03) — Seif
+- [x] Confirmed D-021 with a module B rework (simpler, standalone, pneumatics designed in) — 2026-11-13
 - [ ] **Review Maatoug's clapets work (D-014 → D-017)**: v5 is being printed and tested as v7 (D-019, D-020); A/B/C not dropped, the real test decides. Close this after the test — Seif, Maatoug — before 2026-11-22
 - [ ] Confirm D-012 (parts library, logged as "Decided by: Seif" on 2026-10-27) — Seif
 - [ ] Tell Maatoug about the shared hub (D-018) and the steps before his next pull (see `todo/maatoug.md`) — Seif — 2026-11-01

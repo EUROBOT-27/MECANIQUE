@@ -18,7 +18,7 @@ _Last updated: 2026-11-13 (Seif)_
   flat web), cap front tab + insert, teeth that lock the door units on the butterfly plate, nut pockets in the arm tabs,
   insert holes redesigned (D-025: Ø5.4 × 7 + cone); top crossbar without a 608 (lead screw through a Ø15 hole).
   **Module A passed CAD on 2026-11-13: printing in ABS (plates sliced), then assembly + test**; the assembly guide is
-  out of date for the new features. Module B: Maatoug's **v8** (D-021, proposed: cups strike 8 mm forward),
+  out of date for the new features. Module B: Maatoug's **v8** (D-021, confirmed 2026-11-13 with a rework: simpler, standalone, pneumatics designed in),
   which must take v7's module A. A/B/C not dropped; the test decides.
 - Parts library from the disassembled Ender 3 V2, lines still unverified (D-012).
 - Software: simulation repo (ROS 2 Jazzy + Gazebo), clone separately into `eurobot2027/`. `software/` area exists.
@@ -33,7 +33,7 @@ _Last updated: 2026-11-13 (Seif)_
 
 ## Waiting on
 - Seif: module A print (clapets v7), order stones + foam balls, robot and roof layout sketches, refined
-  timeline, confirmation of the D-008 location, confirm/reject D-021.
+  timeline, confirmation of the D-008 location.
 - Maatoug: back up personal files before the next pull; push the generators that only exist on his PC; carry v7's
   module A into v8; remove the ~470 software build files committed in `a746ea1`; fix the head servo posts; update v8's insert holes to D-025.
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.

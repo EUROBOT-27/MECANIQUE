@@ -11,6 +11,11 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Note: Seif owns `mechanical/clapets-v6/` and `clapets-v7/` for now (v5 untouched). v7 = the version we print (D-020); have a look at its README (fasteners, real printer parts, motor on the floor) — Maatoug
 - [ ] Where did you download the Two Trees Bluer V2 model? Add the link to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` if Seif hasn't — Maatoug
 
+## From Seif (2026-11-13)
+- [ ] **D-021 confirmed, with a rework of module B:** simpler, reliable, buildable, works and tests **without module A**
+  (own frame + one simple interface to module A), pneumatics (pumps, valves, tubes through the rotation + strike),
+  cables and fixings designed in. Full list in `project/decisions.md`, D-021 — Maatoug, Seif
+
 ## From Seif (2026-11-12)
 - [ ] **Insert holes changed (D-025):** the Ø4.6 hole pushed plastic into the insert's thread in the ABS test. New
   reference: `mechanical/design-principles.md` (drawing `mechanical/img/heat_set_insert_hole.png`): our M3 inserts →
