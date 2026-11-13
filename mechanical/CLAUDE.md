@@ -27,7 +27,7 @@ the testing method, …) (D-006).
 - `concepts/gate-lintel.md`: space to reserve for the gate (slot on a driving face shared with a stone gripper, D-011 + narrow protrusion for the perimeter budget), concepts compared. Mechanism not chosen.
 - Launcher (flywheel, fixed angle), Grail lift variants: brainstorm in `project/strategy.md`.
 - `concepts/aile-redesign/README.md`: clapets v7 door unit + cap rebuilt from scratch, 4 options (2026-11-10), not chosen yet.
-- `concepts/central-hub-builder.md`: Ayoub's idea (2026-11-13), round Ø300 robot with a central hub, 6 suction shafts (3 front, 3 rear) that rotate 90° to the side on elastics + latch servos, then spin the stone upright. Walls + towers from one mechanism. Idea only, for Seif to review.
+- `concepts/central-hub-builder.md`: Ayoub's idea (2026-11-13), Ø100 grooved hub on base_330 (bridge over the drive motors), 6 suction shafts (3 front → left, 3 rear → right); each sleeve rides its groove (turn 90° + reach the spin-safe height in one move), then spins the stone upright. Walls + towers. GIF in `simulations/central_hub/`. Idea only, for Seif to review.
 - `concepts/clapets-redesign.md`: rethink of the clapets modules v1/v2 (quarry-stack grip + 15 mm lift, v2 adds a turning suction head) around our parts library. Proposal, 2026-10-27.
 
 ## Robot layout

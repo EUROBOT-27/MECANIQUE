@@ -48,6 +48,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Plan the 3 PAMI versions (basic, ejector, attack) and their tests with Hamza Sammoud. Ejector result needed before CAD freeze 2026-12-13 — Seif, Hamza Sammoud
 - [ ] Decide ArUco tags on our SIMAs (IDs > 90 suggested) — Seif, Hamza Sammoud
 
+## From Ayoub
+- [ ] **Review Ayoub's new idea: grooved central hub on base_330** (walls + towers from one mechanism, 6 suction shafts, front stones → left, rear → right). Concept: `mechanical/concepts/central-hub-builder.md`; GIF: `mechanical/simulations/central_hub/hub_base330.gif`. Keep / drop / test? It competes with clapets v7 for the faces (D-010, D-011) and needs base_330's back wall gone — Seif — before 2026-11-22
+
 ## Follow-ups with others
 - [x] Confirmed D-021 with a module B rework (simpler, standalone, pneumatics designed in) — 2026-11-13
 - [ ] **Review Maatoug's clapets work (D-014 → D-017)**: v5 is being printed and tested as v7 (D-019, D-020); A/B/C not dropped, the real test decides. Close this after the test — Seif, Maatoug — before 2026-11-22
