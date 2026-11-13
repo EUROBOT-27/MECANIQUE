@@ -29,6 +29,12 @@ the testing method, …) (D-006).
 - `concepts/aile-redesign/README.md`: clapets v7 door unit + cap rebuilt from scratch, 4 options (2026-11-10), not chosen yet.
 - `concepts/clapets-redesign.md`: rethink of the clapets modules v1/v2 (quarry-stack grip + 15 mm lift, v2 adds a turning suction head) around our parts library. Proposal, 2026-10-27.
 
+## Robot layout
+- `layout/` (Seif, 2026-11-13, proposal): robot 300 × 292 around the real v7 module, front = module A+B, back =
+  mirror / flip6 / simple, right = Grail, left = launcher, axle at the centre. Script `layout/fc/layout_fc.py` reports
+  perimeter (start 1184 / deployed 1352 with a mirrored back), height, start area, overlaps, free volumes.
+  **Check every new mechanism against its reserved volume there** (README "What the layout taught us").
+
 ## Simulations and videos
 **Every mechanism animation, motion study or simulation video is saved in `mechanical/simulations/`** (one
 subfolder per study, listed in `simulations/INDEX.md`), even when the script that makes it lives elsewhere.
