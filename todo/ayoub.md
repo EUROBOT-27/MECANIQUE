@@ -17,6 +17,8 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Get Seif's review of `flip-6cups` (concept CAD, not reviewed) — Ayoub, Seif
 - [ ] Gate lintel: still no mechanism (not covered by the hub) — Ayoub, Seif, Baha
 
+- [ ] Ask Seif / Hamza Sammoud to send FAQ questions (Q1 first: does a carried stone count in the perimeter?) — Ayoub
+
 ## Done
 - [x] Wrote the central hub builder concept (`mechanical/concepts/central-hub-builder.md`) — 2026-11-13
 - [x] `base_330` back wall + assembly, `flip-6cups` concept CAD + kinematics — 2026-11-12

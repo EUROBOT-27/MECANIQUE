@@ -1,9 +1,9 @@
 # Status
 
-_Last updated: 2026-11-13 (Seif, Ayoub)_
+_Last updated: 2026-11-14 (Ayoub; content from Seif's 2026-11-13 wrap)_
 
 **Phase:** Strategy partly fixed → **clapets v7 module A: CAD passed (2026-11-13), now printing + testing**; module B (suction) reworked by Seif as `suction-v1` (D-021). Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
-**Next deadline:** Strategy chosen (internal), 2026-11-08 (**5 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (9 days) · CAD freeze 2026-12-13 (30 days) · Mechanical built and assembled, 2026-12-31 (48 days)
+**Next deadline:** Strategy chosen (internal), 2026-11-08 (**6 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (8 days) · CAD freeze 2026-12-13 (29 days) · Mechanical built and assembled, 2026-12-31 (47 days)
 **Qualifier:** end of March 2027
 
 ## Where we are
