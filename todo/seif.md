@@ -42,7 +42,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Define the test targets (table in `design-principles.md`) once the mechanisms are known — Seif
 
 ## Vision (parked until vision tasks start — mechanical first)
-- [ ] Opponent tracking concept, LiDAR + vision (D-007, D-008): camera choice, how LiDAR and vision combine, LiDAR mounting height, opponent SIMAs — Seif
+- [ ] **Buy the Raspberry Pi Camera Module 3 Wide** (2BTrading, 275 TND, D-026) + decide Pi 4 or 5 (Pi 5 needs its own camera cable) — Seif
+- [ ] Far-corner test with a printed 70 mm marker once the camera arrives (56 fps ~24 × 12 px: borderline) — Seif
+- [ ] Opponent tracking concept, LiDAR + vision (D-007, D-008): how LiDAR and vision combine, LiDAR mounting height, opponent SIMAs — Seif
 - [ ] Read the table ArUco IDs from `Docs/table.svg` → `vision/CLAUDE.md` — Seif
 
 ## SIMAs
@@ -69,6 +71,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Overhead camera chosen (D-026) + Tunisian market comparison `vision/camera-choice.md` — 2026-11-14
 - [x] Layout v1 refined: module on the floor, chamfers, 4 casters, B-only variant, 5 reports + README — 2026-11-13
 - [x] Clapets v7 module A CAD passed (README, STATUS), effort estimate ~45–65 h logged — 2026-11-13
 - [x] D-021 confirmed with rework; `mechanical/suction-v1/` created — 2026-11-13

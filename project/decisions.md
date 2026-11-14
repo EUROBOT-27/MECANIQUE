@@ -424,3 +424,20 @@ Template:
 - Why: the hole was far too small for a 6.0 knurl; the extra plastic had nowhere to go but into the thread.
 - Consequences: `ins_hole()` in `clapets-v7/fc/v7_fc.py` (`INS3_K`, `INS3_L`) regenerated, all M3 insert holes changed
   (socle ×4, cap tabs ×2, head bracket ×4). Clapets v8 (Maatoug) still uses Ø4.6 × 6.5: to update.
+
+## D-026 — Overhead camera: Raspberry Pi Camera Module 3 Wide, frames sent to the laptop by Ethernet
+- Date: 2026-11-14
+- Area: vision
+- Decided by: Seif
+- Status: active
+- Decision: buy the **Raspberry Pi Camera Module 3 Wide (SC0874)** for the overhead station (2BTrading, 275 TND).
+  The camera goes on a Raspberry Pi (4 or 5) that only grabs frames and sends them to the laptop over a **wired
+  Ethernet cable** (JPEG per frame); **all processing runs on the laptop**.
+- Alternatives considered: Arducam B0433 12MP USB 110° (better balance of sharpness and speed, but must be imported);
+  ArduCam 64MP (sold locally, but too narrow: sees ~65–75 % of the table and needs a Pi); IMX219 120°/160° (too few
+  pixels at speed); 4K webcams (too narrow, ≤ 90° D); WiFi from the Pi to the laptop (too slow).
+- Why: the only camera sold in Tunisia that covers the whole table from the station (102° × 67°) at a usable rate
+  (2304×1296 @ 56 fps). Comparison in `vision/camera-choice.md`.
+- Consequences: D-008 stays (camera + laptop on the station) with a Pi added between them. Pi 4 or Pi 5 still to
+  choose (Pi 5 needs its own camera cable). Lock the autofocus and calibrate at the runtime resolution. First test:
+  70 mm marker in the far corners (~24 × 12 px at 56 fps, borderline).
