@@ -1,0 +1,13 @@
+Single-bar flip - solid check over the whole range (flipbar_fc.py), 85 poses from s -0.025 (home stop) to s 1.025 (upright stop)
+Expected contacts ignored: gear meshes, bearings in hubs/housings, shafts in gears, motor on the rear plate,
+switches and stops on the column. Parts moving together (same link) are not checked against each other.
+
+fixed parts against each other (frame, motor, pumps, base): 0 overlap(s)
+moving parts, unexpected overlaps: 0
+
+actuators highest point (exact solids): 339.0 mm at s 0.413 -> OK (limit 350)
+stones highest: 470.3 mm at s 0.512 (castle / construction zones only)
+moving parts (not the stones) lowest point: 17.9 mm at s -0.025 (above the table)
+
+masses (g): Crank 40, Crank_bearings 36, Crank_shaft 19, Gear_crank_45T 10, Rocker 56, Rocker_bearings 73, Bar 179, Bar_pins 32, Station_spacer_1 13, Station_TPU_1 7, Support_ring_1 10, DPS30_1 8, Station_spacer_2 13, Station_TPU_2 7, Support_ring_2 10, DPS30_2 8, Station_spacer_3 13, Station_TPU_3 7, Support_ring_3 10, DPS30_3 8
+bar assembly (bar + pins + spacers + TPU stations + support rings + cups): 323 g (flipbar_params assumes 303 g)

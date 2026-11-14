@@ -1,0 +1,41 @@
+Single-bar flip - range of motion + forces (flipbar_check.py, 2026-11-14)
+
+== Four-bar (Ayoub's flip-6cups synthesis): crank 91.0, rocker 149.2, coupler 104.2, ground 204.1 mm
+   non-Grashof (295.0 > 253.4): no link can turn fully; the crank swings between two toggle positions
+   used travel: crank 120.0 deg (s 0 = stack on the table, s 1 = stones upright 8.8 mm above it), bar 0 -> 90 deg
+   toggle limits (linkage locks): s -0.725 (crank 87.0 deg before the start) and s 1.152 (18.2 deg past upright)
+   hard stops (rubber, on the column, crank layer): 3.0 deg past each end = s -0.025 / 1.025 -> 84.0 / 15.2 deg from the toggles
+
+== Geometry over the travel (s 0 -> 1), and at the hard stops
+   transmission angle  min 49.2 deg (>= 40 good) at s 0.21; at the stops 59.5 / 46.0 deg
+   ACTUATORS highest point  339.0 mm at s 0.41 (bar 33.4 deg)  -> OK, margin 11.0 (limit 350, game rules E.1)
+   actuators lowest point   18.9 mm (above the table)
+   stones highest  470.3 mm at s 0.51 (game elements may pass 350 in the castle / construction zones only)
+   stones lowest during the flip  7.2 mm (bar between 1 and 89 deg, as flip-6cups; at s 0 they rest on the table)
+   actuators X span over the travel: -118.4 .. 157.1 mm (bar + stations; the stones don't count, FAQ Q1)
+
+== Torque (quasi-static, gravity; masses from the CAD: bar assembly 0.323, crank 0.076, rocker 0.093, stones 3 x 0.090 kg)
+   with 3 stones            crank: lift peak +0.66 N.m (s 0.21), brake peak -0.82 N.m (s 1.00); sign changes at s 0.53
+   empty (stones released)  crank: lift peak +0.40 N.m (s 0.21), brake peak -0.49 N.m (s 1.00); sign changes at s 0.53
+   unpowered (gears back-drive): with the torque > 0 the bar falls back toward the start, < 0 it falls toward
+   upright -> rests on the hard stop there. The stops take the full load: 0.86 N.m with stones.
+
+== Drive: 17HS4401S, 2-stage spur 15T/45T x 2 = 9:1, module 1.0, 9 mm wide, printed ABS, efficiency 0.81
+   motor: holding 0.40 N.m at 1.7 A (datasheet, CHECK the label); driven at ~1.0 A -> usable 0.20 N.m up to 300 rpm (assumed)
+   resolution: 16 microsteps -> 0.0125 deg of crank per microstep (80 microsteps per crank degree)
+   flip in 0.6 s (trapezoid, 25% ramps): motor up to 400 rpm, peak motor torque 0.172 N.m, worst margin x1.01 at s 0.17 TIGHT
+   flip in 1.0 s (trapezoid, 25% ramps): motor up to 240 rpm, peak motor torque 0.118 N.m, worst margin x1.70 at s 0.17 OK
+   flip in 1.5 s (trapezoid, 25% ramps): motor up to 160 rpm, peak motor torque 0.101 N.m, worst margin x1.98 at s 0.17 OK
+   holding (powered, standstill): worst 0.090 N.m at the motor = 45% of the usable torque
+   stage 1: wheel torque 0.37 N.m, tooth force 16 N, pinion root stress 6.3 MPa (Lewis) -> x6.3 vs ABS ~40 MPa
+   stage 2: wheel torque 1.11 N.m, tooth force 49 N, pinion root stress 19.0 MPa (Lewis) -> x2.1 vs ABS ~40 MPa
+   backlash at the crank: ~0.34 deg (0.10 mm designed per mesh); crossed where the torque changes sign (slow down there)
+   gear layout: crank 45T on O1 (-34.8, 50.4), intermediate (-56.0, 71.6), motor (-56.0, 101.6); crank 45T bottom z 26.9 (base top 18.5)
+   intermediate 45T tip to the crank shaft: 2.5 mm clearance
+
+== Joints
+   pin forces (with stones): crank pin / crank shaft max 8.3 N, rocker max 6.8 N (in-plane)
+   out-of-plane moment (stones' COG 106 mm in front of the link mid-plane y 144): 0.39 N.m
+   -> crank shaft, 608 in rear plate + column  bearings 35 mm apart: pair force 11 N each (608 static rating 1370 N)
+   -> P1 / P2 / O2 hubs, two 608 back to back  bearings 7 mm apart: pair force 55 N each (608 static rating 1370 N)
+   in-plane friction: 608 (mu ~0.003) x 8 N x 4 mm = 0.0001 N.m per joint (negligible)

@@ -19,7 +19,9 @@ the testing method, …) (D-006).
 
 ## Decided so far
 - Differential drive, 2 × Pololu 4742 (37D) + JSUMO wheels (D-004). Omniwheels were rejected.
-- Working assumption: a carried stone does **not** count in the robot perimeter (FAQ Q1, to confirm).
+- A carried stone does **not** count in the robot perimeter (FAQ Q1, answered 2026-11-14).
+- "Fully deployed" perimeter = **every mechanism open at the same time** (homologation), so a software interlock
+  (never open two mechanisms together) does not make a design legal (FAQ Q10, answered 2026-11-14).
 - Strategy: target every action, Grail at L4 on our roof (D-009). Build order: secure the sure points first, reserve CAD space for later mechanisms (D-010).
 
 ## Concepts in progress
@@ -28,6 +30,7 @@ the testing method, …) (D-006).
 - Launcher (flywheel, fixed angle), Grail lift variants: brainstorm in `project/strategy.md`.
 - `concepts/aile-redesign/README.md`: clapets v7 door unit + cap rebuilt from scratch, 4 options (2026-11-10), not chosen yet.
 - `concepts/central-hub-builder.md`: Ayoub's idea (2026-11-13), Ø100 grooved hub on base_330 (bridge over the drive motors), 6 suction shafts (3 front → left, 3 rear → right); each sleeve rides its groove (turn 90° + reach the spin-safe height in one move), then spins the stone upright. Walls + towers. GIF in `simulations/central_hub/`. Idea only, for Seif to review.
+- `flip-bar/` (Maatoug, 2026-11-14, proposal): Ayoub's flip-6cups four-bar with ONE smooth cup bar (3 cups on the stack's centre line, each in the clapets-v8 TPU spring station + a Barbatronic-style Ø62 support ring) so actuators stay ≤ 350 (339.0) while the stones turn upright in the castle; 17HS4401S + 2-stage printed spur gears 9:1, column + rear plate, two 608 per joint, hard stops + 2 endstops. Range-of-motion study + CAD, 0 collisions. No 6-stone carry.
 - `concepts/clapets-redesign.md`: rethink of the clapets modules v1/v2 (quarry-stack grip + 15 mm lift, v2 adds a turning suction head) around our parts library. Proposal, 2026-10-27.
 
 ## Robot layout
@@ -102,7 +105,7 @@ mechanism on real stones** once they arrive (size, stiffness and weight may diff
 | Constraint | Value | Ref |
 |---|---|---|
 | Perimeter at start | ≤ 1200 mm (convex hull of vertical projection) | GR F.3 |
-| Perimeter deployed | ≤ 1400 mm, at all times | GR F.3 |
+| Perimeter deployed | ≤ 1400 mm, at all times, **with every mechanism open at once** (FAQ Q10) | GR F.3 |
 | Height (robot + carried objects) | ≤ 350 mm at all times; e-stop ≤ 375 mm | GR F.3 |
 | Start area | fit fully in 500 × 500 mm, **and leave room for the Grail** on the floor | G D.3, G E.2 |
 | Beacon support | top at 430 ± 5 mm (make adjustable), within Ø200 of robot centre, ≥ Ø70 / ≤ 100 × 100, solid, opaque, Velcro hook top, holds 400 g, full between 350 mm and top | GR F.6 |
@@ -120,7 +123,7 @@ mechanism on real stones** once they arrive (size, stiffness and weight may diff
 
 ## Known hard problems
 1. **Gate lintel**: placing a stone on top of two 320 mm uprights while the actuator stays ≤ 350 mm.
-2. **Carrying a 320 mm stone or a full quarry stack.** Assumed not to count in the perimeter (FAQ Q1), but it
+2. **Carrying a 320 mm stone or a full quarry stack.** Doesn't count in the perimeter (FAQ Q1, answered), but it
    is still long and must be held securely. A single central suction cup will let it swing (see the Aerobotix note).
 3. **Standing a stone upright** for towers and gate uprights.
 4. **Robot + Grail in 500 × 500** at start.
