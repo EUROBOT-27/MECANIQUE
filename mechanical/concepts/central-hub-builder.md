@@ -71,6 +71,48 @@ A front stone stands 225 mm left of the centre and a rear stone 225 mm right: 45
 (850, 1246) are ~500 mm apart, and a stone counts if any part of its projection is in the zone [G E.1] → maybe 2 towers
 in one stop.
 
+## Option A (2026-11-14): rings + slides, no grooves, no elastics
+
+Elastics dropped (Ayoub, 2026-11-14): a one-shot spring can't come back, so every move must be driven both ways.
+The grooved hub was modelled first (`../central-hub/fc/hub_fc.py`, `hub_report.txt`) and **fails**: the top and bottom
+grooves start at 77° (no single actuator can drive them: a turn jams on the steep start, a push on the flat end), and
+the 3 sleeves of a unit collide where the grooves cross (118 clashes in the step check).
+
+**Option A** (`../central-hub/fc/hub_a_fc.py` → `CAD_FC/HUB_A_*.FCStd`, `hub_a_report.txt`; views
+`../simulations/central_hub/option_a_sheet.png`, animation `hub_option_a_sequence.gif` via `fc/anim_a.py`):
+- **3 full rings** on the Ø100 hub (z 105 / 140 / 245), one per stack level, each in its own band: they only turn.
+- **Each ring carries a front and a rear arm** (180° apart): one 90° turn places a front stone on the left and a rear
+  stone on the right (2 towers per stop). Turn = 1 servo per ring, fixed in the free front-right quarter, pinion Ø63
+  on the ring gear (180° servo → 90°).
+- **Height:** top and bottom arms carry a vertical slide (rail + carriage, lead screw + N20 placeholder, 115 mm travel);
+  the middle arm is fixed. Heights change only once the arm is turned out (alone at the side).
+- **Spin:** one MG90S per arm on the carriage, radial axis, turns cup + stone 90°.
+- **Layout rule found:** the 3 levels park at the same angle and turn the same way, so **seen from the side (radius ×
+  height) their parts must never overlap** (whichever moves second would sweep into the other). Hence: top rail r 80–88,
+  bottom rail r 102–110, middle arm goes out under the top rail, up between the rails, over the bottom rail (z 199).
+- **Sequence:** unpinch (top +5, bottom −5, so the middle stone slides out freely) → middle: turn, spin, place, spin
+  back, turn back → top: turn, down to 175, spin, place, back → bottom: turn, up to 175, spin, place, back.
+- **Set-down:** the top and bottom slides lower their standing stone onto the table (centre 160) before venting; the
+  middle arm has no slide, so its stone drops ~15 mm (needs the base lift or a short slide).
+- **Check (167 steps, both units, every part):** no clashes; stones 0–345 mm, mechanism ≤ 329 mm [GR F.3].
+- **Actuators (modelled 2026-11-14):** 3 turn MG996R 📦 **inside the hub bore** (one per ring; the pinion pokes through a
+  window in the hub wall and meshes an internal gear cut in the ring bore, pitch r 26 / 52 → 180° servo = 90° ring;
+  bottom + middle servos hang upside down above their pinion, top one below; rings now at z 90 / 140 / 245);
+  4 slides = N20 gear motor 🇹🇳 + M4 lead screw 🇹🇳 beside each rail, nut block in the carriage; 6 spin MG90S 📦;
+  6 pumps 📦 off the hub, hoses + wires down the Ø76 bore. 13 motors + 6 pumps, all reversible. The front-right
+  quarter is free again (no outside turn drives).
+
+**Connections, actuator table, collisions:** `../central-hub/CONNECTIONS.md` (2026-11-14, proposal). The model now
+has the hub in 4 segments + 3 M4 tie rods, open windows and gear bands (assembly order), MG996R ears + printed cradles,
+ring lugs, N20 clamps, couplers, bearings, limit switches and every fastener. No clashes in 167 steps. Against base_330
+(`../central-hub/fc/check_env_a.py`) only the bottom slide hits the wheels: left open, a smaller wheel is planned.
+The bottom carriage now rises +16 before its turn (its stones cleared the plate corner).
+
+Open on option A: robot around it (base_330 wheels at x ±84–104 and the bottom slide motors at z 21–46 are in the
+swept quarters; nothing may stand at r 56–170 in the front-left and rear-right quarters); front and rear of a level
+always turn together (a stone not to place stays on its cup and comes back); rails are cantilevered (stiffness);
+slide drive choice (N20 + M3/M4 screw 🇹🇳, or 360° servo + rack); hose routing through the Ø76 bore; turn gear detail.
+
 ## Actuators and parts
 
 Not fixed yet. What moves: per shaft, the turn along the groove (1 actuator, or an elastic + latch servo, see the

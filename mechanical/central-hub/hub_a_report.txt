@@ -1,0 +1,31 @@
+Central hub - option A - report
+
+Hub Ø100 z 73-345 in 4 segments (joints z 100.5/150.5/255.5), 3 M4 tie rods; rings Ø124 x 20 at z 90/140/245, lugs to r 76; top rail r 80-88, bottom rail r 102-110, middle arm over at z 199
+Cup heights: stack 65/175/285, spin at 175; bottom rises to 76 before its turn; slide travel bottom 115, top 130 mm
+Actuators: 3 turn MG996R inside the hub (1 per ring, both units, 2:1 internal gear), 4 slides (N20 + M4 screw; top + bottom, front + rear), 6 spin MG90S, 6 pumps (off the hub, hoses through the bore), 4 limit switches
+
+Fixed parts against each other (segments, cradles, turn servos with ears, fixed fasteners): no clashes
+Sequence check: 167 steps, both units, every part (rings, lugs, arms, rails, carriages, servos, cups, stones, switches, fasteners; fixed: segments, cradles, turn servos, fixed fasteners)
+  stones: lowest -0.0, highest 345.0 mm; mechanism highest 328.0 mm (limits 0 / 350 [GR F.3])
+  no clashes
+
+Fasteners (whole hub, both units):
+  J2     4 x M4x16 button head ISO 7380 + nut
+  J3     3 x M4 threaded rod 272 mm + 2 nuts
+  J4     6 x M3x12 socket head + nut (inner servo ear)
+  J5     6 x M3x25 countersunk + M3 insert (radial, cradle)
+  J6     3 x MG996R round horn + 4 x M2x6 self-tapping + centre screw
+  J8    12 x M3x20 socket head + nut (arm -> ring lug)
+  J10    8 x M2x16 + nut (N20 clamp)
+  J11    4 x coupler 3 -> 4 mm
+  J12    4 x bearing 4 x 8 x 3 (screw end)
+  J13    4 x M4 nut (lead nut, in the carriage)
+  J14   12 x M2x8 self-tapping (MG90S ears)
+  J15   12 x M2 self-tapping (cup adaptor -> horn)
+  J18    4 x micro-switch + 2 x M2x12 + nuts
+
+wrote CAD_FC\HUB_A_HOME.FCStd
+wrote CAD_FC\HUB_A_1_MIDDLE.FCStd
+wrote CAD_FC\HUB_A_2_TOP.FCStd
+wrote CAD_FC\HUB_A_3_BOTTOM.FCStd
+base_330 check: fc/check_env_a.py; animation: fc/anim_a.py; sheet: fc/sheet_a.py
