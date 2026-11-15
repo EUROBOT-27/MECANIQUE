@@ -3,7 +3,7 @@
   "robot/fc/layout.py": "7a4e468c2407",
   "robot/fc/build_robot.py": "672913d39141",
   "robot/fc/robot.urdf.xacro": "d1ad07b1dbdc",
-  "clapets/clapets-v8/CAD_FC/MODULE_CLAPETS_V8.FCStd": "4b9da5ccbcff",
+  "clapets/clapets-v8/CAD_FC/MODULE_CLAPETS_V8.FCStd": "19adc9ebe9ea",
   "grail-lift/CAD_FC/GRAIL_LIFT_V3.FCStd": "6f9c90aa6a26",
   "grail-lift/CAD_FC/joints_v3.json": "ca321bd6df65"
  },

@@ -111,7 +111,7 @@ Last full review: 2026-10-25 (game rules v1.0, general rules v1.4).
 
 | Constraint | Value | Ref |
 |---|---|---|
-| Perimeter (convex hull of vertical projection) | **≤ 1200 mm at start**, **≤ 1400 mm deployed**, at all times | [GR F.3] |
+| Perimeter (convex hull of vertical projection) | **≤ 1200 mm at start**, **≤ 1400 mm deployed**, at all times. "Fully deployed" = **every mechanism open at the same time** (checked that way at homologation, Q10). Carried stones don't count (Q1) | [GR F.3] |
 | Height | **≤ 350 mm** for robot **and manipulated objects**, at all times. E-stop may reach 375 mm. Excludes beacon mast + sensors under it | [GR F.3] |
 | Start position | vertical projection fully inside the 500 × 500 start area at end of setup | [G D.3] |
 | Beacon support | top flat & horizontal at **430 ± 5 mm** (adjustable recommended); convex shape ≥ Ø70, ≤ 100 × 100 square; solid, opaque (IR + visible); top fully covered with Velcro (hook); within Ø200 circle around robot centre; full between 350 mm and top (rotating-sensor gap < 20 mm); holds ≥ 400 g without flexing; only sensors/telecom on it | [GR F.6] |
@@ -175,8 +175,8 @@ Last full review: 2026-10-25 (game rules v1.0, general rules v1.4).
 
 1. **Robot + Grail share the 500 × 500 throne room at start**, and the Grail must not be under robot control. The robot footprint must leave room for the Grail (unless the Grail can sit under the robot — see FAQ Q4).
 2. **Gate lintel problem**: the top stone sits at 320–430 mm, but the actuator must stay ≤ 350 mm. Only ~30 mm of the lintel's height is reachable while lowering it onto the uprights.
-3. **A quarry stack = a ready-made wall** (3 horizontal stones, 330 mm tall, under the 350 mm limit). Carrying a full stack keeps you under the height limit. Working assumption: carried stones don't count in the
-   perimeter (Q1, to confirm).
+3. **A quarry stack = a ready-made wall** (3 horizontal stones, 330 mm tall, under the 350 mm limit). Carrying a full stack keeps you under the height limit. Carried stones don't count in the
+   perimeter (Q1, answered 2026-11-14).
 4. **Grail L4 + full return home** both require the robot to finish in the castle, so they combine: 10 + 5 + 20 = 35 pts. But the Grail must stay inside the castle all match, so the robot can only carry it while staying in the castle.
 5. Stone dimensions have ±4/±5 mm tolerance and cardboard deforms → grippers must take up the slack.
 6. **Tag 13 is only on the 4 long faces** [G D.4], so a standing stone (tower, gate upright) shows no tag to an
@@ -188,7 +188,7 @@ Last full review: 2026-10-25 (game rules v1.0, general rules v1.4).
 
 | # | Question | Why it matters | Status |
 |---|---|---|---|
-| Q1 | Does a carried game element (stone) count in the robot's perimeter (convex hull)? [GR F.3] only says height includes manipulated objects. | Decides whether we can carry a 320 mm stone / a full quarry stack | **working assumption: does NOT count** (Seif, 2026-10-25). Seif will confirm with the FAQ |
+| Q1 | Does a carried game element (stone) count in the robot's perimeter (convex hull)? [GR F.3] only says height includes manipulated objects. | Decides whether we can carry a 320 mm stone / a full quarry stack | **answered: does NOT count** (Maatoug, 2026-11-14; source to add). Was the working assumption since 2026-10-25 |
 | Q2 | Is the castle courtyard (incl. throne room) "the castle" for the Grail's 5 pts — i.e. does the Grail score 5 pts by just staying where it starts? | Free points / strategy | **likely yes:** the definitions say the castle courtyard "includes the throne room" [G D.4]. Low priority to send |
 | Q3 | Which SIMA constraints apply to the Grail exactly? (max perimeter 600? max height 175? weight 1.5 kg? e-stop?) | Grail design | open |
 | Q4 | Can the Grail be placed physically under the robot in the throne room if the robot doesn't hold it? | Robot footprint | open |
@@ -197,3 +197,4 @@ Last full review: 2026-10-25 (game rules v1.0, general rules v1.4).
 | Q7 | Grail L4 "free of any actuators and fixing system": may the roof have a passive recess or rim to hold the Grail? | Roof design | open |
 | Q8 | Grail on the roof (L4) "without blocking any opposing beacons" [G E.2]: is a Grail whose top passes 430 mm, next to our beacon support (where the opponent's on-board beacon sits), considered blocking? Is there a max Grail height on the roof? | Grail height / roof layout | open |
 | Q9 | Inside a construction zone / the castle, may a stone **still held by the robot** go above 350 mm (e.g. gate lintel carried on a fork whose top stays ≤ 350 mm)? [GR F.3] says manipulated objects ≤ 350 mm; [G E.1] lets game elements exceed it in zones/castle, actuators still ≤ 350 mm. | Decides if the "fork under the lintel" gate method is legal | open |
+| Q10 | [GR F.3] says "the perimeter of the **fully deployed** robot must not exceed 1400 mm", then "the convex hull may change during the game as long as its perimeter always respects the max". If software never deploys two mechanisms at once (each alone ≤ 1400, both together > 1400), is the robot compliant, and how is it measured at homologation? | Layout v1 A+B / mirror: one module working 1318, both 1493 (`mechanical/layout-v1/perimeter-study/`) | **answered: not compliant.** "Fully deployed" = every mechanism open at the same time, as shown at homologation; a software interlock doesn't help (Maatoug, 2026-11-14; source to add) |

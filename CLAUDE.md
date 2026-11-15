@@ -120,7 +120,7 @@ Hardware availability in Tunisia is limited, and imports take time (orders from 
 ## Key rule numbers (quick reference — full list in `project/rules-digest.md`)
 
 - Table 3000 × 2000 mm. Match 100 s. Prep time 3 min. Start area ("throne room") 500 × 500 mm.
-- Robot perimeter ≤ 1200 mm at start, ≤ 1400 mm deployed. Height ≤ 350 mm at all times (e-stop may reach 375 mm).
+- Robot perimeter ≤ 1200 mm at start, ≤ 1400 mm deployed (every mechanism open at once; carried stones don't count). Height ≤ 350 mm at all times (e-stop may reach 375 mm).
 - Beacon support top at 430 ± 5 mm, mandatory. Avoidance system, e-stop and 500 mm start cord mandatory.
 - Stone = cardboard box 320 × 110 × 110 mm, ~90 g, ArUco ID 13 on the 4 long faces. 30 stones, 3 per quarry.
 - Attack phase (SIMAs, cannonballs) only from 85 s to 100 s.

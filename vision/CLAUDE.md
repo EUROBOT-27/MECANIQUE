@@ -21,7 +21,9 @@ checked at homologation. A non-working system costs −30 pts [GR H.4].
   to the robot (tech chosen by the software team).
 - **Idea (Seif):** put team ArUco tags on **our** SIMAs. Use IDs **> 90** so the same tag works for both colours
   (51–70 blue / 71–90 yellow also allowed) [GR G.6]. Opponent SIMAs: to decide later.
-- Vision work (camera choice, accuracy, etc.) starts later. **Mechanical is the priority now.**
+- **Camera chosen (D-026, 2026-11-14):** Raspberry Pi Camera Module 3 Wide on a Pi, frames sent to the laptop over
+  an Ethernet cable, all processing on the laptop. Comparison + TL;DR in `vision/camera-choice.md`.
+- Vision work (accuracy, code, etc.) starts later. **Mechanical is the priority now.**
 - Earlier camera options (for reference):
   - **Overhead camera** on the remote computing device (up to 1.6 m above the table edge) [GR G.4]: sees the whole
     table and every robot marker. It's on the table, so talking to our robot is allowed [GR F.6].
