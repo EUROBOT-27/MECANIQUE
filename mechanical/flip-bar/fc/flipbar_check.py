@@ -176,8 +176,8 @@ for name, T in (("with 3 stones", T_st), ("empty (stones released)", T_empty)):
 L.append("   unpowered (gears back-drive): with the torque > 0 the bar falls back toward the start, < 0 it falls toward")
 L.append("   upright -> rests on the hard stop there. The stops take the full load: %.2f N.m with stones." % max(abs(t) for t in T_st))
 L.append("")
-L.append("== Drive: %s, 2-stage spur %dT/%dT x %d = %.0f:1, module %.1f, %.0f mm wide, printed ABS, efficiency %.2f" % (
-    P.MOTOR["name"], P.Z_PINION, P.Z_WHEEL, P.STAGES, P.RATIO, P.GEAR_M, P.GEAR_W, P.ETA))
+L.append("== Drive: %s, one spur pair %dT pinion -> %dT sector = %.2f:1, module %.1f, %.0f mm wide, printed ABS, efficiency %.2f" % (
+    P.MOTOR["name"], P.Z_PINION, P.Z_WHEEL, P.RATIO, P.GEAR_M, P.GEAR_W, P.ETA))
 L.append("   motor: holding %.2f N.m at %.1f A (datasheet, CHECK the label); driven at ~%.1f A -> usable %.2f N.m up to 300 rpm (assumed)" % (
     P.MOTOR["hold"], P.MOTOR["rated_a"], P.DRIVER_A, P.MOTOR_USABLE))
 L.append("   resolution: %d microsteps -> %.4f deg of crank per microstep (%.0f microsteps per crank degree)" % (
@@ -201,19 +201,23 @@ for Tf in (0.6, 1.0, 1.5):
 hold = max(abs(motor_side(T_st[i])) for i in iu)
 L.append("   holding (powered, standstill): worst %.3f N.m at the motor = %.0f%% of the usable torque" % (hold, 100 * hold / P.MOTOR_USABLE))
 tc_peak = max(abs(t) for t in T_st) * 1.3            # + inertia/hoses margin
-for stage, (zp, zw) in enumerate(((P.Z_PINION, P.Z_WHEEL), (P.Z_PINION, P.Z_WHEEL)), 1):
-    t_wheel = tc_peak / (P.RATIO / (zw / zp)) if stage == 1 else tc_peak     # torque on that stage's wheel
-    ft = t_wheel / (P.GEAR_M * zw / 2 / 1000)
-    sig = ft / (P.GEAR_W * P.GEAR_M * P.LEWIS_Y[zp])
-    L.append("   stage %d: wheel torque %.2f N.m, tooth force %.0f N, pinion root stress %.1f MPa (Lewis) -> x%.1f vs ABS ~%d MPa" % (
-        stage, t_wheel, ft, sig, P.ABS_YIELD / sig, P.ABS_YIELD))
-bl = P.BACKLASH / (P.GEAR_M * P.Z_WHEEL / 2) + P.BACKLASH / (P.GEAR_M * P.Z_WHEEL / 2) / 3
-L.append("   backlash at the crank: ~%.2f deg (%.2f mm designed per mesh); crossed where the torque changes sign (slow down there)" % (
+ft = tc_peak / (P.GEAR_M * P.Z_WHEEL / 2 / 1000)
+sig = ft / (P.GEAR_W * P.GEAR_M * P.LEWIS_Y[P.Z_PINION])
+L.append("   teeth: crank torque %.2f N.m (peak x1.3), tooth force %.0f N, pinion root stress %.1f MPa (Lewis) -> x%.1f vs ABS ~%d MPa" % (
+    tc_peak, ft, sig, P.ABS_YIELD / sig, P.ABS_YIELD))
+bl = P.BACKLASH / (P.GEAR_M * P.Z_WHEEL / 2)
+L.append("   backlash at the crank: ~%.2f deg (%.2f mm designed); crossed where the torque changes sign (slow down there)" % (
     math.degrees(bl), P.BACKLASH))
-L.append("   gear layout: crank 45T on O1 (%.1f, %.1f), intermediate (%.1f, %.1f), motor (%.1f, %.1f); crank 45T bottom z %.1f (base top %.1f)" % (
-    P.O1[0], P.O1[1], P.I_POS[0], P.I_POS[1], P.M_POS[0], P.M_POS[1], P.O1[1] - P.GEAR_M * (P.Z_WHEEL / 2 + 1), P.BASE_TOP))
-L.append("   intermediate 45T tip to the crank shaft: %.1f mm clearance" % (
-    P.CD - P.GEAR_M * (P.Z_WHEEL / 2 + 1) - P.SHAFT_D / 2))
+b0, b1 = P.sector_span()
+r_tip = P.GEAR_M * (P.Z_WHEEL / 2 + 1)
+a_lo = min(math.degrees(P.PHI0), math.degrees(P.PHI1)) - P.STOP_PAST_DEG
+a_hi = max(math.degrees(P.PHI0), math.degrees(P.PHI1)) + P.STOP_PAST_DEG
+low = min(P.O1[1] + r_tip * math.sin(math.radians(b + ph)) for ph in [a_lo + (a_hi - a_lo) * k / 60 for k in range(61)]
+          for b in [b0 + (b1 - b0) * k / 140 for k in range(141)])
+L.append("   sector: %.0f deg of teeth (%.0f of the %d), tip r %.1f; lowest tooth tip over the travel z %.1f (base top %.1f: %.1f mm clear)" % (
+    b1 - b0, (b1 - b0) / 360 * P.Z_WHEEL, P.Z_WHEEL, r_tip, low, P.BASE_TOP, low - P.BASE_TOP))
+L.append("   gear layout: crank sector on O1 (%.1f, %.1f), motor pinion (%.1f, %.1f), centres %.1f mm apart" % (
+    P.O1[0], P.O1[1], P.M_POS[0], P.M_POS[1], P.CD))
 L.append("")
 L.append("== Joints")
 L.append("   pin forces (with stones): crank pin / crank shaft max %.1f N, rocker max %.1f N (in-plane)" % (
@@ -317,12 +321,17 @@ def draw_frame(ax):
 
 
 def draw_gears(ax, phi_rel, alpha=1.0):
-    """Pitch circles of the 4 gears + a mark showing each one's rotation (crank turned phi_rel from the start)."""
-    r45, r15 = P.GEAR_M * P.Z_WHEEL / 2, P.GEAR_M * P.Z_PINION / 2
-    for (c, r, rot_) in ((P.O1, r45, phi_rel), (P.I_POS, r45, -phi_rel * 3), (P.I_POS, r15, -phi_rel * 3),
-                         (P.M_POS, r15, phi_rel * 9)):
-        ax.add_patch(Circle(c, r, fill=False, ec="#4a4a4a", lw=0.8, alpha=alpha, zorder=2))
-        ax.plot([c[0], c[0] + r * math.cos(rot_)], [c[1], c[1] + r * math.sin(rot_)], color="#4a4a4a", lw=0.8, alpha=alpha, zorder=2)
+    """Sector pitch arc (turns with the crank) + pinion pitch circle with a mark (crank turned phi_rel from the start)."""
+    rw, rp = P.GEAR_M * P.Z_WHEEL / 2, P.GEAR_M * P.Z_PINION / 2
+    b0, b1 = P.sector_span()
+    ph = P.PHI0 + phi_rel
+    arc = [(P.O1[0] + rw * math.cos(math.radians(b0 + (b1 - b0) * k / 40) + ph),
+            P.O1[1] + rw * math.sin(math.radians(b0 + (b1 - b0) * k / 40) + ph)) for k in range(41)]
+    ax.add_patch(Polygon([P.O1] + arc, closed=True, fc="#f2c14e", ec="#8a6a10", lw=0.8, alpha=0.55 * alpha, zorder=2))
+    rot_ = -phi_rel * P.RATIO
+    ax.add_patch(Circle(P.M_POS, rp, fc="#f2c14e", ec="#8a6a10", lw=0.8, alpha=alpha, zorder=2))
+    ax.plot([P.M_POS[0], P.M_POS[0] + rp * math.cos(rot_)], [P.M_POS[1], P.M_POS[1] + rp * math.sin(rot_)],
+            color="#4a4a4a", lw=0.8, alpha=alpha, zorder=2)
     m = P.MOTOR["body"] / 2
     ax.add_patch(Polygon([(P.M_POS[0] - m, P.M_POS[1] - m), (P.M_POS[0] + m, P.M_POS[1] - m), (P.M_POS[0] + m, P.M_POS[1] + m),
                           (P.M_POS[0] - m, P.M_POS[1] + m)], closed=True, fill=False, ec="#222", lw=0.8, ls=":", alpha=alpha, zorder=2))
@@ -391,7 +400,7 @@ for Tf, col in ((0.6, "#d43a2a"), (1.0, "#e0a020"), (1.5, "#3a9a52")):
     a.plot(ca, tm, color=col, label="flip in %.1f s" % Tf)
 a.plot(ca, [abs(motor_side(t)) for t in T_st], color="#333", ls=":", label="static (holding)")
 a.axhline(P.MOTOR_USABLE, color="#d01010", ls="--", lw=0.8, label="usable %.2f N.m" % P.MOTOR_USABLE)
-a.legend(fontsize=7); a.set_title("Torque at the motor (N.m), 9:1, with 3 stones", fontsize=9)
+a.legend(fontsize=7); a.set_title("Torque at the motor (N.m), %.2f:1, with 3 stones" % P.RATIO, fontsize=9)
 for row in axs:
     for a in row:
         a.set_xlabel("crank angle from the start (deg)", fontsize=8); a.tick_params(labelsize=7); a.grid(color="#e4e4e4", lw=0.6)
