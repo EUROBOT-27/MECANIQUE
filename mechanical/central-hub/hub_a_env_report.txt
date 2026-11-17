@@ -1,0 +1,22 @@
+Central hub option A - extra clash check (fixed parts, base_330, clearances) 
+== 1. fixed parts: clashes and gaps (mm) ==
+clashes: none
+turn servo bottom (with ears) - hub wall gap 0.00
+cradle     bottom - hub wall gap 0.40
+turn servo bottom - middle pinion gap 1.00; cradle bottom - middle pinion gap 1.00
+turn servo bottom - top    pinion gap 106.00; cradle bottom - top    pinion gap 106.00
+turn servo middle (with ears) - hub wall gap 0.00
+cradle     middle - hub wall gap 0.40
+turn servo middle - bottom pinion gap 50.00; cradle middle - bottom pinion gap 65.50
+turn servo middle - top    pinion gap 56.00; cradle middle - top    pinion gap 56.00
+turn servo top    (with ears) - hub wall gap 0.00
+cradle     top    - hub wall gap 0.40
+turn servo top    - bottom pinion gap 106.00; cradle top    - bottom pinion gap 106.00
+turn servo top    - middle pinion gap 56.00; cradle top    - middle pinion gap 56.00
+ == 2. sequence (167 steps) vs base_330 ==
+bottom mechanism hits wheel_L in 45 steps (3. Bottom ring turns 90 ... Bottom arms back home)
+bottom mechanism hits wheel_R in 45 steps (3. Bottom ring turns 90 ... Bottom arms back home)
+ == 3. min clearance between levels (every 4th step) ==
+bottom / middle: 2.00 mm at 'Both stacks held (base +10)'
+bottom / top: 12.93 mm at '3. Bottom ring turns 90'
+middle / top: 2.00 mm at 'Both stacks held (base +10)'

@@ -1,0 +1,83 @@
+Central hub (grooved) - report
+
+Hub Ø100, bore Ø76, z 73-345; sleeves 40 deg x 30 mm; pin Ø6 in groove Ø6.5 at r 48
+  bottom sleeve z 105 -> 210, cup z 65 -> 170
+  middle sleeve z 175 -> 175, cup z 175 -> 175
+  top    sleeve z 245 -> 140, cup z 285 -> 180
+
+Groove slope (angle of the groove from horizontal, at the pin radius 48 mm)
+A follower turned by a torque about the hub jams above ~55-60 deg (friction 0.3-0.4);
+a follower pushed up/down jams below ~30-35 deg. Cam rule of thumb: keep it under ~45 deg.
+  bottom groove: max 77 deg at phi 0, average 54 deg (straight helix)
+  middle groove: max 0 deg at phi 0, average 0 deg (straight helix)
+  top    groove: max 77 deg at phi 0, average 54 deg (straight helix)
+  a straight 105 mm / 90 deg helix at radius 50: 53 deg
+  a straight 105 mm / 90 deg helix at radius 80: 40 deg
+  a straight 105 mm / 90 deg helix at radius 110: 31 deg
+
+Clash check, front unit, 138 steps (turn every 3 deg, spin every 6 deg; rear unit = same turned 180):
+  stones: lowest 0.8 mm, highest 349.2 mm (limits 0 / 350 [GR F.3])
+  118 clashes:
+    turn top 51: middle / top mechanisms
+    turn top 54: middle / top mechanisms
+    turn top 57: middle / top mechanisms
+    turn top 81: middle / top mechanisms
+    turn top 81: middle mechanism / top stone
+    turn top 84: middle / top mechanisms
+    turn top 84: middle mechanism / top stone
+    turn top 87: middle / top mechanisms
+    turn top 87: middle mechanism / top stone
+    turn top 90: middle / top mechanisms
+    spin top  6: middle / top mechanisms
+    spin top 12: middle / top mechanisms
+    spin top 18: middle / top mechanisms
+    spin top 24: middle / top mechanisms
+    spin top 30: middle / top mechanisms
+    spin top 36: middle / top mechanisms
+    spin top 42: middle / top mechanisms
+    spin top 48: middle / top mechanisms
+    spin top 54: middle / top mechanisms
+    spin top 60: middle / top mechanisms
+    spin top 66: middle / top mechanisms
+    spin top 72: middle / top mechanisms
+    spin top 78: middle / top mechanisms
+    spin top 84: middle / top mechanisms
+    spin top 90: middle / top mechanisms
+    turn bottom  0: middle / top mechanisms
+    turn bottom  3: middle / top mechanisms
+    turn bottom  6: middle / top mechanisms
+    turn bottom  9: middle / top mechanisms
+    turn bottom 12: middle / top mechanisms
+    turn bottom 15: middle / top mechanisms
+    turn bottom 18: middle / top mechanisms
+    turn bottom 21: middle / top mechanisms
+    turn bottom 24: middle / top mechanisms
+    turn bottom 27: middle / top mechanisms
+    turn bottom 30: middle / top mechanisms
+    turn bottom 33: middle / top mechanisms
+    turn bottom 36: middle / top mechanisms
+    turn bottom 39: middle / top mechanisms
+    turn bottom 42: middle / top mechanisms
+    turn bottom 45: middle / top mechanisms
+    turn bottom 48: middle / top mechanisms
+    turn bottom 51: bottom / middle mechanisms
+    turn bottom 51: middle / top mechanisms
+    turn bottom 54: bottom / middle mechanisms
+    turn bottom 54: middle / top mechanisms
+    turn bottom 57: bottom / middle mechanisms
+    turn bottom 57: middle / top mechanisms
+    turn bottom 60: middle / top mechanisms
+    turn bottom 63: middle / top mechanisms
+    turn bottom 66: middle / top mechanisms
+    turn bottom 69: middle / top mechanisms
+    turn bottom 72: middle / top mechanisms
+    turn bottom 75: middle / top mechanisms
+    turn bottom 78: middle / top mechanisms
+    turn bottom 81: bottom / middle mechanisms
+    turn bottom 81: middle mechanism / bottom stone
+    turn bottom 81: bottom / top mechanisms
+    turn bottom 81: top mechanism / bottom stone
+    turn bottom 81: middle / top mechanisms
+
+wrote CAD_FC\HUB_HOME.FCStd
+wrote CAD_FC\HUB_DEPLOYED.FCStd
