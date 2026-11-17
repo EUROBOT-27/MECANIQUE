@@ -20,18 +20,17 @@ Single-bar flip - range of motion + forces (flipbar_check.py, 2026-11-14)
    unpowered (gears back-drive): with the torque > 0 the bar falls back toward the start, < 0 it falls toward
    upright -> rests on the hard stop there. The stops take the full load: 0.86 N.m with stones.
 
-== Drive: 17HS4401S, 2-stage spur 15T/45T x 2 = 9:1, module 1.0, 9 mm wide, printed ABS, efficiency 0.81
+== Drive: 17HS4401S, one spur pair 15T pinion -> 100T sector = 6.67:1, module 0.8, 10 mm wide, printed ABS, efficiency 0.90
    motor: holding 0.40 N.m at 1.7 A (datasheet, CHECK the label); driven at ~1.0 A -> usable 0.20 N.m up to 300 rpm (assumed)
-   resolution: 16 microsteps -> 0.0125 deg of crank per microstep (80 microsteps per crank degree)
-   flip in 0.6 s (trapezoid, 25% ramps): motor up to 400 rpm, peak motor torque 0.172 N.m, worst margin x1.01 at s 0.17 TIGHT
-   flip in 1.0 s (trapezoid, 25% ramps): motor up to 240 rpm, peak motor torque 0.118 N.m, worst margin x1.70 at s 0.17 OK
-   flip in 1.5 s (trapezoid, 25% ramps): motor up to 160 rpm, peak motor torque 0.101 N.m, worst margin x1.98 at s 0.17 OK
-   holding (powered, standstill): worst 0.090 N.m at the motor = 45% of the usable torque
-   stage 1: wheel torque 0.37 N.m, tooth force 16 N, pinion root stress 6.3 MPa (Lewis) -> x6.3 vs ABS ~40 MPa
-   stage 2: wheel torque 1.11 N.m, tooth force 49 N, pinion root stress 19.0 MPa (Lewis) -> x2.1 vs ABS ~40 MPa
-   backlash at the crank: ~0.34 deg (0.10 mm designed per mesh); crossed where the torque changes sign (slow down there)
-   gear layout: crank 45T on O1 (-34.8, 50.4), intermediate (-56.0, 71.6), motor (-56.0, 101.6); crank 45T bottom z 26.9 (base top 18.5)
-   intermediate 45T tip to the crank shaft: 2.5 mm clearance
+   resolution: 16 microsteps -> 0.0169 deg of crank per microstep (59 microsteps per crank degree)
+   flip in 0.6 s (trapezoid, 25% ramps): motor up to 296 rpm, peak motor torque 0.208 N.m, worst margin x0.96 at s 0.17 TOO WEAK
+   flip in 1.0 s (trapezoid, 25% ramps): motor up to 178 rpm, peak motor torque 0.143 N.m, worst margin x1.40 at s 0.17 TIGHT
+   flip in 1.5 s (trapezoid, 25% ramps): motor up to 119 rpm, peak motor torque 0.123 N.m, worst margin x1.63 at s 0.17 OK
+   holding (powered, standstill): worst 0.110 N.m at the motor = 55% of the usable torque
+   teeth: crank torque 1.11 N.m (peak x1.3), tooth force 28 N, pinion root stress 12.0 MPa (Lewis) -> x3.3 vs ABS ~40 MPa
+   backlash at the crank: ~0.14 deg (0.10 mm designed); crossed where the torque changes sign (slow down there)
+   sector: 140 deg of teeth (39 of the 100), tip r 40.8; lowest tooth tip over the travel z 22.5 (base top 18.5: 4.0 mm clear)
+   gear layout: crank sector on O1 (-34.8, 50.4), motor pinion (-34.8, 96.4), centres 46.0 mm apart
 
 == Joints
    pin forces (with stones): crank pin / crank shaft max 8.3 N, rocker max 6.8 N (in-plane)

@@ -9,7 +9,8 @@
 #     Barbatronic-style printed SUPPORT RING around it: the bellows pulls the stone onto the ring rim (Ø62 annulus)
 #     -> rigid seat, no sag, no sway; the TPU spring lets the cup tilt to seat on bent cardboard;
 #   - the bar is one smooth outline (lobes around the stations, arm to the crank pin, filleted, lightening slots);
-#   - drive: our NEMA 17 (17HS4401S) through a 2-stage printed spur gear train 15T/45T x 2 = 9:1 (no belts, no worm):
+#   - drive: our NEMA 17 (17HS4401S) through ONE printed spur pair: 15T pinion -> 100T SECTOR gear on the crank
+#     shaft, module 0.8 = 6.67:1 (no belts, no worm). A sector, because a full wheel that size would hit the base:
 #     reversible, back-drivable, motor stays powered to hold;
 #   - rigid frame: column + rear plate (both 5 mm aluminium) tied by 4 standoffs; crank on its own D8 shaft on two
 #     608 bearings (one per plate); rocker ground shaft held in both plates; every moving joint has TWO 608 bearings;
@@ -68,10 +69,9 @@ PIN_D = 8.0
 
 # ---------------------------------------------------------------- Y layers (mm)
 REAR = (85.0, 90.0)                     # rear plate, 5 mm aluminium (motor on its back face)
-HOUSING_R = (90.0, 97.0)                # printed 608 housings on the rear plate front face (crank + intermediate)
-STAGE1 = (98.0, 107.0)                  # gears: motor 15T -> intermediate 45T
-STAGE2 = (108.5, 117.5)                 # gears: intermediate 15T -> crank 45T
-HOUSING_C = (118.0, 125.0)              # printed 608 housings on the column back face (crank + intermediate)
+HOUSING_R = (90.0, 97.0)                # printed 608 housing on the rear plate front face (crank shaft)
+GEAR = (98.0, 108.0)                    # gear layer: motor 15T pinion -> crank 100T sector
+HOUSING_C = (118.0, 125.0)              # printed 608 housing on the column back face (crank shaft)
 HOUSING_D = 34.0                        # housing Ø (608 OD 22 + 6 mm walls)
 COL = (125.0, 130.0)                    # column, 5 mm aluminium
 CRANK = (133.0, 139.0)                  # crank plate, 6 mm aluminium
@@ -87,24 +87,27 @@ Y_SEAT = Y_HUB[1] + CUP_BELLOWS - CUP_SQUEEZE                 # 196: ring rim = 
 Y_STATION = (BAR[1], Y_SEAT)
 Y_STONE = Y_SEAT
 
-# ---------------------------------------------------------------- drive: 17HS4401S + 2 spur stages (printed ABS)
+# ---------------------------------------------------------------- drive: 17HS4401S + one spur pair (printed ABS)
 MOTOR = dict(name="17HS4401S", body=42.3, length=40.0, flange_boss_d=22.0, flange_boss_h=2.0, shaft_d=5.0,
              shaft_l=24.0, holes=31.0, hold=0.40, rated_a=1.7, step_deg=1.8, inertia=54e-7)  # datasheet values: CHECK labels
 DRIVER_A = 1.0                          # Ender board drivers (TMC2225 / HR4988) set to ~1 A
 MOTOR_USABLE = 0.20                     # N.m usable while moving (~half of holding at ~1 A, <= 300 rpm)
 MICROSTEPS = 16
-GEAR_M = 1.0                            # module
-Z_PINION, Z_WHEEL = 15, 45
-STAGES = 2
-RATIO = (Z_WHEEL / Z_PINION) ** STAGES  # 9
+GEAR_M = 0.8                            # module: m 1 would need a 90T sector (tip r 46) that sweeps 7 deg too low
+Z_PINION, Z_WHEEL = 15, 100             # Z_WHEEL = teeth of the FULL circle; only a ~140 deg sector is made
+STAGES = 1
+RATIO = Z_WHEEL / Z_PINION              # 6.67
 ETA_STAGE = 0.90                        # printed spur gear mesh, greased
 ETA = ETA_STAGE ** STAGES
-CD = GEAR_M * (Z_PINION + Z_WHEEL) / 2  # centre distance 30
-GEAR_W = 9.0
-BACKLASH = 0.10                         # mm, designed per mesh (circular)
-I_POS = (O1[0] + CD * math.cos(math.radians(135)), O1[1] + CD * math.sin(math.radians(135)))   # intermediate shaft
-M_POS = (I_POS[0], I_POS[1] + CD)       # motor shaft, straight above the intermediate
-LEWIS_Y = {15: 0.289, 45: 0.399}        # Lewis form factors, 20 deg full depth
+CD = GEAR_M * (Z_PINION + Z_WHEEL) / 2  # centre distance 46
+GEAR_W = 10.0
+BACKLASH = 0.10                         # mm, designed (circular)
+PINION_ANG = 90.0                       # motor straight above the crank shaft: the sector sweeps the upper side,
+                                        # its empty side faces the base plate
+M_POS = (O1[0] + CD * math.cos(math.radians(PINION_ANG)), O1[1] + CD * math.sin(math.radians(PINION_ANG)))
+SECTOR_MARGIN_TEETH = 2                 # spare teeth past each end of the travel (hard stop included)
+SECTOR_HUB_D = 26.0                     # full hub disc on the crank shaft (clamp)
+LEWIS_Y = {15: 0.289, 100: 0.446}       # Lewis form factors, 20 deg full depth
 ABS_YIELD = 40.0                        # MPa (printed ABS, along the layers: use ~1/2)
 
 # ---------------------------------------------------------------- frame
@@ -113,7 +116,8 @@ BASE_TOP = BASE_Z + BASE_T
 FRAME_X = (min(O1[0], O2[0]) - 40.0, max(O1[0], O2[0]) + 45.0)   # column + rear plate outline (as flip-6cups)
 FRAME_Z1 = O2[1] + 28.0
 COLUMN_X1 = 52.0                        # the column is wider on +X: the upright-side switch (x ~19) and stop (x ~40) sit on it
-STANDOFFS = ((-128.0, 52.0), (-2.0, 52.0), (-128.0, 262.0), (-2.0, 262.0))   # low ones above the angle brackets   # (x, z), M5 through Ø10 spacers
+STANDOFFS = ((-128.0, 52.0), (O1[0], 25.0), (-128.0, 262.0), (-2.0, 262.0))   # (x, z), M5 through Ø10 spacers;
+# the low right one sits straight under the crank shaft, in the zone the sector never sweeps
 SHAFT_D = 8.0
 B608 = (8.0, 22.0, 7.0)                 # bore, OD, width
 
@@ -276,6 +280,15 @@ def actuator_points(n_arc=36):
     return pts
 
 
+def sector_span():
+    """(b0, b1) deg, crank frame (P1 = 0 deg): the arc the sector's teeth must cover = the pinion's direction over the
+    whole crank travel, hard stops included, + SECTOR_MARGIN_TEETH at each end."""
+    a0, a1 = math.degrees(PHI0), math.degrees(PHI1)
+    lo, hi = min(a0, a1) - STOP_PAST_DEG, max(a0, a1) + STOP_PAST_DEG
+    m = SECTOR_MARGIN_TEETH * 360.0 / Z_WHEEL
+    return (PINION_ANG - hi - m, PINION_ANG - lo + m)
+
+
 def stone_corners():
     return [(su * STONE_L / 2, v + sv * STONE_W / 2) for v in STONE_V for su in (-1, 1) for sv in (-1, 1)]
 
@@ -374,4 +387,4 @@ if __name__ == "__main__":
     for s in (0, 0.5, 1):
         p = pose_at(s)
         print(s, [round(v, 2) for v in p[0][:2]], round(math.degrees(p[0][2]), 2))
-    print("I", I_POS, "M", M_POS)
+    print("M", M_POS, "sector (crank frame)", sector_span())

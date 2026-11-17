@@ -1,6 +1,6 @@
 # flipbar_render.py - 3D pictures of the single-bar flip at 3 poses (GUI: opens FreeCAD, saves, closes itself).
 #   "C:/Program Files/FreeCAD 1.1/bin/freecad.exe" flipbar_render.py      (from mechanical/flip-bar/fc/, ~1-2 min)
-# -> ../../simulations/flip_bar/flipbar_3d_{start,mid,upright}.png, flipbar_3d_linkage.png, flipbar_3d_station.png
+# -> ../../simulations/flip_bar/flipbar_3d_{start,mid,upright,linkage,station,gears}.png
 import os
 import sys
 
@@ -35,6 +35,7 @@ def run():
     try:
         import flipbar_fc as F
         import flipbar_params as P
+        App.ParamGet("User parameter:BaseApp/Preferences/View").SetBool("UseNavigationAnimations", False)
         doc = App.newDocument("flipbar_render")
         objs = F.build(doc)
         doc.removeObject("table")
@@ -80,9 +81,20 @@ def run():
         view.fitAll()
         Gui.updateGui()
         view.saveImage(os.path.join(SIM, "flipbar_3d_linkage.png"), 1600, 1200, "White")
+        # gear pair: seen from behind, rear plate / motor / housings hidden
+        for n, (o, k) in objs.items():
+            if n.startswith(("rear_plate", "motor", "housings", "bearings_fixed", "brackets", "standoffs")):
+                o.ViewObject.Visibility = False
+        view.viewFront()
+        view.fitAll()
+        Gui.updateGui()
+        view.saveImage(os.path.join(SIM, "flipbar_3d_gears.png"), 1600, 1200, "White")
     except Exception:
         import traceback
         open(os.path.join(SIM, "render_error.txt"), "w").write(traceback.format_exc())
+    for d in list(App.listDocuments()):        # close without the "save changes?" prompt, then quit
+        if d.startswith("flipbar_render"):
+            App.closeDocument(d)
     Gui.getMainWindow().close()
 
 

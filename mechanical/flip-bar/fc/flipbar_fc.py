@@ -157,31 +157,27 @@ def fixed_parts():
         Part.makeCylinder(45, 20, V(-83.8, 0, 45), V(-1, 0, 0)))
     so = [(x, z, 5.5) for x, z in P.STANDOFFS]
     # column: crank shaft + intermediate shaft holes (Ø12, bearings in the housings behind), O2 shaft Ø8 (clamped)
-    parts["column"] = frame_plate(*P.COL, [(P.O1[0], P.O1[1], 12), (P.I_POS[0], P.I_POS[1], 12),
-                                            (P.O2[0], P.O2[1], 8)] + so, x1=P.COLUMN_X1)
+    parts["column"] = frame_plate(*P.COL, [(P.O1[0], P.O1[1], 12), (P.O2[0], P.O2[1], 8)] + so, x1=P.COLUMN_X1)
     mh = P.MOTOR["holes"] / 2
-    parts["rear_plate"] = frame_plate(*P.REAR, [(P.O1[0], P.O1[1], 12), (P.I_POS[0], P.I_POS[1], 12),
+    parts["rear_plate"] = frame_plate(*P.REAR, [(P.O1[0], P.O1[1], 12),
                                                  (P.O2[0], P.O2[1], 8), (P.M_POS[0], P.M_POS[1], 22.5)] + so +
                                       [(P.M_POS[0] + sx * mh, P.M_POS[1] + sz * mh, 3.4) for sx in (1, -1) for sz in (1, -1)])
     parts["standoffs"] = Part.makeCompound([tube_y(x, z, 10, 5.5, P.REAR[1], P.COL[0]) for x, z in P.STANDOFFS])
     hs, br = [], []
-    for (y0, y1) in (P.HOUSING_R, P.HOUSING_C):     # one printed double housing per plate (crank + intermediate)
-        h = cyl_y(P.O1[0], P.O1[1], P.HOUSING_D, y0, y1).fuse(cyl_y(P.I_POS[0], P.I_POS[1], P.HOUSING_D, y0, y1))
-        for (x, z) in (P.O1, P.I_POS):
-            h = h.cut(cyl_y(x, z, 22.0, y0 - 1, y1 + 1))
-            br.append(b608(x, z, y0))
-        hs.append(h.removeSplitter())
+    for (y0, y1) in (P.HOUSING_R, P.HOUSING_C):     # one printed housing per plate (crank shaft)
+        hs.append(tube_y(P.O1[0], P.O1[1], P.HOUSING_D, 22.0, y0, y1))
+        br.append(b608(P.O1[0], P.O1[1], y0))
     parts["housings"] = Part.makeCompound(hs)
     parts["bearings_fixed"] = Part.makeCompound(br)
     # rocker ground shaft: Ø8, clamped in both plates, out to the rocker hub front + e-clip
     parts["shaft_O2"] = cyl_y(P.O2[0], P.O2[1], 8, P.REAR[0], P.ROCK_HUB[1] + 1.5)
-    parts["shaft_I"] = cyl_y(P.I_POS[0], P.I_POS[1], 8, P.HOUSING_R[0], P.HOUSING_C[1])
-    # angle brackets: both plates -> base plate (clear of the gears: at the outer ends)
+    # angle brackets: both plates -> base plate. Column: inner face (clear of the sector, x < -77 and x > 7);
+    # rear plate: back face (its right bracket would sit in the sector's sweep)
     x0, x1 = P.FRAME_X
     bk = []
-    for (yp0, yp1), sgn, xr in ((P.COL, -1, P.COLUMN_X1), (P.REAR, 1, x1)):
+    for (yp0, yp1), sgn, xr in ((P.COL, -1, P.COLUMN_X1), (P.REAR, -1, x1)):
         for bx0, bx1 in ((x0 + 2, x0 + 22), (xr - 22, xr - 2)):
-            yb = yp0 if sgn < 0 else yp1
+            yb = yp1 if sgn > 0 else yp0
             bk.append(box(bx0, bx1, min(yb, yb + sgn * 25), max(yb, yb + sgn * 25), P.BASE_TOP, P.BASE_TOP + 4)
                       .fuse(box(bx0, bx1, min(yb, yb + sgn * 4), max(yb, yb + sgn * 4), P.BASE_TOP, P.BASE_TOP + 25)))
     parts["brackets"] = Part.makeCompound(bk)
@@ -225,8 +221,25 @@ def crank_shaft_local():
 
 
 def crank_gear_local():
-    to_i = math.atan2(P.I_POS[1] - P.O1[1], P.I_POS[0] - P.O1[0]) - P.PHI0      # crank frame
-    return involute_gear(P.Z_WHEEL, P.GEAR_M, *P.STAGE2, 8, mesh_phase(P.Z_WHEEL, to_i, True))
+    """Crank SECTOR gear (crank frame: P1 along +X): the teeth only where the pinion meets them over the travel,
+    full hub disc on the shaft, two lightening windows."""
+    y0, y1 = P.GEAR
+    to_m = math.radians(P.PINION_ANG) - P.PHI0                     # pinion direction at the start, crank frame
+    full = involute_gear(P.Z_WHEEL, P.GEAR_M, y0, y1, 8, mesh_phase(P.Z_WHEEL, to_m, True))
+    b0, b1 = P.sector_span()
+    R = P.GEAR_M * (P.Z_WHEEL / 2 + 2)
+    pie = poly_y([(0.0, 0.0)] + [(R * math.cos(math.radians(b0 + (b1 - b0) * k / 48)),
+                                  R * math.sin(math.radians(b0 + (b1 - b0) * k / 48))) for k in range(49)], y0 - 1, y1 + 1)
+    g = full.common(pie).fuse(cyl_y(0, 0, P.SECTOR_HUB_D, y0, y1)).removeSplitter()
+    r_in, r_out = P.SECTOR_HUB_D / 2 + 4, P.GEAR_M * (P.Z_WHEEL / 2 - 1.25) - 5
+    mid = (b0 + b1) / 2
+    for c0, c1 in ((b0 + 14, mid - 4), (mid + 4, b1 - 14)):     # windows, a 8-ish deg rib in the middle
+        inner = [(r_in * math.cos(math.radians(c0 + (c1 - c0) * k / 24)), r_in * math.sin(math.radians(c0 + (c1 - c0) * k / 24)))
+                 for k in range(25)]
+        outer = [(r_out * math.cos(math.radians(c1 - (c1 - c0) * k / 24)), r_out * math.sin(math.radians(c1 - (c1 - c0) * k / 24)))
+                 for k in range(25)]
+        g = g.cut(poly_y(inner + outer, y0 - 1, y1 + 1))
+    return g.cut(cyl_y(0, 0, 8, y0 - 1, y1 + 1))
 
 
 def rocker_local():
@@ -334,17 +347,9 @@ def stones_local():
             for v in P.STONE_V]
 
 
-def int_gears_local():
-    to_m = math.atan2(P.M_POS[1] - P.I_POS[1], P.M_POS[0] - P.I_POS[0])
-    to_o = math.atan2(P.O1[1] - P.I_POS[1], P.O1[0] - P.I_POS[0])
-    g45 = involute_gear(P.Z_WHEEL, P.GEAR_M, *P.STAGE1, 8, mesh_phase(P.Z_WHEEL, to_m, False))
-    g15 = involute_gear(P.Z_PINION, P.GEAR_M, *P.STAGE2, 8, mesh_phase(P.Z_PINION, to_o, False))
-    return g45, g15
-
-
 def motor_pinion_local():
-    to_i = math.atan2(P.I_POS[1] - P.M_POS[1], P.I_POS[0] - P.M_POS[0])
-    g = involute_gear(P.Z_PINION, P.GEAR_M, *P.STAGE1, 5, mesh_phase(P.Z_PINION, to_i, True))
+    to_o = math.atan2(P.O1[1] - P.M_POS[1], P.O1[0] - P.M_POS[0])
+    g = involute_gear(P.Z_PINION, P.GEAR_M, *P.GEAR, 5, mesh_phase(P.Z_PINION, to_o, False))
     shaft = cyl_y(0, 0, 5, P.REAR[0] + P.MOTOR["flange_boss_h"], P.REAR[0] + P.MOTOR["shaft_l"])
     return g, shaft
 
@@ -359,8 +364,7 @@ def placements(item):
             "crank_gear": App.Placement(V(P.O1[0], 0, P.O1[1]), rot_y(a1)),
             "rocker": App.Placement(V(P.O2[0], 0, P.O2[1]), rot_y(a2)),
             "bar": App.Placement(V(pose[0], 0, pose[1]), rot_y(math.degrees(pose[2]))),
-            "int": App.Placement(V(P.I_POS[0], 0, P.I_POS[1]), rot_y(-3 * dphi)),
-            "mot": App.Placement(V(P.M_POS[0], 0, P.M_POS[1]), rot_y(9 * dphi))}
+            "mot": App.Placement(V(P.M_POS[0], 0, P.M_POS[1]), rot_y(-P.RATIO * dphi))}
 
 
 def build(doc):
@@ -377,7 +381,7 @@ def build(doc):
     add("Crank", crank_local(), "crank")
     add("Crank_bearings", crank_bearings_local(), "crank")
     add("Crank_shaft", crank_shaft_local(), "crank")
-    add("Gear_crank_45T", crank_gear_local(), "crank_gear")
+    add("Gear_crank_sector", crank_gear_local(), "crank_gear")
     add("Rocker", rocker_local(), "rocker")
     add("Rocker_bearings", rocker_bearings_local(), "rocker")
     add("Bar", bar_local(), "bar")
@@ -389,9 +393,6 @@ def build(doc):
         add("DPS30_%d" % (i + 1), cup, "bar")
     for i, st in enumerate(stones_local()):
         add("Stone_%d" % (i + 1), st, "bar")
-    g45, g15 = int_gears_local()
-    add("Gear_int_45T", g45, "int")
-    add("Gear_int_15T", g15, "int")
     gm, sh = motor_pinion_local()
     add("Gear_motor_15T", gm, "mot")
     add("Motor_shaft", sh, "mot")
@@ -406,8 +407,8 @@ def pose(objs, item):
 
 
 # crank-kind shapes are built in the crank frame: P1 along +X. The rocker in its frame: P2 along +X.
-EXPECTED = {("Gear_crank_45T", "Gear_int_15T"), ("Gear_int_45T", "Gear_motor_15T"),     # meshes
-            ("Crank", "Crank_bearings"), ("Rocker", "Rocker_bearings"), ("Crank_shaft", "Gear_crank_45T"),
+EXPECTED = {("Gear_crank_sector", "Gear_motor_15T"),     # mesh
+            ("Crank", "Crank_bearings"), ("Rocker", "Rocker_bearings"), ("Crank_shaft", "Gear_crank_sector"),
             ("Motor_shaft", "Gear_motor_15T"), ("motor", "Motor_shaft"), ("motor", "rear_plate"),
             ("column", "switch_home"), ("column", "switch_upright"), ("column", "stop_home"), ("column", "stop_upright")}
 STOP_CONTACT = {"stop_home", "stop_upright"}     # the crank resting on a hard stop at the end of the over-travel = the stop working
@@ -442,19 +443,18 @@ def check(objs, item):
 
 
 LABELS = {"base_330": "Base_plate_330", "wheels": "Drive_wheels", "column": "Column_alu_5mm", "rear_plate": "Rear_plate_alu_5mm",
-          "standoffs": "Standoffs_10x35_M5_x4", "housings": "Bearing_housings_printed_x4", "bearings_fixed": "608ZZ_frame_x4",
-          "shaft_O2": "Rocker_ground_shaft_D8", "shaft_I": "Intermediate_shaft_D8", "brackets": "Angle_brackets_x4",
+          "standoffs": "Standoffs_10x35_M5_x4", "housings": "Bearing_housings_printed_x2", "bearings_fixed": "608ZZ_frame_x2",
+          "shaft_O2": "Rocker_ground_shaft_D8", "brackets": "Angle_brackets_x4",
           "motor": "Stepper_17HS4401S", "switch_home": "Endstop_home", "switch_upright": "Endstop_upright",
           "stop_home": "Hard_stop_home_rubber", "stop_upright": "Hard_stop_upright_rubber", "pumps": "Vacuum_pumps_12V_x3",
           "valves": "Vent_valves_12V_x3", "Crank": "Crank_alu_6mm", "Crank_bearings": "608ZZ_crank_pin_x2",
-          "Crank_shaft": "Crank_shaft_D8", "Gear_crank_45T": "Gear_45T_m1_crank_ABS", "Rocker": "Rocker_alu_6mm",
+          "Crank_shaft": "Crank_shaft_D8", "Gear_crank_sector": "Gear_sector_100T_m08_crank_ABS", "Rocker": "Rocker_alu_6mm",
           "Rocker_bearings": "608ZZ_rocker_x4", "Bar": "Cup_bar_alu_5mm", "Bar_pins": "Bar_pins_D8_with_spacers",
-          "Gear_int_45T": "Gear_45T_m1_intermediate_ABS", "Gear_int_15T": "Gear_15T_m1_intermediate_ABS",
-          "Gear_motor_15T": "Gear_15T_m1_motor_ABS", "Motor_shaft": "Motor_shaft_D5",
+          "Gear_motor_15T": "Gear_15T_m08_motor_ABS", "Motor_shaft": "Motor_shaft_D5",
           "Station_spacer_1": "Station_spacer_ABS", "Station_TPU_1": "Station_TPU_95A_clapets_v8",
           "Support_ring_1": "Support_ring_ABS"}
 GROUPS = [("Robot_base", ["base_330", "wheels"]),
-          ("Frame", ["column", "rear_plate", "standoffs", "housings", "bearings_fixed", "brackets", "shaft_O2", "shaft_I"]),
+          ("Frame", ["column", "rear_plate", "standoffs", "housings", "bearings_fixed", "brackets", "shaft_O2"]),
           ("Drive", ["motor", "Motor_shaft", "Gear_"]),
           ("Switches_stops", ["switch_", "stop_"]),
           ("Four_bar", ["Crank", "Crank_", "Rocker", "Rocker_", "Bar_pins"]),
@@ -465,7 +465,7 @@ GROUPS = [("Robot_base", ["base_330", "wheels"]),
 
 def mass_report(objs):
     mat = {"Bar": "alu", "Bar_pins": "steel", "Crank": "alu", "Crank_bearings": "steel", "Crank_shaft": "steel",
-           "Gear_crank_45T": "abs", "Rocker": "alu", "Rocker_bearings": "steel"}
+           "Gear_crank_sector": "abs", "Rocker": "alu", "Rocker_bearings": "steel"}
     out, bar_assy = [], 0.0
     for n, (o, k) in objs.items():
         if k not in ("bar", "crank", "crank_gear", "rocker") or n.startswith("Stone"):
@@ -498,7 +498,7 @@ def main():
             low = (mn, it[0])
         allhits += [(it[0],) + h for h in hits] + [(it[0], n, "table", 0) for n in th]
     FIXED_OK = {("base_330", "brackets"), ("column", "brackets"), ("rear_plate", "brackets"), ("housings", "bearings_fixed"),
-                ("column", "shaft_O2"), ("rear_plate", "shaft_O2"), ("housings", "shaft_I"), ("bearings_fixed", "shaft_I"),
+                ("column", "shaft_O2"), ("rear_plate", "shaft_O2"),
                 ("column", "standoffs"), ("rear_plate", "standoffs"), ("rear_plate", "motor"), ("column", "switch_home"),
                 ("column", "switch_upright"), ("column", "stop_home"), ("column", "stop_upright"), ("pumps", "valves"),
                 ("base_330", "wheels")}
@@ -554,8 +554,7 @@ def main():
     Part.makeCompound([o.Shape.copy() for o in keep]).exportStep(os.path.join(out, "flipbar.step"))
     doc.saveAs(os.path.join(out, "flipbar.FCStd"))
     for n in ("Bar", "Crank", "Rocker", "column", "rear_plate", "Station_spacer_1", "Station_TPU_1", "Support_ring_1",
-              "Gear_crank_45T", "Gear_int_45T",
-              "Gear_int_15T", "Gear_motor_15T"):
+              "Gear_crank_sector", "Gear_motor_15T"):
         sh = objs[n][0].Shape.copy()
         sh.Placement = App.Placement()
         sh.exportStep(os.path.join(out, "parts", "%s.step" % LABELS.get(n, n)))

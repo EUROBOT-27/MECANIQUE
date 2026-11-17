@@ -3,7 +3,8 @@
 > **Status: concept CAD + range-of-motion study, proposal, nothing decided.** Derived from Ayoub's
 > [`flip-6cups`](../flip-6cups/README.md) (same four-bar). Ayoub / Seif to review.
 > Revision of 2026-11-14 (evening): smooth bar outline, cups in the clapets-v8 **TPU spring stations** with a
-> Barbatronic-style **support ring** around each cup (replaces the cup blocks + seat pads).
+> Barbatronic-style **support ring** around each cup (replaces the cup blocks + seat pads). Then: **one gear pair**
+> (15T pinion → 100T sector, m 0.8, 6.67:1) instead of the 2-stage 9:1 train.
 
 Flips one quarry stack (3 stones) from lying to standing, **inside the castle only** (the stones reach 470 mm on
 the way; game elements may pass 350 mm only in construction zones and the castle). Each stone has its own cup, so
@@ -17,7 +18,7 @@ the robot then drops **one tower at a time** by venting one cup.
 |---|---|---|---|
 | Cup holder | Al plate 230 × 290, 6 cups (2 per stone, quarter points) | **one smooth Al bar** (5 mm, CNC / laser cut): a lobe around each cup station, an arm to the crank pin, filleted, lightening slot | the plate corner and one cup reached **387 mm** during the flip; actuators must stay ≤ 350 even in the castle (game rules, stone constraints, before E.1.c). Bar: **339.0 mm** |
 | Grip | 2 bellows cups per stone | 1 DP-S30 per stone in the **clapets-v8 TPU spring station** (`B_STATION_TPU`, same part), under a printed **Ø62 support ring** (after Barbatronic's cup pot): the bellows pulls the stone onto the ring rim | the stone sits on a rigid ring: no sag, no sway; the TPU spring lets the cup tilt to seat on bent cardboard; one station design for the head and the flip |
-| Drive | JGB37-520 direct on the crank | **17HS4401S** (our Ender steppers) + **2-stage printed spur gears 15T/45T × 2 = 9:1** | user choice: our stepper, gears (no belts, no worm); reversible and back-drivable |
+| Drive | JGB37-520 direct on the crank | **17HS4401S** (our Ender steppers) + **one printed spur pair: 15T pinion → 100T sector gear on the crank shaft, module 0.8 = 6.67:1** | user choice: our stepper, 2 gears only (no belts, no worm); reversible and back-drivable. A **sector** because the crank only swings 126° stop to stop and a full wheel that size would hit the base plate |
 | Frame | one 5 mm column, crank on the motor shaft | **column + rear plate** (5 mm Al) tied by 4 standoffs; crank on its own Ø8 shaft, one 608 in each plate | the gear mesh force must not sit on the motor's bearings; stiff against the stones' overhang |
 | Joints | one 688ZZ per joint | **two 608ZZ per moving joint** (crank pin, rocker at O2 and P2); crank and rocker blended at the hubs, lightening slot | the stones' weight sits 106 mm in front of the links: 0.39 N·m of twist |
 | Ends of travel | home endstop | home + upright endstops, **rubber hard stops 3° past each end** | unpowered, the bar falls back (first half) or forward (second half) onto a stop |
@@ -53,10 +54,10 @@ The bar has a Ø30 hole under each station (lighter; the spacer bears on r 15–
 | Collisions | **0** between moving parts and the frame over 85 poses, hard stop to hard stop; **0** between fixed parts |
 | Masses (CAD) | bar assembly 323 g (bar 179, 3 stations × 38: spacer 13, TPU 7, ring 10, cup 8; pins 32), crank 76 g, rocker 93 g (with bearings) |
 | Crank torque (3 stones) | lift peak +0.66 N·m (crank 25°), **brake** peak −0.82 N·m (upright); reverses at crank 64° |
-| Motor torque (9:1, η 0.81) | flip in **1.0 s: peak 0.118 N·m → ×1.70 margin** (1.5 s: ×1.98; 0.6 s: ×1.01, too tight). Holding: 0.090 N·m (45 %) |
-| Gear teeth (ABS, m1, 9 mm) | stage 2 pinion 19.0 MPa (×2.1), stage 1 6.3 MPa (×6.3) |
-| Backlash at the crank | ~0.34° (0.10 mm per mesh): slow the move around crank 55–75° where the torque reverses |
-| Resolution | 16 microsteps → 0.0125° of crank per microstep |
+| Motor torque (6.67:1, η 0.90) | flip in **1.5 s: peak 0.123 N·m → ×1.63 margin**; 1.0 s: ×1.40 (tight); 0.6 s: ×0.96, too weak. Holding: 0.110 N·m (55 %). Less margin than the old 9:1 (×1.70 at 1.0 s): the price of 2 gears; raise the driver current if the 1 s flip is wanted |
+| Gear pair (ABS, m 0.8, 10 mm wide) | pinion root 12.0 MPa (×3.3). Sector: 140° of teeth (39 teeth of a 100T wheel, 2 spare past each hard stop), tip r 40.8; lowest tooth tip **4.0 mm above the base plate** over the whole travel. Teeth never overlap (0.05 mm gap, stop to stop) |
+| Backlash at the crank | ~0.14° (0.10 mm): slow the move around crank 55–75° where the torque reverses |
+| Resolution | 16 microsteps → 0.0169° of crank per microstep |
 | Joints | pin forces ≤ 8 N; twist 0.39 N·m → 11 N per bearing on the crank shaft, 55 N per bearing in the hubs (608 static 1370 N); friction negligible |
 
 Assumptions to check: 17HS4401S = 0.40 N·m holding at 1.7 A (**read our labels**), usable 0.20 N·m at ~1 A up to
@@ -69,10 +70,10 @@ Assumptions to check: 17HS4401S = 0.40 N·m holding at 1.7 A (**read our labels*
 | Part | Qty | Source |
 |---|---|---|
 | Stepper 17HS4401S (Ender) | 1 | 📦 (read the label) |
-| 608ZZ (8 × 22 × 7) | 10 (4 frame, 2 crank pin, 4 rocker) | 🇹🇳 |
-| Ø8 rod: crank shaft 49, intermediate 35, rocker ground shaft 72, bar pins 31 + 22 | 5 pieces | 📦 smooth rods, cut |
-| Gears m1: 15T × 2, 45T × 2, 9 mm wide | 4 | 🖨️ 100 % infill |
-| Double bearing housings (rear plate, column) | 2 | 🖨️ |
+| 608ZZ (8 × 22 × 7) | 8 (2 crank shaft, 2 crank pin, 4 rocker) | 🇹🇳 |
+| Ø8 rod: crank shaft 49, rocker ground shaft 72, bar pins 31 + 22 | 4 pieces | 📦 smooth rods, cut |
+| Gears m 0.8, 10 mm wide: 15T pinion on the motor shaft, 100T **sector** clamped on the crank shaft | 2 | 🖨️ 100 % infill (0.4 nozzle OK; print the pair first) |
+| Bearing housings (rear plate, column) | 2 | 🖨️ |
 | Column (x −137..52), rear plate, 5 mm aluminium | 2 | 🇹🇳 (cut + drill) |
 | **Bar, 5 mm aluminium, smooth outline** (DXF from `CAD/parts/Cup_bar_alu_5mm.step`) | 1 | 🇹🇳 laser / waterjet / CNC (the curves can't be hand-cut well; a printed drilling template + jigsaw is the fallback) |
 | Crank, rocker 6 mm aluminium (blended hubs, slot) | 2 | 🇹🇳 same cutter as the bar |
@@ -96,11 +97,14 @@ All numbers live in `fc/flipbar_params.py`. The bar and link outlines are comput
 circles and capsules, `bar_outline()` / `link_outline()`), so the 2D check and the CAD use the same shape; change
 `LOBE_R`, `SPINE_R`, `ARM_R`, `BLEND` to reshape the bar, then rerun the three scripts (height + collisions).
 Pictures and the GIF: `../simulations/flip_bar/`.
+Angle brackets: the column's on its inner face, the rear plate's on its back face (the sector sweeps the space
+between the plates). The low right standoff sits straight under the crank shaft, where the sector never goes.
 Frame = base_330 (X wheel axis, Y forward with the mechanism on the +Y edge, Z up, origin = robot centre on the table).
 
 ## Open points
 1. **Read the stepper labels** (holding torque, current) and set the driver current; the 1 s flip margin depends on it.
-2. **Print one 15T/45T pair first** and measure the backlash at 30.0 mm centres; the housings set the centre distance.
+2. **Print the 15T + sector pair first** and check the mesh at 46.0 mm centres (the motor holes in the rear plate
+   and the crank housing set it); m 0.8 teeth are small: ABS, 100 %, check the pinion's grip on the Ø5 motor shaft.
 3. **Suction test on real stones:** one station (spacer + TPU disc + support ring + DP-S30) per stone, hold > 30 s,
    and during the flip; also with the top cup 25 mm off its stone's centre.
 4. Switch levers are not modelled: set them so they trip at the end of the travel (bodies are 5 mm clear of the crank).
