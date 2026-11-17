@@ -1,11 +1,11 @@
 Central hub - option A - report
 
-Hub Ø100 z 73-345 in 4 segments (joints z 100.5/150.5/255.5), 3 M4 tie rods; rings Ø124 x 20 at z 90/140/245, lugs to r 76; top rail r 80-88, bottom rail r 102-110, middle arm over at z 199
-Cup heights: stack 65/175/285, spin at 175; bottom rises to 76 before its turn; slide travel bottom 115, top 130 mm
+Hub Ø100 z 73-345 in 4 segments (joints z 100.5/150.5/255.5), 3 M4 tie rods; rings Ø124 x 20 at z 90/140/245, lugs to r 76; top rail r 76-84, bottom rail r 104-112, middle arm over at z 213
+Cup heights: stack 65/175/285, spin at 175; bottom rises to 76 before its turn; slide travel bottom 115, top 115 mm
 Actuators: 3 turn MG996R inside the hub (1 per ring, both units, 2:1 internal gear), 4 slides (N20 + M4 screw; top + bottom, front + rear), 6 spin MG90S, 6 pumps (off the hub, hoses through the bore), 4 limit switches
 
 Fixed parts against each other (segments, cradles, turn servos with ears, fixed fasteners): no clashes
-Sequence check: 167 steps, both units, every part (rings, lugs, arms, rails, carriages, servos, cups, stones, switches, fasteners; fixed: segments, cradles, turn servos, fixed fasteners)
+Sequence check: 164 steps, both units, every part (rings, lugs, arms, rails, carriages, servos, cups, stones, switches, fasteners; fixed: segments, cradles, turn servos, fixed fasteners)
   stones: lowest -0.0, highest 345.0 mm; mechanism highest 328.0 mm (limits 0 / 350 [GR F.3])
   no clashes
 

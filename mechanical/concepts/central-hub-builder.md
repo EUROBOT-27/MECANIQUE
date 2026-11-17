@@ -113,6 +113,14 @@ swept quarters; nothing may stand at r 56–170 in the front-left and rear-right
 always turn together (a stone not to place stays on its cup and comes back); rails are cantilevered (stiffness);
 slide drive choice (N20 + M3/M4 screw 🇹🇳, or 360° servo + rack); hose routing through the Ø76 bore; turn gear detail.
 
+## Option B (2026-11-17): one lift + one turret (paused 2026-11-18: holder cups grip off-centre, see OPTION_B.md)
+
+Option A simplified (Ayoub asked for fewer actuators and a safer arm turn + spin): the 3 levels never work at once, so
+**one carriage** on a fixed column (2 × Ø8 rods + T8, NEMA17) visits them in turn; **one turret** on it (MG996R, hard
+stops, V-wheels) carries the front and rear arms; each arm spins its cup on a **bearing shaft** with an MG996R and hard
+stops; **fixed holder cups** keep the stack. 4 motors instead of 13, every stone set on the table (no drop). Box check
+`../central-hub/fc/check_b.py`: no clashes, ≤ 343 mm. Details, A vs B table, open points: `../central-hub/OPTION_B.md`.
+
 ## Actuators and parts
 
 Not fixed yet. What moves: per shaft, the turn along the groove (1 actuator, or an elastic + latch servo, see the
