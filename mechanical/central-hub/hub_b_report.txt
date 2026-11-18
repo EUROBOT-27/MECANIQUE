@@ -1,0 +1,25 @@
+Central hub - option B (one lift + one turret) - concept check, 345 steps, both units
+
+Order: top, middle, bottom. Each level: park 20 deg, move to the level, engage (turret 20 -> 0), unpinch, swing 0 -> 90,
+lift to the spin height 173, spin 90, set on the table, vent, turn back to 20.
+
+== Height budget ==
+carriage centre 96 .. 319 -> block 76 .. 339 (bridge top 73, top plate 345)
+lift stroke 223 mm; moving parts + held stones z 0.0 .. 343.0 (limits 0 / 350 [GR F.3])
+
+== Spin (stone turns about the cup axis at its face centre) ==
+nominal 320 x 110  at 173: lowest corner 3.8, highest 342.2
+worst 324 x 115    at 173: lowest corner 1.1, highest 344.9
+Any in-plane stand-up needs 320 sin a + 110 cos a = 338 mm of height at a = 71 deg (out of 350): the margin is
+physics, not mechanism. B sets the spin height with a homed stepper (option A: N20 + switch on a printed rail).
+
+== Cup clearance to the stack face while parked ==
+turret 20 deg: cup rim 5.1 mm off the face (face at r 170)
+
+== Clashes (overlap; intended contacts left out: cup on its stone while engaging, held stone leaving its holder cup and the stone below) ==
+none
+
+== Closer than 3 mm (not a clash) ==
+
+held stone F x holder cup F1: 2 steps (L0 unpinch ... L0 swing out)
+held stone R x holder cup R1: 2 steps (L0 unpinch ... L0 swing out)

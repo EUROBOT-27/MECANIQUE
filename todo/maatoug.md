@@ -11,6 +11,14 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Note: Seif owns `mechanical/clapets/clapets-v6/` and `clapets-v7/` for now (v5 untouched). v7 = the version we print (D-020); have a look at its README (fasteners, real printer parts, motor on the floor) — Maatoug
 - [ ] Where did you download the Two Trees Bluer V2 model? Add the link to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` if Seif hasn't — Maatoug
 
+## From Ayoub (2026-11-18)
+- [ ] **New base `mechanical/base_330_js/` (proposal): laser-cut file `CAD/base_330_js.dxf`** (330 × 280, 5 mm,
+  mm, R12, outline + holes on layer 0). Same size as base_330, made for the **JSUMO JS7444** wheels (well cut for
+  Ø72–80 since the wheel isn't measured yet), **no MDF lift and no strap slots** (only the 8 hinge holes in the
+  middle), and the CDR-2027 **AMT102-V** encoder on a sprung swing arm (4 × M3 per side for its bracket). Printed parts:
+  `CAD/base_330_js_print.3mf` (ABS, one X1C plate). Please check the DXF is ready for laser cutting and the
+  printed parts for fabrication (fits, inserts). Details: `mechanical/base_330_js/README.md` — Maatoug
+
 ## From Seif (2026-11-13)
 - [ ] **D-021 confirmed (FYI):** your strike principle is kept. Seif reworks module B himself in a new folder
   `mechanical/suction-v1/` (simpler, reliable, works without the doors, pneumatics designed in; list in

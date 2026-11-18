@@ -61,8 +61,8 @@ Other: 3 servo horns, 4 couplers, 4 bearings, 4 micro-switches. The same list is
 | ID | Qty | Part | Where | What it does | Travel | Drive / control | Src |
 |---|---|---|---|---|---|---|---|
 | TURN-B / -M / -T | 3 (1 per ring) | MG996R | Inside the Ø76 hub bore. Bottom + middle hang upside down above their pinion, top one sits below | Turns its ring, and with it **both** the front arm (stone → robot's left) and the rear arm (→ right) | Servo 180° → ring 90° (pinion pitch r 26 on internal gear r 52, 2:1) | PWM. The ring gets 2 × the servo torque (~18 kg·cm). Load is only inertia (vertical axis) | 📦 |
-| SLIDE-TF / -TR | 2 | N20 gear motor + M4 lead screw | Top front + top rear arm, rail r 80–88 | Lowers the top cup from the stack (z 290) to the spin height (175), then sets the standing stone on the table (160), and back | 130 mm | DC via an H-bridge, home switch | 📦/🇹🇳 |
-| SLIDE-BF / -BR | 2 | N20 gear motor + M4 lead screw | Bottom front + bottom rear arm, rail r 102–110 | Raises the bottom cup from the stack (60) to 175, then sets the stone at 160, and back | 115 mm | DC via an H-bridge, home switch | 📦/🇹🇳 |
+| SLIDE-TF / -TR | 2 | N20 gear motor + M4 lead screw | Top front + top rear arm, rail r 76–84 | Lowers the top cup from the stack (z 290) to the spin height (175); after the spin the cup vents and the stone drops 15 mm, like the middle one (2026-11-15: the rail used to reach z 146 and passed 2 mm over the middle arm), and back | 115 mm | DC via an H-bridge, home switch | 📦/🇹🇳 |
+| SLIDE-BF / -BR | 2 | N20 gear motor + M4 lead screw | Bottom front + bottom rear arm, rail r 104–112 | Raises the bottom cup from the stack (60) to 175, then sets the stone at 160, and back | 115 mm | DC via an H-bridge, home switch | 📦/🇹🇳 |
 | SPIN ×6 | 6 (1 per arm) | MG90S | On the carriage (top, bottom) or on the fixed post (middle), output axis radial | Turns cup + stone 90° about the stone's long axis: flat → standing (tower) | 90° | PWM | 📦 |
 | VAC ×6 | 6 (1 per cup) | 12 V 370 vacuum pump | Off the hub, hoses down the bore | Holds the stone on its cup | on/off | MOSFET | 📦 |
 | VENT ×6 | 6 | 12 V solenoid valve (not modelled) | Next to each pump | Lets air into the cup to drop the stone. A 370 diaphragm pump stays sealed when stopped, so stopping the pump alone may not release the stone | on/off | MOSFET | 🇹🇳 |
@@ -73,7 +73,7 @@ Tell Hamza Bjaoui: 9 PWM outputs, 4 DC channels, 12 MOSFET channels, 4 inputs.
 Points to check on the actuators:
 - **MG996R range:** many sold units turn only ~120–160°, not 180°. With the 2:1 gear that gives a 60–80° ring turn.
   Measure ours before freezing the 2:1 ratio.
-- **Slide speed:** an M4 screw (0.7 mm/turn) on a typical 300 rpm N20 gives 3.5 mm/s, so **~35 s for one 130 mm
+- **Slide speed:** an M4 screw (0.7 mm/turn) on a typical 300 rpm N20 gives 3.5 mm/s, so **~33 s for one 115 mm
   stroke**. That is far too slow for a 100 s match. You need a ≥ 1000 rpm N20, or a fast-lead screw (T8 lead 8 📦
   → 40 mm/s), or a rack.
 - **Front and rear on one ring always move together:** a stone you don't want to place stays on its cup and comes
@@ -96,9 +96,12 @@ Tightest gaps:
 |---|---|
 | Cradle ↔ hub bore wall (all 3) | 0.4 mm |
 | Bottom turn servo and bottom cradle ↔ middle pinion | 1.0 mm |
-| Bottom ↔ middle level, middle ↔ top level (at home) | 2.0 mm |
+| Middle ↔ bottom level (middle ring turning) | 5.3 mm (was 2.0: fixed 2026-11-15, see below) |
+| Middle ↔ top level (middle ring turning) | 6.7 mm (was 2.0) |
 | J18 screw heads ↔ carriage tab at the switch point | 0.9 mm |
-| Bottom ↔ top level (during the bottom turn) | 13 mm |
+| Bottom ↔ top level (during the top turn) | 19.9 mm |
+
+**2026-11-15, middle arm vs top + bottom arms (Ayoub):** all 3 arms park at the same angle and the middle arm passed 2 mm under the top rail end and 2 mm over the bottom rail end, which the ring tilt and rail flex would close. Fixed by lengths: top rail shortened (ends at z 161; the top stone now drops 15 mm from the spin height like the middle one), middle crossover raised 199 → 213, top rail moved 4 mm in (r 76–84), bottom rail 2 mm out (r 104–112, bottom spin shaft 2 mm shorter). Re-checked: no clashes, gaps above.
 
 Problems found on 2026-11-14 and what became of them:
 

@@ -6,7 +6,7 @@
 #    internal gear in the ring bore (2:1, 180 deg servo -> 90 deg ring). Teeth drawn as simple blocks.
 #  - Height: top and bottom arms carry a vertical slide (rail + carriage, N20 gear motor + M4 lead screw, nut in the carriage); the middle arm
 #    is fixed. All 3 arms park at the same angle, so seen from the side (r, z) their parts must not overlap:
-#    top rail r 80-88, bottom rail r 102-110, middle arm stepped between them. Heights change only once turned out
+#    top rail r 76-84, bottom rail r 104-112, middle arm stepped between them, >= 5 mm while it turns (see 2026-11-15 below). Heights change only once turned out
 #    (exception: the bottom carriage rises +16 at home before its turn, once the levels above are empty).
 #  - Spin: one micro servo per carriage, radial axis, turns cup + stone 90 deg (stone stands up).
 #
@@ -14,6 +14,9 @@
 # 3 M4 tie rods; pinion windows and ring gear bands open to the top (assembly: segment, ring, servo + pinion, next
 # segment); MG996R ears + wall slots; printed servo cradles held by radial M3 through the collars; ring lugs + arm pads
 # (2 x M3 each); N20 clamps, couplers, screw-end bearings, lead nuts, limit switches; every fastener drawn.
+# 2026-11-15 (Ayoub: the middle arm collided with the top and bottom arms): the gaps at the rail ends were 2 mm. Top rail
+# shortened (ends at 161, top stone dropped 15 mm from the spin height like the middle), middle crossover raised 199 -> 213,
+# rails moved apart (top 4 mm in, bottom 2 mm out, bottom spin shaft 2 mm shorter).
 # Previous version (grooved hub, rejected for drive + clashes): fc/hub_fc.py + hub_report.txt.
 #
 # Run: "<FreeCAD>/bin/freecadcmd.exe" fc/hub_a_fc.py   (from mechanical/central-hub/)
@@ -34,7 +37,9 @@ V = App.Vector
 HUB_R, HUB_RI, HUB_Z0, HUB_Z1 = 50.0, 38.0, 73.0, 345.0
 RING_RI, RING_RO, RING_H = 50.5, 62.0, 20.0
 RING_Z = [90.0, 140.0, 245.0]              # ring band centres: bottom, middle, top (bottom low: room for its turn servo)
-MID_OVER = 199.0                           # middle arm crosses over the bottom rail (top 187) here
+MID_OVER = 213.0                           # middle arm crosses over the bottom rail here (cap top 193 -> 16 mm gap; was 199 = 2 mm)
+BR, TR = 104.0, 76.0                        # bottom rail r 104-112 (between the middle post r 92-98 and drop r 118-124: ~5 mm each side
+                                            # as the middle arm turns), top rail r 76-84 (~7 mm). Were 102-110 / 80-88 (2 mm)
 COLLAR_RO = 56.0                           # collars between the rings (were the spacer tubes): axial location
 BAR_W, BAR_T = 14.0, 8.0
 RAIL_R0, RAIL_R1, RAIL_W = 100.0, 110.0, 10.0
@@ -50,7 +55,8 @@ Z_SPIN = 175.0                             # spin-safe height (169..181 for a 32
 Z_SET = 160.0                              # standing stone centre when it touches the table (320 / 2)
 Z_CLEAR = Z_STACK[0] - 5 + 16              # bottom carriage before its turn: stone clears the base plate (z 18.5)
 RAIL_Z = {0: (Z_STACK[0] - 5 - CAR_H / 2 - 2, Z_SPIN + CAR_H / 2 + 2),
-          2: (Z_SET - CAR_H / 2 - 2, Z_STACK[2] + 5 + CAR_H / 2 + 2)}
+          2: (Z_SPIN - CAR_H / 2 - 2, Z_STACK[2] + 5 + CAR_H / 2 + 2)}   # top rail ends at 161: the top cup stops at the spin
+# height and the stone drops 15 mm like the middle one (was set at 160 -> rail end 146, 2 mm over the middle bar)
 # Turn drive INSIDE the hub: one MG996R per ring in the 76 mm bore; its pinion pokes through a window in the hub wall and
 # meshes an internal gear cut in the ring's bore (pitch r 52). Pinion pitch r 26 -> the ring turns half the servo angle,
 # same direction: 180 deg servo -> 90 deg ring. Bottom + middle servos hang upside down above their pinion, top below.
@@ -302,51 +308,51 @@ def arm(k, cz, rho, with_stone):
         holes.append(cyl(1.7, zr - BAR_T / 2, zr + BAR_T / 2, LUG_SCREW_R, t))
         fas.append(screw(V(LUG_SCREW_R, t, zr + RING_H / 2), V(0, 0, -1), 20.0, 3.0, 5.5, 3.0))
         fas.append(hexnut(5.5, 2.4, LUG_SCREW_R, t, zr - RING_H / 2 + 0.2, 3.0))
-    if k == 0:                                          # bottom: rail r 102-110, N20 under the screw
-        z0, z1 = RAIL_Z[0]
-        bar(RING_RO, 102, zr)
-        s.append(box(102, 110, -5, 5, z0, z1))
-        s.append(box(102, 110, -5, SCREW_T + 4, z1, z1 + 4))            # top cap: bearing for the screw end (J12)
-        holes.append(cyl(4.0, z1, z1 + 4, 106, SCREW_T))
-        act.append(annulus(2.0, 4.0, z1 + 0.5, z1 + 3.5).translated(V(106, SCREW_T, 0)))
-        act.append(cyl(SCREW_D / 2, z0 + 1, z1 + 4, 106, SCREW_T))       # M4 lead screw
-        act.append(cyl(4.0, z0, z0 + 6, 106, SCREW_T))                   # J11 coupler 3 -> 4
-        n20 = box(101, 111, SCREW_T - 6, SCREW_T + 6, z0 - 24, z0)
+    if k == 0:                                          # bottom: rail r 104-112 (BR = 104), N20 under the screw
+        z0, z1 = RAIL_Z[0]; b = BR - 102.0              # b: shift of the 2026-11-14 bottom slide (rail was r 102-110)
+        bar(RING_RO, BR, zr)
+        s.append(box(BR, BR + 8, -5, 5, z0, z1))
+        s.append(box(BR, BR + 8, -5, SCREW_T + 4, z1, z1 + 4))          # top cap: bearing for the screw end (J12)
+        holes.append(cyl(4.0, z1, z1 + 4, 106 + b, SCREW_T))
+        act.append(annulus(2.0, 4.0, z1 + 0.5, z1 + 3.5).translated(V(106 + b, SCREW_T, 0)))
+        act.append(cyl(SCREW_D / 2, z0 + 1, z1 + 4, 106 + b, SCREW_T))   # M4 lead screw
+        act.append(cyl(4.0, z0, z0 + 6, 106 + b, SCREW_T))               # J11 coupler 3 -> 4
+        n20 = box(101 + b, 111 + b, SCREW_T - 6, SCREW_T + 6, z0 - 24, z0)
         act.append(n20)
-        s.append(box(99, 113, -1, 23, z0 - 12, z0).cut(n20))             # J10 N20 clamp under the rail
+        s.append(box(99 + b, 113 + b, -1, 23, z0 - 12, z0).cut(n20))     # J10 N20 clamp under the rail
         for t in (1.0, 21.0):
-            fas.append(screw(V(99, t, z0 - 6), V(1, 0, 0), 16, 2.0, 3.8, 1.5))
-            fas.append(box(114, 115.6, t - 2, t + 2, z0 - 8, z0 - 4))
-        s.append(box(102, 110, -18, -1, z0 - 10.2, z0 - 7.2))            # switch shelf (joins the clamp)
-        sw, f = switch(103, z0 - 7.2, True); act.append(sw); fas += f
-        s.append(box(110, 118, -12, 12, cz - CAR_H / 2, cz + CAR_H / 2))
-        s.append(box(105, 111, -16, -12, cz - 13, cz - 6))               # tab that presses the switch at cz 60
-        blk = box(101, 112, SCREW_T - 5, SCREW_T + 5, cz - 6, cz + 8).cut(cyl(2.2, cz - 6, cz + 8, 106, SCREW_T))
-        s.append(blk.cut(hexnut(7.0, 3.4, 106, SCREW_T, cz - 1.7)))      # nut block, J13 nut in a pocket
-        fas.append(hexnut(7.0, 3.2, 106, SCREW_T, cz - 1.6, 4.0))
-        r_srv = 118.0
-    elif k == 2:                                        # top: rail r 80-88, N20 above the screw
-        z0, z1 = RAIL_Z[2]
-        bar(RING_RO, 80, zr)
-        s.append(box(80, 88, -5, 5, z0, z1))
-        s.append(box(80, 88, -5, SCREW_T + 4, z0, z0 + 4))              # bottom cap + bearing (middle arm passes at z 144)
-        holes.append(cyl(4.0, z0, z0 + 4, 84, SCREW_T))
-        act.append(annulus(2.0, 4.0, z0 + 0.5, z0 + 3.5).translated(V(84, SCREW_T, 0)))
-        act.append(cyl(SCREW_D / 2, z0, z1 - 1, 84, SCREW_T))
-        act.append(cyl(4.0, z1 - 6, z1, 84, SCREW_T))                    # J11 coupler
-        n20 = box(79, 89, SCREW_T - 6, SCREW_T + 6, z1, z1 + 24)
+            fas.append(screw(V(99 + b, t, z0 - 6), V(1, 0, 0), 16, 2.0, 3.8, 1.5))
+            fas.append(box(114 + b, 115.6 + b, t - 2, t + 2, z0 - 8, z0 - 4))
+        s.append(box(BR, BR + 8, -18, -1, z0 - 10.2, z0 - 7.2))          # switch shelf (joins the clamp)
+        sw, f = switch(103 + b, z0 - 7.2, True); act.append(sw); fas += f
+        s.append(box(BR + 8, BR + 16, -12, 12, cz - CAR_H / 2, cz + CAR_H / 2))
+        s.append(box(105 + b, 111 + b, -16, -12, cz - 13, cz - 6))       # tab that presses the switch at cz 60
+        blk = box(101 + b, 112 + b, SCREW_T - 5, SCREW_T + 5, cz - 6, cz + 8).cut(cyl(2.2, cz - 6, cz + 8, 106 + b, SCREW_T))
+        s.append(blk.cut(hexnut(7.0, 3.4, 106 + b, SCREW_T, cz - 1.7)))  # nut block, J13 nut in a pocket
+        fas.append(hexnut(7.0, 3.2, 106 + b, SCREW_T, cz - 1.6, 4.0))
+        r_srv = BR + 16                                  # spin servo r 120-143, shaft 143-150 (shorter than top/middle)
+    elif k == 2:                                        # top: rail r 76-84 (TR = 76), N20 above the screw
+        z0, z1 = RAIL_Z[2]; b = TR - 80.0               # b: shift of the 2026-11-14 top slide (rail was r 80-88)
+        bar(RING_RO, TR, zr)
+        s.append(box(TR, TR + 8, -5, 5, z0, z1))
+        s.append(box(TR, TR + 8, -5, SCREW_T + 4, z0, z0 + 4))          # bottom cap + bearing (middle bar passes under it)
+        holes.append(cyl(4.0, z0, z0 + 4, 84 + b, SCREW_T))
+        act.append(annulus(2.0, 4.0, z0 + 0.5, z0 + 3.5).translated(V(84 + b, SCREW_T, 0)))
+        act.append(cyl(SCREW_D / 2, z0, z1 - 1, 84 + b, SCREW_T))
+        act.append(cyl(4.0, z1 - 6, z1, 84 + b, SCREW_T))                # J11 coupler
+        n20 = box(79 + b, 89 + b, SCREW_T - 6, SCREW_T + 6, z1, z1 + 24)
         act.append(n20)
-        s.append(box(77, 91, -1, 23, z1, z1 + 12).cut(n20))              # J10 N20 clamp on the rail top
+        s.append(box(77 + b, 91 + b, -1, 23, z1, z1 + 12).cut(n20))      # J10 N20 clamp on the rail top
         for t in (1.0, 21.0):
-            fas.append(screw(V(77, t, z1 + 6), V(1, 0, 0), 16, 2.0, 3.8, 1.5))
-            fas.append(box(92, 93.6, t - 2, t + 2, z1 + 4, z1 + 8))
-        s.append(box(80, 88, -18, -1, z1 + 7.2, z1 + 10.2))              # switch shelf
-        sw, f = switch(81, z1 + 1.4, False); act.append(sw); fas += f
-        s.append(box(88, 118, -12, 12, cz - CAR_H / 2, cz + CAR_H / 2))
-        s.append(box(83, 89, -16, -12, cz + 6, cz + 13))                 # tab that presses the switch at cz 290
-        blk = box(79, 90, SCREW_T - 5, SCREW_T + 5, cz - 8, cz + 6).cut(cyl(2.2, cz - 8, cz + 6, 84, SCREW_T))
-        s.append(blk.cut(hexnut(7.0, 3.4, 84, SCREW_T, cz - 1.7)))
-        fas.append(hexnut(7.0, 3.2, 84, SCREW_T, cz - 1.6, 4.0))
+            fas.append(screw(V(77 + b, t, z1 + 6), V(1, 0, 0), 16, 2.0, 3.8, 1.5))
+            fas.append(box(92 + b, 93.6 + b, t - 2, t + 2, z1 + 4, z1 + 8))
+        s.append(box(TR, TR + 8, -18, -1, z1 + 7.2, z1 + 10.2))          # switch shelf
+        sw, f = switch(81 + b, z1 + 1.4, False); act.append(sw); fas += f
+        s.append(box(TR + 8, 118, -12, 12, cz - CAR_H / 2, cz + CAR_H / 2))
+        s.append(box(83 + b, 89 + b, -16, -12, cz + 6, cz + 13))         # tab that presses the switch at cz 290
+        blk = box(79 + b, 90 + b, SCREW_T - 5, SCREW_T + 5, cz - 8, cz + 6).cut(cyl(2.2, cz - 8, cz + 6, 84 + b, SCREW_T))
+        s.append(blk.cut(hexnut(7.0, 3.4, 84 + b, SCREW_T, cz - 1.7)))
+        fas.append(hexnut(7.0, 3.2, 84 + b, SCREW_T, cz - 1.6, 4.0))
         r_srv = 118.0
     else:                                               # middle: fixed, stepped arm
         bar(RING_RO, 98, zr)
@@ -416,9 +422,8 @@ def sequence():
     go("2. Top ring turns 90", 2, "phi", 0, 90, 6)
     go("Top carriages go down to 175", 2, "cz", Z_STACK[2] + 5, Z_SPIN, 10)
     go("Top stones spin upright", 2, "rho", 0, 90, 10)
-    go("Top carriages set the stones on the table", 2, "cz", Z_SPIN, Z_SET, 5)
-    S[2]["stone"] = False; out.append(("Placed: 2 more towers", [dict(s) for s in S]))
-    go("Top arms back home", 2, "rho", 90, 0, 15); go("Top arms back home", 2, "cz", Z_SET, Z_STACK[2], 20)
+    S[2]["stone"] = False; out.append(("Placed: 2 more towers; cups vented (stones drop 15 mm)", [dict(s) for s in S]))
+    go("Top arms back home", 2, "rho", 90, 0, 15); go("Top arms back home", 2, "cz", Z_SPIN, Z_STACK[2], 20)
     go("Top arms back home", 2, "phi", 90, 0, 9)
     # bottom
     go("Bottom carriages rise +16 (stones clear the base plate)", 0, "cz", Z_STACK[0] - 5, Z_CLEAR, 8)
@@ -528,11 +533,11 @@ def main():
     bad, zmin, zmax, mzmax = check(seq, fixed)
     L = ["Central hub - option A - report", ""]
     L.append("Hub Ø%.0f z %.0f-%.0f in 4 segments (joints z %s), 3 M4 tie rods; rings Ø%.0f x %.0f at z %s, lugs to r %.0f;"
-             " top rail r 80-88, bottom rail r 102-110, middle arm over at z %.0f" %
+             " top rail r 76-84, bottom rail r 104-112, middle arm over at z %.0f" %
              (2 * HUB_R, HUB_Z0, HUB_Z1, "/".join("%.1f" % z for z in SEG_Z[1:4]), 2 * RING_RO, RING_H,
               "/".join("%.0f" % z for z in RING_Z), LUG_RO, MID_OVER))
     L.append("Cup heights: stack %s, spin at %.0f; bottom rises to %.0f before its turn; slide travel bottom %.0f, top %.0f mm" %
-             ("/".join("%.0f" % z for z in Z_STACK), Z_SPIN, Z_CLEAR, Z_SPIN - (Z_STACK[0] - 5), Z_STACK[2] + 5 - Z_SET))
+             ("/".join("%.0f" % z for z in Z_STACK), Z_SPIN, Z_CLEAR, Z_SPIN - (Z_STACK[0] - 5), Z_STACK[2] + 5 - Z_SPIN))
     L.append("Actuators: 3 turn MG996R inside the hub (1 per ring, both units, 2:1 internal gear), 4 slides (N20 + M4 screw;"
              " top + bottom, front + rear), 6 spin MG90S, 6 pumps (off the hub, hoses through the bore), 4 limit switches")
     L.append("")
