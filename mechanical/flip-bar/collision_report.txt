@@ -7,7 +7,29 @@ moving parts, unexpected overlaps: 0
 
 actuators highest point (exact solids): 339.0 mm at s 0.413 -> OK (limit 350)
 stones highest: 470.3 mm at s 0.512 (castle / construction zones only)
-moving parts (not the stones) lowest point: 17.9 mm at s -0.025 (above the table)
+moving parts (not the stones) lowest point: 17.9 mm at s -0.025, Support_ring_1 (above the table)
 
-masses (g): Crank 40, Crank_bearings 36, Crank_shaft 19, Gear_crank_sector 11, Rocker 56, Rocker_bearings 73, Bar 179, Bar_pins 32, Station_spacer_1 13, Station_TPU_1 7, Support_ring_1 10, DPS30_1 8, Station_spacer_2 13, Station_TPU_2 7, Support_ring_2 10, DPS30_2 8, Station_spacer_3 13, Station_TPU_3 7, Support_ring_3 10, DPS30_3 8
-bar assembly (bar + pins + spacers + TPU stations + support rings + cups): 323 g (flipbar_params assumes 323 g)
+masses (g): Crank 37, Crank_bearings 36, Crank_shaft 23, Gear_crank_sector 10, Hub_crank 5, Crank_clamp 7, Crank_sleeves 1, Fasteners_crank 6, Rocker 48, Rocker_bearings 73, Hub_rocker 9, Fasteners_rocker 4, Bar 180, Bar_pins 36, Bar_pin_nuts 8, Sleeve_P1 0, Hoses 4, Station_spacer_1 13, Station_TPU_1 7, Support_ring_1 10, DPS30_1 8, Station_spacer_2 12, Station_TPU_2 7, Support_ring_2 10, DPS30_2 8, Station_spacer_3 13, Station_TPU_3 7, Support_ring_3 10, DPS30_3 8, Fasteners_sector 2, Fasteners_bar 18, Anchors_bar 2
+bar assembly (bar + M8 pins and nuts + spacers + TPU stations + support rings + cups + bolts + anchors + hoses): 358 g (flipbar_params assumes 358 g)
+
+fasteners drawn and swept (not drawn: pump and valve clamps, the hose loop to the valves, cables):
+    7 x M3 nut
+    8 x M3 x 10 socket head
+    4 x M3 x 12 button head
+    2 x M3 x 12 socket head
+    9 x M3 x 20 socket head
+    4 x M3 x 6 button head
+    4 x M3 x 8 button head
+    1 x M3 x 8 set screw
+    5 x M3 x 8 socket head
+   10 x M4 nut
+   10 x M4 x 16 button head
+    4 x M5 nut
+    4 x M5 x 55 button head
+    1 x M8 nut
+    1 x M8 nyloc nut
+    1 x M8 thin nut
+    1 x M8 washer
+    2 x M8 x 30 hex bolt
+    1 x M8 x 80 hex bolt
+    5 x Zip-tie anchor (printed ABS)

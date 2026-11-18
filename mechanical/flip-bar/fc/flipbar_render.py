@@ -20,7 +20,10 @@ COL = {"base_330": (0.87, 0.78, 0.60), "wheels": (0.15, 0.15, 0.15), "column": A
        "pumps": (0.35, 0.35, 0.35), "valves": (0.85, 0.85, 0.80), "Crank": RED, "Crank_bearings": (0.85, 0.85, 0.88),
        "Rocker": BLUE, "Rocker_bearings": (0.85, 0.85, 0.88), "Bar": NAVY, "Bar_pins": (0.70, 0.70, 0.72),
        "Station_spacer": ABS_D, "Station_TPU": TPU, "Support_ring": ABS_D, "DPS30": BLACK,
-       "Stone": (0.82, 0.70, 0.52), "Gear_": (0.95, 0.75, 0.15), "Motor_shaft": (0.6, 0.6, 0.62)}
+       "Stone": (0.82, 0.70, 0.52), "Gear_": (0.95, 0.75, 0.15), "Motor_shaft": (0.6, 0.6, 0.62),
+       "Hub_": (0.95, 0.60, 0.12), "Crank_clamp": (0.95, 0.60, 0.12), "Crank_sleeves": ABS_D, "Crank_shaft": (0.60, 0.60, 0.62),
+       "Sleeve_": ABS_D, "sleeves_": ABS_D, "Bar_pin": (0.70, 0.70, 0.72), "Hoses": (0.20, 0.62, 0.90),
+       "fasteners_": (0.45, 0.45, 0.48), "Fasteners_": (0.45, 0.45, 0.48), "anchors_": (0.95, 0.45, 0.10), "Anchors_": (0.95, 0.45, 0.10)}
 
 
 def colour(o):
@@ -61,7 +64,7 @@ def run():
         F.pose(objs, (0.40,) + P.pose_at(0.40))
         doc.recompute()
         hide = [o for n, (o, k) in objs.items() if n.startswith(("column", "rear_plate", "standoffs", "brackets", "motor",
-                                                                  "housings", "Stone"))]
+                                                                  "housings", "Stone", "fasteners_", "anchors_", "sleeves_"))]
         for o in hide:
             o.ViewObject.Visibility = False
         Gui.Selection.clearSelection()
@@ -83,7 +86,7 @@ def run():
         view.saveImage(os.path.join(SIM, "flipbar_3d_linkage.png"), 1600, 1200, "White")
         # gear pair: seen from behind, rear plate / motor / housings hidden
         for n, (o, k) in objs.items():
-            if n.startswith(("rear_plate", "motor", "housings", "bearings_fixed", "brackets", "standoffs")):
+            if n.startswith(("rear_plate", "motor", "bearings_fixed", "brackets", "standoffs", "fasteners_", "anchors_")):
                 o.ViewObject.Visibility = False
         view.viewFront()
         view.fitAll()

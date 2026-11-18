@@ -1,4 +1,4 @@
-Single-bar flip - range of motion + forces (flipbar_check.py, 2026-11-14)
+Single-bar flip - range of motion + forces (flipbar_check.py, 2026-11-18)
 
 == Four-bar (Ayoub's flip-6cups synthesis): crank 91.0, rocker 149.2, coupler 104.2, ground 204.1 mm
    non-Grashof (295.0 > 253.4): no link can turn fully; the crank swings between two toggle positions
@@ -14,27 +14,31 @@ Single-bar flip - range of motion + forces (flipbar_check.py, 2026-11-14)
    stones lowest during the flip  7.2 mm (bar between 1 and 89 deg, as flip-6cups; at s 0 they rest on the table)
    actuators X span over the travel: -118.4 .. 157.1 mm (bar + stations; the stones don't count, FAQ Q1)
 
-== Torque (quasi-static, gravity; masses from the CAD: bar assembly 0.323, crank 0.076, rocker 0.093, stones 3 x 0.090 kg)
-   with 3 stones            crank: lift peak +0.66 N.m (s 0.21), brake peak -0.82 N.m (s 1.00); sign changes at s 0.53
-   empty (stones released)  crank: lift peak +0.40 N.m (s 0.21), brake peak -0.49 N.m (s 1.00); sign changes at s 0.53
+== Torque (quasi-static, gravity; masses from the CAD: bar assembly 0.358, crank 0.081, rocker 0.093, stones 3 x 0.090 kg)
+   with 3 stones            crank: lift peak +0.69 N.m (s 0.21), brake peak -0.86 N.m (s 1.00); sign changes at s 0.53
+   empty (stones released)  crank: lift peak +0.44 N.m (s 0.21), brake peak -0.53 N.m (s 1.00); sign changes at s 0.53
    unpowered (gears back-drive): with the torque > 0 the bar falls back toward the start, < 0 it falls toward
-   upright -> rests on the hard stop there. The stops take the full load: 0.86 N.m with stones.
+   upright -> rests on the hard stop there. The stops take the full load: 0.91 N.m with stones.
 
 == Drive: 17HS4401S, one spur pair 15T pinion -> 100T sector = 6.67:1, module 0.8, 10 mm wide, printed ABS, efficiency 0.90
    motor: holding 0.40 N.m at 1.7 A (datasheet, CHECK the label); driven at ~1.0 A -> usable 0.20 N.m up to 300 rpm (assumed)
    resolution: 16 microsteps -> 0.0169 deg of crank per microstep (59 microsteps per crank degree)
-   flip in 0.6 s (trapezoid, 25% ramps): motor up to 296 rpm, peak motor torque 0.208 N.m, worst margin x0.96 at s 0.17 TOO WEAK
-   flip in 1.0 s (trapezoid, 25% ramps): motor up to 178 rpm, peak motor torque 0.143 N.m, worst margin x1.40 at s 0.17 TIGHT
-   flip in 1.5 s (trapezoid, 25% ramps): motor up to 119 rpm, peak motor torque 0.123 N.m, worst margin x1.63 at s 0.17 OK
-   holding (powered, standstill): worst 0.110 N.m at the motor = 55% of the usable torque
-   teeth: crank torque 1.11 N.m (peak x1.3), tooth force 28 N, pinion root stress 12.0 MPa (Lewis) -> x3.3 vs ABS ~40 MPa
+   flip in 0.6 s (trapezoid, 25% ramps): motor up to 296 rpm, peak motor torque 0.219 N.m, worst margin x0.92 at s 0.17 TOO WEAK
+   flip in 1.0 s (trapezoid, 25% ramps): motor up to 178 rpm, peak motor torque 0.151 N.m, worst margin x1.33 at s 0.17 TIGHT
+   flip in 1.5 s (trapezoid, 25% ramps): motor up to 119 rpm, peak motor torque 0.130 N.m, worst margin x1.54 at s 0.17 OK
+   holding (powered, standstill): worst 0.117 N.m at the motor = 58% of the usable torque
+   teeth: crank torque 1.18 N.m (peak x1.3), tooth force 29 N, pinion root stress 12.7 MPa (Lewis) -> x3.1 vs ABS ~40 MPa
    backlash at the crank: ~0.14 deg (0.10 mm designed); crossed where the torque changes sign (slow down there)
    sector: 140 deg of teeth (39 of the 100), tip r 40.8; lowest tooth tip over the travel z 22.5 (base top 18.5: 4.0 mm clear)
    gear layout: crank sector on O1 (-34.8, 50.4), motor pinion (-34.8, 96.4), centres 46.0 mm apart
 
 == Joints
-   pin forces (with stones): crank pin / crank shaft max 8.3 N, rocker max 6.8 N (in-plane)
-   out-of-plane moment (stones' COG 106 mm in front of the link mid-plane y 144): 0.39 N.m
+   pin forces (with stones): crank pin / crank shaft max 8.8 N, rocker max 7.2 N (in-plane)
+   out-of-plane moment (stones' COG 106 mm in front of the link mid-plane y 144): 0.40 N.m
    -> crank shaft, 608 in rear plate + column  bearings 35 mm apart: pair force 11 N each (608 static rating 1370 N)
-   -> P1 / P2 / O2 hubs, two 608 back to back  bearings 7 mm apart: pair force 55 N each (608 static rating 1370 N)
-   in-plane friction: 608 (mu ~0.003) x 8 N x 4 mm = 0.0001 N.m per joint (negligible)
+   -> P1 / P2 / O2 hubs, two 608 back to back  bearings 7 mm apart: pair force 57 N each (608 static rating 1370 N)
+   in-plane friction: 608 (mu ~0.003) x 9 N x 4 mm = 0.0001 N.m per joint (negligible)
+
+== Hoses (3 x D4): tied on the 3 bar anchors, they leave the bar under the bottom anchor (bar frame u 40, v -137)
+   straight distance from that point to the middle vent valve over the travel: 106 mm (s 0.23) .. 186 mm (s 0.82)
+   -> free loop of 240 mm (longest distance x 1.25): 134 mm of slack at the closest pose. To try with real hoses.

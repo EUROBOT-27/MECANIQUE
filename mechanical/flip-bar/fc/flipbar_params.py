@@ -13,7 +13,8 @@
 #     shaft, module 0.8 = 6.67:1 (no belts, no worm). A sector, because a full wheel that size would hit the base:
 #     reversible, back-drivable, motor stays powered to hold;
 #   - rigid frame: column + rear plate (both 5 mm aluminium) tied by 4 standoffs; crank on its own D8 shaft on two
-#     608 bearings (one per plate); rocker ground shaft held in both plates; every moving joint has TWO 608 bearings;
+#     608 bearings (one per plate); rocker ground axle = an M8 bolt through both plates; every moving joint has TWO
+#     608 bearings in a printed hub bolted on a flat (laser-cut) link; bar pins = M8 bolts (2026-11-18);
 #   - no ejector servos (release = vent valve of that cup: one tower at a time); 3 pumps + 3 vent valves.
 #
 # Frame (base_330, same as flip-6cups): X = wheel axis, Y = forward (mechanism on the +Y edge), Z = up,
@@ -75,9 +76,9 @@ HOUSING_C = (118.0, 125.0)              # printed 608 housing on the column back
 HOUSING_D = 34.0                        # housing Ø (608 OD 22 + 6 mm walls)
 COL = (125.0, 130.0)                    # column, 5 mm aluminium
 CRANK = (133.0, 139.0)                  # crank plate, 6 mm aluminium
-CRANK_HUB = (133.0, 147.0)              # crank's P1 hub: two 608 (7 mm each)
+CRANK_HUB = (139.0, 153.0)              # crank's P1 bearings: two 608 in a printed hub on the crank's FRONT face
 ROCK = (150.0, 156.0)                   # rocker plate, 6 mm aluminium
-ROCK_HUB = (142.0, 156.0)               # rocker hubs at O2 and P2: two 608 each
+ROCK_HUB = (136.0, 150.0)               # rocker bearings at O2 and P2: two 608 in a printed hub on the rocker's BACK face
 BAR = (159.0, 164.0)                    # bar, 5 mm aluminium
 Y_SPACER = (BAR[1], BAR[1] + SPACER_T)                       # 164 -> 174
 Y_RIM = (Y_SPACER[1], Y_SPACER[1] + RIM_T)                    # TPU rim 174 -> 177 (spring disc 174 -> 176.5)
@@ -121,6 +122,47 @@ STANDOFFS = ((-128.0, 52.0), (O1[0], 25.0), (-128.0, 262.0), (-2.0, 262.0))   # 
 SHAFT_D = 8.0
 B608 = (8.0, 22.0, 7.0)                 # bore, OD, width
 
+# ---------------------------------------------------------------- fasteners + printed-part fits (2026-11-17)
+# From mechanical/design-principles.md (clapets v7 + its ABS coupons): sized for ABS, nuts in pockets, every fastener
+# drawn and swept, printed zip-tie anchors.
+BRG_SEAT_D, BRG_LEAD = 22.2, 0.6        # printed 608 seat Ø22.2 + 0.6 x 45 deg lead-in (ABS coupon 2026-11-12: good)
+PLATE_BRG_HOLE = 15.0                   # shaft hole in the plates under a 608: holds the outer race (inner Ø ~19), clear of the inner race (Ø12)
+M3_CLEAR, M3_TAP = 3.4, 2.5             # clearance hole (printed + alu), tap drill in the 5 mm aluminium
+NUT3 = (6.0, 6.9, 2.8)                  # M3 nut pocket (nut 5.5 AF x 6.35 x 2.4): the v7 clamp pocket, the nut can't turn
+HOUSING_EAR_R, HOUSING_EAR_W = 21.0, 12.0   # housing ears: M3 x 12 from the plate's outer face into a nut pocket open at the ear tip
+HOUSING_NUT_FLOOR = 2.2                 # plastic between the plate and the nut
+SHAFT_BORE = 8.2                        # printed clamp bore on a Ø8 shaft (v7 ROD_R 4.1): slides on, the clamp closes it
+CLAMP_LUG = (4.0, 14.0, 12.0)           # sector split clamp (v7 split_clamp_z): lug from r 4 to r 14, 12 wide, M3 x 12 at r 9
+PINION_BORE = 5.2                       # printed bore on the Ø5 motor shaft (ABS holes print ~0.2 small)
+PINION_HUB_D = 20.0                     # pinion hub behind the teeth: M3 set screw on the shaft's flat + captive nut
+PINION_HUB_Y = (90.6, 98.0)
+PINION_SET_Y = 94.0
+ANCHOR = (18.0, 8.0, 6.0)               # printed zip-tie anchor (L x W x H): M3 at 4.5, tie tunnel 4 x 2 at 10..14
+HOSE_U = (36.0, 40.0, 44.0)             # hose of the bottom / middle / top cup: side by side down the bar's +u flank
+BAR_ANCHORS = tuple((40.0, cv - 8.0, -90.0) for cv in CUP_V)   # (u, v, deg): one under each spacer slot, on a bar tab
+ANCHOR_TAB_R = 6.5                      # bar tab under each anchor screw (blended into the lobe)
+HOSE_END_V = CUP_V[0] - 27.0            # the 3 hoses leave the bar under the bottom anchor
+VALVE_PORT = (104.3, 67.0, 69.3)        # middle vent valve, top face (x, y, z): the fixed end of the hose loop
+REAR_ANCHORS = ((-95.0, 121.0, 90.0), (-95.0, 191.0, 90.0))  # (x, z, deg) on the rear plate back face: motor + switch cables
+
+# ---------------------------------------------------------------- joints, flat links, small fixings (2026-11-18)
+# The 4 points left open on 2026-11-17. Checked first with the pivots' swept clearances: the rocker never comes
+# within 90 mm of O1, the crank never within 85 mm of P2 or 113 mm of O2, the bar never covers O2.
+LINK_HUB_BODY_D = 28.4                  # printed bearing hub: Ø22.2 seat + 3.1 mm walls, 16 long (2 x 608 + lip)
+LINK_HUB_LIP, LINK_HUB_LIP_BORE = 2.0, 16.5   # lip at the far end holds the outer race; a sleeve (Ø11.5) passes through it
+LINK_HUB_TONGUE = (36.0, 4.0)           # tongue along the link (length from the pin, thickness), LINK_W wide
+LINK_HUB_SCREWS = (18.0, 30.0)          # 2 x M3 x 10 from the tongue into M3 tapped in the 6 mm link (from the pin)
+LINK_PIN_HOLE = 20.0                    # hole in the link under a hub: closes the seat on the 608's outer race (land Ø ~19.2),
+                                        # and a 13 mm socket (Ø ~18) reaches the M8 nut / bolt head that sits inside it
+SLEEVE_D = 11.5                         # printed sleeves on Ø8: touch the 608 inner race only (its OD ~12.1)
+CRANK_CLAMP = (CRANK[1], CRANK[1] + 10.0)   # crank clamp hub on the crank's front face at O1 (split clamp on the shaft)
+CRANK_CLAMP_D = 26.0
+CRANK_CLAMP_SCREWS = (19.0, 31.0)       # 2 x M3 x 10 into M3 tapped in the crank, on the web side (the clamp's hinge side)
+O2_TUBE_D = 14.0                        # printed tube on the O2 bolt between the two plates (a 5th standoff)
+M4_CLEAR = 4.5
+BRACKET_SCREW = 15.0                    # bracket screws: 15 mm from the corner on each leg
+SWITCH_SCREW_X, SWITCH_SCREW_Z = -16.5, (5.0, -1.0)   # endstop PCB screws, switch frame (x radial, z away from the crank): CHECK the real PCB
+
 # hard stops + switches on the column front, in the crank layer (crank angle past each end)
 HOME_SWITCH_DEG, END_SWITCH_DEG = 26.0, 26.0   # switch body centre, angle past each end, at r 55: body 5.2 mm from the
                                                # crank edge at the end, 3.0 mm at the hard stop; the LEVER reaches the crank
@@ -133,11 +175,12 @@ PUMP_D, PUMP_L = 31.8, 66.0
 VALVE = (27.0, 14.0, 17.0)
 
 # ---------------------------------------------------------------- masses (kg) for the torque check (refined from the CAD)
-M_BAR_ASSY = 0.323                      # from the CAD (flipbar_fc.py): bar 179, pins 32, 3 stations x (spacer 13 + TPU 7 + ring 10 + cup 8)
-M_CRANK = 0.040                         # crank plate (COG mid-length); its 2 x 608 sit at P1:
-M_CRANK_P1 = 0.036
-M_ROCKER = 0.056                        # rocker plate (COG mid-length); 2 x 608 at P2 (the O2 pair adds no torque):
-M_ROCKER_P2 = 0.037
+M_BAR_ASSY = 0.358                      # from the CAD (flipbar_fc.py, collision_report.txt, 2026-11-18): bar 180, M8 pins + nuts 44,
+                                        # 3 stations x 38, station bolts + anchors + their screws 20, hoses 4
+M_CRANK = 0.039                         # crank plate (COG mid-length); at P1: 2 x 608 + printed hub + its 2 screws:
+M_CRANK_P1 = 0.042
+M_ROCKER = 0.050                        # rocker plate (COG mid-length); at P2: 2 x 608 + hub + screws (the O2 set adds no torque):
+M_ROCKER_P2 = 0.043
 G = 9.81
 
 
@@ -161,6 +204,8 @@ def bar_sdf(u, v):
     d = _smin(d, _sd_capsule(u, v, P1, ARM_TO, ARM_R), BLEND)
     d = _smin(d, math.hypot(u - P1[0], v - P1[1]) - BOSS_P1_R, BLEND * 0.6)
     d = _smin(d, math.hypot(u - P2[0], v - P2[1]) - BOSS_P2_R, BLEND * 0.6)
+    for au, av in anchor_screws(BAR_ANCHORS):                    # tabs for the hose anchors
+        d = _smin(d, math.hypot(u - au, v - av) - ANCHOR_TAB_R, 6.0)
     return d
 
 
@@ -226,12 +271,17 @@ _OUTLINE = []
 def bar_outline(step=2.0):
     """Smooth bar outline (bar frame, counter-clockwise), ~step mm between points. Cached."""
     if not _OUTLINE:
-        us = [CUP_U, P1[0], P2[0], ARM_TO[0]]
+        us = [CUP_U, P1[0], P2[0], ARM_TO[0], BAR_ANCHORS[0][0]]
         vs = list(CUP_V) + [P1[1], P2[1]]
         m = LOBE_R + BLEND + 4
         loop = _contour(bar_sdf, min(us) - m, max(us) + m, min(vs) - m, max(vs) + m, 1.0)
         _OUTLINE.extend(_resample(loop, step))
     return list(_OUTLINE)
+
+
+def anchor_screws(anchors):
+    """Screw axis (x, z) of each zip-tie anchor: 4.5 mm along the anchor from its origin."""
+    return [(x + 4.5 * math.cos(math.radians(a)), z + 4.5 * math.sin(math.radians(a))) for x, z, a in anchors]
 
 
 def bar_holes():
@@ -241,7 +291,9 @@ def bar_holes():
         h.append(("circle", CUP_U, cv, BAR_HOLE_D))
         for a in ST_BOLT_A:
             t = math.radians(a)
-            h.append(("circle", CUP_U + ST_BOLT_R * math.cos(t), cv + ST_BOLT_R * math.sin(t), 2.5))   # M3 tapped
+            h.append(("circle", CUP_U + ST_BOLT_R * math.cos(t), cv + ST_BOLT_R * math.sin(t), M3_TAP))   # M3 tapped
+    for au, av in anchor_screws(BAR_ANCHORS):
+        h.append(("circle", au, av, M3_TAP))                                                          # zip-tie anchors, M3 tapped
     L = math.dist(P1, ARM_TO)
     du, dv = (ARM_TO[0] - P1[0]) / L, (ARM_TO[1] - P1[1]) / L
     h.append(("slot", (P1[0] + du * 26, P1[1] + dv * 26), (P1[0] + du * (L - 42), P1[1] + dv * (L - 42)), 10.0))
@@ -264,7 +316,14 @@ def link_outline(length, step=2.0):
 
 
 def link_slot(length):
-    return (HUB_D / 2 + 6.0, length - HUB_D / 2 - 6.0, LINK_SLOT_W)
+    """Lightening slot (start, end, width) between the hub / clamp screws of the two ends; None if too short (crank)."""
+    s0, s1 = 40.0, length - 40.0
+    return (s0, s1, LINK_SLOT_W) if s1 - s0 >= 15.0 else None
+
+
+def hose_exit():
+    """Bar-frame point (u, v) and y where the 3 hoses leave the bar."""
+    return (HOSE_U[1], HOSE_END_V), BAR[1] + ANCHOR[2] + 2.0
 
 
 def station_circles():

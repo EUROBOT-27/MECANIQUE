@@ -136,7 +136,7 @@ F = [pin_forces(p) for p in path]
 used = [p for p in path if 0 <= p["s"] <= 1]
 iu = [i for i, p in enumerate(path) if 0 <= p["s"] <= 1]
 L = []
-L.append("Single-bar flip - range of motion + forces (flipbar_check.py, %s)" % "2026-11-14")
+L.append("Single-bar flip - range of motion + forces (flipbar_check.py, %s)" % "2026-11-18")
 L.append("")
 L.append("== Four-bar (Ayoub's flip-6cups synthesis): crank %.1f, rocker %.1f, coupler %.1f, ground %.1f mm" % (
     P.R1, P.R2, P.COUPLER, P.GROUND))
@@ -230,6 +230,16 @@ for name, span in (("crank shaft, 608 in rear plate + column", P.COL[0] + 3.5 - 
     L.append("   -> %-40s bearings %.0f mm apart: pair force %.0f N each (608 static rating 1370 N)" % (name, span, M_out / (span / 1000)))
 L.append("   in-plane friction: 608 (mu ~0.003) x %.0f N x 4 mm = %.4f N.m per joint (negligible)" % (
     max(f[0] for f in F), 0.003 * max(f[0] for f in F) * 0.004))
+(_eu, _ev), _ey = P.hose_exit()
+_vp = P.VALVE_PORT
+_hd = [math.dist(P.to_world(p["pose"], (_eu, _ev)) + (_ey,), (_vp[0], _vp[2], _vp[1])) for p in path]
+_loop = math.ceil(max(_hd) * 1.25 / 10) * 10
+L.append("")
+L.append("== Hoses (3 x D4): tied on the 3 bar anchors, they leave the bar under the bottom anchor (bar frame u %.0f, v %.0f)" % (_eu, _ev))
+L.append("   straight distance from that point to the middle vent valve over the travel: %.0f mm (s %.2f) .. %.0f mm (s %.2f)" % (
+    min(_hd), path[_hd.index(min(_hd))]["s"], max(_hd), path[_hd.index(max(_hd))]["s"]))
+L.append("   -> free loop of %.0f mm (longest distance x 1.25): %.0f mm of slack at the closest pose. To try with real hoses." % (
+    _loop, _loop - min(_hd)))
 
 txt = "\n".join(L) + "\n"
 print(txt)
@@ -283,8 +293,9 @@ def bar_shapes():
 BS = bar_shapes()
 LINK_SHAPES = {}
 for _L in (P.R1, P.R2):
-    _s0, _s1, _w = P.link_slot(_L)
-    LINK_SHAPES[_L] = (P.link_outline(_L), [slot_pts((_s0, 0), (_s1, 0), _w), circle_pts(0, 0, 4, 12), circle_pts(_L, 0, 4, 12)])
+    _sl = P.link_slot(_L)
+    LINK_SHAPES[_L] = (P.link_outline(_L), ([slot_pts((_sl[0], 0), (_sl[1], 0), _sl[2])] if _sl else []) +
+                       [circle_pts(0, 0, 4, 12), circle_pts(_L, 0, 4, 12)])
 COL = {"bar": "#2c4f8c", "ring": "#3a3a40", "tpu": "#2fa34f", "cup": "#111111", "stone": "#d2b48c",
        "crank": "#c0392b", "rocker": "#2a62d4", "frame": "#c8ccd4"}
 
