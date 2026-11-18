@@ -108,6 +108,7 @@ One module per side, outside the drive wheel, **wheel on the axle line (y = 0), 
 | Strap slots across the motors | 2 × (x ±55.5, y ±27.5, 4 wide) | **removed**: the middle of the plate only has the 8 hinge holes (Ø3.5) |
 | Hinge holes, corner holes, casters, back-wall profile holes | | **unchanged** |
 | Clapets v7 module A holes | `CLAP_DY` 23 | **`CLAP_DY` 35**: the socle front must clear the Ø80 envelope (y 40) by 3 mm → stack face 35 mm in front of the plate edge |
+| Clapets v7 module A fixing | 4 × Ø4.8 (M4) | **4 × Ø3.4 for M3** (× 2 ends): M3 × 20 + washer under the head (on the socle, whose holes stay Ø4.4) + washer + nut under the plate |
 
 Plate perimeter 1220 mm (> 1200): like base_330, this is a **test base**, not the final footprint.
 

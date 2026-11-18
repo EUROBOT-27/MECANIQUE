@@ -63,9 +63,11 @@ CASTER_Y, CASTER_D, CASTER_SCREW_X, CASTER_SCREW_D = 110.0, 33.0, 20.0, 4.0
 CASTER_REACH = 16.5         # caster ball bottom below the plate top, flange on the plate (base_330)
 PROF_X, PROF_Y, PROF_D = 100.0, 130.0, 5.5
 
-# clapets v7 module A: same 4 x M4 pattern; module moved CLAP_DY forward. The socle starts 8.5 mm behind its holes'
+# clapets v7 module A: same 4-hole pattern as base_330, but fixed with 4 x M3 (Ayoub, 2026-11-18): Ø3.4 = M3
+# clearance (ISO 273 medium; base_330 had Ø4.8 for M4). The socle holes stay Ø4.4, so M3 takes up the socle's print error;
+# use a washer under the head on the socle. Module moved CLAP_DY forward. The socle starts 8.5 mm behind its holes'
 # y = 18 row (module frame y 8.5) -> socle front at CLAP_DY + 8.5 must clear the Ø80 wheel envelope (y 40) by >= 3.
-CLAP_X, CLAP_Y, CLAP_D = 63.0, (18.0, 53.0), 4.8
+CLAP_X, CLAP_Y, CLAP_D = 63.0, (18.0, 53.0), 3.4
 CLAP_SOCLE_Y0 = 8.5
 CLAP_DY = math.ceil(WHEEL_D_MAX / 2 + 3.0 - CLAP_SOCLE_Y0)          # 35 (base_330: 23)
 
