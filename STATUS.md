@@ -1,8 +1,8 @@
 # Status
 
-_Last updated: 2026-11-18 (Ayoub; Seif's 2026-11-14 content kept)_
+_Last updated: 2026-11-18 (Ayoub, then Seif)_
 
-**Phase:** Strategy partly fixed → **clapets v7 module A: CAD passed (2026-11-13), now printing + testing**; module B (suction) reworked by Seif as `suction-v1` (D-021). Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
+**Phase:** Strategy partly fixed → **clapets v7 module A printed + assembled (2026-11-18), assembly fixes next**; module B (suction) reworked by Seif as `suction-v1` (D-021). Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
 **Next deadline:** Strategy chosen (internal), 2026-11-08 (**10 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (4 days) · CAD freeze 2026-12-13 (25 days) · Mechanical built and assembled, 2026-12-31 (43 days)
 **Qualifier:** end of March 2027
 
@@ -43,7 +43,7 @@ _Last updated: 2026-11-18 (Ayoub; Seif's 2026-11-14 content kept)_
 3. **Perimeter budget:** layout v1 leaves 16 mm at start with a mirrored back (88 mm with a simple back) and 48 mm deployed; side-clamp jaws and the gate protrusion compete for it. FAQ Q1 (does a carried stone count?) unconfirmed.
 
 ## Waiting on
-- Seif: buy the camera (D-026), module A print (clapets v7), order stones + foam balls, choose front/back of the refined layout, review Ayoub's flip-6cups and central-hub-builder + option A CAD (`mechanical/central-hub/CONNECTIONS.md`) (concepts due 2026-11-22), refined
+- Seif: buy the camera (D-026), module A test + assembly fixes (clapets v7), order stones (foam balls ordered 2026-11-18), choose front/back of the refined layout, review Ayoub's flip-6cups and central-hub-builder + option A CAD (`mechanical/central-hub/CONNECTIONS.md`) (concepts due 2026-11-22), refined
   timeline, confirmation of the D-008 location, name of the GROSBOT 2023 club.
 - Maatoug: back up personal files before the next pull; push the generators that only exist on his PC; remove the ~470 software build files committed in `a746ea1`. (v8 tasks dropped: Seif reworks module B in suction-v1.)
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.

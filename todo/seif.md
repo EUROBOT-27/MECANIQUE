@@ -10,7 +10,6 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Roof layout: first version in `mechanical/layout-v1/` (strip between the lifts, L4 Grail right end); refine — Seif
 - [ ] Refine the internal milestones in `project/timeline.md` (CAD freeze etc.) — Seif
 - [ ] **Order real stones from France** (RAJA BLFA01 or equivalent) — now blocks gripper tests — Seif — ASAP
-- [ ] **Order 45 mm compressible foam balls** — Seif — ASAP
 - [ ] Get JSUMO wheels — Seif
 - [ ] Go through `mechanical/design-principles.md`: keep or drop the ◻ items — Seif
 - [ ] Add the name of the French club behind GROSBOT 2023 to `resources/_notes/grosbot-2023.md` — Seif
@@ -32,6 +31,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Module B rework: with the module on the floor, door sheets/foam reach 366 at lift 75 and the cups sit 26 mm above the stone centres (head must come down 26 mm); profiles / top tie get trimmed — Seif
 - [ ] Sprung drive wheels (4 corner casters make 6 contact points) — Seif
 - [ ] Check the clapets folder move after the pull: `layout_fc.py` still reads `mechanical/clapets-v7/` — Seif
+- [ ] Fix the DXF export in `clapets-v7/fc/v7_fc.py` (lay the largest face flat before export; match Seif's orientation of `A_TOLE_PORTE.dxf`), with the assembly quality-of-life changes — Seif
 - [ ] Prototype and test stone gripper concepts A (side clamp) and B (suction) → `mechanical/concepts/stone-gripper.md` — Seif, Ayoub, Baha — due 2026-11-22
 - [ ] Robot layout sketch: drive base vs. ~380 mm open jaws (concept A), pockets, perimeter at start / deployed, **shared gate slot on face A or B** (D-011, `mechanical/concepts/gate-lintel.md`) — Seif
 - [ ] Concepts for the second face: single-stone pick + flip (towers, gate uprights) — Seif, Ayoub, Baha
@@ -71,6 +71,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Foam balls (45 mm) ordered — 2026-11-18
+- [x] Clapets v7 module A printed (ABS) and assembled — 2026-11-18
+- [x] Door sheet DXF `clapets-v7/CAD_FC/DXF/A_TOLE_PORTE.dxf` replaced by Seif's SolidWorks export (the generated one was exported edge-on) — 2026-11-18
 - [x] Overhead camera chosen (D-026) + Tunisian market comparison `vision/camera-choice.md` — 2026-11-14
 - [x] Layout v1 refined: module on the floor, chamfers, 4 casters, B-only variant, 5 reports + README — 2026-11-13
 - [x] Clapets v7 module A CAD passed (README, STATUS), effort estimate ~45–65 h logged — 2026-11-13
