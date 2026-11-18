@@ -8,6 +8,7 @@ robot centre on the table.
 |---|---|
 | `fc/check_d.py` | Box check (plain Python), both units, 1210 states → `hub_d_report.txt`, `../../simulations/central_hub/option_d_sheet.png`, `option_d_sequence.gif` (`--gif`) |
 | `fc/hub_d_fc.py` | FreeCAD model (`freecadcmd fc/hub_d_fc.py`) → `CAD_FC/HUB_D_*.FCStd` (5 poses), `CAD_FC/HUB_D_HOME.step`, `hub_d_fc_report.txt` (solid clash check) |
+| `fc/hub_d_gif.py` | GIF rendered from the FreeCAD solids (`FreeCAD.exe fc/hub_d_gif.py`, GUI, closes itself): run B sequence, 3D + top view → `../../simulations/central_hub/option_d_freecad.gif` + 4 stills |
 
 Both scripts take the arm geometry, the guides, the robot and the stones from option C (`../fc/check_c.py`), so the two
 options are checked the same way.

@@ -13,7 +13,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Show `mechanical/concepts/central-hub-builder.md` to Seif and Baha; share the 3 artifact pages from their Share menu — Ayoub — due 2026-11-22
 - [ ] Plywood test of one ring (elastic + MG90S latch + cup + home-made stone): holds through swing and stop? stone stands after venting? — Ayoub — due 2026-11-22
 - [ ] Review `mechanical/central-hub/CONNECTIONS.md` + option A CAD + `OPTION_B.md` with Seif (option A clashes fixed 2026-11-15; reports clean) — Ayoub, Seif — due 2026-11-22
-- [ ] Central hub: **option C** (`central-hub/OPTION_C.md`) and **option D** (`central-hub/option-d/`, FreeCAD model) solve the holder-cup problem of B. Show both to Seif, pick B / C / D — Ayoub, Seif — due 2026-11-22
+- [ ] Central hub: **option C** (`central-hub/OPTION_C.md`) and **option D** (`central-hub/option-d/`, FreeCAD model) solve the holder-cup problem of B. Show both to Seif (use `option_d_freecad.gif`), pick B / C / D — Ayoub, Seif — due 2026-11-22
 - [ ] Option D, if kept: ring spacing (rings touch, add washer / 1 mm shoulder), choose the N20 gearbox + test torque, agree 6 DC channels with encoders with Hamza Bjaoui, print test of ring + pinion in ABS — Ayoub
 - [ ] Add FAQ question "may the robot drag a quarry stack on the table?" to `project/rules-digest.md` — Ayoub
 - [ ] Check the hub against `mechanical/layout-v1/` (round Ø300 body, wheels, battery, electronics around the hub) — Ayoub
@@ -24,6 +24,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Ask Seif / Hamza Sammoud to send FAQ questions (Q1 first: does a carried stone count in the perimeter?) — Ayoub
 
 ## Done
+- [x] Option D GIF rendered from the FreeCAD solids (`option-d/fc/hub_d_gif.py` → `simulations/central_hub/option_d_freecad.gif`) — 2026-11-19
 - [x] Central hub option C (box check) and option D (one N20 + ring per stone, motors inside a hollow spine): `option-d/` with box check, FreeCAD poses, report, README, sheet + gif — 2026-11-18
 - [x] Central hub: option A clash fix + new animation + PDF brief; option B concept + box check; Idea 1 / Idea 2 studied; interactive comparison page — 2026-11-15/18
 - [x] Central hub option A: FreeCAD model (4 segments, arms, servos, all fasteners), `CONNECTIONS.md`, collision reports, sequence gif — 2026-11-14/15

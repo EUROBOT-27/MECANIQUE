@@ -1,9 +1,9 @@
 # Status
 
-_Last updated: 2026-11-18 (Ayoub, then Seif)_
+_Last updated: 2026-11-19 (Ayoub)_
 
 **Phase:** Strategy partly fixed → **clapets v7 module A printed + assembled (2026-11-18), assembly fixes next**; module B (suction) reworked by Seif as `suction-v1` (D-021). Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
-**Next deadline:** Strategy chosen (internal), 2026-11-08 (**10 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (4 days) · CAD freeze 2026-12-13 (25 days) · Mechanical built and assembled, 2026-12-31 (43 days)
+**Next deadline:** Strategy chosen (internal), 2026-11-08 (**11 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (3 days) · CAD freeze 2026-12-13 (24 days) · Mechanical built and assembled, 2026-12-31 (42 days)
 **Qualifier:** end of March 2027
 
 ## Where we are
@@ -32,7 +32,7 @@ _Last updated: 2026-11-18 (Ayoub, then Seif)_
 - **Ayoub's new idea, not reviewed (2026-11-13):** `mechanical/concepts/central-hub-builder.md`: round Ø300 robot, central hub, 6 suction shafts (3 front, 3 rear) that rotate 90° to the side on elastics + micro-servo latches, then spin the stone upright (walls and towers, ~2 lifts + 6 micro servos). Open: height step, layout vs layout v1 (needs a round body and the robot centre), suction on cardboard, FAQ Q1, gate lintel. Not a decision.
   **2026-11-15: option A modelled in FreeCAD** (`mechanical/central-hub/`, proposal): hub in 4 printed segments S1–S4 on 3 × M4 tie rods, MG996R turn servos in cradles, one-piece arms + carriages, every fastener; joints and parts in `CONNECTIONS.md`, clash reports `hub_a_report.txt` / `hub_a_env_report.txt`, gif in `simulations/central_hub/`. The grooved-hub variant was dropped from the model (helix up to 77°, 118 clashes).
   **2026-11-18: option A clash fix + new animation + PDF brief; option B written (`mechanical/central-hub/OPTION_B.md`, proposal, box-checked: 1 NEMA17 lift + 1 MG996R turret + 1 spin MG996R per arm = 4 motors instead of 13); two further variants studied (3 and 2 motors).** Interactive comparison page (private): https://claude.ai/artifact/U8UQDkDet7VDkMRGUdMCQC. Option B was blocked: the fixed holder cups grip each stone 100 mm off its centre (open point 8).
-  **2026-11-18 (later): option C** (`central-hub/OPTION_C.md`: one MG996R ring per level, arm height tied to the turn by a drag link / ramp, no holder cups, 10 motors) **and option D** (`central-hub/option-d/`: one ring + one N20 per stone with the motors inside a hollow spine, 13 motors, front and rear units independent; FreeCAD poses `CAD_FC/HUB_D_*.FCStd`). Both box-checked and clash-free, ≤ 347.4 mm, deployed 1233; **start perimeter 1249 > 1200** (cups stick out front and back). Proposals, Seif has not reviewed; pick B / C / D with him.
+  **2026-11-18 (later): option C** (`central-hub/OPTION_C.md`: one MG996R ring per level, arm height tied to the turn by a drag link / ramp, no holder cups, 10 motors) **and option D** (`central-hub/option-d/`: one ring + one N20 per stone with the motors inside a hollow spine, 13 motors, front and rear units independent; FreeCAD poses `CAD_FC/HUB_D_*.FCStd`). Both box-checked and clash-free, ≤ 347.4 mm, deployed 1233; **start perimeter 1249 > 1200** (cups stick out front and back). Proposals, Seif has not reviewed; pick B / C / D with him. **2026-11-19:** option D now also has a GIF rendered from the FreeCAD solids (`simulations/central_hub/option_d_freecad.gif`, script `option-d/fc/hub_d_gif.py`).
 - Parts library from the disassembled Ender 3 V2, lines still unverified (D-012).
 - Software: simulation repo (ROS 2 Jazzy + Gazebo), clone separately into `eurobot2027/`. `software/` area exists.
 - Earlier decisions: differential drive (D-004), LiDAR + vision (D-007), overhead station on the table (D-008), **overhead camera = Pi Camera Module 3 Wide on a Pi, Ethernet to the laptop (D-026, `vision/camera-choice.md`)**, Aerobotix principles (D-006).
