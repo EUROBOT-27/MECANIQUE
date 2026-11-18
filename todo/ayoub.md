@@ -10,15 +10,13 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] List candidate concepts for Grail lift (electromagnet, hand, elevator…) and the flywheel launcher — Seif, Ayoub, Baha
 
 ## Now (current focus)
-- [ ] Show `mechanical/concepts/central-hub-builder.md` to Seif and Baha; share the 3 artifact pages from their Share menu — Ayoub — due 2026-11-22
 - [ ] Plywood test of one ring (elastic + MG90S latch + cup + home-made stone): holds through swing and stop? stone stands after venting? — Ayoub — due 2026-11-22
-- [ ] Review `mechanical/central-hub/CONNECTIONS.md` + option A CAD + `OPTION_B.md` with Seif (option A clashes fixed 2026-11-15; reports clean) — Ayoub, Seif — due 2026-11-22
-- [ ] Central hub: **option C** (`central-hub/OPTION_C.md`) and **option D** (`central-hub/option-d/`, FreeCAD model) solve the holder-cup problem of B. Show both to Seif (use `option_d_freecad.gif`), pick B / C / D — Ayoub, Seif — due 2026-11-22
+- [ ] Review `mechanical/central-hub/CONNECTIONS.md` + option A CAD + `OPTION_B.md` (option A clashes fixed 2026-11-15; reports clean) — Ayoub — due 2026-11-22
+- [ ] Central hub: **option C** (`central-hub/OPTION_C.md`) and **option D** (`central-hub/option-d/`, FreeCAD model + `option_d_freecad.gif`) solve the holder-cup problem of B. Pick B / C / D — Ayoub — due 2026-11-22
 - [ ] Option D, if kept: ring spacing (rings touch, add washer / 1 mm shoulder), choose the N20 gearbox + test torque, agree 6 DC channels with encoders with Hamza Bjaoui, print test of ring + pinion in ABS — Ayoub
 - [ ] Add FAQ question "may the robot drag a quarry stack on the table?" to `project/rules-digest.md` — Ayoub
 - [ ] Check the hub against `mechanical/layout-v1/` (round Ø300 body, wheels, battery, electronics around the hub) — Ayoub
-- [ ] Decide the height step: helix groove (A) or off-centre cups (B) — Ayoub, with Seif
-- [ ] Get Seif's review of `flip-6cups` (concept CAD, not reviewed) — Ayoub, Seif
+- [ ] Decide the height step: helix groove (A) or off-centre cups (B) — Ayoub
 - [ ] Gate lintel: still no mechanism (not covered by the hub) — Ayoub, Seif, Baha
 
 - [ ] Ask Seif / Hamza Sammoud to send FAQ questions (Q1 first: does a carried stone count in the perimeter?) — Ayoub
