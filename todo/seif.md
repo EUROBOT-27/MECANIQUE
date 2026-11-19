@@ -5,7 +5,9 @@ Tasks for Maatoug go in `todo/maatoug.md` under `From Seif`.
 Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 
 ## Now (current focus)
-- [ ] **Module B T1 vs module A doors (A+B front):** the right door touches T1 past ~50°, the left past ~80° (`mechanical/suction-v1/CAD_FC/turn/check_report.txt`). Choose: doors fold less at the start (run layout-v1 for the exact start perimeter, estimate ~1150–1160) or reshape module B into v7's pocket (x ±30, y ≤ 140) — Seif
+- [ ] **Door sheet + foam too high in the lift-turn (360.8 > 350):** cut the top ≥ 11 mm (~14) off the door sheet DXF, check the top stone is still gripped (`mechanical/layout-v1/README.md`, update 2026-11-19) — Seif
+- [ ] **Choose + log front / back** with the layout results: front A+B with doors folding only to 46°/78° (S3) or 52°/82° (S1), back T1 alone; start 1142 / 1135, deployed 1333 / 1329 (not logged yet, Seif 2026-11-19) — Seif
+- [ ] Check tipping margin (stack centre 93 mm past the front casters) and the 4 mm drive motor / socle overlap — Seif
 - [ ] **T1 final review before printing** + caliper checks (DP-S30 cup, PL4-M5 elbow, 6002, Ø15 tube, servo horn); print an ABS test ring for the Ø32.1 bearing seat — Seif
 - [ ] Get the T1 bought parts: 2 × 6002-2RS, Ø15 × 1 tube 54 mm (copper plumbing pipe), Ø4 PU tube — Seif
 - [ ] Print T1, bench-test S1 vs S3 on stones (grip, sag when the stack is sideways, servo torque) — Seif
@@ -76,6 +78,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Layout v1 run with T1: doors fold less costs only ~19 / ~12 mm, passes Q10 (1333 / 1329); layout_fc.py takes T1 + back t1 — 2026-11-19
 - [x] Module B v1 = T1 turning plate designed (`mechanical/suction-v1/`, D-027, D-028): pumps + valves in the robot, tubes through a hollow shaft, cups at the stone centres for layout-v1 (replaces the "cups 26 mm too high" rework), print files in STEP/STL/DXF, full-cycle check — 2026-11-19
 - [x] suction-v1: valves vs pump-off / pumps placement decided: one pump + one valve per cup, both in the robot (D-028) — 2026-11-19
 - [x] Clapets v7 README: fixes to make if module A is ever reprinted; design-principles: assembly lessons — 2026-11-18

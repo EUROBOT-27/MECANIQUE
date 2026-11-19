@@ -29,7 +29,7 @@ STACK_N = 3
 STONE_CZ_TABLE = (55.0, 165.0, 275.0)             # stone centres above the table, quarry stack
 HEIGHT_MAX = 350.0                                 # robot + held objects, above the table [GR F.3]
 SPIN_HALF_DIAG = (160.0 ** 2 + 55.0 ** 2) ** 0.5   # 169.2: half-diagonal of a 320 x 110 face
-STACK_FACE_Y = 146.0                               # layout-v1: stack face y in the module frame (front face of the body)
+STACK_FACE_Y = 140.0                               # layout-v1: body front face in the module frame (robot Y 146 = module y 140 + 6)
 
 def table_to_module(z_table, lift=0.0):
     """Height above the table -> module z of a point that rides the butterfly plate at a given lift."""
