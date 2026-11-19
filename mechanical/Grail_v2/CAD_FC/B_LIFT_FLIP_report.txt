@@ -1,0 +1,47 @@
+GRAIL v2 - B LIFT + FLIP (NEMA17 rack lift + MG996R flip) - fc/b_lift_flip_fc.py
+Grail 70 x 70 x 80, 150 g, picked by its top at x 195.0, placed upside down at x 110.0 on the roof (top 306)
+Flip axis x 152.5; pivot z 125.0 (pick) -> 269.0 (flip) -> 261.0 (place) -> 255.0 (stowed). Lift travel 150.0 mm.
+Column 2020 at x 118, y -70 (beside the flip plane: the Grail spans y +-35).
+
+CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 150)
+  step                        act.top  act.out Grail.bot Grail.top Grail inside robot?
+  lift 125.0, flip 0            162.5     61.0       0.0      80.0 
+  lift 149.0, flip 0            186.5     61.0      24.0     104.0 
+  lift 173.0, flip 0            210.5     61.0      48.0     128.0 
+  lift 197.0, flip 0            234.5     61.0      72.0     152.0 
+  lift 221.0, flip 0            258.5     61.0      96.0     176.0 
+  lift 245.0, flip 0            282.5     61.0     120.0     200.0 
+  lift 269.0, flip 0            306.5     61.0     144.0     224.0 
+  flip  15 at 269.0             306.5     67.3     150.2     245.6 
+  flip  30 at 269.0             306.5     72.6     164.5     268.8 
+  flip  45 at 269.0             306.5     73.2     185.9     292.0 
+  flip  60 at 269.0             312.2     69.0     213.0     313.6 
+  flip  75 at 269.0             321.6     60.2     243.9     332.2 
+  flip  90 at 269.0             327.5     47.5     276.5     346.5 
+  flip 105 at 269.0             333.8     38.2     287.9     376.2 
+  flip 120 at 269.0             339.1     26.5     298.0     398.6 
+  flip 135 at 269.0             339.7     25.1     306.1     412.2 
+  flip 150 at 269.0             335.5     25.1     311.7     416.0 
+  flip 165 at 269.0             326.7     25.1     314.4     409.8 
+  flip 170 at 269.0             322.9     25.1     314.6     405.6 
+  flip 175 at 269.0             318.6     25.1     314.5     400.3 
+  flip 178 at 269.0             315.9     25.1     314.2     396.6 
+  flip 180 at 269.0             314.0     25.1     314.0     394.0 
+  lower to place 261.0          306.0     25.1     306.0     386.0 
+  magnet off, lower 6           300.0     25.1     306.0     386.0 
+
+SUMMARY
+  highest actuator point over the cycle: 339.7 (flip 135 at 269.0, limit 350, design 348) -> OK
+  max protrusion past the right face: 73.2 mm (flip  45 at 269.0) -> perimeter bump ~35 mm (estimate, narrow protrusion mid-side, side 292)
+  at the start (stowed): 25.1 mm past the face -> bump ~4 mm
+  Grail entering the robot body before it lands: never
+  Grail highest point in the cycle: 416.0 (only the Grail may pass 350, in the castle [G E.2])
+  roof slot for the arm: x 81.0..151.0, y -77.1..14.5
+  servo reach around the axis 38.4 mm vs Grail nearest point 45.6 mm (servo body y -36.6..7.2 overlaps the Grail's y, so it must stay inside that radius)
+  flip torque max 1.7 kg.cm at 60 deg (MG996R direct, ~9.4 at 6 V: 5.5x margin); servo range 180 deg
+  lift: ~0.67 kg moving -> 0.67 kg.cm on the 20T pinion (NEMA17 ~4 kg.cm). The rack can be back-driven: at 100 s the carriage drops (Grail already released, arm in the slot)
+  release: magnet off, carriage down 6 mm: the magnet leaves the Grail straight down (clean); magnet face then at z 300.0
+
+PARTS (📦 library · 🇹🇳 local · ✈️ import)
+  NEMA17 📦 · 2020 profile 📦 · V-wheels + eccentric 📦 (Ender carriage) · rack m1 + 20T pinion printed (Seif's print fits) · MG996R + round horn 📦 · electromagnet 🇹🇳 · arm, servo bracket printed ABS
+  arm (bar + tip + hub) ~10 g ABS. To detail: second support of the arm (steel U bracket + rear pin).

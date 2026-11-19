@@ -1,0 +1,30 @@
+GRAIL V1 - RACK VERSION (Baha, 2026-11-19), assembled from the SolidWorks STLs by fc/rack_fc.py
+Frame: x = outward (servo/magnet side), y = along the face, z = up. Profile stood up (it leaned 1.00 deg in the SW assembly); profile bottom ASSUMED at z = 5.0.
+
+PARTS (group | bodies closed into solids / left as open shells | facets)
+  PROFILE_316       fixed   1 / 0     324  x   -10.3..   10.5  y   -10.5..   10.3  z     5.0..  321.0  (20.8 x 20.8 x 316.0)
+  RACK_310          fixed   1 / 0    2404  x    -5.5..    5.1  y    -9.2..   -4.0  z    11.0..  321.0  (10.6 x 5.2 x 310.0)
+  CARRIAGE_PLATE    moving  1 / 0   16174  x   -34.5..   35.5  y    -6.5..   17.7  z   244.7..  319.7  (70.0 x 24.2 x 75.0)
+  VWHEELS           moving  9 / 8   22036  x   -35.0..   29.3  y    -5.3..    7.7  z   244.2..  318.3  (64.3 x 13.0 x 74.0)
+  WHEEL_SCREWS_M5   moving  3 / 0   20044  x   -26.7..   22.6  y    -5.8..   22.8  z   251.4..  310.3  (49.3 x 28.7 x 59.0)
+  WHEEL_NUTS_M5     moving  3 / 0   15410  x   -25.7..   23.3  y    15.1..   22.3  z   254.4..  312.5  (49.0 x 7.3 x 58.1)
+  SUPPORT_FIXATION  moving  3 / 0    1080  x   -32.0..  139.0  y   -57.1..   23.3  z   239.8..  344.3  (171.0 x 80.4 x 104.4)
+  NEMA17            moving  1 / 0    3998  x    15.0..   76.0  y   -47.0..    1.8  z   272.5..  314.8  (61.0 x 48.8 x 42.3)
+  PINION            moving  2 / 0    1137  x    -3.9..   30.8  y   -28.6..   -6.5  z   283.0..  304.8  (34.7 x 22.0 x 21.9)
+  SERVO_MG996R      moving  1 / 0   11158  x    84.4..  141.3  y   -26.1..   18.9  z   318.6..  338.7  (56.9 x 44.9 x 20.2)
+  HORN              moving  1 / 0    1418  x   112.1..  132.2  y    14.9..   20.0  z   318.6..  338.6  (20.0 x 5.1 x 20.0)
+  SUPPORT_U         arm     1 / 0     364  x    98.7..  166.1  y   -61.8..   21.9  z   306.6..  348.6  (67.3 x 83.7 x 41.9)
+  MAGNET_5KG        arm     0 / 1    2872  x   170.3..  203.3  y    20.8..   46.0  z   354.8..  379.9  (33.0 x 25.2 x 25.1)
+
+OVERALL            x   -35.0..  203.3  y   -61.8..   46.0  z     5.0..  379.9  (238.3 x 107.8 x 374.9)
+FIXED (profile+rack) x   -10.3..   10.5  y   -10.5..   10.3  z     5.0..  321.0  (20.8 x 20.8 x 316.0)
+MOVING (carriage..magnet) x   -35.0..  203.3  y   -61.8..   46.0  z   239.8..  379.9  (238.3 x 107.8 x 140.1)
+  moving block height 140.1 mm; highest point of the whole model 379.9 (limit 350)
+
+LIFT TRAVEL from the model pose (+ = up)
+  pinion on the rack: -271.9 .. +16.1   wheels on the profile: -239.2 .. +2.7   moving block above the table: >= -239.8
+  -> usable travel -239.2 .. +2.7 = 242.0 mm; moving block top then 140.7 .. 382.6, bottom 0.6 .. 242.5
+
+SERVO AXIS along y, through x 122.1 z 328.6 (horn centre)  ->  122.1 mm out from the profile centre, 323.6 above the profile bottom at the model pose
+  servo axis height over the travel: 89.4 .. 331.3
+  magnet centre x 186.8 y 33.4 z 367.3 -> 75.4 mm from the servo axis (in x-z)

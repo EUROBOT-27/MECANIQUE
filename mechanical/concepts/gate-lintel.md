@@ -35,12 +35,12 @@ On a 300 × 300 base:
 
 | Concept | Idea | Status |
 |---|---|---|
-| Flip hand (Seif) | Suction on the top face, flip 180° so the cup ends under the stone, set down, pull out through the gap | Needs brainstorming; see `project/strategy.md` |
+| Flip hand (Seif) | Suction on the top face, flip 180° so the cup ends under the stone, set down, pull out through the gap | **Chosen direction (Seif, 2026-11-20, D-029)**: the suction-cup version of the Grail v2 flip lift (`../Grail_v2/`). Pick the **2nd stone of a stack from its top (z 220)**, flip 180°, lift a little past 320: the stone lands upside down on the two towers, the cup ends in the ~100 mm gap between them, actuator ≤ 350. Stone's long side along the flip axis. Built after the electromagnet (Grail) version works |
 | Side-suction lift (Seif) | 3 cups on a Z-bar, top cup takes the top stone and lifts it ~110 mm | **Judged unreliable** (Seif, 2026-10-26): ~20 mm grip band on cardboard, ±5 mm uprights |
 | Fork from below (Claude) | Lintel on a fork, fork enters the gap between uprights, lowers until the lintel rests, pulls out. Fork top ≤ ~330 mm | Open. Unsolved: how the lintel gets onto the fork |
 | Shelf + pusher (Claude) | Lintel on a shelf level with the upright tops; robot docks, pusher slides it across (touches at 325–345 mm) | Open. Same loading problem as the fork |
 
 ## Open points
 - **Loading** the lintel onto a fork/shelf from a quarry stack (side jaws lift the top stone, support slides under = an extra axis?).
-- FAQ **Q9** (`project/rules-digest.md`): may a stone still held by the robot go above 350 mm inside a zone?
+- FAQ **Q9** (`project/rules-digest.md`): may a stone still held by the robot go above 350 mm inside a zone? Answered yes (castle), official reference still to add.
 - Cheap hand test before any CAD: 3 stones + scrap plywood: does a lintel set from a fork/shelf land straight on the uprights?
