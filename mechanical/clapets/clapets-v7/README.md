@@ -1,6 +1,19 @@
 # Clapets v7: v6 with reworked door units (Seif)
 
-> **Where we are (2026-11-13): module A has PASSED CAD → printing + testing phase.**
+> **2026-11-18: module A printed (ABS) and assembled.** Assembly went well. Not reprinted for now.
+>
+> **⚠ If module A is ever reprinted or adjusted, make these fixes first** (from the first assembly, details in
+> [`../../design-principles.md`](../../design-principles.md), "Lessons from the first assembly"):
+> 1. **Cap ↔ butterfly plate M4 nut** (the one nearest the plate, `m4_plate()` in `fc/v7_fc.py`): make it placeable
+>    by hand: nut on the open side, a drop-in pocket that holds it, or a heat-set insert (D-025).
+> 2. **Spacers into the arms:** `A_ENTRETOISE_608_BAS/HAUT` become a boss on `A_BRAS_PORTE_*` (inner race only, Ø12).
+> 3. **Rod clamps coupler style** (`split_clamp_z()`): thick round hub, screw across the slot inside the hub's
+>    outline, no lug sticking out.
+> 4. **DXF export** (`main()` in `fc/v7_fc.py`): lay the sheet's face flat before export (the generated
+>    `A_TOLE_PORTE.dxf` came out edge-on). The DXF in `CAD_FC/DXF/` is Seif's SolidWorks export: keep its
+>    orientation, don't let a re-run overwrite it with a broken one.
+>
+> **Where we were (2026-11-13): module A has PASSED CAD → printing + testing phase.**
 > - **Module A (lift + doors) CAD: closed for the first prototype.** Door unit + cap rebuilt (option B, D-022), every
 >   fastener checked, ABS tolerance coupons done and fed back (2026-11-12), insert holes per D-025.
 > - **Now: printing module A in ABS** on the Bambu X1 Carbon: sliced plates in `CAD_FC/STL/PRINT.3mf`

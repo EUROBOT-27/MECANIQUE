@@ -1,0 +1,27 @@
+{
+ "title": "S3 flip-bar: spacer + TPU disc + support ring",
+ "lip_y_free": 39.5,
+ "stone_face_y_held": 36.5,
+ "compliance": "bellows ~6 + TPU ~3 back, tilt",
+ "stone_stop": "support ring rim \u00d862/\u00d856, 3 windows (rigid)",
+ "tube_exit": "y 8.5, +x, in front of the carrier (spacer window)",
+ "tube_bend_r": 20.0,
+ "carrier_hole_d": "50.0 (only for the elbow going in; nothing behind)",
+ "fixing": "3 x M3 x 35 through ring + TPU rim + spacer + carrier, nut behind",
+ "printed_parts": 2,
+ "tpu_parts": 1,
+ "print_orientation": "spacer and ring: flat face on the bed; TPU: rim on the bed",
+ "assembly": "spacer + TPU + ring stacked, 3 long screws; elbow from behind through the carrier hole into the hub, cup on",
+ "port": [
+  17.7,
+  8.5,
+  0.0
+ ],
+ "port_dir": [
+  1.0,
+  0.0,
+  0.0
+ ],
+ "tube_side": "front",
+ "printed_mass_g": 75.7
+}

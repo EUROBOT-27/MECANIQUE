@@ -441,3 +441,39 @@ Template:
 - Consequences: D-008 stays (camera + laptop on the station) with a Pi added between them. Pi 4 or Pi 5 still to
   choose (Pi 5 needs its own camera cable). Lock the autofocus and calibrate at the runtime resolution. First test:
   70 mm marker in the far corners (~24 × 12 px at 56 fps, borderline).
+
+## D-027 — Module B: one design for the front (on module A) and the back (alone on a butterfly plate); walls + towers
+- Date: 2026-11-18
+- Area: mechanical
+- Decided by: Seif
+- Status: active (updates D-021: module B is a fresh design, no longer a rework of the v8 strike head)
+- Decision: module B (suction) is designed from a blank sheet in `mechanical/suction-v1/`, as **one design used
+  twice**: at the **front** it mounts on clapets module A (rides its lift, doors around it); at the **back** it is
+  mounted **alone on its own butterfly plate** (own lift, **no doors**). It must build **walls** (grab, carry, set down
+  a quarry stack) **and towers** (stand single stones upright). Robot layout follows perimeter option 2: **front
+  A+B, back B only**. Cups, holders (TPU spring stations if needed), tubes, fittings and cable/tube bending are
+  designed in from the start. FreeCAD generator by Claude; many variations studied before choosing.
+- Alternatives considered: rework of Maatoug's v8 strike head (D-021 plan of 2026-11-13); A+B front and mirrored A+B
+  back (out: 1493 mm with both open, FAQ Q10); flip the whole stack in the castle (depends on FAQ Q9, open).
+- Why: doors on both faces break the 1400 mm deployed perimeter (`mechanical/layout-v1/perimeter-study/`), so the
+  back module must work by suction alone; one design for both faces halves the CAD and the spares.
+- Consequences: the back of layout v1 = module B on a butterfly plate + lift (no mirror, no flip6). The back's
+  deployed outline must stay inside the 82 mm left at 1318 mm. Flip-bar, central hub and v8 stay as references.
+  Brief and driving numbers: `mechanical/suction-v1/README.md`.
+
+## D-028 — Module B v1 turns the whole stack (3 stones at once); one stone at a time comes later
+- Date: 2026-11-18
+- Area: mechanical
+- Decided by: Seif
+- Status: active (narrows D-027 for the first version)
+- Decision: module B v1 = a **turning plate with 3 cups** (one per stone) on the butterfly plate. It grabs a quarry
+  stack and **turns the whole stack 90°** so the 3 stones end up standing side by side (towers), using module A's
+  lift during the turn. Turning **one stone at a time** is a later version.
+- Alternatives considered: one stone at a time first (M1 tower unit: own carriage + belt, much bigger, built
+  2026-11-18 as a study only).
+- Why: simplest mechanism that does walls and towers; Seif reports FAQ Q9 answered **yes** (a held stone may pass
+  350 mm inside the castle), so the ~460 mm mid-turn height is legal there.
+- Consequences: the turn happens in the castle only. The cups are pitched 85 mm (not 110) so the turning plate
+  itself stays under 350 mm during the lift-turn. Generator: `mechanical/suction-v1/fc/turn_t1.py`.
+- Update 2026-11-18 (Seif): **pumps and valves stay in the robot**, not on module B (too heavy, too complex);
+  the 3 cup tubes go through a hollow shaft at the turning axis.

@@ -1,0 +1,94 @@
+T1_S1  (T1 turning plate: turns the whole stack 90 deg (pose: turn 0 deg, lift 0.0))
+
+T1_BRACKET                 print    size  131.0 x   46.5 x  112.0    96.4 g  valid
+T1_PINION_22T              print    size   29.8 x    8.5 x   30.0     3.6 g  valid
+REF_MG996R_HORN            bought   size   59.6 x   48.5 x   20.8
+REF_6002_REAR              bought   size   32.0 x    9.0 x   32.0
+REF_6002_FRONT             bought   size   32.0 x    9.0 x   32.0
+FIX_M5x35_R112             fastener size    8.0 x   40.0 x    8.0
+FIX_NYLOC_M5_R112          fastener size    9.2 x    5.0 x    8.0
+FIX_M5x35_R187             fastener size    8.0 x   40.0 x    8.0
+FIX_NYLOC_M5_R187          fastener size    9.2 x    5.0 x    8.0
+FIX_M5x35_L112             fastener size    8.0 x   40.0 x    8.0
+FIX_NYLOC_M5_L112          fastener size    9.2 x    5.0 x    8.0
+FIX_M5x35_L187             fastener size    8.0 x   40.0 x    8.0
+FIX_NYLOC_M5_L187          fastener size    9.2 x    5.0 x    8.0
+FIX_M3x8_SERVO_1a          fastener size    4.8 x   11.0 x    4.8
+FIX_M3x8_SERVO_1b          fastener size    4.8 x   11.0 x    4.8
+FIX_M3x8_SERVO_2a          fastener size    4.8 x   11.0 x    4.8
+FIX_M3x8_SERVO_2b          fastener size    4.8 x   11.0 x    4.8
+REF_TUBE_TOP_TO_ROBOT      bought   size   29.9 x   26.5 x   92.7
+REF_TUBE_MID_TO_ROBOT      bought   size   42.3 x   26.5 x   93.0
+REF_TUBE_BOT_TO_ROBOT      bought   size   56.0 x   26.7 x  116.0
+REF_SHAFT_TUBE_15x1x54     bought   size   15.0 x   53.9 x   15.0
+T1_REAR_COLLAR             print    size   28.0 x    8.0 x   28.0     3.0 g  valid
+FIX_M3x12_REAR_COLLAR      fastener size   15.0 x    4.8 x    4.8
+T1_HUB_33T                 print    size   80.0 x   25.9 x   80.0    35.5 g  valid
+T1_TURN_PLATE_MDF6         mdf      size  154.0 x    6.0 x  254.0    81.4 g  valid  DXF 154.0 x 254.0
+FIX_M3x14_HUB_CLAMP        fastener size   17.0 x    4.8 x    4.8
+S1_HOLDER_TOP              print    size   76.0 x   23.0 x   75.6    24.8 g  valid
+REF_ELBOW_PL4_M5_TOP       bought   size   10.0 x   20.0 x   22.7
+REF_CUP_DPS30_TOP          bought   size   30.0 x   18.0 x   30.0
+FIX_M3x16_1_TOP            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_1_TOP           fastener size    5.5 x    2.4 x    6.4
+FIX_M3x16_2_TOP            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_2_TOP           fastener size    5.5 x    2.4 x    6.4
+FIX_M3x16_3_TOP            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_3_TOP           fastener size    5.5 x    2.4 x    6.4
+S1_HOLDER_MID              print    size   75.6 x   23.0 x   76.0    24.8 g  valid
+REF_ELBOW_PL4_M5_MID       bought   size   22.7 x   20.0 x   10.0
+REF_CUP_DPS30_MID          bought   size   30.0 x   18.0 x   30.0
+FIX_M3x16_1_MID            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_1_MID           fastener size    6.4 x    2.4 x    5.5
+FIX_M3x16_2_MID            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_2_MID           fastener size    6.4 x    2.4 x    5.5
+FIX_M3x16_3_MID            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_3_MID           fastener size    6.4 x    2.4 x    5.5
+S1_HOLDER_BOT              print    size   76.0 x   23.0 x   75.6    24.8 g  valid
+REF_ELBOW_PL4_M5_BOT       bought   size   10.0 x   20.0 x   22.7
+REF_CUP_DPS30_BOT          bought   size   30.0 x   18.0 x   30.0
+FIX_M3x16_1_BOT            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_1_BOT           fastener size    5.5 x    2.4 x    6.4
+FIX_M3x16_2_BOT            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_2_BOT           fastener size    5.5 x    2.4 x    6.4
+FIX_M3x16_3_BOT            fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_3_BOT           fastener size    5.5 x    2.4 x    6.4
+FIX_M3x10_PLATE_1          fastener size    4.8 x   13.0 x    4.8
+FIX_M3x10_PLATE_2          fastener size    4.8 x   13.0 x    4.8
+FIX_M3x10_PLATE_3          fastener size    4.8 x   13.0 x    4.8
+REF_TUBE_TOP_PLATE         bought   size    6.3 x   59.1 x   69.3
+REF_TUBE_MID_PLATE         bought   size   53.5 x   53.5 x    5.2
+REF_TUBE_BOT_PLATE         bought   size    4.0 x   59.1 x   68.1
+REF_STONE_1                ref      size  320.0 x  110.0 x  110.0
+REF_STONE_2                ref      size  320.0 x  110.0 x  110.0
+REF_STONE_3                ref      size  320.0 x  110.0 x  110.0
+REF_BUTTERFLY_PLATE        ref      size  190.0 x    3.0 x  190.0
+
+printed + TPU mass: 294.2 g
+
+title                  T1 turning plate: turns the whole stack 90 deg (pose: turn 0 deg, lift 0.0)
+station                S1 (TPU disc + support ring)
+cups                   3 x DP-S30, one per stone: (x, table z at lift 0) = (0, 80), (70, 165), (0, 250)
+turning_axis           x 0, table 165 at lift 0 (= middle stone centre)
+drive                  MG996R + round horn, 22T -> 33T m1.25 (90 deg plate = 135 deg servo)
+joint                  hollow shaft: tube Ø15 x 1 x 54 (copper / alu / steel) in 2 x 6002-2RS; hub + rear collar = coupler clamps
+pneumatics             pumps + valves in the robot; 3 tubes Ø4 through the hollow shaft
+plate_front_y          114.9
+stack_face_y           149.9
+stack_face_vs_layout_v1 +3.9 mm (layout-v1 stack face y 146)
+turn_plate_size        154 x 254 (MDF 6)
+lift_turn              lift = 160 sin t + 165 cos t + 5 - 165: 5 at t 0, peak 69.8 at t 44 deg, 0 at t 90
+turning_parts_max_height 343.8
+turning_parts_min_height 43.0
+fixed_parts_top_at_peak_lift 295.8
+stack_top_mid_turn     464.7
+tubes_on_plate         {'REF_TUBE_TOP_PLATE': '120 mm, min bend R12.0', 'REF_TUBE_MID_PLATE': '97 mm, min bend R12.0', 'REF_TUBE_BOT_PLATE': '119 mm, min bend R12.0'}
+tubes_to_robot         {'REF_TUBE_TOP_TO_ROBOT': '116 mm to z 230, min bend R12.0', 'REF_TUBE_MID_TO_ROBOT': '139 mm to z 230, min bend R11.7', 'REF_TUBE_BOT_TO_ROBOT': '182 mm to z 230, min bend R12.0'}
+fits                   A+B front (|x| <= 65.5 at the plate, door units from 66) and B alone (back)
+
+Notes:
+- Tubes: in the shaft they turn with the plate; behind it they are held still: the bundle twists 90 deg over ~25 mm (Ø4 PU, fine). In the 90 deg pose the two tube parts don't line up (that twist).
+- Height: every turning part stays <= 350 during the lift-turn (turning_parts_max_height). The STACK passes 350 mid-turn: castle only (Q9 yes, D-028).
+- Assembly (before the bracket goes on the butterfly plate): rear 6002 from the back, front 6002 from the front; shaft from the front through both; rear collar on from the back (M3 x 12, key through the side hole); hub on the front end (nuts in its 3 pockets first), clamp M3 x 14 from the left; tubes pushed through the shaft; then the bracket on the 4 wheel bolts; servo + pinion; plate with its stations to the hub flange.
+- Doors (A+B): open before turning.
+- Middle cup 70 mm to the right of the stone centre; top / bottom cups 25 mm off their stone centre.

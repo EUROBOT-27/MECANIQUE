@@ -66,6 +66,26 @@ Main source: Aerobotix INSAT's 2026 robot (2nd at the European final). Details i
   meet shelves. ABS: tall parts need an enclosed printer.
 - **Size for ABS** (tolerances from ABS test prints, ABS masses), D-023; see "Print materials".
 
+### Lessons from the first assembly (clapets v7 module A)
+✅ Seif, 2026-11-18, after printing (ABS) and assembling module A. Everything else assembled well. Apply these to the
+**next prints** (any mechanism). Module A itself is not reprinted for them.
+
+- **A nut must be placeable by hand, not just reachable.** The M4 nut that holds the cap to the butterfly plate (the
+  one nearest the plate, `m4_plate()` in `clapets-v7/fc/v7_fc.py`) was near impossible to set: it sits in a pocket on
+  a face you can't see or hold while the screw comes blind from the other side of the plate. For each nut, check: can
+  it go in its pocket **before** the parts are brought together, and does the pocket hold it on its own (drop-in from
+  above so gravity keeps it there, or a snug pocket)? If not, swap the sides (nut on the open side), or use a heat-set
+  insert there (D-025 holes).
+- **Spacers belong to the part they sit on.** A separate spacer between two parts (e.g. `A_ENTRETOISE_608_BAS/HAUT`
+  between the door arms and the 608) is one more piece to hold and lose during assembly. Make it a boss on the part
+  (here: on `A_BRAS_PORTE`), keeping what the spacer did: touch only the bearing's inner race (Ø12 ring), clear the
+  outer race.
+- **Rod clamps: coupler style, not a tab.** The split clamps on the Ø8 rods (`split_clamp_z()`) work, but the lug
+  that sticks out with the M3 across it feels fragile when the screw is tightened. Design them like a clamp-style
+  shaft coupler: a thick round hub (large outer diameter) with the slot through one side, and the screw running
+  across the slot **inside** the hub's diameter (head in a counterbore, nut in a pocket, both within the round
+  outline). More material around the screw, nothing thin sticking out.
+
 ## Print materials (we have PLA and ABS, no PETG)
 Seif, 2026-11-10. Our CAD so far assumed PETG; nothing in the geometry depends on it, only tolerances and habits.
 

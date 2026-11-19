@@ -1,0 +1,37 @@
+S1_rigid  (S1 rigid holder)
+
+S1_HOLDER                  print    size   75.6 x   23.0 x   76.0    24.8 g  valid
+REF_ELBOW_PL4_M5           bought   size   22.7 x   20.0 x   10.0
+REF_CUP_DPS30              bought   size   30.0 x   18.0 x   30.0
+REF_TUBE_4x2.5             bought   size   38.8 x    4.0 x   73.8
+REF_CARRIER                ref      size  100.0 x    6.0 x  100.0
+REF_STONE                  ref      size  120.0 x   30.0 x  110.0
+FIX_M3x16_1                fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_1               fastener size    6.4 x    2.4 x    5.5
+FIX_M3x16_2                fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_2               fastener size    6.4 x    2.4 x    5.5
+FIX_M3x16_3                fastener size    5.5 x   19.0 x    5.5
+FIX_NUT_M3_3               fastener size    6.4 x    2.4 x    5.5
+
+printed + TPU mass: 24.8 g
+
+title                  S1 rigid holder
+lip_y_free             41.0
+stone_face_y_held      35.0
+compliance             bellows only, ~6 mm
+stone_stop             none (squashed bellows)
+tube_exit              y 10.0, +x, in front of the carrier
+tube_bend_r            20.0
+carrier_hole_d         50.0
+fixing                 3 x M3 x 16 + nut behind the carrier
+printed_parts          1
+tpu_parts              0
+print_orientation      flange on the bed (body up), no support
+assembly               elbow in from behind the carrier (hex into the pocket), cup screwed on from the front, tube on
+port                   [17.7, 10.0, 0.0]
+port_dir               [1.0, 0.0, 0.0]
+tube_side              front
+
+Notes:
+- Cheapest and stiffest; the stone can rock on the bellows (no rigid seat).
+- Bulkhead: check the real M5 thread length of the elbow (2 mm wall + cup insert).

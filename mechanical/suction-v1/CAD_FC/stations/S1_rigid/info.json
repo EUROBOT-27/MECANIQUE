@@ -1,0 +1,27 @@
+{
+ "title": "S1 rigid holder",
+ "lip_y_free": 41.0,
+ "stone_face_y_held": 35.0,
+ "compliance": "bellows only, ~6 mm",
+ "stone_stop": "none (squashed bellows)",
+ "tube_exit": "y 10.0, +x, in front of the carrier",
+ "tube_bend_r": 20.0,
+ "carrier_hole_d": 50.0,
+ "fixing": "3 x M3 x 16 + nut behind the carrier",
+ "printed_parts": 1,
+ "tpu_parts": 0,
+ "print_orientation": "flange on the bed (body up), no support",
+ "assembly": "elbow in from behind the carrier (hex into the pocket), cup screwed on from the front, tube on",
+ "port": [
+  17.7,
+  10.0,
+  0.0
+ ],
+ "port_dir": [
+  1.0,
+  0.0,
+  0.0
+ ],
+ "tube_side": "front",
+ "printed_mass_g": 24.8
+}

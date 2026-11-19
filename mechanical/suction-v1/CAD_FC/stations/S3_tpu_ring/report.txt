@@ -1,0 +1,40 @@
+S3_tpu_ring  (S3 flip-bar: spacer + TPU disc + support ring)
+
+S3_SPACER                  print    size   76.0 x   18.0 x   76.0    45.1 g  valid
+S3_TPU_DISC                tpu      size   74.0 x   14.0 x   74.0    15.9 g  valid
+S3_SUPPORT_RING            print    size   76.0 x   15.5 x   76.0    14.7 g  valid
+REF_ELBOW_PL4_M5           bought   size   22.7 x   20.0 x   10.0
+REF_CUP_DPS30              bought   size   30.0 x   18.0 x   30.0
+REF_TUBE_4x2.5             bought   size   38.8 x    4.0 x   73.8
+REF_CARRIER                ref      size  100.0 x    6.0 x  100.0
+REF_STONE                  ref      size  120.0 x   30.0 x  110.0
+FIX_M3x35_1                fastener size    5.5 x   38.0 x    5.5
+FIX_NUT_M3_1               fastener size    6.4 x    2.4 x    5.5
+FIX_M3x35_2                fastener size    5.5 x   38.0 x    5.5
+FIX_NUT_M3_2               fastener size    6.4 x    2.4 x    5.5
+FIX_M3x35_3                fastener size    5.5 x   38.0 x    5.5
+FIX_NUT_M3_3               fastener size    6.4 x    2.4 x    5.5
+
+printed + TPU mass: 75.7 g
+
+title                  S3 flip-bar: spacer + TPU disc + support ring
+lip_y_free             39.5
+stone_face_y_held      36.5
+compliance             bellows ~6 + TPU ~3 back, tilt
+stone_stop             support ring rim Ø62/Ø56, 3 windows (rigid)
+tube_exit              y 8.5, +x, in front of the carrier (spacer window)
+tube_bend_r            20.0
+carrier_hole_d         50.0 (only for the elbow going in; nothing behind)
+fixing                 3 x M3 x 35 through ring + TPU rim + spacer + carrier, nut behind
+printed_parts          2
+tpu_parts              1
+print_orientation      spacer and ring: flat face on the bed; TPU: rim on the bed
+assembly               spacer + TPU + ring stacked, 3 long screws; elbow from behind through the carrier hole into the hub, cup on
+port                   [17.7, 8.5, 0.0]
+port_dir               [1.0, 0.0, 0.0]
+tube_side              front
+
+Notes:
+- Nothing behind the carrier: best when the carrier's back is crowded (lift, plate).
+- Longest station (+18 spacer): pushes the stone face 18 mm further out than S2.
+- M3 x 35 is long: heat-set inserts in the spacer (D-025) would allow 2 short screws instead.
