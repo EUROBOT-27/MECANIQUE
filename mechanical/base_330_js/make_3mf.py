@@ -1,12 +1,13 @@
 # make_3mf.py - every printed part of base_330_js on one 256 x 256 plate (Bambu X1C, ABS - D-023) -> CAD/base_330_js_print.3mf
 # Run after base_330_js.py:  freecadcmd -c "__file__=r'<path>/make_3mf.py'; exec(open(__file__).read())"
-# The AMT102-V encoder (CDR "Poenc1_102-v-2530") is bought: only its support (bracket + arm) and the odometry wheel are printed.
+# The AMT102-V encoder (CDR "Poenc1_102-v-2530") is bought and the odometry wheel is the existing sysRoueCodeusee
+# wheel: only the support (bracket + swing beam) is printed.
 #
 # Print orientation (chosen so the precise holes are round and nothing needs support):
-#   odo_bracket   on its back wall (-Y face down): bridge, ears and flanges stand up, no overhang
-#   odo_arm       on the inner side plate (-X face down): 625 seats + F623 bores vertical (round, accurate)
-#   odo_wheel     flat (axis vertical)
-#   caster_spacer flat
+#   odo_bracket   on its back wall (-Y face down): bridge, ears, inner flange and middle foot stand up, no overhang
+#   odo_arm       on its encoder face (-X face down): 696 seats + F623 bores vertical (round, accurate), lip on the bed
+#   ball_holder   flange down (roof on top bridges a Ø24.6 bore: 5 mm roof over a round hole, prints fine in ABS)
+#   ball_shim     flat
 
 import os
 import zipfile
@@ -24,8 +25,8 @@ GAP = 8.0
 PARTS = [  # name, copies, rotation (axis, deg)
     ("odo_bracket", 2, (V(1, 0, 0), 90)),
     ("odo_arm", 2, (V(0, 1, 0), -90)),
-    ("odo_wheel", 2, (V(0, 1, 0), -90)),
-    ("caster_spacer", 2, None),
+    ("ball_holder", 4, None),
+    ("ball_shim", 4, None),
 ]
 
 
@@ -52,6 +53,8 @@ def main():
     x = y = row_h = 0.0
     oid = 0
     for name, n, rot in PARTS:
+        if not os.path.exists(os.path.join(CAD, name + ".step")):
+            continue           # e.g. no shim needed for this wheel size
         s = oriented(name, rot)
         bb = s.BoundBox
         mx, ntri = mesh_xml(s)

@@ -1,26 +1,36 @@
-base_330_js_assembly.py - JSUMO JS7444 + AMT102 odometry on the 330 x 280 base
+base_330_js_assembly.py - JSUMO JS7444 + AMT102 odometry (existing sysRoueCodeusee wheel) on the 336 x 260 base
 Nominal wheel Ø74: plate bottom 11.5 / top 16.5 above the floor, drive axle 37.0
+Motors 30 mm apart (back ends at x ±15.0), wheel pocket x 78.0..136.0 y ±45, perimeter (rectangle) 1192 mm
+Plate perimeter 1192 mm vs 1200 at start [GR F.3]: OK (margin 8 mm; the robot hull adds what sticks out)
 
 1. Interferences (common volume > 0.01 mm3) between parts, nominal pose:
-   -> 0 clash(es) (allowed by design: wheel/AMT on the shaft = press fit / sleeve)
+   -> 0 clash(es) (allowed by design: wheel/AMT on the shaft = grub screw / sleeve, e-clip in its groove)
 
-2. Drive wheel UNCERTAINTY ENVELOPE Ø80 x 52 (x 66..118) - clearances:
+2. Drive wheel UNCERTAINTY ENVELOPE Ø80 x 52 (x 79..131) - clearances:
    plate             1.0 mm
-   odo_bracket       6.0 mm
-   odo_arm           7.0 mm
-   odo_wheel        13.0 mm
-   amt102           29.0 mm
+   odo_bracket       7.2 mm
+   odo_arm          14.2 mm
+   dead_wheel       26.2 mm
+   amt102            5.0 mm
    hinges_PH         1.3 mm
-   screws_M3        15.0 mm
-   nominal Ø74 x 44 wheel <-> plate 3.0 mm, <-> odometry arm 13.0 mm
+   screws_M3        16.8 mm
+   ball_holders     44.6 mm
+   plate beside the hinge tongue (|y| > 21) 5.0 mm; the tongue itself carries the hinge foot
+   nominal Ø74 x 44 wheel <-> plate 3.0 mm, <-> AMT102 11.0 mm, <-> odometry arm 20.2 mm
+   motor back ends 30.0 mm apart
 
 3. Floor contact vs the real JSUMO diameter (plate frame fixed, the floor moves):
-   wheel Ø | plate top | caster gap (spacer 2.0) | spacer for 2 mm | odo arm angle | wheel dz | spring +mm
-    72.0   |   15.5    |    1.0                  |    3.0          |  +0.95 deg    |  +1.0    | +0.32
-    74.0   |   16.5    |    2.0                  |    2.0          |  +0.00 deg    |  +0.0    | +0.00
-    77.0   |   18.0    |    3.5                  |    0.5          |  -1.43 deg    |  -1.5    | -0.48
-    80.0   |   19.5    |    5.0                  |   -1.0          |  -2.87 deg    |  -3.0    | -0.95
-   droop stop (nut under the crossbar) set at -4.8 deg = wheel -5.0 mm below the nominal floor
+   wheel Ø | plate top | ball gap (shim 1.0) | shim for 2 mm | odo arm angle | wheel dz | spring +mm
+    72.0   |   15.5    |    1.0                  |    0.0          |  +0.95 deg    |  +1.0    | +0.32
+    74.0   |   16.5    |    2.0                  |    1.0          |  +0.00 deg    |  +0.0    | +0.00
+    77.0   |   18.0    |    3.5                  |    2.5          |  -1.43 deg    |  -1.5    | -0.48
+    80.0   |   19.5    |    5.0                  |    4.0          |  -2.87 deg    |  -3.0    | -0.95
+   droop stop (nut under the beam) set at -4.8 deg = wheel -5.0 mm below the nominal floor
+   4 x KSM15-FL at (±130, ±105): ball bottom 2.00 above the floor (Ø74), holder roof 7.5 above the plate top,
+   stud left for the shim 4.9 mm (shim needs ≤ 4.0 for Ø80); support rectangle 260 x 210, plate edge 16.0 / 3.0 mm away
+   ball holders <-> odo_bracket  6.2 mm
+   ball holders <-> screws_M3    22.5 mm
+   ball holders <-> hinges_PH    77.8 mm
 
 4. Arm travel (rotate the arm + wheel + AMT about the pivot; clash with plate / bracket / screws / spring?):
    droop -4.8 deg: clash volume 0.00 mm3
@@ -29,18 +39,19 @@ Nominal wheel Ø74: plate bottom 11.5 / top 16.5 above the floor, drive axle 37.
    (spring solid ~10 mm assumed -> 10 mm more travel at the spring)
 
 5. Odometry:
-   track (wheel mid-planes) 272 mm, tyre Ø53.0 (O-ring 46 x 3.5 on a Ø46 groove), contact on the axle line (y = 0)
-   AMT102 at 2048 PPR -> 8192 counts/rev -> 0.0201 mm/count
-   AMT102 bounding box x -156.2..156.2 (plate edge 165.0), z 9.7..54.2 above the floor
-   odo_bracket  z 16.5..57.2, |x| <= 162.0
-   odo_arm      z 15.2..37.2, |x| <= 147.0
-   odo_wheel    z 1.2..51.2, |x| <= 141.0
-   arm/encoder above the floor: arm 15.2, AMT 10.9, odometry wheel bottom -0.30 (squash 0.3)
+   track (O-ring contact planes) 329.4 mm, existing wheel Ø61 (O-ring tyre), contact on the axle line (y = 0)
+   AMT102 at 2048 PPR -> 8192 counts/rev -> 0.0232 mm/count
+   x stack (right side): AMT 136.0..145.2 | beam 145.2..156.2 | shim | wheel 157.2..167.2 | plate edge 168.0
+   AMT102 bounding box z 13.7..58.2 above the floor
+   odo_bracket  z 16.5..61.2, |x| <= 163.2
+   odo_arm      z 19.2..41.2, |x| <= 156.2
+   dead_wheel   z -0.3..60.7, |x| <= 167.2
+   arm/encoder above the floor: arm 19.2, AMT 14.9, odometry wheel bottom -0.30 (squash 0.3)
 
 6. Clapets v7 module A (moved by 0, 35, 16.5):
    338 solids, 0 clash(es); closest to the drive wheel envelope:
-     5.9 mm  solid bb x -68..68 y 44..96 z 16..55
-     19.3 mm  solid bb x -56..56 y 47..90 z 54..60
-     23.9 mm  solid bb x 30..50 y 58..78 z 22..372
-     23.9 mm  solid bb x -50..-30 y 58..78 z 22..372
-   stack face at y 175 (35 mm in front of the plate edge; base_330: 23)
+     12.5 mm  solid bb x -68..68 y 44..96 z 16..55
+     28.1 mm  solid bb x -56..56 y 47..90 z 54..60
+     33.8 mm  solid bb x 30..50 y 58..78 z 22..372
+     33.8 mm  solid bb x -50..-30 y 58..78 z 22..372
+   stack face at y 175 (45 mm in front of the plate edge)

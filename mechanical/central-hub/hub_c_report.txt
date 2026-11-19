@@ -1,0 +1,35 @@
+Central hub - option C: 1 transfer servo per level (ring + arm tied to the turn), cup servo stands the stone up
+concept check on base_330_js, 404 states, both units (front stones -> robot's left, rear stones -> right)
+Order: unpinch (top + bottom rings to -3), middle, bottom, top. Hub lift 14 for every transfer + spin, 0 to set down.
+
+== Transfer: cup height (hub at 0) and cup face radius along the turn ==
+top    z at turn -3/0/15/30/45/60/75/90: 278 / 275 / 254 / 226 / 198 / 176 / 163 / 160   face r at 0/45/90: 176 / 197 / 176
+middle z at turn -3/0/15/30/45/60/75/90: 160 / 160 / 160 / 160 / 160 / 160 / 160 / 160   face r at 0/45/90: 176 / 176 / 176
+bottom z at turn -3/0/15/30/45/60/75/90: 52 / 55 / 87 / 113 / 134 / 148 / 157 / 160   face r at 0/45/90: 176 / 191 / 176
+top    drag link: links +45.1 -> -45.0 deg (+48.5 at turn -3); rod 157 mm between ball studs;
+       B on the lower link 50 from the root pivot, 30 to the side; A on a spine bracket at polar 80, r 70, side 30, z 320
+       worst transmission angle 31 deg (90 = rod pushes straight; keep > 30); last 10 deg of turn move the links 1.1 deg
+bottom cam: lever 22 behind the lower root pivot, roller under a fixed ramp (r 40-54); steepest ramp 34 deg
+       (the grooved hub had 77 deg, cam rule of thumb < 45); last 10 deg of turn move the links 1.2 deg
+top    return after venting: first 10 deg move the cup 1.1 mm toward the tower (+) / away (-)
+bottom return after venting: first 10 deg move the cup 1.1 mm toward the tower (+) / away (-)
+
+== Spin (cup on a bearing shaft + hard stops; stone turns about the cup axis at cup z 174) ==
+top/bottom, nominal            lowest corner 4.8, highest 343.2  (limits 0 / 350 [GR F.3])
+top/bottom, worst 324 x 115    lowest corner 2.1, highest 345.9  (limits 0 / 350 [GR F.3])
+middle (cup 5 below), nominal  lowest corner 6.4, highest 344.9  (limits 0 / 350 [GR F.3])
+middle, worst                  lowest corner 3.7, highest 347.6  (limits 0 / 350 [GR F.3])
+
+== Height [GR F.3] ==
+moving parts + held stones z -0.0 .. 347.4 (highest: FT stone, 'unpinch: top + bottom rings turn back to -3')
+
+== Perimeter (convex hull, stones excluded per FAQ Q1) [GR F.3] ==
+start, arms home: 1249 mm (limit 1200; the base_330_js plate alone is 1232: test base, see its README)
+deployed, all 3 levels at 90 + spun: 1233 mm (limit 1400, FAQ Q10)
+
+== Clashes (left out by design: joints inside an arm, cup on its stone, stones touching inside the stack, rod on
+   its anchor, roller on its ramp, post on its ring) ==
+none
+
+== Closer than 3 mm (not a clash) ==
+none

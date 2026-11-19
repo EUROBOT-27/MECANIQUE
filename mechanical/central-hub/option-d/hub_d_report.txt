@@ -1,0 +1,91 @@
+Central hub - option D: ONE transfer servo per box (own ring on the hub axis + passive guide), cup servo stands
+the stone up, shared hub lift sets the towers down. Box check on base_330_js, both units (front -> left, rear -> right).
+Arm geometry, guides, robot, stones: imported from option C (fc/check_c.py).
+
+== Rings and transfer motors ==
+front bottom ring z 131.0-141.0 (r 35-48, internal 72 T)   N20 at polar   0 (front frame), r 25, below the ring, pinion 22 T
+front middle ring z 151.0-161.0 (r 35-48, internal 72 T)   N20 at polar 120 (front frame), r 25, below the ring, pinion 22 T
+front top    ring z 174.5-184.5 (r 35-48, internal 72 T)   N20 at polar 240 (front frame), r 25, above the ring, pinion 22 T
+rear  bottom ring z 141.0-151.0 (r 35-48, internal 72 T)   N20 at polar  60 (front frame), r 25, below the ring, pinion 22 T
+rear  middle ring z 161.0-171.0 (r 35-48, internal 72 T)   N20 at polar 180 (front frame), r 25, above the ring, pinion 22 T
+rear  top    ring z 184.5-194.5 (r 35-48, internal 72 T)   N20 at polar 300 (front frame), r 25, above the ring, pinion 22 T
+ratio 72/22 = 3.27: ring -3 .. 93 = 314 deg of motor shaft (N20 with encoder, hard stops at -3 and 90)
+
+== Transfer path (from option C, unchanged): cup height (hub at 0) ==
+top    z at turn -3/0/15/30/45/60/75/90: 278 / 275 / 254 / 226 / 198 / 176 / 163 / 160
+middle z at turn -3/0/15/30/45/60/75/90: 160 / 160 / 160 / 160 / 160 / 160 / 160 / 160
+bottom z at turn -3/0/15/30/45/60/75/90: 52 / 55 / 87 / 113 / 134 / 148 / 157 / 160
+top drag link worst transmission angle 31 deg; bottom ramp steepest 34 deg
+
+== Run A. both units together (as option C): 404 states ==
+clashes: none
+closer than 3 mm: 
+  FB lug x ramp FB: 583 states (both: home ... both units: top: vented, arm returns)
+  FB lug x ring RB: 404 states (both: home ... both units: top: vented, arm returns)
+  FM beam x FT lug: 192 states (both: home ... both units: top: vented, arm returns)
+  FM lug x ring RB: 404 states (both: home ... both units: top: vented, arm returns)
+  FM lug x ring RM: 404 states (both: home ... both units: top: vented, arm returns)
+  FT lug x ring RT: 404 states (both: home ... both units: top: vented, arm returns)
+  RB lug x ring FB: 404 states (both: home ... both units: top: vented, arm returns)
+  RB lug x ring FM: 404 states (both: home ... both units: top: vented, arm returns)
+  RM lug x ring FM: 404 states (both: home ... both units: top: vented, arm returns)
+  RT lug x ring FT: 404 states (both: home ... both units: top: vented, arm returns)
+  motor FM x pinion RB: 1 states (static ... static)
+  motor FT x pinion RT: 1 states (static ... static)
+  motor RB x pinion FB: 1 states (static ... static)
+  motor RM x pinion FT: 1 states (static ... static)
+  pinion FB x pinion RB: 1 states (static ... static)
+  pinion FB x ring RB: 1 states (static ... static)
+  pinion FM x pinion RB: 1 states (static ... static)
+  pinion FM x pinion RM: 1 states (static ... static)
+  pinion FM x ring RB: 1 states (static ... static)
+  pinion FM x ring RM: 1 states (static ... static)
+  pinion FT x pinion RT: 1 states (static ... static)
+  pinion FT x ring RT: 1 states (static ... static)
+  pinion RB x ring FB: 1 states (static ... static)
+  pinion RB x ring FM: 1 states (static ... static)
+  pinion RM x ring FM: 1 states (static ... static)
+  pinion RT x ring FT: 1 states (static ... static)
+  ramp FB x ring FB: 2 states (static ... static)
+  ramp RB x ring FB: 2 states (static ... static)
+height: parts + held stones z -3.0 .. 347.4 (highest: FT stone, 'both units: middle: hub to 14')
+
+== Run B. front unit alone while the rear unit holds its stack, then rear alone: 806 states ==
+clashes: none
+closer than 3 mm: 
+  FB lug x ramp FB: 1387 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  FB lug x ring RB: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  FM beam x FT lug: 594 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  FM lug x ring RB: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  FM lug x ring RM: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  FT lug x ring RT: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  RB lug x ring FB: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  RB lug x ring FM: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  RM lug x ring FM: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  RT lug x ring FT: 806 states (front only (rear holds its stack): unpinch: top + bottom rings to -3 ... rear only: top: vented, arm returns)
+  motor FM x pinion RB: 1 states (static ... static)
+  motor FT x pinion RT: 1 states (static ... static)
+  motor RB x pinion FB: 1 states (static ... static)
+  motor RM x pinion FT: 1 states (static ... static)
+  pinion FB x pinion RB: 1 states (static ... static)
+  pinion FB x ring RB: 1 states (static ... static)
+  pinion FM x pinion RB: 1 states (static ... static)
+  pinion FM x pinion RM: 1 states (static ... static)
+  pinion FM x ring RB: 1 states (static ... static)
+  pinion FM x ring RM: 1 states (static ... static)
+  pinion FT x pinion RT: 1 states (static ... static)
+  pinion FT x ring RT: 1 states (static ... static)
+  pinion RB x ring FB: 1 states (static ... static)
+  pinion RB x ring FM: 1 states (static ... static)
+  pinion RM x ring FM: 1 states (static ... static)
+  pinion RT x ring FT: 1 states (static ... static)
+  ramp FB x ring FB: 2 states (static ... static)
+  ramp RB x ring FB: 2 states (static ... static)
+height: parts + held stones z -3.0 .. 347.4 (highest: FT stone, 'front only (rear holds its stack): middle: hub to 14')
+
+== Perimeter (convex hull, stones excluded per FAQ Q1) [GR F.3] ==
+start, arms home: 1249 mm (limit 1200; the base_330_js plate alone is 1232)
+deployed, all 6 arms at 90 + spun: 1233 mm (limit 1400, FAQ Q10)
+
+== Summary ==
+1210 states; clashes: none; closer than 3 mm: 28 pairs; height -3.0 .. 347.4 (limit 350 [GR F.3])
