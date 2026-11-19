@@ -1,20 +1,23 @@
 Central hub - option D - FreeCAD model report (fc/hub_d_fc.py)
 
 Solid clash check (FreeCAD booleans, > 1 mm3) of the saved poses + every arm alone at 15/30/60/75 deg;
-left out by design: parts of one arm, cup on its stone, rod on its stud + anchor, pinion in its ring, roller on
-its ramp, stones of one stack, spine on the mast.
+left out by design: parts of one arm, cup on its stone, rod on its stud + anchor, pinion in its ring,
+stones of one stack, spine on the mast.
+BOTTOM_FIXED: bottom stone in a fixed holder (collar + bracket + cup), no ring / motor / spin; left lying
+on the table at the start of tower mode, so 2 towers per unit (middle + top).
 
 HUB_D_HOME                   home: both stacks held, hub at 0                                                 highest 330.0  no clashes
 HUB_D_1_FRONT_TOP_45         front top stone half-way (turn 45, drag link), rear unit holds its stack         highest 344.0  no clashes
-HUB_D_2_FRONT_BOTTOM_SPIN    front bottom stone at 90 spinning (45), rear unit holds its stack                highest 344.0  no clashes
+HUB_D_2_FRONT_TOP_SPIN       front top stone at 90 spinning (45), front bottom left lying, rear holds its stack highest 344.0  no clashes
 HUB_D_3_REAR_MIDDLE_UP       rear middle stone at 90 and stood up, front unit holds its stack                 highest 344.0  no clashes
 HUB_D_DEPLOYED               every arm at 90 and spun (perimeter pose, FAQ Q10), no stones                    highest 330.0  envelope only (3 arms of a unit share the end spot), not clash-checked
 
-extra poses (24): no clashes
+extra poses (16): no clashes
 highest point of hub + arms + held stones over all poses: 344.0 mm (limit 350 [GR F.3])
 
-Parts (both units): 6 rings (r 35-48, 72 T internal, m 1) + 6 N20 gear motors with encoder + 6 pinions 22 T;
-hollow spine r 30/34 with 6 windows; 2 drag rods 157 mm (M3 + 2 ball links) + 2 anchors; 2 ramps + 2 x 623ZZ;
-4 parallelogram arms (2 links + 4 pins each) + 2 rigid arms; 6 MG90S spin servos, 6 bearing housings, 6 VS2-S30 cups;
+Parts (both units): 4 rings (r 35-48, 72 T internal, m 1) + 4 N20 gear motors with encoder + 4 pinions 22 T;
+hollow spine r 30/34 with 4 windows; 2 drag rods 157 mm (M3 + 2 ball links) + 2 anchors;
+bottom: 1 collar (r 34/42) + 2 fixed brackets + 2 fixed cup mounts;
+2 parallelogram arms (top, 2 links + 4 pins each) + 2 rigid arms (middle); 4 MG90S spin servos, 6 VS2-S30 cups;
 hub lift (MG996R + crank, from option C) and the mast are the robot's.
 wrote CAD_FC/HUB_D_*.FCStd + CAD_FC/HUB_D_HOME.step

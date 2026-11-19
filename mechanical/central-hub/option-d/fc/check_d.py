@@ -1,10 +1,13 @@
-﻿# check_d.py - central hub option D: ONE TRANSFER ACTUATOR PER BOX.
+# check_d.py - central hub option D: ONE TRANSFER ACTUATOR PER BOX.
 # Every stone has its own ring on the hub axis, turned 0 -> 90 by its own N20 gear motor (inside the hollow spine,
 # pinion on the ring's internal teeth). The stone's height change comes from a PASSIVE guide fixed on the spine, so one actuator makes the
 # whole move from the stack to the spin-safe position beside the robot:
 #   top    : parallelogram arm + drag link to a fixed anchor (as option C)
 #   middle : rigid arm, plain turn
-#   bottom : parallelogram arm + roller under a fixed ramp (as option C)
+#   bottom : FIXED HOLDER (2026-11-19, BOTTOM_FIXED = True): no ring, no motor, no spin. A rigid bracket on a collar
+#            of the spine holds the bottom stone's cup, so the bottom stone is carried with the stack (walls) but never
+#            stood up: each unit builds 2 towers (middle + top), 4 in all = the 4 tower zones per team [G D.4].
+#            BOTTOM_FIXED = False brings back the transfer: parallelogram arm + roller under a fixed ramp (as option C).
 # Then the cup servo stands the stone up (bearing shaft + hard stops) and the shared hub lift sets the tower down.
 # Why the swing axis is the hub axis: the stone's heading turns exactly 90 deg (face +Y -> -X) and its cup face is at
 # r 176 at both ends; a rotation of 90 deg about a vertical axis that maps (0, 231) to (-231, 0) has its axis at (0, 0).
@@ -34,12 +37,17 @@ UN = ("F", "R")
 NAMES = cc.NAMES
 UNAME = {"F": "front", "R": "rear"}
 
+BOTTOM_FIXED = True                             # 2026-11-19: bottom level = fixed holder (see the header)
+TRANSFER = ("M", "T") if BOTTOM_FIXED else ("M", "B", "T")      # levels that move, in build order
+UNPINCH = tuple(lv for lv in ("T", "B") if lv in TRANSFER)       # rings turned back to PARK before the middle goes
+
 # ================================================================== rings: one per box, two per level
 R_RING = 48.0                                   # ring outer r; posts start at r >= 54
 R_RING_IN = 35.0                                # ring bore: internal teeth, pitch r 36 (m 1, 72 T)
 RING_Z = {("F", "B"): (131.0, 141.0), ("R", "B"): (141.0, 151.0),     # B: above the ramps (top 127.6)
           ("F", "M"): (151.0, 161.0), ("R", "M"): (161.0, 171.0),
           ("F", "T"): (174.5, 184.5), ("R", "T"): (184.5, 194.5)}
+RING_Z = {k: v for k, v in RING_Z.items() if k[1] in TRANSFER}  # fixed bottom: no bottom rings (other bands unchanged)
 
 # Transfer drive per ring: N20 gear motor (12 x 10 mm, 34 long with gearbox + encoder) standing INSIDE the hollow
 # spine, around the mast. Pinion 22 T (pitch r 11) on the motor shaft at r 25 pokes through a window in the spine wall
@@ -52,9 +60,15 @@ R_SPINE = 34.0                                  # hollow spine, wall 4 (bore r 3
 MOT_R, PIN_R = 25.0, 11.0
 MOTOR = {("F", "B"): (0.0, "below"), ("R", "B"): (60.0, "below"), ("F", "M"): (120.0, "below"),
          ("R", "M"): (180.0, "above"), ("F", "T"): (240.0, "above"), ("R", "T"): (300.0, "above")}
+MOTOR = {k: v for k, v in MOTOR.items() if k in RING_Z}
 N20_L = 34.0
 M_POST_TOP = 171.5                              # middle post top: 3 under the lower top ring + its lug (174.5)
 M_BEAM_R0 = 65.0                                # middle beam starts outside the top rings' lugs (r <= 62)
+
+# fixed bottom holder: printed collar clamped on the spine (shared by both units), one bracket per unit from the collar
+# out to the cup, cup on a fixed mount (no spin servo). Bracket above the bridge plate (z 73) and below the rings (151).
+COLLAR_R, COLLAR_Z = 42.0, (86.0, 102.0)
+HOLD_BEAM_Z = (88.0, 100.0)
 
 
 def phi_abs(u, phi):
@@ -77,10 +91,13 @@ def spine_parts(L):
         ang = np.arctan2(A[1], A[0])
         s = np.array([np.cos(ang) * (R_SPINE - 2), np.sin(ang) * (R_SPINE - 2), A[2]])
         p.append(seg_box("anchor %sT" % u, s, A + (A - s) / np.linalg.norm(A - s) * 6, 12, "spine"))
+        if BOTTOM_FIXED: continue
         for ph in np.arange(cc.PARK - 5, 96, 5.0):
             rl = cc.roller_local(cc.bottom_alpha(min(max(ph, cc.PARK), 90)))
             seg = Box.lohi("ramp %sB" % u, (40, -2.6, rl[2] + 5), (54, 2.6, rl[2] + 11))
             p.append(seg.to(W(phi_abs(u, ph)), off, grp="spine"))
+    if BOTTOM_FIXED:
+        p.append(Ann("bottom collar", R_SPINE, COLLAR_R, COLLAR_Z[0] + L, COLLAR_Z[1] + L, "spine"))
     return p
 
 
@@ -109,8 +126,23 @@ def ring_parts(L):
 def arm_parts(lv, u, phi, L, spin=0.0, held=True, size=cc.STONE):
     """one arm (+ its stone), as option C but the post is bolted to the arm's OWN ring"""
     Wm = W(phi_abs(u, phi)); off = np.array([0, 0, L]); g = u + lv
-    rz0, rz1 = RING_Z[(u, lv)]
     P = []
+    if lv == "B" and BOTTOM_FIXED:
+        # fixed holder: never turns (phi ignored), cup where the bottom transfer arm held it at turn 0
+        tip_r = cc.TIP_R
+        cup = cc.Z_STONE["B"]
+        P += [Box.lohi("holder beam", (COLLAR_R, -12, HOLD_BEAM_Z[0]), (tip_r + 6, 12, HOLD_BEAM_Z[1])),
+              Box.lohi("holder drop", (tip_r - 5, -16, cup - 13), (tip_r + 6, 16, HOLD_BEAM_Z[0])),
+              Box.lohi("cup mount", (tip_r + 6, -12, cup - 12), (tip_r + 30, 12, cup + 12)),
+              Box.lohi("cup", (tip_r + 30, -15, cup - 15), (tip_r + cc.CUP_OFF, 15, cup + 15))]
+        Wm = W(phi_abs(u, 0.0)); off = np.array([0, 0, L])
+        out = [b.to(Wm, off, name="%s %s" % (g, b.name), grp=g) for b in P]
+        if held:
+            sb = Box("%s stone" % g, np.array([tip_r + cc.CUP_OFF + size[1] / 2, 0, cup]),
+                     (size[1] / 2, size[0] / 2, size[2] / 2))
+            out.append(sb.to(Wm, off, grp=g + "stone"))
+        return out
+    rz0, rz1 = RING_Z[(u, lv)]
     if lv == "M":
         tip_r, zlt = cc.TIP_R, cc.CUP_END - cc.CUP_DZ["M"]
         # post stops 3 below the lower top ring (174.5); the beam starts at r 65, outside the top rings' lugs (r <= 62)
@@ -173,19 +205,28 @@ def build_levels(S, st, units, tag):
         for v in np.linspace(a, b, n)[1:]:
             st["L"] = float(v); push(label)
 
-    for lv in ("M", "B", "T"):
+    if BOTTOM_FIXED:
+        # tower mode starts with the hub at 0 (stack on the table): the bottom cup vents and the bottom stone stays
+        # lying on the table. The hub then lifts the middle stone 14 clear of it (no sliding, no unpinch needed below),
+        # and the top stone can drop to 160 without meeting it. It is left there when the robot drives to the next spot.
+        if st["L"] != 0.0: go_L(st["L"], 0.0, 5, "hub to 0, stack on the table")
+        for u in units: st["held"][(u, "B")] = False; st["tower"][(u, "B")] = True
+        push("bottom cup vented: the bottom stone stays lying on the table")
+    for lv in TRANSFER:
         n = NAMES[lv]
-        if lv == "M": go_phi(("T", "B"), 0, cc.PARK, 3, "unpinch: top + bottom rings to %g" % cc.PARK)
+        if lv == "M": go_phi(UNPINCH, 0, cc.PARK, 3, "unpinch: %s to %g" % (" + ".join(NAMES[x] + " ring" for x in UNPINCH), cc.PARK))
         if st["L"] != cc.L_SPIN: go_L(st["L"], cc.L_SPIN, 5, "%s: hub to %g" % (n, cc.L_SPIN))
         go_phi((lv,), st["phi"][(units[0], lv)], 90, 48, "%s: transfer" % n)
-        if lv == "M": go_phi(("T", "B"), cc.PARK, 0, 3, "top + bottom rings back to 0")
+        if lv == "M": go_phi(UNPINCH, cc.PARK, 0, 3, "%s back to 0" % " + ".join(NAMES[x] + " ring" for x in UNPINCH))
         for v in np.linspace(0, 90, 31)[1:]:
             for u in units: st["spin"][(u, lv)] = float(v)
             push("%s: spin" % n)
         go_L(cc.L_SPIN, 0, 8, "%s: hub lowers, the tower stands on the table" % n)
         for u in units: st["held"][(u, lv)] = False; st["tower"][(u, lv)] = True
         go_phi((lv,), 90, 0, 46, "%s: vented, arm returns" % n)
-        for u in units: st["spin"][(u, lv)] = 0.0; st["tower"][(u, lv)] = False
+        for u in units:
+            st["spin"][(u, lv)] = 0.0; st["tower"][(u, lv)] = False      # robot drives away (>= 0.34 m)
+            if lv == "M" and BOTTOM_FIXED: st["tower"][(u, "B")] = False   # the lying bottom stone stays behind too
 
 
 def seq_both():
@@ -212,7 +253,10 @@ def collect(state, with_towers=True):
             k = (u, lv)
             parts += arm_parts(lv, u, state["phi"][k], L, state["spin"][k], state["held"][k])
             if with_towers and state["tower"][k]:
-                tb = [b for b in arm_parts(lv, u, 90.0, 0.0, 90.0, True) if b.name.endswith("stone")][0]
+                if lv == "B" and BOTTOM_FIXED:      # "tower" of the fixed bottom = the stone left lying on the table
+                    tb = [b for b in arm_parts(lv, u, 0.0, 0.0, 0.0, True) if b.name.endswith("stone")][0]
+                else:
+                    tb = [b for b in arm_parts(lv, u, 90.0, 0.0, 90.0, True) if b.name.endswith("stone")][0]
                 tb.name = "%s%s tower" % (u, lv); tb.grp = u + lv + "tower"; parts.append(tb)
     return parts
 
@@ -238,8 +282,10 @@ def allowed(a, b, state):
             key = x.grp[4:]
             if y.grp == key and y.name.endswith(("post", "lug")): return True   # lug + post bolted to its own ring
             if y.name == "pinion " + key: return True                  # pinion meshes its own ring
-    if "spine" in (na, nb) and (nb if na == "spine" else na).startswith(("pinion", "motor", "anchor")):
-        return True                       # pinion through its wall window, motor in its wall groove, anchor bolted on
+    if "spine" in (na, nb) and (nb if na == "spine" else na).startswith(("pinion", "motor", "anchor", "bottom collar")):
+        return True                       # pinion through its wall window, motor in its wall groove, anchor + collar bolted on
+    if "bottom collar" in (na, nb) and (nb if na == "bottom collar" else na).endswith("holder beam"):
+        return True                       # holder bracket bolted to the collar
     if {na.split()[0], nb.split()[0]} == {"motor", "pinion"} and na.split()[1] == nb.split()[1]:
         return True                       # pinion on its own motor's shaft
     if "rod" in ga + gb and "anchor" in na + nb:
@@ -301,11 +347,17 @@ def main():
     L = []; P = L.append
     P("Central hub - option D: ONE transfer motor per box (own ring on the hub axis + passive guide), cup servo stands")
     P("the stone up, shared hub lift sets the towers down. Box check on base_330_js, both units (front -> left, rear -> right).")
+    if BOTTOM_FIXED:
+        P("BOTTOM_FIXED: the bottom stone stays in a fixed holder (carried, never stood up): 2 towers per unit, 4 in all.")
     P("Arm geometry, guides, robot, stones: imported from option C (fc/check_c.py).")
     P("")
     P("== Rings and transfer motors ==")
     for u in UN:
         for lv in LV:
+            if (u, lv) not in RING_Z:
+                P("%-5s %-6s fixed holder: collar r %g-%g z %g-%g on the spine, bracket z %g-%g, cup at z %g; no ring, motor or spin" %
+                  (UNAME[u], NAMES[lv], R_SPINE, COLLAR_R, COLLAR_Z[0], COLLAR_Z[1], HOLD_BEAM_Z[0], HOLD_BEAM_Z[1], cc.Z_STONE["B"]))
+                continue
             z0, z1 = RING_Z[(u, lv)]; pol, wh = MOTOR[(u, lv)]
             P("%-5s %-6s ring z %5.1f-%5.1f (r %g-%g, internal 72 T)   N20 at polar %3g (front frame), r %g, %s the ring, pinion 22 T" %
               (UNAME[u], NAMES[lv], z0, z1, R_RING_IN, R_RING, pol, MOT_R, wh))
@@ -313,10 +365,13 @@ def main():
     P("")
     P("== Transfer path (from option C, unchanged): cup height (hub at 0) ==")
     for lv in ("T", "M", "B"):
+        if lv not in TRANSFER:
+            P("%-6s fixed: cup stays at z %g (stone carried with the stack, released lying)" % (NAMES[lv], cc.Z_STONE[lv]))
+            continue
         zs = " / ".join("%.0f" % cc.cup_z(lv, p) for p in (cc.PARK, 0, 15, 30, 45, 60, 75, 90))
         P("%-6s z at turn %g/0/15/30/45/60/75/90: %s" % (NAMES[lv], cc.PARK, zs))
-    P("top drag link worst transmission angle %.0f deg; bottom ramp steepest %.0f deg" %
-      (cc.transmission(cc.DRAG, cc.TOP_TAB), cc.cam_slope()))
+    P("top drag link worst transmission angle %.0f deg%s" % (cc.transmission(cc.DRAG, cc.TOP_TAB),
+      "" if BOTTOM_FIXED else "; bottom ramp steepest %.0f deg" % cc.cam_slope()))
     P("")
     total = 0
     worst_z = (-1e9, None)
@@ -341,7 +396,7 @@ def main():
     for k in dep["phi"]: dep["phi"][k] = 90.0; dep["spin"][k] = 90.0
     P("== Perimeter (convex hull, stones excluded per FAQ Q1) [GR F.3] ==")
     P("start, arms home: %.0f mm (limit 1200; the base_330_js plate alone is 1232)" % perim(fixed + collect(home, False)))
-    P("deployed, all 6 arms at 90 + spun: %.0f mm (limit 1400, FAQ Q10)" % perim(fixed + collect(dep, False)))
+    P("deployed, every moving arm at 90 + spun: %.0f mm (limit 1400, FAQ Q10)" % perim(fixed + collect(dep, False)))
     P("")
     P("== Summary ==")
     P("%d states; clashes: %s; closer than %g mm: %d pairs; height %.1f .. %.1f (limit 350 [GR F.3])" %
@@ -395,7 +450,7 @@ def sheet(fixed):
     a.set_xlabel("x (robot's left = -x)"); a.set_ylabel("y (forward)")
     # 2 hub cross-sections: motors inside the spine, around the mast
     from matplotlib.patches import Circle, Wedge
-    a = ax[0, 1]; a.set_title("Hub section (x-y): 6 N20 motors inside the hollow spine,\npinion through the wall into each ring's internal teeth")
+    a = ax[0, 1]; a.set_title("Hub section (x-y): %d N20 motors inside the hollow spine,\npinion through the wall into each ring's internal teeth" % len(MOTOR))
     a.add_patch(Circle((0, 0), R_RING, fc="#ccd", ec="k", alpha=0.4))
     a.add_patch(Circle((0, 0), R_RING_IN, fc="white", ec="k", ls="--"))
     a.add_patch(Wedge((0, 0), R_SPINE, 0, 360, width=4, fc="#9ab", ec="k"))
@@ -416,15 +471,17 @@ def sheet(fixed):
     a.axhline(350, color="r", ls="--", lw=1); a.text(-320, 353, "350 [GR F.3]", color="r", fontsize=8)
     a.set_xlim(-330, 330); a.set_ylim(-10, 375); a.set_aspect("equal"); a.grid(alpha=0.3)
     # 4 front view: front unit tower built while the rear holds
-    a = ax[1, 1]; a.set_title("Front view (x-z): front bottom stone spinning, rear unit still holding its stack")
+    SV = "T" if BOTTOM_FIXED else "B"
+    a = ax[1, 1]; a.set_title("Front view (x-z): front %s stone spinning, rear unit still holding its stack" % NAMES[SV])
     scene(a, fixed, (0, 2), only=lambda p: isinstance(p, Cyl) or abs(p.c[1]) < 150)
     for sp_, al in ((0, 0.3), (45, 0.5), (90, 1.0)):
-        s = new_state(); s["L"] = cc.L_SPIN; s["phi"][("F", "B")] = 90.0; s["spin"][("F", "B")] = sp_
-        for k in s["held"]: s["held"][k] = k == ("F", "B") or k[0] == "R"
-        scene(a, collect(s, False), (0, 2), al, only=lambda p: p.grp.startswith(("FB", "R")) or p.grp == "spine")
+        s = new_state(); s["L"] = cc.L_SPIN; s["phi"][("F", SV)] = 90.0; s["spin"][("F", SV)] = sp_
+        for k in s["held"]: s["held"][k] = k == ("F", SV) or k[0] == "R"
+        scene(a, collect(s, False), (0, 2), al, only=lambda p: p.grp.startswith(("F" + SV, "R")) or p.grp == "spine")
     a.axhline(350, color="r", ls="--", lw=1); a.axhline(0, color="k", lw=1)
     a.set_xlim(-430, 430); a.set_ylim(-10, 375); a.set_aspect("equal"); a.grid(alpha=0.3)
-    fig.suptitle("Central hub option D: 1 transfer N20 per box (own ring + passive guide), 1 spin servo per cup, 1 hub-lift servo", fontsize=12)
+    fig.suptitle("Central hub option D: 1 transfer N20 per moving box (own ring + passive guide), 1 spin servo per moving cup, "
+                 "1 hub-lift servo" + ("; bottom stones in fixed holders" if BOTTOM_FIXED else ""), fontsize=12)
     fig.tight_layout()
     os.makedirs(SIM, exist_ok=True)
     fig.savefig(os.path.join(SIM, "option_d_sheet.png"), dpi=90)

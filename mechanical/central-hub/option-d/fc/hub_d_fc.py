@@ -2,8 +2,12 @@
 # One transfer actuator per stone: each of the 6 arms sits on its OWN ring on the hub axis, turned 0 -> 90 deg by its
 # own N20 gear motor inside the hollow spine (pinion through a wall window, ring with internal teeth). The height
 # change comes from a passive guide, so the one motor makes the whole move stack -> spin-safe position:
-#   top: parallelogram + drag link (rod with 2 ball links) to a fixed anchor; middle: rigid arm; bottom: parallelogram
-#   + 623ZZ roller under a fixed ramp. Then the cup's MG90S stands the stone up and the shared hub lift sets it down.
+#   top: parallelogram + drag link (rod with 2 ball links) to a fixed anchor; middle: rigid arm.
+#   bottom (cd.BOTTOM_FIXED, 2026-11-19): FIXED HOLDER - a bracket on a collar of the spine holds the bottom cup; no
+#   ring, motor, spin, parallelogram or cam. The bottom stone is carried with the stack (walls) and left lying at the
+#   start of tower mode, so each unit builds 2 towers (4 = the 4 tower zones [G D.4]).
+#   With BOTTOM_FIXED = False: parallelogram + 623ZZ roller in the groove of a fixed cam sleeve (cam_sleeve(), earlier
+#   one-sided ramp() kept for reference). Then the cup's MG90S stands the stone up and the shared hub lift sets it down.
 # Every number comes from fc/check_d.py (which imports option C's fc/check_c.py), so this model and the box check agree.
 # Concept-level parts: gears drawn as blocks / plain discs, no fasteners except the joint pins.
 #
@@ -123,6 +127,80 @@ def ramp(u, L):
     return moved(comp(segs), np.eye(3), (0, 0, L))
 
 
+SLEEVE_R = 54.0          # grooved cam sleeve: printed tube r R_SPINE..54 fixed on the spine (2026-11-19, replaces the ramps)
+SLEEVE_CLEAR = 0.5      # roller clearance in the groove (each side, normal to the groove)
+SLEEVE_WALL = 4.0        # sleeve material above the highest / below the lowest groove point
+
+
+def groove_centre(phi):
+    """roller centre (local r, z, hub at L = 0) and the groove slope (deg) at ring angle phi (clamped to the travel)"""
+    p = min(max(phi, cc.PARK), 90.0)
+    rl = cc.roller_local(cc.bottom_alpha(p))
+    d = 0.25
+    pa, pb = max(p - d, cc.PARK), min(p + d, 90.0)
+    za = cc.roller_local(cc.bottom_alpha(pa))[2]; zb = cc.roller_local(cc.bottom_alpha(pb))[2]
+    slope = 0.0 if pb <= pa else math.degrees(math.atan2(zb - za, rl[0] * math.radians(pb - pa)))
+    if phi < cc.PARK or phi > 90.0:
+        slope = 0.0
+    return rl, slope
+
+
+def cam_sleeve(L):
+    """barrel cam: one printed tube on the spine with one groove per unit (front 0 -> 90, rear 180 -> 270 deg).
+    The 623ZZ roller (axis along t, as before) runs in the groove, which is open toward the outside: the upper
+    wall is the old ramp, the lower wall replaces the safety lip, so the roller is guided both ways."""
+    ext = 9.0                                         # groove runs on past each end of the travel: roller radius + 3 deg
+    phs = np.arange(cc.PARK - ext, 90.0 + ext + 0.01, 1.0)
+    zs = [groove_centre(p)[0][2] for p in phs]
+    hmax = 5.0 / math.cos(math.radians(34.0)) + SLEEVE_CLEAR
+    z0, z1 = min(zs) - hmax - SLEEVE_WALL, max(zs) + hmax + SLEEVE_WALL
+    tube = Part.makeCylinder(SLEEVE_R, z1 - z0, V(0, 0, z0)).cut(Part.makeCylinder(cd.R_SPINE, z1 - z0, V(0, 0, z0)))
+    for u in "FR":
+        wires = []
+        for p in phs:
+            rl, sl = groove_centre(p)
+            h = 5.0 / math.cos(math.radians(sl)) + SLEEVE_CLEAR      # vertical half-gap for a Ø10 roller on a slope
+            pts = [np.array([r, 0.0, rl[2] + dz]) for r, dz in ((39.0, -h), (SLEEVE_R + 3, -h), (SLEEVE_R + 3, h), (39.0, h))]
+            Wm = cc.W(cd.phi_abs(u, p))
+            pts = [V(*(Wm @ q)) for q in pts]
+            wires.append(Part.makePolygon(pts + [pts[0]]))
+        tube = tube.cut(Part.makeLoft(wires, True, True))
+        # exact envelope on the tight bends (unpinch -> lift): the roller + clearance at every 0.5 deg of the travel
+        c = SLEEVE_CLEAR
+        rolls = []
+        for p in np.arange(cc.PARK, 90.01, 0.5):
+            rl = cc.roller_local(cc.bottom_alpha(p))
+            cyl = Part.makeCylinder(5 + c, 4 + 2 * c, V(rl[0], -2 - c, rl[2]), V(0, 1, 0))
+            rolls.append(moved(cyl, cc.W(cd.phi_abs(u, p))))
+        tube = tube.cut(Part.makeCompound(rolls))
+    return moved(tube, np.eye(3), (0, 0, L))
+
+
+def collar(L):
+    """fixed bottom holder: printed collar clamped on the spine, both units' brackets bolt to it"""
+    z0, z1 = cd.COLLAR_Z
+    c = Part.makeCylinder(cd.COLLAR_R, z1 - z0, V(0, 0, z0)).cut(Part.makeCylinder(cd.R_SPINE, z1 - z0, V(0, 0, z0)))
+    return moved(c, np.eye(3), (0, 0, L))
+
+
+def holder(u, L, held):
+    """fixed bottom holder of unit u: bracket (beam + drop), fixed cup mount (no spin servo), cup; stone if held"""
+    tip_r, cup = cc.TIP_R, cc.Z_STONE["B"]
+    b0, b1 = cd.HOLD_BEAM_Z
+    S = {"holder beam": lbox(cd.COLLAR_R, tip_r + 6, -12, 12, b0, b1),
+         "holder drop": lbox(tip_r - 5, tip_r + 6, -16, 16, cup - 13, b0),
+         "cup mount": comp([lbox(tip_r + 6, tip_r + 18, -11.5, 11.5, cup - 12, cup + 12),
+                            Part.makeCylinder(12, 12, V(tip_r + 18, 0, cup), V(1, 0, 0))]),
+         "cup": comp([Part.makeCylinder(4, 4, V(tip_r + 30, 0, cup), V(1, 0, 0)),
+                      Part.makeCone(8, 15, 10.5, V(tip_r + 34, 0, cup), V(1, 0, 0))])}
+    Wm = cc.W(cd.phi_abs(u, 0.0)); off = (0, 0, L)
+    world = {"%sB %s" % (u, k): moved(v, Wm, off) for k, v in S.items()}
+    stone = None
+    if held:
+        stone = moved(obox(np.array([tip_r + cc.CUP_OFF + 55.0, 0, cup]), (55.0, 160.0, 55.0), np.eye(3)), Wm, off)
+    return world, stone
+
+
 def anchor(u, L):
     A = cc.A_point(None, u)
     ang = math.atan2(A[1], A[0])
@@ -145,6 +223,8 @@ def ring(key, phi, L):
 # ---------------------------------------------------------------- arm (local frame, then placed)
 def arm(u, lv, phi, L, spin, held):
     """returns dict name -> world shape for the arm (incl. lug, pins, spin unit, cup) and the stone (or None)"""
+    if lv == "B" and cd.BOTTOM_FIXED:
+        return holder(u, L, held)
     key = (u, lv)
     rz0, rz1 = cd.RING_Z[key]
     S = {}
@@ -214,8 +294,12 @@ def pose(st):
         m, sp = motor(key, L)
         P["motor %s%s" % key] = ("hub", m); P["pinion %s%s" % key] = ("hub", sp)
         P["ring %s%s" % key] = (key[0] + key[1], ring(key, st["phi"][key], L))
+    if cd.BOTTOM_FIXED:
+        P["bottom collar"] = ("hub", collar(L))
+    else:
+        P["cam sleeve"] = ("hub", cam_sleeve(L))
     for u in ("F", "R"):
-        P["ramp %sB" % u] = ("hub", ramp(u, L)); P["anchor %sT" % u] = ("hub", anchor(u, L))
+        P["anchor %sT" % u] = ("hub", anchor(u, L))
         for lv in ("B", "M", "T"):
             w, stone = arm(u, lv, st["phi"][(u, lv)], L, st["spin"][(u, lv)], st["held"][(u, lv)])
             for n, s in w.items():
@@ -233,7 +317,6 @@ def allowed(na, ga, nb, gb, st):
             if g2 == g1[:2] and n2.endswith(("ball stud", "lower link")): return True
             if n2 == "anchor %sT" % g1[0]: return True
         if n1 == "pinion " + g2 and n2.startswith("ring"): return True      # pinion meshes its own ring
-        if n1.startswith("ramp") and g2 == n1.split()[1] and n2.endswith(("roller", "cam lever")): return True
         if g1.endswith("stone") and g2.endswith("stone") and g1[0] == g2[0]:
             if st["phi"][(g1[0], g1[1])] <= 0.01 and st["phi"][(g2[0], g2[1])] <= 0.01: return True
     return False
@@ -302,8 +385,10 @@ def main():
         ("HUB_D_HOME", "home: both stacks held, hub at 0", state()),
         ("HUB_D_1_FRONT_TOP_45", "front top stone half-way (turn 45, drag link), rear unit holds its stack",
          state(LS, FT_phi=45.0, FM_held=False, FB_held=False)),
-        ("HUB_D_2_FRONT_BOTTOM_SPIN", "front bottom stone at 90 spinning (45), rear unit holds its stack",
-         state(LS, FB_phi=90.0, FB_spin=45.0, FM_held=False)),
+        (("HUB_D_2_FRONT_TOP_SPIN", "front top stone at 90 spinning (45), front bottom left lying, rear holds its stack",
+          state(LS, FT_phi=90.0, FT_spin=45.0, FM_held=False, FB_held=False)) if cd.BOTTOM_FIXED else
+         ("HUB_D_2_FRONT_BOTTOM_SPIN", "front bottom stone at 90 spinning (45), rear unit holds its stack",
+          state(LS, FB_phi=90.0, FB_spin=45.0, FM_held=False))),
         ("HUB_D_3_REAR_MIDDLE_UP", "rear middle stone at 90 and stood up, front unit holds its stack",
          state(LS, RM_phi=90.0, RM_spin=90.0)),
         ("HUB_D_DEPLOYED", "every arm at 90 and spun (perimeter pose, FAQ Q10), no stones",
@@ -315,16 +400,22 @@ def main():
     # middle -> bottom -> top: the levels that went before are empty (their towers were left behind)
     extra = []
     before = {"M": "", "B": "M", "T": "MB"}
+    if cd.BOTTOM_FIXED:
+        before = {"M": "B", "T": "BM"}          # the bottom stone is left lying before the middle goes
     for u in "FR":
-        for lv in "BMT":
+        for lv in cd.TRANSFER:
             for ph in (15.0, 30.0, 60.0, 75.0):
                 kw = {"%s%s_phi" % (u, lv): ph}
                 kw.update({"%s%s_held" % (u, x): False for x in before[lv]})
                 extra.append(("%s %s at %g" % (UNAME[u], NAMES[lv], ph), state(LS, **kw)))
     R = ["Central hub - option D - FreeCAD model report (fc/hub_d_fc.py)", ""]
     R.append("Solid clash check (FreeCAD booleans, > 1 mm3) of the saved poses + every arm alone at 15/30/60/75 deg;")
-    R.append("left out by design: parts of one arm, cup on its stone, rod on its stud + anchor, pinion in its ring, roller on")
-    R.append("its ramp, stones of one stack, spine on the mast.")
+    R.append("left out by design: parts of one arm, cup on its stone, rod on its stud + anchor, pinion in its ring,")
+    R.append("stones of one stack, spine on the mast." + ("" if cd.BOTTOM_FIXED else
+             " The bottom roller and lever ARE checked against the grooved cam sleeve."))
+    if cd.BOTTOM_FIXED:
+        R.append("BOTTOM_FIXED: bottom stone in a fixed holder (collar + bracket + cup), no ring / motor / spin; left lying")
+        R.append("on the table at the start of tower mode, so 2 towers per unit (middle + top).")
     R.append("")
     allbad, ztop = 0, 0.0
     for name, label, st in poses:
@@ -352,9 +443,16 @@ def main():
     R.append("extra poses (%d): %s" % (len(extra), "no clashes" if allbad == 0 else "see above"))
     R.append("highest point of hub + arms + held stones over all poses: %.1f mm (limit 350 [GR F.3])" % ztop)
     R.append("")
-    R.append("Parts (both units): 6 rings (r 35-48, 72 T internal, m 1) + 6 N20 gear motors with encoder + 6 pinions 22 T;")
-    R.append("hollow spine r 30/34 with 6 windows; 2 drag rods 157 mm (M3 + 2 ball links) + 2 anchors; 2 ramps + 2 x 623ZZ;")
-    R.append("4 parallelogram arms (2 links + 4 pins each) + 2 rigid arms; 6 MG90S spin servos, 6 bearing housings, 6 VS2-S30 cups;")
+    if cd.BOTTOM_FIXED:
+        R.append("Parts (both units): 4 rings (r 35-48, 72 T internal, m 1) + 4 N20 gear motors with encoder + 4 pinions 22 T;")
+        R.append("hollow spine r 30/34 with 4 windows; 2 drag rods 157 mm (M3 + 2 ball links) + 2 anchors;")
+        R.append("bottom: 1 collar (r %g/%g) + 2 fixed brackets + 2 fixed cup mounts;" % (cd.R_SPINE, cd.COLLAR_R))
+        R.append("2 parallelogram arms (top, 2 links + 4 pins each) + 2 rigid arms (middle); 4 MG90S spin servos, 6 VS2-S30 cups;")
+    else:
+        R.append("Parts (both units): 6 rings (r 35-48, 72 T internal, m 1) + 6 N20 gear motors with encoder + 6 pinions 22 T;")
+        R.append("hollow spine r 30/34 with 6 windows; 2 drag rods 157 mm (M3 + 2 ball links) + 2 anchors; 1 grooved cam sleeve")
+        R.append("(r %g/%g, one groove per unit) + 2 x 623ZZ rollers;" % (cd.R_SPINE, SLEEVE_R))
+        R.append("4 parallelogram arms (2 links + 4 pins each) + 2 rigid arms; 6 MG90S spin servos, 6 bearing housings, 6 VS2-S30 cups;")
     R.append("hub lift (MG996R + crank, from option C) and the mast are the robot's.")
     R.append("wrote CAD_FC/HUB_D_*.FCStd + CAD_FC/HUB_D_HOME.step")
     txt = "\n".join(R)

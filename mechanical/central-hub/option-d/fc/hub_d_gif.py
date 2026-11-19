@@ -1,7 +1,7 @@
 # hub_d_gif.py - Central hub OPTION D: GIF rendered from the FreeCAD model (real solids, not the box check).
 # Uses the part geometry of fc/hub_d_fc.py and the build sequence of fc/check_d.py (run B: the front unit builds its
-# 3 towers while the rear unit holds its stack, then the rear unit builds), so the GIF, the box check and the FCStd
-# poses all agree.
+# towers while the rear unit holds its stack, then the rear unit builds), so the GIF, the box check and the FCStd
+# poses all agree. With cd.BOTTOM_FIXED (2026-11-19) the bottom stone sits in a fixed holder: 2 towers per unit.
 #
 # Run (FreeCAD GUI needed for the renders; it closes itself at the end):
 #   "<FreeCAD>/bin/FreeCAD.exe" mechanical/central-hub/option-d/fc/hub_d_gif.py
@@ -100,8 +100,11 @@ def build_static(sc):
         # bring it back to its own frame (phi_abs(u, 0) undone) so a Placement can turn it to any phi
         back = np.asarray(cc.W(cd.phi_abs(key[0], 0.0)), float).T
         sc.put("ring %s%s" % key, F["moved"](ring0, back), UCOL[key[0]])
+    if cd.BOTTOM_FIXED:
+        sc.put("bottom collar", F["collar"](0.0), DARK)
     for u in "FR":
-        sc.put("ramp %sB" % u, F["ramp"](u, 0.0), DARK)
+        if not cd.BOTTOM_FIXED:
+            sc.put("ramp %sB" % u, F["ramp"](u, 0.0), DARK)
         sc.put("anchor %sT" % u, F["anchor"](u, 0.0), DARK)
 
 
@@ -113,7 +116,8 @@ def place(Rm=None, L=0.0):
 def show(sc, st):
     L = st["L"]
     lift = place(None, L)
-    for n in ["spine", "ramp FB", "ramp RB", "anchor FT", "anchor RT"] + \
+    guides = ["bottom collar"] if cd.BOTTOM_FIXED else ["ramp FB", "ramp RB"]
+    for n in ["spine", "anchor FT", "anchor RT"] + guides + \
              ["%s %s%s" % (w, *k) for k in cd.RING_Z for w in ("motor", "pinion")]:
         sc.objs[n].Placement = lift
     for key in cd.RING_Z:
@@ -131,7 +135,10 @@ def show(sc, st):
                 sc.put(n, stone, STONE, 60); seen.add(n)
             if st["tower"][k]:
                 n = "%s%s tower" % k
-                sc.put(n, F["arm"](u, lv, 90.0, 0.0, 90.0, True)[1], TOWER, 40); seen.add(n)
+                if lv == "B" and cd.BOTTOM_FIXED:          # bottom stone left lying on the table
+                    sc.put(n, F["arm"](u, lv, 0.0, 0.0, 0.0, True)[1], TOWER, 40); seen.add(n)
+                else:
+                    sc.put(n, F["arm"](u, lv, 90.0, 0.0, 90.0, True)[1], TOWER, 40); seen.add(n)
     for n, o in sc.objs.items():
         if (n.endswith(("stone", "tower"))) and n not in seen:
             o.Visibility = False
@@ -184,7 +191,8 @@ def make_gif(tmp, frames):
         d = ImageDraw.Draw(canvas)
         for j, key in enumerate(VIEWS):
             d.text((j * W + 10, 8), VIEW_LABELS[key], font=f2, fill=(90, 90, 90))
-        d.text((14, H + 8), "Central hub option D (FreeCAD model) - one ring + one N20 per stone", font=f1,
+        d.text((14, H + 8), "Central hub option D (FreeCAD model) - one ring + one N20 per moving stone"
+               + (", bottom stones in fixed holders" if cd.BOTTOM_FIXED else ""), font=f1,
                fill=(120, 220, 140))
         d.text((14, H + 36), st["label"], font=f2, fill=(225, 228, 232))
         imgs.append(canvas.quantize(colors=128, method=Image.Quantize.MEDIANCUT))

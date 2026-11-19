@@ -1,0 +1,7 @@
+Central hub option E (Ayoub, 2026-11-19, concept): clapet doors + one shaft carriage on the hub
+states: 349, margin 3.0 mm (cup vs stone faces: 0, touching = grip)
+door top z 195; stones turn with their bottom face at >= 205
+highest point (robot + held stone): 343.1 mm (limit 350 [GR F.3])
+lowest stone corner during the spin: 4.9 mm (> 0 = clears the table)
+clashes: 0
+cup touches / brushes a stack stone face (vacuum off) while turning back: 3 states (stone M)

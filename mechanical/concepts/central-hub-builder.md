@@ -121,6 +121,17 @@ stops, V-wheels) carries the front and rear arms; each arm spins its cup on a **
 stops; **fixed holder cups** keep the stack. 4 motors instead of 13, every stone set on the table (no drop). Box check
 `../central-hub/fc/check_b.py`: no clashes, ≤ 343 mm. Details, A vs B table, open points: `../central-hub/OPTION_B.md`.
 
+## Option C (2026-11-18): one transfer servo per level + one spin servo per cup
+
+Back to the first sketch (Ayoub): one movement takes each stone from the stack to the spin-safe position beside the
+robot, then a cup servo stands it up. Each level has a ring (one MG996R, front + rear arm) and a **parallelogram arm
+whose height is tied to the turn**: top level by a **drag link** (rod + 2 ball links to a spine bracket), bottom level
+by a **roller under a fixed ramp** (no room for a drag link there; ramp ≤ 34°), middle level a plain turn. One hub-lift
+servo sets the spin height (14) and sets every tower down on the table. No holder cups: each stone stays on its own
+cup at the middle of its face. Order middle → bottom → top after a 3° unpinch. Box check on base_330_js
+(`../central-hub/fc/check_c.py`, 404 states): **no clashes, ≤ 347.4 mm**, 10 motors. Details, the list of earlier
+problems it fixes, open points (worst-case stack height, start perimeter 1249): `../central-hub/OPTION_C.md`.
+
 ## Actuators and parts
 
 Not fixed yet. What moves: per shaft, the turn along the groove (1 actuator, or an elastic + latch servo, see the
