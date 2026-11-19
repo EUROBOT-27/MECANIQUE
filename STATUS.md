@@ -1,12 +1,19 @@
 # Status
 
-_Last updated: 2026-11-19 (Ayoub)_
+_Last updated: 2026-11-19 (Seif; Ayoub earlier the same day)_
 
-**Phase:** Strategy partly fixed → **clapets v7 module A printed + assembled (2026-11-18), assembly fixes next**; module B (suction) reworked by Seif as `suction-v1` (D-021). Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
+**Phase:** Strategy partly fixed → **clapets v7 module A printed + assembled (2026-11-18)**; **module B v1 = T1 turning plate designed (2026-11-19, D-027, D-028)**, final review before printing. Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
 **Next deadline:** Strategy chosen (internal), 2026-11-08 (**11 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (3 days) · CAD freeze 2026-12-13 (24 days) · Mechanical built and assembled, 2026-12-31 (42 days)
 **Qualifier:** end of March 2027
 
 ## Where we are
+- **Module B (suction) = T1** (`mechanical/suction-v1/`, Seif, D-027, D-028):
+  - What: a plate with 3 cups on the butterfly plate that turns the whole stack 90° (towers) during a lift-turn
+    (peak lift 70). The stack passes 350 mid-turn: castle only (FAQ Q9 = yes).
+  - Pneumatics: pumps + valves in the robot; 3 tubes through a hollow shaft (2 × 6002).
+  - Same module front (A+B) and back (alone).
+  - Full-cycle check: height ≤ 350 (343.6), B alone clean, A+B clean except **module A's doors can't fold fully over
+    T1** (right door ~50°, left ~80°): choose doors-fold-less (+~40 mm start perimeter) or reshape module B.
 - **Strategy direction decided:** max points, every action, Grail at L4 on our roof (D-009). Build order: 1st walls,
   return home, Grail L4 · 2nd flipper (towers) · 3rd gate lintel, robot launcher; PAMIs in parallel (D-010).
 - **Gate:** shares a driving face (front/back) with a stone gripper, no side face (D-011). Space to reserve and
@@ -38,6 +45,7 @@ _Last updated: 2026-11-19 (Ayoub)_
 - Earlier decisions: differential drive (D-004), LiDAR + vision (D-007), overhead station on the table (D-008), **overhead camera = Pi Camera Module 3 Wide on a Pi, Ethernet to the laptop (D-026, `vision/camera-choice.md`)**, Aerobotix principles (D-006).
 
 ## Biggest risks right now
+0. **Front A+B: module A's doors vs T1 when folded** (start position). Folding less costs ~40 mm of the start perimeter margin.
 1. **Real stones not ordered.** Gripper prototypes (concepts due 2026-11-22) can't be tested without them, especially suction on cardboard.
 2. **Clapets height margin 2.3 mm** (head at the top of its 75 mm lift) + rails/top tie at 366 mm in the prototype: the
    real-robot mount must keep the mechanism's height above the table and cut the profiles (top tie ≤ 350 mm).
@@ -48,4 +56,4 @@ _Last updated: 2026-11-19 (Ayoub)_
   timeline, confirmation of the D-008 location, name of the GROSBOT 2023 club.
 - Maatoug: back up personal files before the next pull; push the generators that only exist on his PC; remove the ~470 software build files committed in `a746ea1`. (v8 tasks dropped: Seif reworks module B in suction-v1.)
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.
-- FAQ answers (Q1–Q9 not sent yet).
+- FAQ answers (Q1–Q8 not sent yet; Q9 answered yes, reference to add).
