@@ -10,6 +10,8 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] List candidate concepts for Grail lift (electromagnet, hand, elevator…) and the flywheel launcher — Seif, Ayoub, Baha
 
 ## Now (current focus)
+- [ ] **REMINDER at /start: ask Claude to generate a GIF of the doubled flip-bar** (`flip-bar/fc/flipbar_double_fc.py`, both units flipping) → `mechanical/simulations/flip_bar/` — Ayoub
+- [ ] Doubled flip-bar: re-check the start perimeter on a smaller footprint (`layout-v1`, 300 × 292); on base_330 it is 1265 > 1200 — Ayoub
 - [ ] Plywood test of one ring (elastic + MG90S latch + cup + home-made stone): holds through swing and stop? stone stands after venting? — Ayoub — due 2026-11-22
 - [ ] Review `mechanical/central-hub/CONNECTIONS.md` + option A CAD + `OPTION_B.md` (option A clashes fixed 2026-11-15; reports clean) — Ayoub — due 2026-11-22
 - [ ] Central hub: **option C** (`central-hub/OPTION_C.md`) and **option D** (`central-hub/option-d/`, FreeCAD model + `option_d_freecad.gif`) solve the holder-cup problem of B. Option E (doubled, `central-hub/option-e/`, start perimeter 1176 OK) is the newest. Pick B / C / D / E — Ayoub — due 2026-11-22
@@ -22,6 +24,8 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Ask Seif / Hamza Sammoud to send FAQ questions (Q1 first: does a carried stone count in the perimeter?) — Ayoub
 
 ## Done
+- [x] Odometry (2 × AMT102 wheels) added to central hub option E at x ±82, y +36; checks clean, CAD + GIFs regenerated — 2026-11-20
+- [x] Flip-bar doubled front + rear (`flipbar_double_fc.py`, `CAD/flipbar_double.FCStd`): no clashes, start perimeter 1265 on base_330 — 2026-11-20
 - [x] Central hub option E (doubled): box check, FreeCAD model + poses, `option_e_freecad.gif`, pushed — 2026-11-19
 - [x] Option D GIF rendered from the FreeCAD solids (`option-d/fc/hub_d_gif.py` → `simulations/central_hub/option_d_freecad.gif`) — 2026-11-19
 - [x] Central hub option C (box check) and option D (one N20 + ring per stone, motors inside a hollow spine): `option-d/` with box check, FreeCAD poses, report, README, sheet + gif — 2026-11-18

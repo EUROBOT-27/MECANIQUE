@@ -160,7 +160,12 @@ def robot():
     out = {}
     oct_ = ce.body_outline()
     w = Part.makePolygon([V(x, y, ce.FLOOR_Z[0]) for x, y in oct_] + [V(oct_[0][0], oct_[0][1], ce.FLOOR_Z[0])])
-    out["floor"] = ("robot", Part.Face(w).extrude(V(0, 0, ce.FLOOR_Z[1] - ce.FLOOR_Z[0])), "floor")
+    floor = Part.Face(w).extrude(V(0, 0, ce.FLOOR_Z[1] - ce.FLOOR_Z[0]))
+    for sx in (1, -1):                                       # slots for the odometry wheel + encoder
+        x0, x1 = sorted((sx * ce.ODOM_SLOT["X"][0], sx * ce.ODOM_SLOT["X"][1]))
+        y0, y1 = ce.ODOM_SLOT["Y"]
+        floor = floor.cut(Part.makeBox(x1 - x0, y1 - y0, 20, V(x0, y0, ce.FLOOR_Z[0] - 5)))
+    out["floor"] = ("robot", floor, "floor")
     for sx, side in ((1, "R"), (-1, "L")):
         out["wheel " + side] = ("robot", Part.makeCylinder(37, 44, V(sx * (102 if sx > 0 else 146), 0, 37), V(1, 0, 0)), "wheel")
         out["drive motor " + side] = ("robot", Part.makeCylinder(18.5, 68, V(sx * (32 if sx > 0 else 100), 0, 37),
@@ -169,6 +174,13 @@ def robot():
             out["caster %s%s" % (side, "F" if sy > 0 else "B")] = (
                 "robot", cyl_z(sx * 124, sy * 120, 4, 21, 12).fuse(Part.makeSphere(7.9, V(sx * 124, sy * 120, 7.9))),
                 "dark")
+    for sx, side in ((1, "R"), (-1, "L")):                  # odometry (reserve from robot/fc/layout.py)
+        out["odometry wheel " + side] = ("odom", Part.makeCylinder(ce.ODOM_R, ce.ODOM_W, V(
+            sx * ce.ODOM_X - ce.ODOM_W / 2, ce.ODOM_Y, ce.ODOM_R), V(1, 0, 0)), "wheel")
+        xe0, xe1 = sorted((sx * (ce.ODOM_X + ce.AMT102["X"][0]), sx * (ce.ODOM_X + ce.AMT102["X"][1])))
+        z0, z1 = ce.AMT102["Z"]
+        out["odometry AMT102 " + side] = ("odom", Part.makeBox(xe1 - xe0, 2 * ce.AMT102["Y"], z1 - z0, V(
+            xe0, ce.ODOM_Y - ce.AMT102["Y"], z0)), "dark")
     out["column"] = ("column", tube_z(0, 0, ce.FLOOR_Z[1], 350, ce.R_COL, ce.R_COL - 2), "alu")
     out["beacon support"] = ("beacon", tube_z(0, 0, 350, 430, 40, 37).fuse(cyl_z(0, 0, 350, 353, 40)), "dark")
     out["L4 roof pad"] = ("grail", Part.makeBox(74, 96, 5, V(76, 26, 330)), "reserve_grail")
@@ -409,7 +421,7 @@ def perimeter(P):
 
 
 # ---------------------------------------------------------------- save
-GROUP_LABEL = {"robot": "Robot_base_layout_v1", "column": "Column_and_beacon", "beacon": "Column_and_beacon",
+GROUP_LABEL = {"robot": "Robot_base_layout_v1", "odom": "Odometry", "column": "Column_and_beacon", "beacon": "Column_and_beacon",
                "grail": "Reserved_volumes", "reserve": "Reserved_volumes"}
 
 

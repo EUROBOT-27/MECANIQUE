@@ -61,6 +61,15 @@ TURN = {"F": dict(shaft=(25.8, 36.9), sx=1, block=0.0, gear_z=(72.0, 77.0)),    
 for _u in TURN:                                  # body under its pinion, spline + printed shaft up to the gear plane
     TURN[_u]["body_z"] = (26.0 + TURN[_u]["block"], 26.0 + TURN[_u]["block"] + 36.8)
 MG996 = dict(L=40.7, W=19.7, H=36.8, SHAFT_OFF=10.2, EAR_L=54.0)   # body; shaft 10.2 from one end
+# odometry: 2 free wheels Ø30 with AMT102 encoders, same parts as the volume reserved in robot/fc/layout.py
+# (encoder 6-17 mm outboard of the wheel), in this frame (X = wheel axis, Y = forward). layout.py's spot (86 to the
+# side, 31 forward) puts the AMT102 into this base's drive wheel (x 102) and drive motor (r 18.5): moved 4 mm inboard
+# and 5 mm forward -> 3.0 mm to the wheel, 3.1 mm to the motor body, odometry wheel 42 mm from the motor axis.
+# The wheel and the encoder pass through a slot in the floor plate.
+ODOM_X, ODOM_Y, ODOM_R, ODOM_W = 82.0, 36.0, 15.0, 8.0   # |x| of the wheel centre plane, y, wheel radius, width
+AMT102 = dict(X=(6.0, 17.0), Y=14.4, Z=(0.0, 43.0))      # |x| from the wheel plane, half length along y, z
+ODOM_SLOT = dict(X=(ODOM_X - ODOM_W / 2 - 2.0, ODOM_X + AMT102["X"][1] + 2.0),   # |x|, y of the floor slot
+                 Y=(ODOM_Y - ODOM_R - 2.0, ODOM_Y + ODOM_R + 2.0))
 
 
 # ================================================================== boxes
@@ -142,6 +151,15 @@ def fixed_robot():
         for sy in (1, -1):
             f.append(Box.lohi("caster", (sx * 124 - 12, sy * 120 - 12, 0), (sx * 124 + 12, sy * 120 + 12, 21),
                               col="0.4", **g))
+    for sx, side in ((1, "R"), (-1, "L")):
+        lo = lambda a, b: min(sx * a, sx * b)
+        hi = lambda a, b: max(sx * a, sx * b)
+        xw = (ODOM_X - ODOM_W / 2, ODOM_X + ODOM_W / 2)
+        xe = (ODOM_X + AMT102["X"][0], ODOM_X + AMT102["X"][1])
+        f.append(Box.lohi("odometry wheel " + side, (lo(*xw), ODOM_Y - ODOM_R, 0), (hi(*xw), ODOM_Y + ODOM_R, 2 * ODOM_R),
+                          grp="odom", col="0.1", kind="odom"))
+        f.append(Box.lohi("odometry AMT102 " + side, (lo(*xe), ODOM_Y - AMT102["Y"], AMT102["Z"][0]),
+                          (hi(*xe), ODOM_Y + AMT102["Y"], AMT102["Z"][1]), grp="odom", col="0.25", kind="odom"))
     f.append(Box.lohi("column", (-R_COL, -R_COL, FLOOR_Z[1]), (R_COL, R_COL, 350), col="0.3", kind="column", **g))
     # beacon support on top of the column: 80 x 80 (<= 100 x 100, >= 70), top 430 [GR F.6]
     f.append(Box.lohi("beacon support", (-40, -40, 350), (40, 40, 430), col="0.15", kind="beacon", **g))
@@ -341,6 +359,8 @@ def allowed(a, b, s):
     ka, kb = a.kind, b.kind
     if {ka, kb} == {"hub", "column"}:
         return True, 0
+    if {ka, kb} == {"odom", "floor"}:
+        return True, 0                                     # wheel + encoder pass through a slot in the floor plate
     if a.grp == b.grp:
         return True, 0
     if {ka, kb} <= {"stone"}:

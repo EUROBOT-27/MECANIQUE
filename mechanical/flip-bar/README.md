@@ -217,3 +217,22 @@ Frame = base_330 (X wheel axis, Y forward with the mechanism on the +Y edge, Z u
    of flip6 (not checked against layout-v1 yet, nor its perimeter at full deployment, FAQ Q10).
 7. Strategy: no 6-stone carry (case B) with a centre-line bar.
 8. The 5 bench tests under "Still to prove on the bench" above (clamp grip first).
+
+## Doubled: front + rear (Ayoub, 2026-11-19, proposal)
+
+`fc/flipbar_double_fc.py` (`"D:/FreeCad/bin/freecadcmd.exe" flipbar_double_fc.py` from `fc/`, ~5 min) puts the same
+unit on the rear face, **turned 180° about Z** (identical parts, nothing mirrored), on the symmetric `base_330`. It
+loads `flipbar_fc.py` as a library (that script and its files are not changed). Writes `CAD/flipbar_double.FCStd` /
+`.step` (both units at home, groups `Front_unit` / `Rear_unit` / `Robot_base`) and `double_report.txt`.
+
+| Check | Result |
+|---|---|
+| Front unit × rear unit, 12 × 12 poses (each unit anywhere in its range) | **0 overlaps**; the units never come closer than 90 mm (motors at y ±45) |
+| Rear unit × base_330 + wheels, 85 poses | 0 overlaps |
+| Height | as one unit: 339.0 mm |
+| Perimeter at start (stones out of count) | **1265 > 1200** (one unit: 1243; the bare base_330 is already 1220) |
+| Perimeter, both moving (FAQ Q10) | max 1354 ≤ 1400 |
+
+The start perimeter fails because of the 330 × 280 base, not the doubling (the two units add 45 mm to the base's
+1220). On a ≤ 1155 mm footprint (e.g. `layout-v1`, 300 × 292 with 30 mm chamfers) it should pass: not modelled yet.
+Not modelled either: base_330 casters and odometry units, battery, electronics, beacon support, Grail lift, launcher.

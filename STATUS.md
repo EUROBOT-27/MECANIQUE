@@ -1,9 +1,9 @@
 # Status
 
-_Last updated: 2026-11-19 (Ayoub, 2nd session; Seif earlier the same day)_
+_Last updated: 2026-11-20 (Ayoub)_
 
 **Phase:** Strategy partly fixed → **clapets v7 module A printed + assembled (2026-11-18)**; **module B v1 = T1 turning plate designed (2026-11-19, D-027, D-028)**, final review before printing. Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
-**Next deadline:** Strategy chosen (internal), 2026-11-08 (**11 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (3 days) · CAD freeze 2026-12-13 (24 days) · Mechanical built and assembled, 2026-12-31 (42 days)
+**Next deadline:** Strategy chosen (internal), 2026-11-08 (**11 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (2 days) · CAD freeze 2026-12-13 (23 days) · Mechanical built and assembled, 2026-12-31 (41 days)
 **Qualifier:** end of March 2027
 
 ## Where we are
@@ -41,7 +41,8 @@ _Last updated: 2026-11-19 (Ayoub, 2nd session; Seif earlier the same day)_
   **2026-11-15: option A modelled in FreeCAD** (`mechanical/central-hub/`, proposal): hub in 4 printed segments S1–S4 on 3 × M4 tie rods, MG996R turn servos in cradles, one-piece arms + carriages, every fastener; joints and parts in `CONNECTIONS.md`, clash reports `hub_a_report.txt` / `hub_a_env_report.txt`, gif in `simulations/central_hub/`. The grooved-hub variant was dropped from the model (helix up to 77°, 118 clashes).
   **2026-11-18: option A clash fix + new animation + PDF brief; option B written (`mechanical/central-hub/OPTION_B.md`, proposal, box-checked: 1 NEMA17 lift + 1 MG996R turret + 1 spin MG996R per arm = 4 motors instead of 13); two further variants studied (3 and 2 motors).** Interactive comparison page (private): https://claude.ai/artifact/U8UQDkDet7VDkMRGUdMCQC. Option B was blocked: the fixed holder cups grip each stone 100 mm off its centre (open point 8).
   **2026-11-18 (later): option C** (`central-hub/OPTION_C.md`: one MG996R ring per level, arm height tied to the turn by a drag link / ramp, no holder cups, 10 motors) **and option D** (`central-hub/option-d/`: one ring + one N20 per stone with the motors inside a hollow spine, 13 motors, front and rear units independent; FreeCAD poses `CAD_FC/HUB_D_*.FCStd`). Both box-checked and clash-free, ≤ 347.4 mm, deployed 1233; **start perimeter 1249 > 1200** (cups stick out front and back). Proposals, not reviewed; Ayoub picks B / C / D. **2026-11-19:** option D now also has a GIF rendered from the FreeCAD solids (`simulations/central_hub/option_d_freecad.gif`, script `option-d/fc/hub_d_gif.py`).
-  **2026-11-19 (later): option E (doubled)** (`mechanical/central-hub/option-e/`, proposal, not reviewed): front + rear unit around one Ø20 column, per unit 1 turret + 1 shaft carriage + spin servo + cup, holder cups in pairs, no doors. Box check 585 states clean, <= 347.0 mm, **perimeter 1176 start / 1182 deployed (inside the limits, unlike C / D at 1249)**; FreeCAD model + `simulations/central_hub/option_e_freecad.gif`.
+  **2026-11-19 (later): option E (doubled)** (`mechanical/central-hub/option-e/`, proposal, not reviewed): front + rear unit around one Ø20 column, per unit 1 turret + 1 shaft carriage + spin servo + cup, holder cups in pairs, no doors. Box check 585 states clean, <= 347.0 mm, **perimeter 1176 start / 1182 deployed (inside the limits, unlike C / D at 1249)**; FreeCAD model + `simulations/central_hub/option_e_freecad.gif`. **2026-11-20:** odometry (2 × AMT102 wheels) added at x ±82, y +36 (the `robot/fc/layout.py` spot hits option E's drive wheel + motor); checks still clean.
+- **Flip-bar doubled** (Ayoub, 2026-11-20, proposal on Maatoug's flip-bar): same unit front + rear (rear turned 180°, identical parts), `flip-bar/fc/flipbar_double_fc.py`, `CAD/flipbar_double.FCStd`. No clashes between the units; **start perimeter 1265 > 1200 on base_330** (the bare base is 1220), deployed 1354. Not checked on layout-v1 yet.
 - Parts library from the disassembled Ender 3 V2, lines still unverified (D-012).
 - Software: simulation repo (ROS 2 Jazzy + Gazebo), clone separately into `eurobot2027/`. `software/` area exists.
 - Earlier decisions: differential drive (D-004), LiDAR + vision (D-007), overhead station on the table (D-008), **overhead camera = Pi Camera Module 3 Wide on a Pi, Ethernet to the laptop (D-026, `vision/camera-choice.md`)**, Aerobotix principles (D-006).

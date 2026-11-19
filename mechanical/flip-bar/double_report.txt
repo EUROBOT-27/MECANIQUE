@@ -1,0 +1,16 @@
+flip-bar doubled (front + rear, rear = front turned 180 deg about Z) - flipbar_double_fc.py, Ayoub 2026-11-19, proposal
+Base base_330 (330 x 280, symmetric). Each unit = Maatoug's flip-bar unchanged (flipbar_fc.py).
+
+front unit x rear unit, 12 x 12 poses (each unit anywhere from its home stop to its upright stop): 0 overlap(s)
+   closest approach along Y between the two units (bound boxes): 90.0 mm
+rear unit (moving parts) x base_330 + wheels, 85 poses: 0 overlap(s)
+height: same as one unit (the turn is about Z): actuators 339.0 mm, see collision_report.txt
+
+perimeter, convex hull of the vertical projection, stones out of count (FAQ Q1) [GR F.3]:
+   one unit (front only), home :   1243 mm  (x -165..165, y -140..196)
+   doubled, both at home (start):   1265 mm  (x -165..165, y -196..196)  limit 1200 -> OVER by 65
+   doubled, both upright        :   1348 mm  (x -165..165, y -196..196)
+   doubled, largest over the range, both moving (FAQ Q10): 1354 mm at s 0.837, limit 1400 -> OK
+
+Not modelled (as in flipbar_fc.py): base_330 casters (front + back on the Y axis) and odometry units, battery,
+electronics, beacon support, Grail lift, launcher.

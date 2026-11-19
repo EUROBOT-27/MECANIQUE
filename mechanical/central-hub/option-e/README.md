@@ -3,6 +3,7 @@
 Status: **concept + box check, proposal** (Ayoub, 2026-11-19). Nothing in `project/decisions.md`.
 Same frame as options A–D: X = wheel axis (robot's left = −X), Y = forward, Z = up, origin = robot centre on the table.
 Base = `layout-v1` body **300 × 292, chamfer 30** (Seif), JSUMO wheels, 4 KSM15 casters.
+**Odometry** (added 2026-11-19): 2 free wheels Ø30 + AMT102 encoders (the reserve of `robot/fc/layout.py`), through slots in the floor plate. At layout.py's spot (86 to the side, 31 forward) the AMT102 hits this base's drive wheel and motor (604 + 159 mm³ per side in the solid check), so here it sits at **x ±82, y +36**: 3.0 mm to the wheel, 3.1 mm to the motor. Both checks clean with it.
 Parts: parts library first, then parts sold in Tunisia, no imports (Ayoub, 2026-11-19).
 
 | File | What |
