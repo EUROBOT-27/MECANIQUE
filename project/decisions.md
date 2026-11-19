@@ -477,3 +477,25 @@ Template:
   itself stays under 350 mm during the lift-turn. Generator: `mechanical/suction-v1/fc/turn_t1.py`.
 - Update 2026-11-18 (Seif): **pumps and valves stay in the robot**, not on module B (too heavy, too complex);
   the 3 cup tubes go through a hollow shaft at the turning axis.
+
+## D-029 — Grail lift: top grip + 180° flip onto the roof, two versions (B rack, B2 lead screw); suction version later for the gate lintel
+- Date: 2026-11-20
+- Area: mechanical
+- Decided by: Seif
+- Status: active (the Grail lift direction; `mechanical/grail-lift/` v1–v3 stay as reference)
+- Decision: the Grail lift grips the Grail **by its top** and **flips it 180°** about an axis along the right face, so
+  it lands **upside down on the roof** and the gripper ends under it in a roof slot. Two versions are developed in
+  parallel in `mechanical/Grail_v2/`: **B** = rack lift (2020 + V-wheel carriage + NEMA17 pinion on an m1 rack,
+  Baha's rack) and **B2** = lead-screw lift (T8 + 2 × Ø8 rods / LM8UU, NEMA17 by GT2 belt, from Baha's "corrigé").
+  Both flip with an MG996R. **Electromagnet first**; a **suction-cup version** comes later and is meant for the
+  **gate lintel** too (pick the 2nd stone of a stack from its top at z 220, flip, set it on the two towers at ≥ 320,
+  the cup ending in the gap between them).
+- Alternatives considered: A pivot (one servo, no lift: arm 128 mm out while turning, perimeter +~96); C rolling (one
+  NEMA17, half gear on a fixed rack: the Grail dips below the roof top at the edge); Baha's Grail v1 screw and rack
+  versions and the corrigé (flip into their own column, 360–520 mm tall); grail-lift v2/v3 (Maatoug).
+- Why: only B/B2 pass every check so far (actuators ≤ 340, the Grail never enters the body, magnet leaves straight
+  down); a top grip needs the flip to end under 350; one mechanism can serve the Grail and the gate lintel.
+- Consequences: the right side bay (x 66–150, y ±40, z 78–300) holds the lift; roof slot about x 95–151, y ±15 at the
+  Grail spot. B must move its column into the bay (as B2). Gate lintel stays 3rd in the build order (D-010); its
+  stone passes 350 mid-flip (FAQ Q9 yes, castle only: check where the gate is built). Files and checks:
+  `mechanical/Grail_v2/README.md`.
