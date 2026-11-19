@@ -1,0 +1,126 @@
+ROBOT LAYOUT v1 - front module: AB, back: t1   (mechanical/layout-v1/fc/layout_fc.py)
+Body X ±150.0, front face Y +146.0, back face Y -146.0 -> 300.0 x 292.0, corner chamfers 30, 4 casters
+Module raised 26.0 mm: socle on the floor top (z 26.0). Module y 140 = body front face, robot Y +146.0.
+Stack face at start (stack touching the cups): module y 149.9 = robot Y +155.9 (+9.9 past the body face)
+Module B = T1 turning plate, station S1 (suction-v1, D-027); back = module A's lift without door units + T1 (81 parts)
+
+== Chamfer sweep: perimeter vs corner chamfer, same on the 4 corners (carried stones not counted: FAQ Q1) [GR F.3]
+   chamfer   start (<=1200)   one module working (<=1400)   every mechanism at once (<=1400, FAQ Q10)
+       0      1198.0 (  +2.0)    1354.5 ( +45.5)               1356.6 ( +43.4)
+      20      1155.0 ( +45.0)    1333.1 ( +66.9)               1337.1 ( +62.9)
+      30      1134.9 ( +65.1)    1322.9 ( +77.1)               1329.3 ( +70.7)   <- used below
+      40      1116.7 ( +83.3)    1313.3 ( +86.7)               1324.0 ( +76.0)
+      50      1100.1 ( +99.9)    1304.8 ( +95.2)               1320.3 ( +79.7)
+      60      1087.8 (+112.2)    1297.4 (+102.6)               1317.6 ( +82.4)
+   (gain of a chamfer c on a plain box = 2.34 c; less when module parts fill the corner, see below)
+   Back corners only (front chamfer 30): no door units at the back, so the back corners can be cut deeper
+   back  30   1134.9 ( +65.1)    1322.9 ( +77.1)               1329.3 ( +70.7)   <- used below
+   back  40   1124.5 ( +75.5)    1313.3 ( +86.7)               1324.0 ( +76.0)
+   back  50   1115.1 ( +84.9)    1304.8 ( +95.2)               1320.3 ( +79.7)
+   back  60   1106.8 ( +93.2)    1297.4 (+102.6)               1317.6 ( +82.4)
+   back  70   1099.0 (+101.0)    1290.6 (+109.4)               1315.9 ( +84.1)
+   back  80   1091.6 (+108.4)    1284.3 (+115.7)               1315.1 ( +84.9)
+
+== Perimeter with chamfer 30 front / 30 back, doors at start D 52 / G 82 deg (90 = fully folded)
+  start                                      1134.9  (limit 1200, margin +65.1)  hull X -153.6..153.6 Y -161.9..181.7
+  front start_folded / back start                       1134.9  (limit 1400, margin +265.1)
+  front start_folded / back carry_lift15                1134.9  (limit 1400, margin +265.1)
+  front start_folded / back lift_turn30                 1135.0  (limit 1400, margin +265.0)
+  front start_folded / back lift_turn45                 1135.7  (limit 1400, margin +264.3)
+  front start_folded / back lift_turn60                 1137.9  (limit 1400, margin +262.1)
+  front start_folded / back lift_turn90                 1141.2  (limit 1400, margin +258.8)
+  front approach_open / back start                      1322.7  (limit 1400, margin +77.3)
+  front clamp / back start                              1276.7  (limit 1400, margin +123.3)
+  front carry_lift15 / back start                       1276.7  (limit 1400, margin +123.3)
+  front open_release / back start                       1322.5  (limit 1400, margin +77.5)
+  front lift_turn30 / back start                        1322.6  (limit 1400, margin +77.4)
+  front lift_turn45 / back start                        1322.7  (limit 1400, margin +77.3)
+  front lift_turn60 / back start                        1322.8  (limit 1400, margin +77.2)
+  front lift_turn90 / back start                        1322.9  (limit 1400, margin +77.1)
+  worst with ONE module working (other at start): 1322.9 (front lift_turn90 / back start)
+  FULLY DEPLOYED, every mechanism at once (FAQ Q10, the number that counts): 1329.3 (front lift_turn90 / back lift_turn90) -> OK
+  module parts outside the chamfered body at start (they set the hull, not the floor): F:A_TOLE_PORTE 35.7, F:REF_MOUSSE_PORTE 32.7, F:REF_CUP_DPS30_TOP 15.9, F:REF_CUP_DPS30_MID 15.9, F:REF_CUP_DPS30_BOT 15.9, B:REF_CUP_DPS30_TOP 15.9, B:REF_CUP_DPS30_MID 15.9, B:REF_CUP_DPS30_BOT 15.9, F:FIX_VIS_BRAS_D 6.5, F:A_BRAS_PORTE_D_BAS 4.7, F:A_BRAS_PORTE_D_HAUT 4.7, F:REF_FIL_BRUN_D 3.6, F:REF_FIL_ROUGE_D 3.6, F:REF_FIL_ORANGE_D 3.6, F:REF_FIL_BRUN_G 3.6, F:REF_FIL_ROUGE_G 3.6, F:REF_FIL_ORANGE_G 3.6
+
+== Door fold at start vs start perimeter (A+B front with T1). T1 stops the doors at D 52 / G 82 (suction-v1 check_report.txt, 2 deg steps)
+   fold D   fold G   start (<=1200)
+      90       90     1123.2 ( +76.8)   (not possible: doors hit T1)
+      52       82     1134.9 ( +65.1)
+      48       78     1139.8 ( +60.2)
+      52       52     1144.7 ( +55.3)
+      40       40     1172.9 ( +27.1)
+      30       30     1200.3 (  -0.3)
+       0        0     1283.5 ( -83.5)
+
+== Start area 500 x 500 with the Grail on the floor at the right [G D.3, G E.2]
+  robot + Grail: 378.6 (X) x 343.6 (Y) -> fits (Grail 70.0 x 70.0, 5 mm from the body)
+
+== Casters (KSM15-FL, Ø24 assumed) and support polygon
+  casters at (123.7, 119.7), (123.7, -119.7), (-123.7, 119.7), (-123.7, -119.7)
+  drive wheel contacts at (±128.0, 0)
+  support polygon: X ±128.0, Y -119.7..119.7; carried stack centre at Y +210.9 (91.2 mm beyond the front support line)
+  6 contact points: the drive wheels need a sprung mount (or casters ~1 mm above the wheel line)
+
+== Height [GR F.3: <= 350; beacon support top 430 ± 5 GR F.6; e-stop <= 375 GR F.4.c]
+   Profiles, top tie, lead screw, T-nuts, rail screws are exempt here (cut to length on the robot).
+  F module start_folded     max 292.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module approach_open    max 292.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module clamp            max 292.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module carry_lift15     max 307.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module open_release     max 292.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module lift_turn30      max 353.9; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module lift_turn45      max 360.8; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module lift_turn60      max 352.1; profiles / top tie / lead screw 392.0 (cut on the robot)
+  F module lift_turn90      max 291.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  B module start            max 292.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  B module carry_lift15     max 307.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  B module lift_turn30      max 343.5; profiles / top tie / lead screw 392.0 (cut on the robot)
+  B module lift_turn45      max 340.8; profiles / top tie / lead screw 392.0 (cut on the robot)
+  B module lift_turn60      max 332.1; profiles / top tie / lead screw 392.0 (cut on the robot)
+  B module lift_turn90      max 277.0; profiles / top tie / lead screw 392.0 (cut on the robot)
+  ! moving parts over 350 (NOT trimmable; Seif fixes it in the module B rework):
+      A_TOLE_PORTE               F:lift_turn30 353.9, F:lift_turn45 360.8, F:lift_turn60 352.1
+      REF_MOUSSE_PORTE           F:lift_turn30 353.9, F:lift_turn45 360.8, F:lift_turn60 352.1
+  T1 (T1S1): cups placed for the module on the floor (D-027); stack on the table at z 0.0..330.0
+  lift NEMA hangs 19.5 below the socle: bottom at z 6.5 on the robot -> floor cut-out (done), 6.5 mm above the table
+  blocks: all within their limits unless listed above (Grail on the roof: see FAQ Q8)
+
+== Overlaps: reserved volumes / known parts vs the real module parts (v7 module A + T1S1), every pose (> 1 mm3)
+   (E) = expected, see the note; everything else is a real conflict to solve
+  BEACON_SUPPORT (GR F.6, on a bridge over the 2 top ties): 4 part(s)  (E) top ties + lead screws cut to <= 350 on the robot; the support sits on a bridge over them
+      B:A_TRAVERSE_HAUT-1 [start 12158, carry_lift15 12158, lift_turn30 12158, lift_turn45 12158, lift_turn60 12158, lift_turn90 12158]
+      B:REF_VIS_T8-1 [start 1270, carry_lift15 1270, lift_turn30 1270, lift_turn45 1270, lift_turn60 1270, lift_turn90 1270]
+      F:A_TRAVERSE_HAUT-1 [start_folded 12158, approach_open 12158, clamp 12158, carry_lift15 12158, open_release 12158, lift_turn30 12158, lift_turn45 12158, lift_turn60 12158, lift_turn90 12158]
+      F:REF_VIS_T8-1 [start_folded 1270, approach_open 1270, clamp 1270, carry_lift15 1270, open_release 1270, lift_turn30 1270, lift_turn45 1270, lift_turn60 1270, lift_turn90 1270]
+  DRIVE_MOTOR_L (Pololu 37D, 37 x 68): 2 part(s)  
+      B:A_SOCLE-1 [start 447, carry_lift15 447, lift_turn30 447, lift_turn45 447, lift_turn60 447, lift_turn90 447]
+      F:A_SOCLE-1 [start_folded 447, approach_open 447, clamp 447, carry_lift15 447, open_release 447, lift_turn30 447, lift_turn45 447, lift_turn60 447, lift_turn90 447]
+  DRIVE_MOTOR_R (Pololu 37D, 37 x 68): 2 part(s)  
+      B:A_SOCLE-1 [start 447, carry_lift15 447, lift_turn30 447, lift_turn45 447, lift_turn60 447, lift_turn90 447]
+      F:A_SOCLE-1 [start_folded 447, approach_open 447, clamp 447, carry_lift15 447, open_release 447, lift_turn30 447, lift_turn45 447, lift_turn60 447, lift_turn90 447]
+  ROOF (L4 roof strip between the 2 lifts (cut-outs for the rails)): 4 part(s)  (E) rails + lead screws pass through the roof strip: cut-outs
+      B:REF_RAILS_2020-1 [start 857, carry_lift15 857, lift_turn30 857, lift_turn45 857, lift_turn60 857, lift_turn90 857]
+      B:REF_VIS_T8-1 [start 103, carry_lift15 103, lift_turn30 103, lift_turn45 103, lift_turn60 103, lift_turn90 103]
+      F:REF_RAILS_2020-1 [start_folded 857, approach_open 857, clamp 857, carry_lift15 857, open_release 857, lift_turn30 857, lift_turn45 857, lift_turn60 857, lift_turn90 857]
+      F:REF_VIS_T8-1 [start_folded 103, approach_open 103, clamp 103, carry_lift15 103, open_release 103, lift_turn30 103, lift_turn45 103, lift_turn60 103, lift_turn90 103]
+
+== Overlaps between blocks (> 1 mm3)
+  none
+
+== Reserved volumes (mm)
+  WHEEL_R            real X   106.0..150.0   Y   -37.0..37.0    Z    0.0..74.0    0.19 L  JSUMO JS7444 Ø74 (width assumed 44)
+  DRIVE_MOTOR_R      real X    32.0..100.0   Y   -18.5..18.5    Z   18.5..55.5    0.07 L  Pololu 37D, 37 x 68
+  WHEEL_L            real X  -150.0..-106.0  Y   -37.0..37.0    Z    0.0..74.0    0.19 L  JSUMO JS7444 Ø74 (width assumed 44)
+  DRIVE_MOTOR_L      real X  -100.0..-32.0   Y   -18.5..18.5    Z   18.5..55.5    0.07 L  Pololu 37D, 37 x 68
+  CASTER_1           real X   111.7..135.7   Y   107.7..131.7   Z    0.0..21.0    0.01 L  KSM15-FL ball transfer
+  CASTER_2           real X   111.7..135.7   Y  -131.7..-107.7  Z    0.0..21.0    0.01 L  KSM15-FL ball transfer
+  CASTER_3           real X  -135.7..-111.7  Y   107.7..131.7   Z    0.0..21.0    0.01 L  KSM15-FL ball transfer
+  CASTER_4           real X  -135.7..-111.7  Y  -131.7..-107.7  Z    0.0..21.0    0.01 L  KSM15-FL ball transfer
+  FLOOR              real X  -150.0..150.0   Y  -146.0..146.0   Z   21.0..26.0    0.32 L  floor plate, chamfered, cut-outs below
+  SHOOTER_L          res  X  -150.0..-66.0   Y   -52.0..40.0    Z   78.0..300.0   1.72 L  cannonball launcher + magazine (left)
+  GRAIL_LIFT_R       res  X    66.0..150.0   Y   -52.0..40.0    Z   78.0..300.0   1.72 L  Grail pickup + lift to the roof (right)
+  CORE               res  X   -64.0..64.0    Y   -18.0..18.0    Z   86.0..300.0   0.99 L  centre slab: battery + electronics + pumps
+  ROOF               real X  -150.0..150.0   Y   -38.0..38.0    Z  300.0..306.0   0.14 L  L4 roof strip between the 2 lifts (cut-outs for the rails)
+  GRAIL_ON_ROOF      res  X    75.0..145.0   Y   -35.0..35.0    Z  306.0..406.0   0.49 L  Grail at L4 (may pass 350 in the castle, G E.1; FAQ Q8)
+  BEACON_SUPPORT     real X   -40.0..40.0    Y   -40.0..40.0    Z  350.0..430.0   0.40 L  GR F.6, on a bridge over the 2 top ties
+  ESTOP              real X  -135.0..-95.0   Y   -20.0..20.0    Z  306.0..360.0   0.07 L  GR F.4.c, on the roof strip, left
+  LIDAR_IN_MAST      res  X   -20.0..20.0    Y   -20.0..20.0    Z  375.0..410.0   0.04 L  LD06-class inside the beacon support (GR F.6)

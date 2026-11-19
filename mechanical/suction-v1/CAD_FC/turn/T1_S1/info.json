@@ -1,0 +1,30 @@
+{
+ "title": "T1 turning plate: turns the whole stack 90 deg (pose: turn 0 deg, lift 0.0)",
+ "station": "S1 (TPU disc + support ring)",
+ "cups": "3 x DP-S30, one per stone: (x, table z at lift 0) = (0, 80), (70, 165), (0, 250)",
+ "turning_axis": "x 0, table 165 at lift 0 (= middle stone centre)",
+ "drive": "MG996R + round horn, 22T -> 33T m1.25 (90 deg plate = 135 deg servo)",
+ "joint": "hollow shaft: tube \u00d815 x 1 x 54 (copper / alu / steel) in 2 x 6002-2RS; hub + rear collar = coupler clamps",
+ "pneumatics": "pumps + valves in the robot; 3 tubes \u00d84 through the hollow shaft",
+ "plate_front_y": 114.9,
+ "stack_face_y": 149.9,
+ "stack_face_vs_layout_v1": "+3.9 mm (layout-v1 stack face y 146)",
+ "turn_plate_size": "154 x 254 (MDF 6)",
+ "lift_turn": "lift = 160 sin t + 165 cos t + 5 - 165: 5 at t 0, peak 69.8 at t 44 deg, 0 at t 90",
+ "turning_parts_max_height": 343.8,
+ "turning_parts_min_height": 43.0,
+ "fixed_parts_top_at_peak_lift": 295.8,
+ "stack_top_mid_turn": 464.7,
+ "tubes_on_plate": {
+  "REF_TUBE_TOP_PLATE": "120 mm, min bend R12.0",
+  "REF_TUBE_MID_PLATE": "97 mm, min bend R12.0",
+  "REF_TUBE_BOT_PLATE": "119 mm, min bend R12.0"
+ },
+ "tubes_to_robot": {
+  "REF_TUBE_TOP_TO_ROBOT": "116 mm to z 230, min bend R12.0",
+  "REF_TUBE_MID_TO_ROBOT": "139 mm to z 230, min bend R11.7",
+  "REF_TUBE_BOT_TO_ROBOT": "182 mm to z 230, min bend R12.0"
+ },
+ "fits": "A+B front (|x| <= 65.5 at the plate, door units from 66) and B alone (back)",
+ "printed_mass_g": 294.2
+}

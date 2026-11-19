@@ -1,0 +1,94 @@
+T1 check (check_t1.py)
+Heights are above the table (module z + 26). Poses: see the cycle at the top of the script.
+
+====================================================================================================
+T1 with S3  -  A+B (front, with module A's doors)  -  61 poses
+----------------------------------------------------------------------------------------------------
+Highest module B point: 343.6 above the table (lift-turn 35 deg)   limit 350
+Highest stone point:    464.6 (lift-turn 45 deg)   held stones may pass 350 in the castle only (Q9)
+Footprint: module B adds at most 28.6 mm to module A's hull perimeter (start: doors folded); B reaches |x| 127.0, y 154.4
+Collisions: 31 (+ 12 expected contacts: bolts through the wheels, pinion on the horn)
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-2              4143.9 mm3   worst at: start: doors folded
+   S3_SPACER_MID                x REF_MOUSSE_PORTE-2              4122.2 mm3   worst at: doors open 80
+   S3_SPACER_MID                x A_TOLE_PORTE-1                  3450.2 mm3   worst at: start: doors folded
+   S3_TPU_DISC_MID              x A_TOLE_PORTE-1                  3398.4 mm3   worst at: doors open 80
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-5              1716.0 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-1              1606.3 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-4              1570.9 mm3   worst at: start: doors folded
+   S3_SUPPORT_RING_MID          x REF_MOUSSE_PORTE-2              1535.1 mm3   worst at: doors open 70
+   REF_CUP_DPS30_MID            x A_TOLE_PORTE-1                  1377.2 mm3   worst at: doors open 70
+   S3_SUPPORT_RING_MID          x A_TOLE_PORTE-1                  1254.0 mm3   worst at: doors open 80
+   S3_SPACER_BOT                x REF_MOUSSE_PORTE-1               844.4 mm3   worst at: start: doors folded
+   S3_TPU_DISC_MID              x REF_MOUSSE_PORTE-2               814.9 mm3   worst at: doors open 70
+   S3_SPACER_BOT                x REF_MOUSSE_PORTE-4               807.2 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-6               791.5 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-3               786.2 mm3   worst at: start: doors folded
+   S3_SPACER_BOT                x A_TOLE_PORTE-1                   763.6 mm3   worst at: start: doors folded
+   S3_SPACER_TOP                x A_TOLE_PORTE-2                   763.6 mm3   worst at: start: doors folded
+   S3_SPACER_TOP                x A_TOLE_PORTE-1                   736.4 mm3   worst at: start: doors folded
+   S3_SPACER_BOT                x A_TOLE_PORTE-2                   736.4 mm3   worst at: start: doors folded
+   REF_ELBOW_PL4_M5_MID         x A_TOLE_PORTE-1                   490.2 mm3   worst at: start: doors folded
+   S3_SPACER_TOP                x REF_MOUSSE_PORTE-6               400.2 mm3   worst at: start: doors folded
+   S3_SPACER_TOP                x REF_MOUSSE_PORTE-3               394.7 mm3   worst at: start: doors folded
+   REF_CUP_DPS30_MID            x REF_MOUSSE_PORTE-2               374.7 mm3   worst at: doors open 60
+   FIX_M3x35_3_MID              x REF_MOUSSE_PORTE-2                57.4 mm3   worst at: doors open 80
+   FIX_M3x35_1_BOT              x REF_MOUSSE_PORTE-4                56.5 mm3   worst at: start: doors folded
+   FIX_M3x35_3_MID              x A_TOLE_PORTE-1                    21.5 mm3   worst at: doors open 80
+   FIX_M3x35_1_MID              x A_TOLE_PORTE-1                    21.5 mm3   worst at: doors open 80
+   FIX_M3x35_1_TOP              x A_TOLE_PORTE-1                    21.2 mm3   worst at: start: doors folded
+   FIX_M3x35_1_BOT              x A_TOLE_PORTE-2                    21.2 mm3   worst at: start: doors folded
+   REF_TUBE_MID_PLATE           x A_TOLE_PORTE-1                    18.0 mm3   worst at: start: doors folded
+   FIX_M3x35_1_TOP              x REF_MOUSSE_PORTE-3                 6.2 mm3   worst at: start: doors folded
+Door D (+x side): folds freely up to 46 deg (fully folded = 90)
+Door G (-x side): folds freely up to 78 deg (fully folded = 90)
+Hull perimeter of module A + B: doors folded 90 = 758; doors at 60 = 782; at 40 = 835 (layout-v1 start A+B: 1114, limit 1200)
+
+====================================================================================================
+T1 with S3  -  B alone (back, module A's lift without door units)  -  30 poses
+----------------------------------------------------------------------------------------------------
+Highest module B point: 343.6 above the table (lift-turn 35 deg)   limit 350
+Highest stone point:    464.6 (lift-turn 45 deg)   held stones may pass 350 in the castle only (Q9)
+Footprint: module B reaches |x| 127.0, y 154.4 (layout-v1 body face y 146)
+Collisions: 0 (+ 6 expected contacts: bolts through the wheels, pinion on the horn)
+
+====================================================================================================
+T1 with S1  -  A+B (front, with module A's doors)  -  61 poses
+----------------------------------------------------------------------------------------------------
+Highest module B point: 343.6 above the table (lift-turn 35 deg)   limit 350
+Highest stone point:    464.6 (lift-turn 45 deg)   held stones may pass 350 in the castle only (Q9)
+Footprint: module B adds at most 26.3 mm to module A's hull perimeter (start: doors folded); B reaches |x| 127.0, y 155.9
+Collisions: 22 (+ 12 expected contacts: bolts through the wheels, pinion on the horn)
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-2              4143.9 mm3   worst at: start: doors folded
+   S1_HOLDER_MID                x REF_MOUSSE_PORTE-2              3340.5 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-5              1716.0 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-1              1606.3 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-4              1570.9 mm3   worst at: start: doors folded
+   S1_HOLDER_MID                x A_TOLE_PORTE-1                  1309.9 mm3   worst at: doors open 80
+   REF_CUP_DPS30_MID            x A_TOLE_PORTE-1                  1168.1 mm3   worst at: doors open 70
+   S1_HOLDER_BOT                x REF_MOUSSE_PORTE-1               823.8 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-6               791.5 mm3   worst at: start: doors folded
+   S1_HOLDER_BOT                x REF_MOUSSE_PORTE-4               787.5 mm3   worst at: start: doors folded
+   T1_TURN_PLATE_MDF6           x REF_MOUSSE_PORTE-3               786.2 mm3   worst at: start: doors folded
+   REF_CUP_DPS30_MID            x REF_MOUSSE_PORTE-2               484.4 mm3   worst at: doors open 60
+   S1_HOLDER_TOP                x REF_MOUSSE_PORTE-6               390.5 mm3   worst at: start: doors folded
+   S1_HOLDER_TOP                x REF_MOUSSE_PORTE-3               385.1 mm3   worst at: start: doors folded
+   REF_ELBOW_PL4_M5_MID         x A_TOLE_PORTE-1                   280.2 mm3   worst at: start: doors folded
+   FIX_M3x16_1_TOP              x A_TOLE_PORTE-1                    68.9 mm3   worst at: start: doors folded
+   FIX_M3x16_1_BOT              x A_TOLE_PORTE-2                    68.9 mm3   worst at: start: doors folded
+   FIX_M3x16_3_MID              x A_TOLE_PORTE-1                    68.9 mm3   worst at: start: doors folded
+   FIX_M3x16_1_MID              x A_TOLE_PORTE-1                    63.3 mm3   worst at: start: doors folded
+   FIX_M3x16_3_MID              x REF_MOUSSE_PORTE-2                58.2 mm3   worst at: start: doors folded
+   FIX_M3x16_1_BOT              x REF_MOUSSE_PORTE-4                58.2 mm3   worst at: start: doors folded
+   FIX_M3x16_1_TOP              x REF_MOUSSE_PORTE-3                 6.8 mm3   worst at: start: doors folded
+Door D (+x side): folds freely up to 52 deg (fully folded = 90)
+Door G (-x side): folds freely up to 82 deg (fully folded = 90)
+Hull perimeter of module A + B: doors folded 90 = 755; doors at 60 = 782; at 40 = 835 (layout-v1 start A+B: 1114, limit 1200)
+
+====================================================================================================
+T1 with S1  -  B alone (back, module A's lift without door units)  -  30 poses
+----------------------------------------------------------------------------------------------------
+Highest module B point: 343.6 above the table (lift-turn 35 deg)   limit 350
+Highest stone point:    464.6 (lift-turn 45 deg)   held stones may pass 350 in the castle only (Q9)
+Footprint: module B reaches |x| 127.0, y 155.9 (layout-v1 body face y 146)
+Collisions: 0 (+ 6 expected contacts: bolts through the wheels, pinion on the horn)
+

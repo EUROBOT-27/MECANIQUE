@@ -6,6 +6,51 @@
 > Seif chooses the front (A+B or B only) and the back (mirror / flip6 / simple). Profile and top-tie heights are
 > ignored for now (they get trimmed). The moving parts over 350 mm get fixed in Seif's module B rework (`../suction-v1/`).
 
+## Update 2026-11-19: module B = T1 (suction-v1), back = T1 alone (results only, nothing decided)
+
+The script now takes **T1** (`../suction-v1/`, D-027) instead of the v7 suction head, a **back = T1 alone** (module A's
+lift without the door units + T1), the **door fold angle at start per side**, a separate **back chamfer**, and the
+deployed check follows **FAQ Q10** (every front pose × every back pose, all at once).
+```
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/layout_fc.py                  # default: front A+B, back t1, T1 S3
+set LAYOUT_HEAD=T1S1 & "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/layout_fc.py
+```
+New options: `LAYOUT_HEAD` = `T1S3` (default) | `T1S1` | `V7` (old v7 head, old reports), `LAYOUT_BACK=t1`,
+`LAYOUT_FOLD_D` / `LAYOUT_FOLD_G` (door angle at start, 90 = fully folded; default = how far the doors fold before
+touching T1, from `../suction-v1/CAD_FC/turn/check_report.txt`), `LAYOUT_CHAMFER_BACK`. Reports `report_AB_t1_T1S3.txt`,
+`report_AB_t1_T1S1.txt`, models `CAD/LAYOUT_AB_t1_T1S3.FCStd`, `CAD/LAYOUT_AB_t1_T1S1.FCStd`.
+
+**Front A+B (doors fold less, only as far as T1 lets them) + back T1 alone, chamfer 30:**
+
+| | T1 S3 | T1 S1 | Limit |
+|---|---|---|---|
+| Doors at start (D / G), stopped by T1 | 46° / 78° | 52° / 82° | |
+| **Start perimeter** [GR F.3] | **1142.2** (+57.8) | **1134.9** (+65.1) | 1200 |
+| Start with a 4° gap before T1 | 1147.5 (+52.5) | 1139.8 (+60.2) | 1200 |
+| Doors fully folded (not possible with T1, reference) | 1122.8 | 1123.2 | |
+| One module working | 1322.4 | 1322.9 | 1400 |
+| **Fully deployed, everything at once** (FAQ Q10) | **1332.7** (+67.3) | **1329.3** (+70.7) | 1400 |
+| Robot + Grail in 500 × 500 | 379 × 347 fits | fits | |
+
+- **Folding less costs only ~19 mm (S3) / ~12 mm (S1)** of start perimeter, not the +35–45 estimated on 2026-11-19.
+  Symmetric folds for comparison (S3): 46/46 → 1157.9, 40/40 → 1172.7, 30/30 → 1200.1 (limit), 0/0 → 1283.3.
+- **Front A+B + back T1 alone passes Q10**: ~67–71 mm left for the Grail lift, launcher and gate tool at their most
+  open, all at the same time.
+- **Back chamfer** (no door units at the back), front 30, S3: back 50 → start 1124.6, back 70 → 1109.7. The fully
+  deployed perimeter barely moves (1332.7 → 1325.8): the front doors set it.
+
+**Problems found:**
+1. **Door sheets + foam reach 360.8 during the lift-turn** (> 350, [GR F.3]): lift-turn 30° 353.9, 45° 360.8, 60° 352.1.
+   The doors ride the lift (peak ~70 at 45°), so T1 does not fix the old "366 at lift 75". Fix to study: cut the
+   door sheet + foam top ≥ 11 mm lower (~14 with margin; sheet top 292 → ~278 at lift 0, DXF only, printed module A
+   unchanged); check the top stone is still gripped.
+2. **T1 sticks out 14.4 mm past the body face** (cups), front and back; the stack face is at module y 151.4 (S3) /
+   149.9 (S1) = 11.4 / 9.9 mm further out than the v7 head (y 140). Reason: `suction-v1/fc/params.py`
+   `STACK_FACE_Y` was 146, but the body face is module y 140 (robot Y 146 = module y 140 + 6). Fixed to 140
+   (report text only, no geometry). This is most of the start rise 1114 → 1142.
+3. Carried stack centre 93 mm past the front caster line (S3; was ~81 with v7): tipping margin to check.
+4. Still open: drive motors overlap the socle by 4 mm (447 mm³ each side), front and back.
+
 Front = clapets v7 module, either **A+B** (lift + doors + suction head) or **B only** (lift + suction head, door units
 removed). Back = **mirror** of the front, Ayoub's **flip-6cups**, or a **simple pick** (no turning). Right = **Grail
 pickup**. Left = **cannonball launcher**. Drive = 2 × JSUMO JS7444 (Ø74) + Pololu 37D (D-004), axle through the robot

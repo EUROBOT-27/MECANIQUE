@@ -5,6 +5,15 @@ Tasks for Maatoug go in `todo/maatoug.md` under `From Seif`.
 Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 
 ## Now (current focus)
+- [ ] **Door sheet + foam too high in the lift-turn (360.8 > 350):** cut the top ≥ 11 mm (~14) off the door sheet DXF, check the top stone is still gripped (`mechanical/layout-v1/README.md`, update 2026-11-19) — Seif
+- [ ] **Choose + log front / back** with the layout results: front A+B with doors folding only to 46°/78° (S3) or 52°/82° (S1), back T1 alone; start 1142 / 1135, deployed 1333 / 1329 (not logged yet, Seif 2026-11-19) — Seif
+- [ ] Check tipping margin (stack centre 93 mm past the front casters) and the 4 mm drive motor / socle overlap — Seif
+- [ ] **T1 final review before printing** + caliper checks (DP-S30 cup, PL4-M5 elbow, 6002, Ø15 tube, servo horn); print an ABS test ring for the Ø32.1 bearing seat — Seif
+- [ ] Get the T1 bought parts: 2 × 6002-2RS, Ø15 × 1 tube 54 mm (copper plumbing pipe), Ø4 PU tube — Seif
+- [ ] Print T1, bench-test S1 vs S3 on stones (grip, sag when the stack is sideways, servo torque) — Seif
+- [ ] Place the pumps + valves in the robot body (layout-v1) and the tube loop from module B (lift 75 mm) — Seif
+- [ ] Add the official reference of the FAQ Q9 answer to `project/rules-digest.md`; add a new question: may a robot drag a quarry stack? — Seif
+- [ ] Delete the local git branch `backup-before-squash-2026-11-19` once the push is confirmed — Seif
 - [ ] **Fix the rest of the strategy** (gripper layout, launcher yes/no after PAMI test, PAMI count) → `project/decisions.md` — Seif — due 2026-11-08
 - [ ] Choose the PAMI size with Hamza Sammoud: 4 × 140 × 160 mm or 6 × 90 × 185 mm (see `simas/CLAUDE.md`) — Seif, Hamza Sammoud
 - [ ] Roof layout: first version in `mechanical/layout-v1/` (strip between the lifts, L4 Grail right end); refine — Seif
@@ -13,7 +22,6 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Get JSUMO wheels — Seif
 - [ ] Go through `mechanical/design-principles.md`: keep or drop the ◻ items — Seif
 - [ ] Add the name of the French club behind GROSBOT 2023 to `resources/_notes/grosbot-2023.md` — Seif
-- [ ] **suction-v1 concept** (`mechanical/suction-v1/`): decide valves vs pump-off, pumps on head vs fixed — Seif
 - [ ] Review Ayoub's `flip-6cups` and `base_330` (base perimeter 1220 > 1200) — Seif
 - [ ] Confirm D-008 location: the vision station = remote computing device platform (not a fixed beacon) — Seif
 
@@ -28,7 +36,6 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
   4. Optional: FEM check of the new door unit (gear force ~90 N + door squeeze)
 - [ ] Decide: "PLA for tests / prototype, ABS (or PETG) for robot parts" → log it as a decision or not — Seif
 - [ ] Add the GrabCAD link of the Two Trees Bluer V2 model to `mechanical/resources/two-trees-bluer-v2-parts/SOURCE.md` — Seif
-- [ ] Module B rework: with the module on the floor, door sheets/foam reach 366 at lift 75 and the cups sit 26 mm above the stone centres (head must come down 26 mm); profiles / top tie get trimmed — Seif
 - [ ] Sprung drive wheels (4 corner casters make 6 contact points) — Seif
 - [ ] Check the clapets folder move after the pull: `layout_fc.py` still reads `mechanical/clapets-v7/` — Seif
 - [ ] Fix the DXF export in `clapets-v7/fc/v7_fc.py` (lay the largest face flat before export; match Seif's orientation of `A_TOLE_PORTE.dxf`), with the assembly quality-of-life changes — Seif
@@ -71,6 +78,10 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Layout v1 run with T1: doors fold less costs only ~19 / ~12 mm, passes Q10 (1333 / 1329); layout_fc.py takes T1 + back t1 — 2026-11-19
+- [x] Module B v1 = T1 turning plate designed (`mechanical/suction-v1/`, D-027, D-028): pumps + valves in the robot, tubes through a hollow shaft, cups at the stone centres for layout-v1 (replaces the "cups 26 mm too high" rework), print files in STEP/STL/DXF, full-cycle check — 2026-11-19
+- [x] suction-v1: valves vs pump-off / pumps placement decided: one pump + one valve per cup, both in the robot (D-028) — 2026-11-19
+- [x] Clapets v7 README: fixes to make if module A is ever reprinted; design-principles: assembly lessons — 2026-11-18
 - [x] Foam balls (45 mm) ordered — 2026-11-18
 - [x] Clapets v7 module A printed (ABS) and assembled — 2026-11-18
 - [x] Door sheet DXF `clapets-v7/CAD_FC/DXF/A_TOLE_PORTE.dxf` replaced by Seif's SolidWorks export (the generated one was exported edge-on) — 2026-11-18
