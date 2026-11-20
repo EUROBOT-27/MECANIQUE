@@ -825,7 +825,9 @@ def main():
                                                     info["ecc_ymin"] - info["bracket_y"][1],
                                                     ", ".join("(x %.0f, z %.0f)" % t_ for t_ in info["tab_screws"]),
                                                     len(lift["MOTOR_BRACKET"].Solids), C.mass_of(lift["MOTOR_BRACKET"]) * 1000),
-        "  FLIPPER_RACK_%.0f: Seif's rack cut to %.0f (rack frame, as printed before)" % (G.PROF_Z1 - G.PROF_Z0, G.PROF_Z1 - G.PROF_Z0),
+        "  FLIPPER_RACK_%.0f: Seif's rack cut to %.0f (z %.0f..%.0f, the pinion's travel + 12 each end; rack frame, as printed "
+        "before); 2020 profile cut to %.0f (z %.0f..%.0f)" % (G.RACK_Z[1] - G.RACK_Z[0], G.RACK_Z[1] - G.RACK_Z[0], G.RACK_Z[0],
+                                                          G.RACK_Z[1], G.PROF_Z1 - G.PROF_Z0, G.PROF_Z0, G.PROF_Z1),
         "  servo body y %.1f..%.1f; SERVO_MOUNT y %.1f..%.1f" % (C.bb(lift["SERVO_MG996R"]).YMin,
                                                                                C.bb(lift["SERVO_MG996R"]).YMax,
                                                                                C.bb(lift["SERVO_MOUNT"]).YMin, C.bb(lift["SERVO_MOUNT"]).YMax),

@@ -93,6 +93,13 @@ the servo mount's base for the servo + magnet cables.
 **Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
 electronics (Seif's idea, `../concepts/electronics-column.md`).
 
+**Grail deck at 320 (Seif, 2026-11-20):** the Grail lands on a **landing deck at z 320** (L4 needs > 300); the rest of
+the robot's top can be at 350 (different top heights). Earlier numbers here used 306 (layout-v1's roof strip, carried over
+without asking). The Flipper's highest point is ~ deck + 24 (the arm swings above the place height), so the deck can't
+go above ~324. With 320 and LZ 80: travel 80 + 12 = **92** (pivot 160 → 246 flip → 240 place → 234 stowed), **2020 profile
+163** (z 88–251), **rack 110** (z 119–229, `print/FLIPPER_RACK_110`), top cross-member z 231–251 (43 mm under the arm),
+**highest point 344** (limit 350), roof slot x 108–169, y ±20. Env `GRAIL_ROOF` changes the deck height.
+
 **Fixes after Seif's review (2026-11-20):**
 - **The arm's cup hit the column at the place / stowed pose.** The Grail's roof spot is right above the column, and the
   magnet + cup hang 26 mm under the roof top (z 280 at the place, 274 after the 6 mm release); the column top was 280.

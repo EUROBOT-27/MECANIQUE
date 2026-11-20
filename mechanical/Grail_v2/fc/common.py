@@ -36,7 +36,11 @@ else:
     BODY_Y = 146.0      # body y +-
     WHEEL = dict(x0=106.0, x1=150.0, r=37.0, z=37.0)    # right drive wheel envelope (axis along x)
     PLATE_TOP = 26.0
-ROOF_BOT, ROOF_TOP = 300.0, 306.0
+# Grail landing deck (L4: the Grail's lowest point > 300 [G E.2]). On base_330_js: 320 (Seif 2026-11-20), the rest of
+# the robot's top can be at 350. The Flipper's highest point is ~ deck + 24 (its arm swings above the place height), so
+# the deck can't go above ~324. env GRAIL_ROOF overrides.
+ROOF_TOP = float(os.environ.get("GRAIL_ROOF", "320" if BASE == "b330" else "306"))
+ROOF_BOT = ROOF_TOP - 6.0
 ROOF_Y = 38.0           # roof strip y +- (between the front and back modules' lifts)
 BAY = dict(x0=66.0, x1=150.0, y=40.0, z0=78.0, z1=300.0)   # right side bay reserved for the Grail (layout-v1)
 H_MAX = 350.0           # [GR F.3]
