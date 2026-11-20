@@ -44,13 +44,16 @@ class G:
     # ---- carriage: plate centre height at the pick; pivot H_P above it
     H_P = None                                # computed: Z_PICK - ZC_PICK
     ZC_PICK = 116.0                           # lowest plate centre (bottom wheel stays on the profile)
-    # ---- rack: V back seated RACK_SEAT deep in the back-face groove, teeth towards -x
-    RACK_SEAT = 2.62
+    # ---- rack: only its V nose enters the back-face slot, teeth towards -x. Real profile slot (measured, section at
+    # mid-length): 8.9 wide at the face, 45 deg down to a 6.4 lip at 1.4 deep, cavity behind. Rack V back: 5.7 (nose)
+    # -> 10.59 over 2.62 (~43 deg). The flanks meet with the nose 1.7 mm below the face (Seif: "not really inside").
+    RACK_SEAT = 1.7
     # ---- motor (standard NEMA17 40 mm for now) + pinion
     MOTOR_FACE_GAP = 1.0                      # motor face this far past the eccentric wheel (in -y)
     PIN_DZ = 10.0                             # pinion centre above the plate centre
     PIN_BOSS_GAP = 0.5                        # flipper_pinion_fc: hub face 0.5 from the motor face
     PIN_GEAR_OFF = 0.5 + 27.5 + 5.0           # gear centre from the motor face (flipper_pinion_fc: BOSS_GAP + HUB_L + FACE_W/2)
+    BASE_T = 8.0                              # SERVO_MOUNT base on the X plate's front face
 
 
 # printer frame of the X axis (from the STLs / STEPs): profile centre line y 246.9, z 235.5; plate centre x 120.6
@@ -157,10 +160,37 @@ def build(doc, groups):
     mb = mb.cut(C.box(wb.XMin - 1, wb.XMax + 1, face_y - 1, face_y + 5, wb.ZMin - 1, wb.ZMax + 1))
     mb = mb.cut(C.box(G.XC - 10.5, G.XC + 10.5, face_y - 1, face_y + 5, G.PROF_Z0 - 500, G.PROF_Z1 + 500))   # profile
     lift["MOTOR_BRACKET"] = mb.removeSplitter()
-    # ---------------- flip head (arm + servo + cheek), servo bracket to the X plate's front face
-    arm, head = C.flip_head(G.PX, G.Z_PICK, plate_bb.XMax)
+    # ---------------- flip head (arm + servo + cheek) + its base on the X plate's front face = one printed SERVO_MOUNT
+    arm, head, hinfo = C.flip_head(G.PX, G.Z_PICK)
+    xf = plate_bb.XMax                                     # X plate front face
+    xb1 = xf + G.BASE_T
+    # X plate holes (printer frame, sliced) -> robot: y = printer z - P_Z + YC, z = printer x - P_XC + zc
+    m5 = [(G.YC + 255.68 - P_Z, zc + px_ - P_XC) for px_ in (95.62, 145.62)]       # upper wheel screws -> M5x35
+    m3 = [(G.YC + 255.18 - P_Z, zc + px_ - P_XC) for px_ in (110.62, 130.62)]      # tapped M3 (Ø2.5) in the plate
+    ecc = (G.YC + 214.63 - P_Z, zc + 120.62 - P_XC)                                # eccentric wheel's nyloc
+    sp_y0, sp_y1 = hinfo["plate_y"]
+    sp_x0 = hinfo["plate_x"][0]
+    base = C.box(xf, xb1, min(sp_y0, G.YC - 34.0), G.YC + 30.0, zc - 33.0, zc + 33.0)
+    web = C.box(xb1 - 1, sp_x0 + 1, sp_y0, sp_y1, max(zc - 33.0, hinfo["plate_z"][0]), min(zc + 33.0, hinfo["plate_z"][1]))
+    base = base.fuse(web)
+    for (y, z) in m5:
+        base = base.cut(C.cyl(2.75, 40, (xf - 1, y, z), (1, 0, 0)))
+    for (y, z) in m3:
+        base = base.cut(C.cyl(1.7, 40, (xf - 1, y, z), (1, 0, 0))).cut(C.cyl(3.25, 4, (xb1 - 3.5, y, z), (1, 0, 0)))
+    base = base.cut(C.cyl(5.5, 6.5, (xf - 0.1, ecc[0], ecc[1]), (1, 0, 0)))
+    head["SERVO_MOUNT"] = head["SERVO_MOUNT"].fuse(base).removeSplitter()
+    # the 2 upper wheel nylocs move onto the base's front (screws M5x25 -> M5x35)
+    nuts = sorted(lift["M5_NYLOC"].Solids, key=lambda s: s.BoundBox.Center.y)
+    moved_nuts = []
+    for k, n_ in enumerate(nuts):
+        n2 = n_.copy()
+        if k > 0:
+            n2.translate(Vector(G.BASE_T, 0, 0))
+        moved_nuts.append(n2)
+    lift["M5_NYLOC"] = Part.makeCompound(moved_nuts)
     lift.update(head)
     arm_all.update(arm)
+    hinfo.update(base_x=(xf, xb1), m5=m5, m3=m3, ecc=ecc)
     for n, s in arm_all.items():
         C.add(doc, n, s, "ARM_pick_pose", groups)
     for n, s in lift.items():
@@ -171,7 +201,7 @@ def build(doc, groups):
     C.add(doc, "GRAIL", g, "GRAIL_pick", groups)
     C.add(doc, "GRAIL_PLATE", plate, "GRAIL_pick", groups)
     info = dict(plate_bb=plate_bb, wheel_bb=wheel_bb, ecc_ymin=ecc_wheel_ymin, pitch_x=pitch_x, pin=(pin_x, gear_y, pin_z),
-                face_y=face_y, motor_bb=C.bb(motor), pin_bb=C.bb(pin), wheels=wheels)
+                face_y=face_y, motor_bb=C.bb(motor), pin_bb=C.bb(pin), wheels=wheels, head=hinfo)
     return arm_all, lift, fixed, (g, plate), info
 
 
@@ -205,7 +235,7 @@ def main():
     fin = steps[-2]["gpl"]
     for n, s in arm.items():
         C.add(doc, "PLACE_" + n, C.moved(s, fin), "GHOST_place", groups)
-    for n in ("X_PLATE", "SERVO_MG996R", "SERVO_BRACKET", "CHEEK_625", "NEMA17", "PINION_v2", "MOTOR_BRACKET"):
+    for n in ("X_PLATE", "SERVO_MG996R", "SERVO_MOUNT", "NEMA17", "PINION_v2", "MOTOR_BRACKET"):
         C.add(doc, "PLACE_" + n, C.moved(lift[n], steps[-2]["pls"]["lift"]), "GHOST_place", groups)
     C.add(doc, "PLACE_GRAIL", C.moved(gr[0].fuse(gr[1]), fin), "GHOST_place", groups)
 
@@ -230,7 +260,7 @@ def main():
     checks = [(n, C.bb(s)) for n, s in fixed.items()]
     for s_, tag in ((steps[0], "pick"), (steps[4], "top")):
         for n, (s, g) in parts.items():
-            if g == "lift" or n in ("SERVO_HORN", "SHAFT_5", "ARM_HUB"):
+            if g == "lift" or n in ("SERVO_HORN", "SHAFT_5"):
                 checks.append(("%s @%s" % (n, tag), C.bb(C.moved(s, s_["pls"][g]))))
     for n, b in checks:
         out = []
@@ -262,11 +292,11 @@ def main():
     rb = C.bb(fixed["RACK_m1_printed"])
     plate_top_place = pb.ZMax + (G.Z_PLACE - G.Z_PICK)
     arm_lower_at = lambda x: G.Z_PLACE + (G.PX - x) / (G.PX - C.X_PLACE) * (C.ROOF_TOP - G.Z_PLACE) - 7.0
-    arm_mass = sum(C.mass_of(arm[n]) for n in ("ARM", "ARM_HUB", "MAG_CUP"))
+    arm_mass = C.mass_of(arm["ARM_PRINTED"])
     m_moving = C.G_MASS + C.MAG_MASS + arm_mass + 0.055 + 0.28 + 0.039 + 0.03 + 0.06    # + servo, NEMA, plate, wheels, brackets
     f_lift = m_moving * 9.81
     t_pin = f_lift * 0.010
-    arm_c = C.com(arm["ARM"].fuse(arm["MAG_CUP"]))
+    arm_c = C.com(arm["ARM_PRINTED"])
     mag_c = C.com(arm["MAGNET_D30"])
     g_c = Vector(C.X_PICK, 0, C.G_H / 2)
     tmax, tang = 0.0, 0
@@ -279,8 +309,24 @@ def main():
     grail_r = math.hypot(C.X_PICK - C.G_W / 2 - G.PX, C.G_H - G.Z_PICK)
     sb = C.bb(lift["SERVO_MG996R"])
     servo_r = max(math.hypot(x - G.PX, z - G.Z_PICK) for x in (sb.XMin, sb.XMax) for z in (sb.ZMin, sb.ZMax))
-    cb = C.bb(lift["CHEEK_625"])
-    cheek_r = max(math.hypot(x - G.PX, z - G.Z_PICK) for x in (cb.XMin, cb.XMax) for z in (cb.ZMin, cb.ZMax))
+    # body parts in the Grail's plane (|y| < G_W/2) vs the zone the Grail sweeps: radius >= grail_r inside the angular
+    # sector it travels through (pick corners' angles .. +180)
+    gpts = [Vector(x, 0, z) for x in (C.X_PICK - C.G_W / 2, C.X_PICK + C.G_W / 2) for z in (0.0, C.G_H)]
+    angs = [math.degrees(math.atan2(p_.z - G.Z_PICK, p_.x - G.PX)) for p_ in gpts]
+    a0, a1 = min(angs), max(angs) + 180.0
+    hits = []
+    for n_ in ("SERVO_MOUNT", "SERVO_MG996R", "BEARING_625", "X_PLATE"):
+        pts = lift[n_].tessellate(0.5)[0]
+        for p_ in pts:
+            if abs(p_.y) < C.G_W / 2 + 2:
+                rr = math.hypot(p_.x - G.PX, p_.z - G.Z_PICK)
+                aa = math.degrees(math.atan2(p_.z - G.Z_PICK, p_.x - G.PX))
+                if aa < a0 - 1:
+                    aa += 360
+                if rr >= grail_r - 2 and a0 - 2 <= aa <= a1 + 2:
+                    hits.append((n_, rr, aa))
+    cheek_r = max(math.hypot(x - G.PX, z - G.Z_PICK) for x in (C.bb(lift["BEARING_625"]).XMin, C.bb(lift["BEARING_625"]).XMax)
+                  for z in (C.bb(lift["BEARING_625"]).ZMin, C.bb(lift["BEARING_625"]).ZMax))
     mbb = info["motor_bb"]
 
     r = ["FLIPPER (rack lift, real Two Trees X carriage + NEMA17 + printed rack) - fc/flipper_fc.py",
@@ -296,9 +342,9 @@ def main():
          "(travel uses %.1f..%.1f: %s)"
          % (wheel_lo, wheel_hi, G.PROF_Z0 - wheel_lo, G.PROF_Z1 - wheel_hi, G.ZC_PICK, zc_top,
             "OK" if G.ZC_PICK >= G.PROF_Z0 - wheel_lo - 0.1 and zc_top <= G.PROF_Z1 - wheel_hi + 0.1 else "WHEEL OFF THE PROFILE"),
-         "  rack: pitch line x %.2f (tips %.2f past the back face), z %.1f..%.1f; pinion centre x %.2f, z %.1f (pick) .. %.1f "
-         "(flip), on the rack: %s"
-         % (info["pitch_x"], 2.38, rb.ZMin, rb.ZMax, pin_x, pin_z, pin_z + top,
+         "  rack: nose %.1f in the back-face slot; pitch line x %.2f (tips %.2f past the back face), z %.1f..%.1f; "
+         "pinion centre x %.2f, z %.1f (pick) .. %.1f (flip), on the rack: %s"
+         % (G.RACK_SEAT, info["pitch_x"], 5.0 - G.RACK_SEAT, rb.ZMin, rb.ZMax, pin_x, pin_z, pin_z + top,
             "OK" if rb.ZMin + 11 <= pin_z - G.REL and pin_z + top <= rb.ZMax - 11 else "OFF THE RACK"),
          "  motor face y %.1f (eccentric wheel edge %.1f); gear centre y %.1f vs rack centre %.1f; motor body x %.1f..%.1f "
          "y %.1f..%.1f z %.1f..%.1f (pick)"
@@ -314,8 +360,9 @@ def main():
           % (plate_top_place, pb.XMin, pb.XMax, arm_lower_at(pb.XMax), arm_lower_at(pb.XMin)),
           "  profile top %.0f vs the arm's lower edge above the profile (x %.0f..%.0f): %.1f..%.1f"
           % (G.PROF_Z1, G.XC - 10, G.XC + 10, arm_lower_at(G.XC + 10), arm_lower_at(G.XC - 10)),
-          "  Grail nearest point to the axis %.1f; servo reaches %.1f, 625 cheek %.1f (both must stay below)"
-          % (grail_r, servo_r, cheek_r),
+          "  Grail nearest point to the axis %.1f, sweeping %.0f..%.0f deg; servo reaches %.1f, 625 %.1f; body points inside "
+          "the Grail's swept zone: %s" % (grail_r, a0, a1, servo_r, cheek_r,
+                                          ", ".join(sorted(set(h[0] for h in hits))) if hits else "none"),
           "  flip torque max %.1f kg.cm at %d deg (MG996R ~9.4: %.1fx)" % (tmax, tang, 9.4 / tmax if tmax else 0),
           "",
           "LAYOUT ENVELOPE (bounding boxes vs layout-v1: Grail bay x %.0f..%.0f, y %.0f..%.0f, z %.0f..%.0f; right wheel; drive motor)"
@@ -325,9 +372,32 @@ def main():
           "PARTS (📦 library · 🇹🇳 local · ✈️ import)",
           "  Two Trees X carriage: plate + 3 V-wheels + 3 M5x25 + nyloc + spacers + eccentric 📦 · 2020 profile cut to %.0f 📦 · "
           "NEMA17 📦 (40 mm; shorter later) · rack m1 printed (Seif's, fits) cut to %.0f · pinion v2 printed (M3 insert K5) · "
-          "MG996R + horn 📦 · 625 + Ø5 shaft 📦/🇹🇳 · electromagnet Ø30 🇹🇳"
+          "MG996R + round horn 📦 · 625 + Ø5 pin 📦/🇹🇳 · electromagnet Ø30 🇹🇳 · upper wheel screws M5x25 -> M5x35 🇹🇳 · "
+          "2 x M3x16 + 2 x M3 self-tap + 4 x M2x6 + M4 nut"
           % (G.PROF_Z1 - G.PROF_Z0, rb.ZLength),
           "  printed ABS: motor bracket, servo bracket + 625 cheek, arm + magnet cup (~%.0f g), pinion" % (arm_mass * 1000)]
+    # print files of the printed parts (robot frame at the pick pose; print orientation in the assembly sheet)
+    os.makedirs(PRINT, exist_ok=True)
+    import MeshPart
+    for n, s_ in (("FLIPPER_ARM", arm["ARM_PRINTED"]), ("FLIPPER_SERVO_MOUNT", lift["SERVO_MOUNT"])):
+        s_.exportStep(os.path.join(PRINT, n + ".step"))
+        MeshPart.meshFromShape(Shape=s_, LinearDeflection=0.05, AngularDeflection=0.2).write(os.path.join(PRINT, n + ".stl"))
+    hi = info["head"]
+    r[r.index("PARTS (📦 library · 🇹🇳 local · ✈️ import)"):r.index("PARTS (📦 library · 🇹🇳 local · ✈️ import)")] = [
+        "PRINTED PARTS (print/)",
+        "  FLIPPER_ARM: hub Ø24 x 10 (round horn on its -y face, 4 x M2 x 6 into the horn holes at r 7.2; Ø5 x %.0f pin pressed "
+        "8 deep from +y), bar 14 x 10, cup Ø%.1f seat %.0f deep (magnet face 4 proud), M4 stud hole + nut seat; %.1f solid(s), "
+        "%.0f g ABS (60 %%)" % (C.bb(arm["SHAFT_5"]).YLength, C.MAG_SEAT, C.MAG_L - 4, len(arm["ARM_PRINTED"].Solids), arm_mass * 1000),
+        "  FLIPPER_SERVO_MOUNT: base %.0f thick on the X plate front (x %.1f..%.1f): 2 x M5x35 through the upper wheel screw "
+        "holes (y %.1f, z %s), 2 x M3 into the plate's tapped holes (y %.1f, z %s), recess for the eccentric nyloc; servo "
+        "plate y %.1f..%.1f under the ears (ear plane y %.1f..%.1f), 2 x M3 self-tap; 625 cheek; %d solid(s), %.0f g ABS (60 %%)"
+        % (G.BASE_T, hi["base_x"][0], hi["base_x"][1], hi["m5"][0][0], ", ".join("%.1f" % z for _, z in hi["m5"]),
+           hi["m3"][0][0], ", ".join("%.1f" % z for _, z in hi["m3"]), hi["plate_y"][0], hi["plate_y"][1], hi["ear_y"][0],
+           hi["ear_y"][1], len(lift["SERVO_MOUNT"].Solids), C.mass_of(lift["SERVO_MOUNT"]) * 1000),
+        "  servo body y %.1f..%.1f (bay from y %.0f); SERVO_MOUNT y %.1f..%.1f" % (C.bb(lift["SERVO_MG996R"]).YMin,
+                                                                               C.bb(lift["SERVO_MG996R"]).YMax, BAY["y0"],
+                                                                               C.bb(lift["SERVO_MOUNT"]).YMin, C.bb(lift["SERVO_MOUNT"]).YMax),
+        ""]
     C.save(doc, "FLIPPER", r)
 
 

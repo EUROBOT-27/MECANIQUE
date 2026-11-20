@@ -65,7 +65,7 @@ def build(doc, groups):
     arm["ARM"] = C.bar((G.PX, zp), (C.X_PICK, ztip + G.TIP_H / 2), G.ARM_T, -G.ARM_Y / 2, G.ARM_Y / 2)
     arm["ARM_HUB"] = C.cyl(12, G.ARM_Y, (G.PX, -G.ARM_Y / 2, zp), (0, 1, 0))
     arm["SHAFT_5"] = C.cyl(G.SHAFT_R, G.Y_625[1] - G.HORN_FACE_Y, (G.PX, G.HORN_FACE_Y, zp), (0, 1, 0))
-    sv, hn = C.servo_mg996r(G.PX, zp, G.HORN_FACE_Y, body="-z")
+    sv, hn, _ = C.servo_mg996r(G.PX, zp, G.HORN_FACE_Y, body="-z")
     arm["SERVO_HORN"] = hn
     # ---------------- carriage (pick pose: bottom at zp - H_P)
     zc0 = zp - G.H_P

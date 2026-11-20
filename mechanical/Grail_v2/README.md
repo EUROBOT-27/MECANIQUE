@@ -55,6 +55,16 @@ Report `CAD_FC/FLIPPER_report.txt`:
 - **the rack can be back-driven:** at 100 s or e-stop the carriage drops (fine at the end, the Grail is released;
   mid-carry the Grail falls)
 
+### Printed parts so far (`print/`, robot frame at the pick pose)
+| Part | What | Fixing |
+|---|---|---|
+| `FLIPPER_ARM` (12 g) | hub Ø24 × 10 + bar 14 × 10 + magnet cup (seat Ø30.3, 18 deep, magnet face 4 mm proud), one solid | round horn on the hub's −y face (4 × M2 × 6 in the horn holes at r 7.2); Ø5 × 16 steel pin pressed 8 deep from +y into the 625; magnet M4 stud + nut |
+| `FLIPPER_SERVO_MOUNT` (30 g) | base 8 thick on the X plate's front + servo plate under the ears (body cut-out) + 625 cheek joined under the pivot, one solid | **2 × M5×35** replacing the upper wheel screws (nylocs move to the base's front), **2 × M3** into the plate's 2 tapped holes (Ø2.5, 20 apart), recess for the eccentric's nyloc; servo: 2 × M3 self-tap through the ears |
+| `FLIPPER_PINION` | below | M3 insert K5 + set screw on the shaft flat |
+
+Checks (report): no body part enters the zone the Grail sweeps (radius ≥ 58.5 from the axis, −87…143°); the servo body
+stays in the bay (y −50.4).
+
 ### Pinion v2 (`fc/flipper_pinion_fc.py` → `print/FLIPPER_PINION.step/.stl`)
 Redo of Baha's `parts/el_pignon.STEP`. Baha's: m1 20T, teeth 5 wide at the end of a Ø10.5 × 29 hub, Ø5.1 bore, radial
 hole for an **M3 insert K 5.0** (Ø4.5 hole + Ø5.2 cone = D-025 read backwards), 2 solids. The new one:
@@ -126,10 +136,11 @@ Run (from this folder):
 Never edit the `.FCStd` by hand: change the generator and re-run it. Colours are only set when run from the FreeCAD GUI.
 
 ## To printing (Flipper)
-1. **Printed parts drawn for real:** motor bracket (around the profile, notch for the eccentric wheel, bolted to the
-   X plate), servo bracket + 625 cheek as one part (bolted to the X plate's front), arm + magnet cup, rack cut to
-   197 mm. Fasteners from `../parts-library.md`, inserts per D-025, ABS fits from the clapets v7 coupons.
-2. X plate holes: find the real hole positions (B-spline faces: slice the plate) or drill new ones.
+1. **Printed parts drawn for real:** ~~arm + magnet cup~~, ~~servo mount + 625 cheek~~ (done 2026-11-20); **motor
+   bracket** (around the profile, notch for the eccentric wheel, bolted to the X plate's back tabs), rack cut to 197 mm.
+   Fasteners from `../parts-library.md`, inserts per D-025, ABS fits from the clapets v7 coupons.
+2. ~~X plate holes~~ (sliced: Ø7.5 eccentric, 2 × Ø5.4 upper wheels, 2 × Ø2.5 tapped M3 20 apart; the back tabs have
+   no holes: drill for the motor bracket).
 3. Roof slot (x ~90–151, y ±20) and how the Grail sits on both sides of it; check against layout-v1's roof.
 4. Bottom endstop / homing; magnet cable loop around the flip axis; sprung magnet mount (CDC D4).
 5. Back-drive of the rack (carriage drops when the NEMA is off): accept, or a brake / self-locking choice.

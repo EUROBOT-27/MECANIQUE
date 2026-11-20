@@ -78,38 +78,94 @@ def magnet_down(xc, z_face):
     return m.fuse(cyl(2.0, 8, (xc, 0, z_face + MAG_L), (0, 0, 1)))
 
 
-def flip_head(px, pz, x_attach, y_back_extra=0.0, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0)):
-    """Flip head at the pick pose, pivot (px, pz), arm in the plane y ~ 0 (arm_y wide).
-    ARM (rotates): magnet in a cup (seat MAG_SEAT, face flush) on the Grail's top, arm bar to the hub, Ø5 shaft through
-    the hub into a 625 in a +y cheek, MG996R round horn on the -y side.
-    BODY (rides the lift): MG996R lying (shaft +y, body DOWN), bracket plate behind it back to x_attach (the carriage
-    face), +y cheek with the 625 joined UNDER the pivot (a zone the arm and the Grail never reach).
-    Returns (arm parts, body parts)."""
+def servo_mg996r(axis_x, axis_z, horn_face_y, body="-x"):
+    """MG996R lying, shaft along +y, round horn ON THE SPLINE, horn's outer face at horn_face_y.
+    body = '-x' (inward) or '-z' (down). Model frame (mg996R_v2.step): shaft along +z, spline top z 15.5, gearbox top
+    z 10.6, ear flange z 0..2.9 (ears 54 long, holes +-24.75 from the body centre x -10, 10 apart), body bottom z -28.3.
+    The round horn file is centred on z 0: it is raised HORN_DZ so it sits on the spline above the gearbox."""
+    sv = GC.read_step(os.path.join(SERVO_DIR, "mg996R_v2.step"))
+    hn = GC.read_step(os.path.join(SERVO_DIR, "mg996_arm_round.step")).copy()
+    hn.translate(Vector(0, 0, HORN_DZ))
+    rows = ((1, 0, 0), (0, 0, 1), (0, -1, 0)) if body == "-x" else ((0, 1, 0), (0, 0, 1), (1, 0, 0))
+    s = GC.place_shape(sv, rows, (axis_x, 0, axis_z))
+    h = GC.place_shape(hn, rows, (axis_x, 0, axis_z))
+    dy = horn_face_y - (3.3 + HORN_DZ)            # horn top (model z 3.3 + HORN_DZ) -> horn_face_y
+    s.translate(Vector(0, dy, 0))
+    h.translate(Vector(0, dy, 0))
+    return s, h, dy
+
+
+HORN_DZ = 13.8              # round horn: bottom at model z 10.8 (just above the gearbox top 10.6), top 17.1
+SERVO_EAR = dict(z0=0.0, z1=2.9, holes_x=(-34.75, 14.75), holes_y=(-5.0, 5.0), body_x=(-30.3, 10.3), body_y=10.25)
+
+
+def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plate_t=5.0):
+    """Flip head at the pick pose, pivot (px, pz), arm in the plane y ~ 0. Printed parts drawn for real.
+    ARM group (rotates):
+      ARM_PRINTED  one printed part: hub Ø24 x arm_y (round horn screwed on its -y face, 4 x M2 into the horn holes at
+                   r 7.2; Ø5 shaft pressed in a blind hole from +y), bar 14 thick, cup (seat MAG_SEAT, magnet face 4 mm
+                   proud, M4 hole for the stud + nut)
+      SHAFT_5      Ø5 steel pin, hub -> 625 · SERVO_HORN (real) · MAGNET_D30
+    BODY group (rides the lift):
+      SERVO_MG996R (real, body DOWN, shaft +y) · BEARING_625
+      SERVO_MOUNT  printed: plate under the servo ears (body cut-out, 2 ear screws M3) + 625 cheek (+y) + the bar that
+                   joins them UNDER the pivot (the arm and the Grail never reach there). The caller fuses its own base
+                   to it (x < the servo plate's XMin).
+    Returns (arm parts, body parts, info)."""
     arm, body = {}, {}
     zf = G_H
-    arm["MAGNET_D30"] = magnet_down(X_PICK, zf)
-    cup_h = MAG_L - 4.0
-    cup = cyl(MAG_SEAT / 2 + 3, cup_h + 4, (X_PICK, 0, zf + 4), (0, 0, 1)).cut(
-        cyl(MAG_SEAT / 2, cup_h, (X_PICK, 0, zf + 3.9), (0, 0, 1))).cut(cyl(2.2, 10, (X_PICK, 0, zf + cup_h), (0, 0, 1)))
-    arm["MAG_CUP"] = cup
-    ztop = zf + 4 + cup_h + 4
-    arm["ARM"] = bar((px, pz), (X_PICK, ztop - 4), 14.0, -arm_y / 2, arm_y / 2)
-    arm["ARM_HUB"] = cyl(12, arm_y, (px, -arm_y / 2, pz), (0, 1, 0))
-    arm["SHAFT_5"] = cyl(2.5, y625[1] - horn_face_y, (px, horn_face_y, pz), (0, 1, 0))
-    sv, hn = servo_mg996r(px, pz, horn_face_y, body="-z")
+    # ---- servo (body down)
+    sv, hn, dy = servo_mg996r(px, pz, horn_face_y, body="-z")
     arm["SERVO_HORN"] = hn
     body["SERVO_MG996R"] = sv
-    sb = bb(sv)
-    yb0 = sb.YMin - 3.4 - y_back_extra
-    body["SERVO_BRACKET"] = box(x_attach, sb.XMax, yb0, sb.YMin, sb.ZMin, pz + 12)
-    cz0 = pz - 44
-    cheek = box(px - 12, px + 5.5, y625[0] - 1, y625[1] + 2, cz0, pz + 9).fuse(
-        cyl(10, y625[1] + 2 - y625[0] + 1, (px, y625[0] - 1, pz), (0, 1, 0)))
-    cheek = cheek.fuse(box(px - 12, px + 5.5, yb0, y625[1] + 2, cz0, cz0 + 6))
-    cheek = cheek.cut(cyl(8.0, 10, (px, y625[0], pz), (0, 1, 0))).cut(cyl(2.8, 30, (px, -10, pz), (0, 1, 0)))
-    body["CHEEK_625"] = cheek
+    # model -> world for the servo ('-z' rows): world x = px + model y, world y = model z + dy, world z = pz + model x
+    ear_y0, ear_y1 = SERVO_EAR["z0"] + dy, SERVO_EAR["z1"] + dy
+    bx0, bx1 = SERVO_EAR["body_x"]
+    # ---- ARM_PRINTED
+    hub = cyl(12, arm_y, (px, -arm_y / 2, pz), (0, 1, 0))
+    cup_h = MAG_L - 4.0
+    zc0 = zf + 4.0                                   # cup rim (magnet face 4 mm proud)
+    cup = cyl(MAG_SEAT / 2 + 3, cup_h + 4, (X_PICK, 0, zc0), (0, 0, 1))
+    ztop = zc0 + cup_h + 4
+    barp = bar((px, pz), (X_PICK, ztop - 7), 14.0, -arm_y / 2, arm_y / 2)
+    armp = hub.fuse(barp).fuse(cup).removeSplitter()
+    armp = armp.cut(cyl(MAG_SEAT / 2, cup_h + 0.1, (X_PICK, 0, zc0 - 0.1), (0, 0, 1)))       # magnet seat
+    armp = armp.cut(cyl(2.2, 10, (X_PICK, 0, zc0 + cup_h - 1), (0, 0, 1)))                     # M4 stud hole
+    armp = armp.cut(cyl(3.9, 3.4, (X_PICK, 0, ztop - 3.4), (0, 0, 1)))                          # M4 nut seat (hex ~ round 7.8)
+    armp = armp.cut(cyl(2.45, 8, (px, arm_y / 2 - 8, pz), (0, 1, 0)))                          # Ø5 shaft, press (Ø4.9)
+    for (a, b) in ((0, 7.2), (7.2, 0), (0, -7.2), (-7.2, 0)):                                   # M2 into the horn holes
+        armp = armp.cut(cyl(0.8, 6, (px + a, -arm_y / 2 - 0.1, pz + b), (0, 1, 0)))
+    arm["ARM_PRINTED"] = armp.removeSplitter()
+    arm["SHAFT_5"] = cyl(2.5, y625[1] - (arm_y / 2 - 8), (px, arm_y / 2 - 8, pz), (0, 1, 0))
+    arm["MAGNET_D30"] = magnet_down(X_PICK, zf)
+    # ---- SERVO_MOUNT: plate under the ears (servo side of the ears = -y of the ear flange)
+    t = mount_plate_t
+    sp_y0, sp_y1 = ear_y0 - t, ear_y0
+    sx0, sx1 = px - SERVO_EAR["body_y"] - 4, px + SERVO_EAR["body_y"] + 4
+    sz0, sz1 = pz + SERVO_EAR["holes_x"][0] - 6, pz + SERVO_EAR["holes_x"][1] + 6
+    plate = box(sx0, sx1, sp_y0, sp_y1, sz0, sz1)
+    plate = plate.cut(box(px - SERVO_EAR["body_y"] - 0.3, px + SERVO_EAR["body_y"] + 0.3, sp_y0 - 1, sp_y1 + 1,
+                          pz + bx0 - 0.3, pz + bx1 + 0.3))                                       # body cut-out
+    for hx in SERVO_EAR["holes_x"]:
+        for hy in SERVO_EAR["holes_y"]:
+            if hy < 0:                                                                            # 2 screws (one per ear)
+                plate = plate.cut(cyl(1.25, t + 2, (px + hy, sp_y0 - 1, pz + hx), (0, 1, 0)))   # M3 self-tap Ø2.5
+    # cheek with the 625 (+y), joined under the pivot to the servo plate
+    zb0, zb1 = pz - 46, pz - 40
+    cheek = box(px - 12, px + 5.5, y625[0] - 1, y625[1] + 2, zb0, pz + 9).fuse(
+        cyl(10, y625[1] + 3 - y625[0], (px, y625[0] - 1, pz), (0, 1, 0)))
+    joiner = box(px - 12, px + 5.5, sp_y0, y625[1] + 2, zb0, zb1)
+    down = box(px - 12, px + 5.5, sp_y0, sp_y1, zb0, sz0 + 1) if zb0 < sz0 else None
+    mount = plate.fuse(cheek).fuse(joiner)
+    if down is not None:
+        mount = mount.fuse(down)
+    mount = mount.cut(cyl(8.0, 5.2, (px, y625[0] - 0.1, pz), (0, 1, 0)))                       # 625 seat Ø16 x 5
+    mount = mount.cut(cyl(3.0, 30, (px, -10, pz), (0, 1, 0)))                                   # shaft clearance
+    body["SERVO_MOUNT"] = mount.removeSplitter()
     body["BEARING_625"] = cyl(8, 5, (px, y625[0], pz), (0, 1, 0)).cut(cyl(2.5, 7, (px, y625[0] - 1, pz), (0, 1, 0)))
-    return arm, body
+    info = dict(dy=dy, ear_y=(ear_y0, ear_y1), plate_y=(sp_y0, sp_y1), plate_x=(sx0, sx1), plate_z=(sz0, sz1),
+                cup_top=ztop, joiner_z=(zb0, zb1))
+    return arm, body, info
 
 
 def robot_context(slot=None):
@@ -123,19 +179,6 @@ def robot_context(slot=None):
     out["CTX_ROOF"] = roof
     out["CTX_WHEEL_R"] = cyl(WHEEL["r"], WHEEL["x1"] - WHEEL["x0"], (WHEEL["x0"], 0, WHEEL["z"]), (1, 0, 0))
     return out
-
-
-def servo_mg996r(axis_x, axis_z, horn_face_y, body="-x"):
-    """MG996R lying, shaft along +y, horn (round) outer face at horn_face_y. body = '-x' (inward) or '-z' (down)."""
-    sv = GC.read_step(os.path.join(SERVO_DIR, "mg996R_v2.step"))
-    hn = GC.read_step(os.path.join(SERVO_DIR, "mg996_arm_round.step"))
-    rows = ((1, 0, 0), (0, 0, 1), (0, -1, 0)) if body == "-x" else ((0, 1, 0), (0, 0, 1), (1, 0, 0))
-    s = GC.place_shape(sv, rows, (axis_x, 0, axis_z))
-    h = GC.place_shape(hn, rows, (axis_x, 0, axis_z))
-    dy = horn_face_y - h.BoundBox.YMax
-    s.translate(Vector(0, dy, 0))
-    h.translate(Vector(0, dy, 0))
-    return s, h
 
 
 # ------------------------------------------------------------------ poses + checks
