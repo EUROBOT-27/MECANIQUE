@@ -1,4 +1,4 @@
-# b2_screw_fc.py - Grail v2, variant B2 = option B made real with the hardware of "essai vis ecrou corrige"
+# flipper_s_fc.py - FLIPPER-S (was B2): the Flipper flip on a lead-screw lift, made real with the hardware of "essai vis ecrou corrige"
 # (../Grail_v1/essai vise ecrou corrigé/): T8 lead screw + flange nut (self-locking-ish, no drop), 2 x Ø8 rods +
 # 4 LM8UU, 608 at both screw ends, flip arm held on BOTH sides (servo horn + 625 bearing).
 # Changes vs the corrigé, forced by layout-v1 (right side bay x 66..150, y +-40, z 78..300; right wheel + drive motor
@@ -10,8 +10,8 @@
 #   * servo body pointing DOWN (stays out of the column and inside the Grail's free radius).
 # Cycle as B: lift (arm at the pick angle) -> flip 180 at the top -> lower OVER onto the roof -> magnet off ->
 # lower REL (magnet leaves straight down) = stowed pose.
-#   Run (from mechanical/Grail_v2): "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/b2_screw_fc.py
-#   -> CAD_FC/B2_SCREW.FCStd, CAD_FC/B2_SCREW_report.txt   (bounding boxes only, no clash check)
+#   Run (from mechanical/Grail_v2): "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_s_fc.py
+#   -> CAD_FC/FLIPPER_S.FCStd, CAD_FC/FLIPPER_S_report.txt   (bounding boxes only, no clash check)
 import math
 import os
 import sys
@@ -143,7 +143,7 @@ def overlap(b1, b2):
 
 
 def main():
-    doc = App.newDocument("B2_SCREW")
+    doc = App.newDocument("FLIPPER_S")
     groups = {}
     arm, lift, fixed, gr = build(doc, groups)
     P = (G.PX, G.Z_PICK)
@@ -255,7 +255,7 @@ def main():
     belt_cd = math.hypot(G.SCREW_X - G.MOT_X, G.COL_Y - G.MOT_Y)
     belt_len = 2 * belt_cd + math.pi * 12.73          # 20T GT2 pitch Ø 12.73
 
-    r = ["GRAIL v2 - B2 SCREW (option B with the corrige's lead-screw lift) - fc/b2_screw_fc.py",
+    r = ["FLIPPER-S (lead-screw lift from the corrige) - fc/flipper_s_fc.py",
          "Grail %.0f x %.0f x %.0f, picked by its top at x %.1f, placed upside down at x %.1f (roof top %.0f)"
          % (C.G_W, C.G_W, C.G_H, C.X_PICK, C.X_PLACE, C.ROOF_TOP),
          "Flip axis x %.1f; pivot z %.1f (pick) -> %.1f (flip) -> %.1f (place) -> %.1f (stowed); lift travel %.1f"
@@ -285,7 +285,7 @@ def main():
           "625 + Ø5 shaft 📦/🇹🇳 · electromagnet 🇹🇳"
           % (G.Z_TOP_PLATE[1] - 2 - G.Z_PULLEY[0], G.Z_TOP_PLATE[1] - G.Z_BOT_PLATE[0]),
           "  printed ABS: carriage, top/bottom plates, motor plate, servo bracket + 625 cheek, arm (~%.0f g) + tip" % (arm_m * 1000)]
-    C.save(doc, "B2_SCREW", r)
+    C.save(doc, "FLIPPER_S", r)
 
 
 main()

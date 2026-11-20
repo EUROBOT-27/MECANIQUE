@@ -1,12 +1,12 @@
-# Grail v2: top grip + 180° flip onto the roof (options B and B2)
+# Grail v2: top grip + 180° flip onto the roof (Flipper and Flipper-S)
 
 > **Where we are (2026-11-20, Seif + Claude)**
-> - **Two versions developed in parallel (D-029): B (rack lift) and B2 (lead-screw lift).** Same flip, same arm,
->   different lift. Electromagnet first.
-> - Both pass every check so far (bounding boxes only, no clash check yet): actuators ≤ 340, the Grail never enters
->   the body, the magnet leaves the Grail straight down.
-> - **Later: a suction-cup version** of the same mechanism, also meant for the **gate lintel** (see below).
-> - Next: perfect B and B2 (list at the bottom).
+> - **Two versions (D-029): Flipper (rack lift, was "B") and Flipper-S (lead-screw lift, was "B2").** Same flip.
+>   Electromagnet Ø30 first. **Flipper is the priority: taken all the way to printing.**
+> - **Flipper is now built from real parts** (`fc/flipper_fc.py`): Two Trees X carriage (plate + 3 V-wheels + fasteners),
+>   real 2020, real NEMA17, Seif's printed rack, new pinion (`fc/flipper_pinion_fc.py`, print files in `print/`).
+> - Both pass the checks so far (bounding boxes only, no clash check yet).
+> - **Later: a suction-cup version**, also for the **gate lintel** (see below).
 
 Fresh start after Baha's Grail v1 (`../Grail_v1/`). Earlier Grail lift work (Maatoug, v1–v3): `../grail-lift/`
 (reference). Requirements: `../grail-lift/docs/CDC.md`.
@@ -30,50 +30,62 @@ axis is halfway between them (Grail centre x 195 on the floor, x 110 on the roof
 |---|---|
 | Right face | x 150 |
 | Roof | top 306 (plate 300–306), strip y ±38 |
-| Right side bay (Grail) | x 66–150, y ±40, z 78–300 (right wheel + drive motor under it) |
+| Grail bay (layout-v1, T1 back) | x 66–150, y −52…40, z 78–300 (right wheel + drive motor under it) |
 | Grail | 70 × 70 × 80, 150 g, steel plate on its top |
-| Magnet | 12 V 5 kg, Ø25 × 20 (KK-P25/20 type) 🇹🇳 |
+| Magnet | 12 V, **Ø30** (same model as `../grail-lift/sw/Magnet 5KG.step`, Ø30 version); height 22 + M4 stud **assumed** (P30/22) 🇹🇳; seat Ø30.3 (Baha's, intentional) |
+| Flip head (`common.flip_head`) | MG996R lying, body down, horn on −y; Ø5 shaft into a **625** in a +y cheek joined under the pivot (the arm and the Grail never go there); arm + magnet cup |
 
-## B: rack lift (`fc/b_lift_flip_fc.py`)
-2020 column + Ender-style carriage (3 V-wheels) + **m1 rack + 20T pinion on a NEMA17** (Baha's rack, Seif's test print
-fits) + MG996R flip. The arm is 45 mm under the pivot at the pick (LZ 45). Pivot 125 → 269 (flip) → 261 (place).
+## Flipper: rack lift from real parts (`fc/flipper_fc.py`)
+Two Trees Bluer V2 **X-axis carriage** on the real **2020**, Seif's **printed rack** (m1, `parts/cremaillere.STL`),
+**NEMA17** + **pinion v2**, flip head.
+- **Why it looks like Baha's:** the X plate sits 2 mm from the profile's front face and its wheels ride the two side
+  faces, so the rack goes on the **back face** (its V back sits in the V-groove). The NEMA shaft runs along y, and the
+  motor body must clear the eccentric wheel: hence a **long pinion hub** (as `el pignon`).
+- Placement (robot frame): profile centre x 110, y 4, cut to z 78–275; plate faces the right face (+x); the servo
+  bracket on the plate's front face reaches the flip axis x 152.5. **LZ 58:** pivot 138 → 254 (flip) → 248 (place)
+  → 242 (stowed), 122 mm of travel; plate centre 116 → 232 (wheels on the profile: 114.9–238 allowed).
+- **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20). Its body sits at y −66…−29: **14 mm past the Grail bay**
+  (y −52) toward the back module. A shorter NEMA (once Seif knows what we have) is a quick fix: motor length + pinion hub.
 
-Report `CAD_FC/B_LIFT_FLIP_report.txt`:
-- highest actuator point 340; the Grail never enters the body; 73 mm out at flip 45° (perimeter +~35)
-- flip 1.7 kg·cm (5.5× on the MG996R); the rack can be back-driven (carriage drops at 100 s, Grail already released)
+Report `CAD_FC/FLIPPER_report.txt`:
+- highest actuator point 335.7; the Grail never enters the body; start 14.5 mm past the face; 84 mm out at flip 45°
+  (perimeter +~45, budget ~67)
+- plate top at the place 263.5, 15 mm under the arm; profile top 275, 10 mm under the arm
+- flip 2.1 kg·cm (4.4× on the MG996R); lift ~0.7 kg → 7 N on the rack, 0.07 N·m on the NEMA
+- **the rack can be back-driven:** at 100 s or e-stop the carriage drops (fine at the end, the Grail is released;
+  mid-carry the Grail falls)
 
-**Known problem: the column is at y −70, outside the right bay** (the back module is there). B2 shows how to fit a
-column in the bay; B has to follow.
+### Pinion v2 (`fc/flipper_pinion_fc.py` → `print/FLIPPER_PINION.step/.stl`)
+Redo of Baha's `parts/el_pignon.STEP`. Baha's: m1 20T, teeth 5 wide at the end of a Ø10.5 × 29 hub, Ø5.1 bore, radial
+hole for an **M3 insert K 5.0** (Ø4.5 hole + Ø5.2 cone = D-025 read backwards), 2 solids. The new one:
+- **involute teeth 10 wide** (rack 10.6), one solid, **D bore** Ø5.15 / flat 4.6
+- **hub Ø16 × 27.5** (long: the motor sits past the wheel); insert 8 mm from the motor end with **6 mm of wall** for the
+  4 mm insert (el pignon had 2.7 mm, so the insert reached the bore)
+- stiffness at 10 N on the teeth: steel shaft bends ~0.02 mm, hub ~0.3 MPa. Gear centre 33 mm from the motor face
 
-## B2: lead-screw lift (`fc/b2_screw_fc.py`)
-Option B with the hardware of Baha's "essai vis ecrou corrigé" (`../Grail_v1/essai vise ecrou corrigé/`). LZ 50,
-pivot 130 → 262 (flip) → 256 (place) → 250 (stowed), 138 mm of travel.
+## Flipper-S: lead-screw lift (`fc/flipper_s_fc.py`, was B2; on hold, Flipper first)
+The Flipper flip on the hardware of Baha's "essai vis ecrou corrigé" (`../Grail_v1/essai vise ecrou corrigé/`).
+LZ 50, pivot 130 → 262 (flip) → 256 (place) → 250 (stowed), 138 mm of travel.
 - **T8 screw + flange nut**, **2 × Ø8 rods + 4 LM8UU** (2 per rod, carriage 48 tall), **608** in a bottom and a top plate.
-  Column in a line along x at **y −28**: rods x 77 / 125, screw x 97. That keeps it behind the arm, which crosses the
-  roof at |y| ≤ 16.
+  Column in a line along x at **y −28**: rods x 77 / 125, screw x 97. That keeps it behind the arm.
 - **Motor not under the screw** (the right wheel and drive motor are there): the NEMA17 **stands on the bottom plate**
   (the bay floor, z 78–88), shaft down. A **GT2 belt 1:1** (pulleys z 64–78, loop ~135) drives the screw, at x ≤ 105:
-  off the wheel (x ≥ 106) and above the drive motor (z 55.5).
-- **Arm held on both sides** (as the corrigé): MG996R horn (−y) + Ø5 shaft into a **625** in a +y cheek. The cheek joins
-  the servo bracket under the pivot, a zone the arm and the Grail never reach. Servo body pointing down.
+  off the wheel (x ≥ 106) and above the drive motor.
+- Flip head as written before `common.flip_head` existed (same design, own copy: to switch to `flip_head`).
 
-Report `CAD_FC/B2_SCREW_report.txt`:
-- highest actuator point 336; the Grail never enters the body; start 14.5 mm past the face; 77 mm out at flip 45°
-  (perimeter +~38, budget ~67)
-- carriage 2 mm under the top plate at the flip; nut 16.5 mm above the bottom plate at the pick
-- servo reaches 38 mm, cheek 46 mm from the axis; the Grail's nearest point is 51 mm away
-- flip 1.8 kg·cm (5.2×); screw 0.014 N·m
-- **everything inside the right bay**, except the pulleys + belt under its floor
+Report `CAD_FC/FLIPPER_S_report.txt` (Ø30 magnet): highest point 338; the Grail never enters the body; 78.5 mm out at
+flip 45°; carriage 2 mm under the top plate at the flip; everything inside the bay except the pulleys + belt under its
+floor.
 
-## B vs B2
-| | B (rack) | B2 (lead screw) |
+## Flipper vs Flipper-S
+| | Flipper (rack) | Flipper-S (lead screw) |
 |---|---|---|
 | Lift drive | NEMA17 rides on the carriage, pinion on a fixed rack | NEMA17 fixed on the bay floor, GT2 belt to a T8 screw |
-| Guide | 2020 + 3 V-wheels (Ender carriage 📦) | 2 × Ø8 rods + 4 LM8UU (rods 📦, LM8UU 🇹🇳 or from the SCS8UU 📦) |
+| Guide | Two Trees X carriage on a 2020 (📦) | 2 × Ø8 rods + 4 LM8UU (rods 📦, LM8UU 🇹🇳 or from the SCS8UU 📦) |
 | Power off / e-stop | carriage drops (back-driven) | holds (T8×8 may creep; T8×2 holds but 4× slower) |
-| Moving mass | + motor (~280 g) | lighter (no motor on the carriage) |
-| Fits the right bay | not yet (column at y −70) | yes |
-| Tested | rack + pinion printed, fits | — |
+| Moving mass | ~0.7 kg (motor rides) | lighter |
+| Fits the Grail bay | yes, except the 40 mm NEMA (14 mm past y −52) | yes |
+| Tested | rack printed, fits the profile | — |
 
 ## Later: suction-cup version, also for the gate lintel (Seif, 2026-11-20)
 Same mechanism with a **suction cup instead of the magnet**:
@@ -81,38 +93,46 @@ Same mechanism with a **suction cup instead of the magnet**:
   It lands upside down **on the two towers**, and the cup ends under it, in the ~100 mm gap between the towers. The
   actuator stays under the stone, so ≤ 350. The stone's long side runs along the flip axis.
 - **Grail:** the same cup picks the Grail by its top (no steel plate needed).
-Details and numbers to do once the electromagnet version works. Concept notes: `../concepts/gate-lintel.md`.
+Details and numbers once the electromagnet version works. Concept notes: `../concepts/gate-lintel.md`.
 
-## Archived (not chosen, 2026-11-19): A and C
+## Archived: A, C (not chosen, 2026-11-19) and the B concept (superseded by Flipper)
 In `archive/` (script + report).
 - **A, pivot:** one servo, no lift, axis fixed at z 193. Arm 121 mm long: **128 mm out** while turning (perimeter +~96),
   and the Grail slides onto the roof sideways.
 - **C, rolling:** one NEMA17. A half gear R60 rolls on a fixed rack, so height sets the angle. **The Grail dips 8–35 mm
   below the roof top** while crossing the roof edge (the axle is still low at 110–170°).
+- **B concept:** simplified carriage, column at y −70 (outside the bay). Replaced by `fc/flipper_fc.py`.
 
 ## Files
 | Path | What |
 |---|---|
-| `fc/common.py` | robot context (layout-v1 numbers), Grail, magnet, MG996R placement, rack-lift unit, cycle table |
-| `fc/b_lift_flip_fc.py` | **B** generator (numbers in `class G`) |
-| `fc/b2_screw_fc.py` | **B2** generator (numbers in `class G`), with the layout-envelope check |
-| `CAD_FC/B_LIFT_FLIP.FCStd`, `CAD_FC/B2_SCREW.FCStd` | pick pose + ghost at the place pose + robot context (body ghost, roof with the slot, right wheel, drive motor) |
-| `CAD_FC/*_report.txt` | cycle table (heights, protrusion, Grail vs body) + summary + parts (📦 / 🇹🇳 / ✈️) |
-| `archive/` | variants A and C |
+| `fc/common.py` | robot context (layout-v1 numbers), Grail, magnet, MG996R placement, **`flip_head()`**, rack-lift unit, cycle table |
+| `fc/flipper_fc.py` | **Flipper** generator (real parts; numbers in `class G`) |
+| `fc/flipper_pinion_fc.py` | **pinion v2** → `print/FLIPPER_PINION.step/.stl` |
+| `fc/flipper_s_fc.py` | **Flipper-S** generator (numbers in `class G`) |
+| `parts/` | inputs: `cremaillere.STL` (Seif's rack, m1, fits the profile), `el_pignon.STEP` (Baha's pinion) |
+| `print/` | print files |
+| `CAD_FC/FLIPPER.FCStd`, `FLIPPER_S.FCStd`, `FLIPPER_PINION.FCStd` | models: pick pose + ghost at the place pose + robot context (body, roof with the slot, right wheel, drive motor, Grail bay) |
+| `CAD_FC/*_report.txt` | cycle table + summary + layout envelope + parts (📦 / 🇹🇳 / ✈️) |
+| `archive/` | A, C, B concept |
+| Real bought parts | `../resources/two-trees-bluer-v2-parts/` (X carriage, profile, NEMA17: see its `SOURCE.md`) |
 
-Run (from this folder, a few seconds each, they can run in parallel):
+Run (from this folder):
 ```
-"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/b_lift_flip_fc.py
-"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/b2_screw_fc.py
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_pinion_fc.py     # first: flipper_fc.py reads print/FLIPPER_PINION.step
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_fc.py            # ~1 min
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_s_fc.py
 ```
 Never edit the `.FCStd` by hand: change the generator and re-run it. Colours are only set when run from the FreeCAD GUI.
 
-## To perfect (next)
-1. **B:** move the column into the right bay (as B2), check the motor-on-carriage fits.
-2. Real carriage (B2: LM8UU clamps, nut screws; B: Ender plate holes), servo bracket + 625 cheek as one printed part.
-3. Roof slot (x ~95–151, y ±15) and how the Grail sits on both sides of it; check against layout-v1's roof (e-stop,
-   beacon support).
-4. Bottom endstop / homing; belt tension (B2, slotted motor holes); T8 lead choice (B2).
-5. Magnet mount (sprung, CDC D4), wiring of the magnet through the flip (cable loop around the axis).
-6. Real Grail design (size, mass, steel plate), FAQ Q3.
-7. Clash check and motion check once the design settles (only when Seif asks).
+## To printing (Flipper)
+1. **Printed parts drawn for real:** motor bracket (around the profile, notch for the eccentric wheel, bolted to the
+   X plate), servo bracket + 625 cheek as one part (bolted to the X plate's front), arm + magnet cup, rack cut to
+   197 mm. Fasteners from `../parts-library.md`, inserts per D-025, ABS fits from the clapets v7 coupons.
+2. X plate holes: find the real hole positions (B-spline faces: slice the plate) or drill new ones.
+3. Roof slot (x ~90–151, y ±20) and how the Grail sits on both sides of it; check against layout-v1's roof.
+4. Bottom endstop / homing; magnet cable loop around the flip axis; sprung magnet mount (CDC D4).
+5. Back-drive of the rack (carriage drops when the NEMA is off): accept, or a brake / self-locking choice.
+6. Shorter NEMA once Seif knows what we have (motor length + pinion `HUB_L`).
+7. Clash check + motion check before printing (only when Seif asks).
+8. STEP / STL / DXF print files + a short assembly sheet.

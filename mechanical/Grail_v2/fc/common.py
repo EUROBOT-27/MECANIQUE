@@ -38,7 +38,9 @@ GAP_OUT = 10.0          # Grail on the floor this far from the face at the pick
 EDGE_IN = 5.0           # Grail on the roof this far inside the face
 X_PICK = FACE + GAP_OUT + G_W / 2          # Grail centre x at the pick (on the floor)
 X_PLACE = FACE - EDGE_IN - G_W / 2         # Grail centre x on the roof
-MAG_D, MAG_L, MAG_MASS = 25.0, 20.0, 0.050  # electromagnet 12 V 5 kg (KK-P25/20 type), 🇹🇳
+MAG_D, MAG_L, MAG_MASS = 30.0, 22.0, 0.080  # electromagnet 12 V, Ø30 (same model as grail-lift/sw/Magnet 5KG.step, Ø30
+                                            # version, Seif 2026-11-20); height 22 + M4 stud ASSUMED (P30/22 size) 🇹🇳
+MAG_SEAT = 30.3                             # seat bore for the magnet (Baha's U had Ø30.3: intentional)
 ABS_RHO = 1.04e-6 * 0.6                     # kg/mm3, ABS at ~60 % effective (walls + infill)
 
 
@@ -74,6 +76,40 @@ def magnet_down(xc, z_face):
     """Magnet with its face down at z_face (pick pose), M4 stud up."""
     m = cyl(MAG_D / 2, MAG_L, (xc, 0, z_face), (0, 0, 1))
     return m.fuse(cyl(2.0, 8, (xc, 0, z_face + MAG_L), (0, 0, 1)))
+
+
+def flip_head(px, pz, x_attach, y_back_extra=0.0, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0)):
+    """Flip head at the pick pose, pivot (px, pz), arm in the plane y ~ 0 (arm_y wide).
+    ARM (rotates): magnet in a cup (seat MAG_SEAT, face flush) on the Grail's top, arm bar to the hub, Ø5 shaft through
+    the hub into a 625 in a +y cheek, MG996R round horn on the -y side.
+    BODY (rides the lift): MG996R lying (shaft +y, body DOWN), bracket plate behind it back to x_attach (the carriage
+    face), +y cheek with the 625 joined UNDER the pivot (a zone the arm and the Grail never reach).
+    Returns (arm parts, body parts)."""
+    arm, body = {}, {}
+    zf = G_H
+    arm["MAGNET_D30"] = magnet_down(X_PICK, zf)
+    cup_h = MAG_L - 4.0
+    cup = cyl(MAG_SEAT / 2 + 3, cup_h + 4, (X_PICK, 0, zf + 4), (0, 0, 1)).cut(
+        cyl(MAG_SEAT / 2, cup_h, (X_PICK, 0, zf + 3.9), (0, 0, 1))).cut(cyl(2.2, 10, (X_PICK, 0, zf + cup_h), (0, 0, 1)))
+    arm["MAG_CUP"] = cup
+    ztop = zf + 4 + cup_h + 4
+    arm["ARM"] = bar((px, pz), (X_PICK, ztop - 4), 14.0, -arm_y / 2, arm_y / 2)
+    arm["ARM_HUB"] = cyl(12, arm_y, (px, -arm_y / 2, pz), (0, 1, 0))
+    arm["SHAFT_5"] = cyl(2.5, y625[1] - horn_face_y, (px, horn_face_y, pz), (0, 1, 0))
+    sv, hn = servo_mg996r(px, pz, horn_face_y, body="-z")
+    arm["SERVO_HORN"] = hn
+    body["SERVO_MG996R"] = sv
+    sb = bb(sv)
+    yb0 = sb.YMin - 3.4 - y_back_extra
+    body["SERVO_BRACKET"] = box(x_attach, sb.XMax, yb0, sb.YMin, sb.ZMin, pz + 12)
+    cz0 = pz - 44
+    cheek = box(px - 12, px + 5.5, y625[0] - 1, y625[1] + 2, cz0, pz + 9).fuse(
+        cyl(10, y625[1] + 2 - y625[0] + 1, (px, y625[0] - 1, pz), (0, 1, 0)))
+    cheek = cheek.fuse(box(px - 12, px + 5.5, yb0, y625[1] + 2, cz0, cz0 + 6))
+    cheek = cheek.cut(cyl(8.0, 10, (px, y625[0], pz), (0, 1, 0))).cut(cyl(2.8, 30, (px, -10, pz), (0, 1, 0)))
+    body["CHEEK_625"] = cheek
+    body["BEARING_625"] = cyl(8, 5, (px, y625[0], pz), (0, 1, 0)).cut(cyl(2.5, 7, (px, y625[0] - 1, pz), (0, 1, 0)))
+    return arm, body
 
 
 def robot_context(slot=None):

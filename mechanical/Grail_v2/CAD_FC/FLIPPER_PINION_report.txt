@@ -1,0 +1,7 @@
+FLIPPER PINION v2 - fc/flipper_pinion_fc.py
+m1.0, 20 teeth, pressure angle 20 deg, backlash 0.15: tip Ø22.00, pitch Ø20.00, root Ø17.50
+teeth 10.0 wide (rack 10.6); hub Ø16.0 x 27.5 on the motor side; total length 37.5 (NEMA17 shaft ~24 from the face)
+gear centre 33.0 mm from the motor face (el pignon: ~31). Stiffness at 10 N on the teeth: steel shaft Ø5 bends ~0.02 mm; hub Ø16 ABS ~0.3 MPa (el pignon Ø10.5 hub, 2.7 mm wall at the insert)
+bore: D Ø5.15, flat at 4.60 from the axis side; M3 insert K 5.0 L 4.0: hole Ø4.50, cone Ø5.20 x 1.0; wall from the flat to the hub surface 5.98 (insert L + 1 = 5.0)
+volume 7727 mm3, ~8.0 g ABS (100 %)
+solids 1, valid True

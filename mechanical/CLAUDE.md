@@ -62,7 +62,7 @@ Nothing goes loose in `mechanical/` itself: a new SolidWorks file goes into its 
 
 ## Grail lift (D-029, 2026-11-20): `Grail_v2/`
 - **Top grip + 180° flip**: the Grail lands upside down on the roof, the gripper ends under it in a roof slot.
-  Two versions in parallel, same flip + MG996R: **B** = rack lift (2020 + V-wheels + NEMA17 pinion), **B2** = lead-screw
+  Two versions in parallel, same flip + MG996R: **Flipper** (was B) = rack lift on the real Two Trees X carriage (2020 + V-wheels + NEMA17 pinion), **Flipper-S** (was B2) = lead-screw
   lift (T8 + 2 × Ø8 rods / LM8UU, NEMA17 on the bay floor by GT2 belt). Electromagnet first; suction-cup version later,
   also for the gate lintel (`concepts/gate-lintel.md`). Generators `Grail_v2/fc/`, status + next steps in its README.
 - `Grail_v1/`: Baha's SolidWorks designs (screw, rack from STLs, corrigé) + `REVIEW.md`. Reference.

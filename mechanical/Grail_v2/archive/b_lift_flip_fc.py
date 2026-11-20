@@ -1,3 +1,4 @@
+# ARCHIVED 2026-11-20: concept of option B, superseded by fc/flipper_fc.py (real parts).
 # b_lift_flip_fc.py - Grail v2, variant B "LIFT + FLIP": rack lift (NEMA17, Baha's tested rack) + MG996R flip.
 # The column stands BESIDE the flip plane (behind it in -y), so the Grail never turns into its own lift (Baha's v1
 # mistake). The flip axis is at the same x as in A (halfway between the pick and the place), but the lift lets the
@@ -10,7 +11,7 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "fc"))   # archived: common.py is in ../fc
 import FreeCAD as App
 from FreeCAD import Vector
 
