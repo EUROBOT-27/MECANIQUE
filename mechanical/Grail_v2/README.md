@@ -68,7 +68,7 @@ and the odometry module, on **4 legs on the free plate zones of Seif's sketch**:
 |---|---|
 | Legs | beside the wheel well: x 80–128, y −60…−47 and 47…60 (odometry bracket from x 132, clapets door unit from y 69); beside the drive motor: x 25–74, y −42…−24 and x 25–66, y 24…40 (hinge \|y\| ≤ 20, clapets socle from y 43.5) |
 | Deck | x 25–141, y ±60 (±55 where x < 70: clapets rails at y 58), underside z 67 (drive motor top 62.5) and z 70 over the odometry module (bracket 61.2, screws 64.2), **tunnel R45 around the worst-case wheel Ø80** (5 mm): crown 82, deck top 85 |
-| Column | pad to z 88 + a **heel on its back face** (x 106–118, to z 112) with **2 × M5 into T-nuts** in the back slot's free bottom (z 96, 106); top: 2020 cross-member inward (z 260–280) + corner bracket in the back slot's top end |
+| Column | **blind socket** (Seif): 3.5 deep pocket 20.4 × 20.4 (profile end at z 84.5, 2.5 floor over the wheel tunnel's crown) + 3 mm collar to z 88.5 (the carriage passes 1 mm above at the pick); a **heel on its back face** (x 106–118, to z 112) with **2 × M5 into T-nuts** in the back slot's free bottom (z 96, 106); top: 2020 cross-member inward (z 260–280) + corner bracket in the back slot's top end |
 | Ribs | back and front edges (7 tall, under the NEMA / outside the carriage) |
 | Lightening | pockets **open at the bottom inside the 4 legs** (3 mm walls round the screw channels, 7 mm cap under the deck) + a grid **under the deck over the drive motor** (4 mm top skin, 3 mm ribs). The crown over the wheel, the pad, the heel and the ribs are untouched |
 | Floor | **8 × M4 × 16** from the top through Ø9 channels, nut under the plate. **Plate holes not added yet** (Seif confirms first): Ø4.4 at (88, −53.5), (120, −53.5), (88, 53.5), (120, 53.5), (33, −33), (66, −33), (33, 32), (58, 32) |
@@ -97,7 +97,7 @@ electronics (Seif's idea, `../concepts/electronics-column.md`).
 the robot's top can be at 350 (different top heights). Earlier numbers here used 306 (layout-v1's roof strip, carried over
 without asking). The Flipper's highest point is ~ deck + 24 (the arm swings above the place height), so the deck can't
 go above ~324. With 320 and LZ 80: travel 80 + 12 = **92** (pivot 160 → 246 flip → 240 place → 234 stowed), **2020 profile
-163** (z 88–251), **rack 110** (z 119–229, `print/FLIPPER_RACK_110`), top cross-member z 231–251 (43 mm under the arm),
+166.5** (z 84.5–251, in the saddle's socket), **rack 110** (z 119–229, `print/FLIPPER_RACK_110`), top cross-member z 231–251 (43 mm under the arm),
 **highest point 344** (limit 350), roof slot x 108–169, y ±20. Env `GRAIL_ROOF` changes the deck height.
 
 **Fixes after Seif's review (2026-11-20):**

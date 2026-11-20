@@ -51,7 +51,8 @@ class G:
     #            plate zones beside the wheel well and the motor; column on its deck, heel + 2 M5 T-nuts
     FIX = os.environ.get("FLIPPER_FIX", "saddle" if C.BASE == "b330" else "bridge")
     XC, YC = C.FACE - {"inward": 65.0}.get(FIX, 40.0), 4.0
-    PROF_Z0 = {"bridge": 86.0, "inward": 60.0, "saddle": 88.0}.get(FIX, 78.0)   # slot: bay floor; bridge/saddle: on the deck
+    PROF_Z0 = {"bridge": 86.0, "inward": 60.0, "saddle": 84.5}.get(FIX, 78.0)   # slot: bay floor; bridge: on the deck;
+                                              # saddle: in a 3.5 deep blind socket (2.5 floor over the wheel tunnel's crown)
     PROF_Z1 = None                            # computed in build(): wheels at the top of the travel + 1
     # ---- carriage: plate centre height at the pick; pivot H_P above it
     H_P = None                                # computed: Z_PICK - ZC_PICK
@@ -415,8 +416,9 @@ class SB:
             ((25.0, 66.0), (24.0, 40.0)))       # beside the drive motor, front (clapets socle from y 43.5)
     FOOT_T = 10.0                         # foot above the plate; the screw head sits in a Ø9 channel from the deck top
     SCREWS = ((88.0, -53.5), (120.0, -53.5), (88.0, 53.5), (120.0, 53.5), (33.0, -33.0), (66.0, -33.0), (33.0, 32.0), (58.0, 32.0))
-    HEEL = (106.0, 118.0, -5.0, 13.0)     # heel on the column back face, within its width (the carriage tabs pass beside it)
+    HEEL = (106.0, 117.9, -5.0, 13.0)     # heel on the column back face (0.1 off it: the T-nut screws clamp it), within its width (the carriage tabs pass beside it)
     HEEL_Z1 = 112.0
+    COLLAR_Z1 = 88.5                      # socket collar top (carriage plate bottom 89.5, wheels 90.1 at the pick)
     HEEL_SCREWS_Z = (96.0, 106.0)         # 2 x M5 into T-nuts in the back slot (free z 88..119 below the rack)
     # lightening, keeping the stiffness: pockets open at the BOTTOM inside the legs (3 mm walls round the screw channels,
     # 7 mm cap under the deck) and a grid under the deck over the drive motor (4 mm top skin, 3 mm ribs). The 3 mm crown
@@ -440,8 +442,11 @@ def saddle_socle():
     body = deck
     for (x0, x1), (y0, y1) in SB.LEGS:
         body = body.fuse(C.box(x0, x1, y0, y1, SB.Z_PLATE, SB.DECK_Z0 + 1))
-    # pad under the column + heel on its back face
-    body = body.fuse(C.box(G.XC - 10, G.XC + 10, G.YC - 10, G.YC + 10, zd - 1, zt))
+    # socket for the column's end (Seif: a blind hole under it): 3 mm collar up to z 88.5 (the carriage's steel plate and
+    # wheels pass 1 mm above at the pick) + a 3.5 deep pocket 20.4 x 20.4 down to PROF_Z0 (2.5 floor over the tunnel crown);
+    # the heel continues the back wall up to HEEL_Z1
+    body = body.fuse(C.box(G.XC - 13, G.XC + 13, G.YC - 13, G.YC + 13, zd - 1, SB.COLLAR_Z1))
+    body = body.cut(C.box(G.XC - 10.2, G.XC + 10.2, G.YC - 10.2, G.YC + 10.2, zt, SB.COLLAR_Z1 + 1))
     hx0, hx1, hy0, hy1 = SB.HEEL
     body = body.fuse(C.box(hx0, hx1, hy0, hy1, zd - 1, SB.HEEL_Z1))
     for (x0, x1), (y0, y1), h in SB.RIBS:
