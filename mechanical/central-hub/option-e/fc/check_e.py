@@ -11,7 +11,10 @@
 #
 # Plain Python (numpy + matplotlib + Pillow), oriented boxes, same level as ../../fc/check_c.py.
 # Frame as options A-D: X = wheel axis (robot's left = -X), Y = forward, Z = up, origin = robot centre on the table.
-# Base = layout-v1 body 300 x 292, chamfer 30 (Seif), JSUMO wheels, 4 KSM15 casters.
+# Base (2026-11-20, Ayoub: "the mechanism must fit the base, keep the base as it is"): mechanical/base_330_js, unchanged:
+# plate 336 x 260 x 5 (z 11.5-16.5), 37D motors on hinges, JSUMO wheels (worst-case envelope), 2 odometry modules
+# (AMT102 + swing arm, x 132-167), 4 KSM15 ball units at (+-130, +-105). The layout-v1 version of option E is kept in
+# CAD_FC/layout-v1/ (snapshot). Perimeter limits are reported but not designed for in this version (Ayoub, 2026-11-20).
 # Run from mechanical/central-hub/option-e/:
 #   python fc/check_e.py          -> hub_e_report.txt
 #   python fc/check_e.py --gif    -> also ../../simulations/central_hub/option_e_sequence.gif + option_e_sheet.png
@@ -27,10 +30,12 @@ MARGIN = 3.0
 
 # ================================================================== numbers (mm, deg)
 STONE = np.array([320.0, 110.0, 110.0])          # nominal [G D.4]; worst 324 x 115 (see the report)
-BODY_W, BODY_D, CHAMFER = 150.0, 146.0, 30.0     # half width (X), half depth (Y): layout-v1 300 x 292
-FLOOR_Z = (21.0, 26.0)                           # floor plate on the KSM15 ball transfers (21 mm)
-FACE = 168.0                                     # stack face = cup faces, from the column axis. 168 so that a stone
-                                                 # lying beside the robot (y +-160) clears the other unit's stack
+BODY_W, BODY_D, CHAMFER = 168.0, 130.0, 0.0      # half width (X), half depth (Y): base_330_js plate 336 x 260
+FLOOR_Z = (11.5, 16.5)                           # base_330_js plate (nominal Ø74 JSUMO wheel)
+FACE = 171.0                                     # stack face = cup faces, from the column axis. >= 163 so that a stone
+                                                 # lying beside the robot (y +-160) clears the other unit's stack, and
+                                                 # 3 mm past the plate edge (168) so a tower stands beside the plate
+DF = FACE - 168.0                                # outer carriage + holder parts moved out by this (layout-v1: 168)
 RC = FACE + STONE[1] / 2                         # 223 stone centre radius
 Z_ST = {"T": 275.0, "M": 165.0, "B": 55.0}       # stone centres, stack on the table
 L_CARRY = 15.0                                   # holder lift + carriage, while carrying
@@ -39,8 +44,12 @@ Z_TURN_TOP = 283.0                               # top stone turns 8 mm above th
 Z_TURN = 250.0                                   # middle / bottom stone turns here: bottom 195 > holder cups (180)
 Z_SPIN, Z_SET = 174.0, 160.0                     # spin height (corners clear the table), tower set down
 DRIVE = 340.0                                    # robot drives on between towers
-UNITS = {"F": dict(phi0=0.0, zb=59.0, zh=66.0, zt=333.0, zht=333.0),     # zb arm / zh hub of the bottom plate
-         "R": dict(phi0=180.0, zb=59.0, zh=80.0, zt=333.0, zht=324.0)}   # zt / zht: top plate arm / hub
+UNITS = {"F": dict(phi0=0.0, zb=65.5, zh=65.5, zt=335.0, zht=335.0),     # zb arm / zh hub of the bottom plate
+         "R": dict(phi0=180.0, zb=65.5, zh=80.0, zt=335.0, zht=326.0)}   # zt / zht: top plate arm / hub
+# base_330_js: the 37D motors reach z 62.5 (x 15-74.5, y +-18.5), the JSUMO envelope z 77 (x 79-131, y +-40). The
+# turret's lower arm turns over them at 90 deg: arm at z 65.5 (3 mm over the motors), bottom pad at r <= 76 (3 mm
+# inside the wheel envelope). Lift: zc 55 (bottom stone) .. 290 (carry, top stone) with the block 16.5 above the cup
+# axis and 27.5 tall -> block 71.5 .. 334 between the bottom pad (70.5) and the top plate (335).
 # Both turrets' arms are at the same level (the carriage must reach the bottom stone); their hubs are stacked on the
 # column, joined to the arm by a web (r 15-34) + a riser at r 34-40. No gear reaches r 34, and the pinions sit at
 # polar -35 / 145, where no riser ever passes.
@@ -48,30 +57,33 @@ RISER_R, WEB_R = (34.0, 40.0), (15.0, 34.0)
 PLATE_T = 5.0                                    # the rear plates step (riser) from their hub to the arm level
 R_COL = 10.0                                     # fixed column: 20 mm aluminium tube, beacon support on its top
 R_HUB = 15.0                                     # turret hub on the column (printed bushing)
-R_SCREW, T_ROD = 88.0, 30.0                      # T8 screw at (r 88, t 0), guide rod at (r 88, t +30): pad r <= 98
-                                                 # clears the wheel (x 102) when the turret is at the side
-NEMA_R = (34.0, 76.0)                            # NEMA17 inboard of the screw, hanging under the top plate, belt 1:1
+R_SCREW = 66.0                                   # T8 screw at (r 66, t 0)
+ROD = (56.0, -28.3)                              # guide rod (r, t): 30 from the screw, 62.7 from the axis
+T_ROD = ROD[1]
+# Everything of the turret below z 80 stays within 76 of the axis: it turns over the wheel envelope (x >= 79).
+PAD_B = [((56.0, 74.5), (-10.0, 10.0)), ((52.0, 70.0), (-22.0, -8.0)), ((48.0, 64.0), (-36.3, -20.3))]  # bottom pad
+PAD_T = dict(r=(44.0, 92.0), t=(-38.0, 67.0))    # top pad (608 + rod + NEMA17)
+NEMA_C = (70.0, 45.0)                            # NEMA17 beside the screw (+t), r 48.9-91.2: 3 mm clear of the other
+                                                 # unit's carriage when that one is at the side; belt ~1:1 (GT2 20T)
+CAR_R, CAR_A, CAR_H = (46.0, 80.0), 16.5, 27.5   # carriage block: r range, bottom above the cup axis, height
+CAR_T_LOW, CAR_LOW_H = 6.5, 10.0                 # lowest 10 mm of the block stop at t 6.5: clear of the own turn pinion
+CAR_T = (-45.0, 12.5)                            # carriage block along t: LM8UU clamp side (-t) + T8 flange pocket
+NEMA_R = (NEMA_C[0] - 21.15, NEMA_C[0] + 21.15)                           # NEMA17 inboard of the screw, hanging under the top plate, belt 1:1
 # turn drive: printed spur gears m 1, 60 T sector on the bottom hub (pitch r 30) + 30 T pinion on an MG996R (2:1).
 # The hub gears sit where nothing else is: front under its hub (z 40-45, inside the drive motors, x < 32), rear over
 # its hub (z 74-79). Front servo hangs upside down, rear servo stands on a 6 mm block. Shafts 45 from the axis.
 GEAR_R, PINION_R = 30.0, 15.0                    # tip radii 31 / 16, centre distance 45
-GEAR_SECTOR = (-137.0, -23.0)                    # hub gear teeth, polar relative to the turret (mesh at -35 - turn)
-TURN = {"F": dict(shaft=(25.8, 36.9), sx=1, block=0.0, gear_z=(72.0, 77.0)),     # servo on the floor
-        "R": dict(shaft=(-25.8, -36.9), sx=-1, block=3.0, gear_z=(86.0, 91.0))}   # 3 mm block: ears below the riser
+PINION_PSI = {"F": -40.0, "R": 140.0}           # polar of the turn pinions (2026-11-20: -35/145 -> -40/140, clear of
+                                                 # the carriage at the bottom stone on base_330_js)
+GEAR_SECTOR = (-142.0, -28.0)                    # hub gear teeth, polar relative to the turret (mesh at -40 - turn)
+TURN = {"F": dict(shaft=(28.93, 34.47), sx=1, block=0.0, gear_z=(72.0, 77.0)),     # servo on the floor
+        "R": dict(shaft=(-28.93, -34.47), sx=-1, block=0.0, gear_z=(86.0, 91.0))}   # on the floor too (2026-11-20: on the
+# 3 mm block the ear screw heads hit the rear arm at z 59; on the floor they stop at 58)
 for _u in TURN:                                  # body under its pinion, spline + printed shaft up to the gear plane
-    TURN[_u]["body_z"] = (26.0 + TURN[_u]["block"], 26.0 + TURN[_u]["block"] + 36.8)
+    TURN[_u]["body_z"] = (FLOOR_Z[1] + TURN[_u]["block"], FLOOR_Z[1] + TURN[_u]["block"] + 36.8)
 MG996 = dict(L=40.7, W=19.7, H=36.8, SHAFT_OFF=10.2, EAR_L=54.0)   # body; shaft 10.2 from one end
-# odometry: 2 free wheels Ø30 with AMT102 encoders, same parts as the volume reserved in robot/fc/layout.py
-# (encoder 6-17 mm outboard of the wheel), in this frame (X = wheel axis, Y = forward). layout.py's spot (86 to the
-# side, 31 forward) puts the AMT102 into this base's drive wheel (x 102) and drive motor (r 18.5): moved 4 mm inboard
-# and 5 mm forward -> 3.0 mm to the wheel, 3.1 mm to the motor body, odometry wheel 42 mm from the motor axis.
-# The wheel and the encoder pass through a slot in the floor plate.
-ODOM_X, ODOM_Y, ODOM_R, ODOM_W = 82.0, 36.0, 15.0, 8.0   # |x| of the wheel centre plane, y, wheel radius, width
-AMT102 = dict(X=(6.0, 17.0), Y=14.4, Z=(0.0, 43.0))      # |x| from the wheel plane, half length along y, z
-ODOM_SLOT = dict(X=(ODOM_X - ODOM_W / 2 - 2.0, ODOM_X + AMT102["X"][1] + 2.0),   # |x|, y of the floor slot
-                 Y=(ODOM_Y - ODOM_R - 2.0, ODOM_Y + ODOM_R + 2.0))
-
-
+HOLD_POST_T = (84.0, 100.0)                      # holder slide posts (|t|): clear of the ball-unit holders (130, 105)
+MG90S_T = 50.0                                   # holder MG90S body t 50-72.8 (between the carriage and the posts)
 # ================================================================== boxes
 class Box:
     def __init__(s, name, c, h, R=None, grp="", col="0.6", kind=""):
@@ -141,30 +153,27 @@ def stone_box(name, phi, z, spin, **kw):
 
 # ================================================================== robot parts
 def fixed_robot():
+    """base_330_js as it is (bounding boxes of mechanical/base_330_js/CAD/base_330_js_assembly.FCStd)"""
     g = dict(grp="fixed")
-    f = [Box.lohi("floor", (-BODY_W, -BODY_D, FLOOR_Z[0]), (BODY_W, BODY_D, FLOOR_Z[1]), col="0.85", kind="floor", **g)]
+    f = [Box.lohi("plate", (-BODY_W, -BODY_D, FLOOR_Z[0]), (BODY_W, BODY_D, FLOOR_Z[1]), col="0.85", kind="floor", **g)]
     for sx in (1, -1):
         lo = lambda a, b: min(sx * a, sx * b)
         hi = lambda a, b: max(sx * a, sx * b)
-        f.append(Box.lohi("wheel", (lo(102, 146), -37, 0), (hi(102, 146), 37, 74), col="0.12", **g))
-        f.append(Box.lohi("drive motor", (lo(32, 100), -18.5, 18.5), (hi(32, 100), 18.5, 55.5), col="0.35", **g))
-        for sy in (1, -1):
-            f.append(Box.lohi("caster", (sx * 124 - 12, sy * 120 - 12, 0), (sx * 124 + 12, sy * 120 + 12, 21),
-                              col="0.4", **g))
-    for sx, side in ((1, "R"), (-1, "L")):
-        lo = lambda a, b: min(sx * a, sx * b)
-        hi = lambda a, b: max(sx * a, sx * b)
-        xw = (ODOM_X - ODOM_W / 2, ODOM_X + ODOM_W / 2)
-        xe = (ODOM_X + AMT102["X"][0], ODOM_X + AMT102["X"][1])
-        f.append(Box.lohi("odometry wheel " + side, (lo(*xw), ODOM_Y - ODOM_R, 0), (hi(*xw), ODOM_Y + ODOM_R, 2 * ODOM_R),
+        f.append(Box.lohi("JSUMO envelope", (lo(79, 131), -40, -3), (hi(79, 131), 40, 77), col="0.12", **g))
+        f.append(Box.lohi("37D motor", (lo(15, 74.5), -18.5, 25.5), (hi(15, 74.5), 18.5, 62.5), col="0.35", **g))
+        f.append(Box.lohi("hinge", (lo(31.9, 77.7), -20, 16.5), (hi(31.9, 77.7), 20, 57.0), col="0.5", **g))
+        f.append(Box.lohi("odometry bracket", (lo(132.2, 163.2), -78, 16.5), (hi(132.2, 163.2), -34, 64.2),
+                          grp="odom", col="0.3", kind="odom"))
+        f.append(Box.lohi("odometry wheel + AMT", (lo(136.0, 167.2), -30.5, -0.3), (hi(136.0, 167.2), 30.5, 60.7),
                           grp="odom", col="0.1", kind="odom"))
-        f.append(Box.lohi("odometry AMT102 " + side, (lo(*xe), ODOM_Y - AMT102["Y"], AMT102["Z"][0]),
-                          (hi(*xe), ODOM_Y + AMT102["Y"], AMT102["Z"][1]), grp="odom", col="0.25", kind="odom"))
+        for sy in (1, -1):
+            f.append(Box.lohi("ball holder", (sx * 130 - 22, sy * 105 - 22, 16.5), (sx * 130 + 22, sy * 105 + 22, 29),
+                              col="0.4", **g))
+            f.append(Box.lohi("ball unit nut", (sx * 130 - 12, sy * 105 - 12, 29), (sx * 130 + 12, sy * 105 + 12, 41),
+                              col="0.4", **g))
     f.append(Box.lohi("column", (-R_COL, -R_COL, FLOOR_Z[1]), (R_COL, R_COL, 350), col="0.3", kind="column", **g))
     # beacon support on top of the column: 80 x 80 (<= 100 x 100, >= 70), top 430 [GR F.6]
     f.append(Box.lohi("beacon support", (-40, -40, 350), (40, 40, 430), col="0.15", kind="beacon", **g))
-    # roof pad for the Grail at L4 (> 300 [G E.2]), over the Grail lift's volume
-    f.append(Box.lohi("L4 roof pad", (76, 26, 330), (150, 122, 335), col="#f1c40f", **g))
     return f
 
 
@@ -172,25 +181,28 @@ def turret(u, th):
     """fixed-to-turret parts of unit u at turn th"""
     U = UNITS[u]
     phi = U["phi0"] + th
-    col = "#2b6cd4" if u == "F" else "#d4802b"
+    col = "#2b6cd4"
     g = dict(grp="tur" + u, col=col)
     zb, zh, zt, zht = U["zb"], U["zh"], U["zt"], U["zht"]
+    rs, ts = (R_SCREW - 4, R_SCREW + 4), (-4, 4)
     P = [rbox("bottom hub " + u, phi, (-R_HUB, R_HUB), (-R_HUB, R_HUB), (zh, zh + PLATE_T), kind="hub", **g),
          rbox("bottom web " + u, phi, WEB_R, (-10, 10), (zh, zh + PLATE_T), kind="hub", **g),
-         rbox("bottom riser " + u, phi, RISER_R, (-10, 10), (zb, zh + PLATE_T), **g),
-         rbox("bottom spoke " + u, phi, (RISER_R[1], 78), (-10, 10), (zb, zb + PLATE_T), **g),
-         rbox("bottom pad " + u, phi, (78, 98), (-10, 40), (zb, zb + PLATE_T), **g),
+         rbox("bottom spoke " + u, phi, (WEB_R[1] if zh == zb else RISER_R[1], 56.0), (-10, 10),
+              (zb, zb + PLATE_T), **g),
+         *[rbox("bottom pad %d %s" % (i, u), phi, r, t, (zb, zb + PLATE_T), **g) for i, (r, t) in enumerate(PAD_B)],
          rbox("top hub " + u, phi, (-R_HUB, R_HUB), (-R_HUB, R_HUB), (zht, zht + PLATE_T), kind="hub", **g),
          rbox("top web " + u, phi, WEB_R, (-10, 10), (zht, zht + PLATE_T), kind="hub", **g),
-         rbox("top spoke " + u, phi, (WEB_R[1] if zht == zt else RISER_R[1], 78), (-21, 21), (zt, zt + PLATE_T), **g),
-         rbox("top pad " + u, phi, (74, 102), (-14, 40), (zt, zt + PLATE_T), **g),
-         rbox("T8 screw " + u, phi, (R_SCREW - 4, R_SCREW + 4), (-4, 4), (zb + PLATE_T, zt), kind="screw",
-              grp="tur" + u, col="0.55"),
-         rbox("guide rod " + u, phi, (R_SCREW - 4, R_SCREW + 4), (T_ROD - 4, T_ROD + 4), (zb + PLATE_T, zt),
-              kind="screw", grp="tur" + u, col="0.75"),
-         rbox("NEMA17 " + u, phi, NEMA_R, (-21, 21), (zt - 42, zt), grp="tur" + u, col="0.1"),
-         rbox("GT2 pulleys + belt " + u, phi, (NEMA_R[0] + 11, R_SCREW + 10), (-10, 10), (zt + PLATE_T + 1, 347),
+         rbox("top spoke " + u, phi, (WEB_R[1] if zht == zt else 31.0, PAD_T["r"][0]), (-21, 21), (zt, zt + PLATE_T), **g),
+         rbox("top pad " + u, phi, PAD_T["r"], PAD_T["t"], (zt, zt + PLATE_T), **g),
+         rbox("T8 screw " + u, phi, rs, ts, (zb + PLATE_T, zt), kind="screw", grp="tur" + u, col="0.55"),
+         rbox("guide rod " + u, phi, (ROD[0] - 4, ROD[0] + 4), (ROD[1] - 4, ROD[1] + 4), (zb, zt), kind="screw", grp="tur" + u,
+              col="0.75"),
+         rbox("NEMA17 " + u, phi, NEMA_R, (NEMA_C[1] - 21.15, NEMA_C[1] + 21.15), (zt - 42, zt), grp="tur" + u,
+              col="0.1"),
+         rbox("GT2 pulleys + belt " + u, phi, (R_SCREW - 8, NEMA_C[0] + 8), (-8, NEMA_C[1] + 8), (zt + PLATE_T + 1, 349.5),
               grp="tur" + u, col="0.25")]
+    if zh != zb:                                 # rear bottom: riser from its hub down to the arm level
+        P.append(rbox("bottom riser " + u, phi, RISER_R, (-10, 10), (zb, zh + PLATE_T), **g))
     if zht != zt:                                # rear top: riser beside the NEMA (t -30..-20), joins web and arm
         P.append(rbox("top riser " + u, phi, (25.0, 31.0), (-30, -20), (zht, zt + PLATE_T), **g))
         P.append(rbox("top web link " + u, phi, (WEB_R[0], 30), (-30, 10), (zht, zht + PLATE_T), kind="hub", **g))
@@ -201,10 +213,15 @@ def carriage(u, th, zc, spin):
     phi = UNITS[u]["phi0"] + th
     g = dict(grp="car" + u)
     ur, ut, a, b = frame(phi, spin)
-    P = [rbox("carriage " + u, phi, (77, 106), (-10, 40), (zc + 10, zc + 40), col="#7a1fa2", kind="carriage", **g),
-         rbox("spin MG996R " + u, phi, (106, 144), (-17, 38), (zc - 10, zc + 10), col="0.2", **g),
-         rbox("cup bearing " + u, phi, (144, 150), (-11, 11), (zc - 11, zc + 11), col="0.45", **g)]
-    P.append(Box("shaft cup " + u, ur * 159 + [0, 0, zc], (9, 15, 15), np.column_stack([ur, a, b]),
+    z0 = zc + CAR_A
+    P = [rbox("carriage " + u, phi, CAR_R, CAR_T, (z0 + CAR_LOW_H, z0 + CAR_H), col="#7a1fa2", kind="carriage", **g),
+         rbox("carriage low " + u, phi, CAR_R, (CAR_T[0], CAR_T_LOW), (z0, z0 + CAR_LOW_H), col="#7a1fa2", kind="carriage", **g),
+         rbox("carriage arm " + u, phi, (CAR_R[1], 144 + DF), (-17, 12.5), (z0, z0 + 4), col="#7a1fa2", **g),
+         rbox("carriage arm out " + u, phi, (94, 144 + DF), (12.5, 38), (z0, z0 + 4), col="#7a1fa2", **g),
+         rbox("carriage drop " + u, phi, (136 + DF, 140 + DF), (-17, 38), (zc - 12, z0 + 4), col="#7a1fa2", **g),
+         rbox("spin MG996R " + u, phi, (106 + DF, 144 + DF), (-17, 38), (zc - 10, zc + 10), col="0.2", **g),
+         rbox("cup bearing " + u, phi, (144 + DF, 150 + DF), (-11, 11), (zc - 11, zc + 11), col="0.45", **g)]
+    P.append(Box("shaft cup " + u, ur * (FACE - 9) + [0, 0, zc], (9, 15, 15), np.column_stack([ur, a, b]),
                  col="0.02", kind="cup", **g))
     return P
 
@@ -214,11 +231,11 @@ def holder(u, L):
     g = dict(grp="hold" + u, col="#2e8b57")
     P = []
     for t in (-HOLD_X, HOLD_X):
-        P.append(rbox(f"holder column {u}{t:+.0f}", phi, (128, 150), (t - 10, t + 10), (38 + L, HOLD_TOP + L), **g))
+        P.append(rbox(f"holder column {u}{t:+.0f}", phi, (128 + DF, 150 + DF), (t - 10, t + 10), (38 + L, HOLD_TOP + L), **g))
         for lv in ("B", "M"):
-            P.append(rbox(f"holder cup {u}{lv}{t:+.0f}", phi, (150, 168), (t - 15, t + 15),
+            P.append(rbox(f"holder cup {u}{lv}{t:+.0f}", phi, (150 + DF, FACE), (t - 15, t + 15),
                           (Z_ST[lv] - 15 + L, Z_ST[lv] + 15 + L), kind="hcup", grp="hold" + u, col="0.02"))
-    P.append(rbox("holder crossbar " + u, phi, (128, 146), (-110, 110), (30 + L, 38 + L), **g))
+    P.append(rbox("holder crossbar " + u, phi, (128 + DF, 146 + DF), (-110, 110), (30 + L, 38 + L), **g))
     return P
 
 
@@ -233,7 +250,11 @@ def fixed_unit(u):
                                                                                        T["body_z"][1]), col="0.2", **g),
            Box.lohi("turn pinion " + u, (x0 - PINION_R - 1, y0 - PINION_R - 1, T["gear_z"][0]),
                     (x0 + PINION_R + 1, y0 + PINION_R + 1, T["gear_z"][1]), col="0.5", kind="pinion", **g),
-           rbox("holder MG90S " + u, phi, (100, 125), (115, 140), (26, 55), col="0.2", **g)]
+           rbox("holder MG90S + cradle " + u, phi, (101, 120), (MG90S_T - 6.5, MG90S_T + 33), (FLOOR_Z[1], 55),
+                col="0.2", **g)]
+    for t in (-1, 1):
+        out.append(rbox(f"holder post {u}{t:+d}", phi, (108, 128), sorted((t * HOLD_POST_T[0], t * HOLD_POST_T[1])),
+                        (FLOOR_Z[1], 195), col="0.2", **g))
     if T["block"]:
         out.append(Box.lohi("turn servo block " + u, (xa, y0 - MG996["W"] / 2, FLOOR_Z[1]),
                             (xb, y0 + MG996["W"] / 2, FLOOR_Z[1] + T["block"]), col="0.6", **g))
@@ -241,12 +262,8 @@ def fixed_unit(u):
 
 
 def free_volumes():
-    """reserved: Grail lift (front-right) and launcher (rear-left), pumps (low, outside the screw circle)"""
-    V = [Box.lohi("FREE Grail lift (front-right)", (82, 22, 78), (146, 110, 330), grp="free", col="#f1c40f"),
-         Box.lohi("FREE launcher (rear-left)", (-146, -110, 78), (-82, -22, 330), grp="free", col="#e74c3c")]
-    V.append(Box.lohi("pumps F (3x)", (-146, 25, 78), (-112, 115, 113), grp="free", col="#95a5a6"))
-    V.append(Box.lohi("pumps R (3x)", (112, -115, 78), (146, -25, 113), grp="free", col="#95a5a6"))
-    return V
+    """the layout-v1 reservations (Grail lift, launcher, pumps) don't apply to base_330_js: none checked here"""
+    return []
 
 
 # ================================================================== sequence
@@ -359,8 +376,12 @@ def allowed(a, b, s):
     ka, kb = a.kind, b.kind
     if {ka, kb} == {"hub", "column"}:
         return True, 0
+    if {ka, kb} == {"pinion", "carriage"}:
+        return False, 0.0                                  # square box round a round pinion: real gap ~4 mm (FreeCAD check)
+    if "beacon" in (ka, kb):
+        return False, 0.0                                  # belt/pulleys under the beacon support (z 349.5 < 350)
     if {ka, kb} == {"odom", "floor"}:
-        return True, 0                                     # wheel + encoder pass through a slot in the floor plate
+        return True, 0                                     # odometry modules on / through the base plate
     if a.grp == b.grp:
         return True, 0
     if {ka, kb} <= {"stone"}:
@@ -543,7 +564,8 @@ def main():
     per_dep, _ = perimeter(dep)
     per_max = max(perimeter(s)[0] for s in S[::3])
     lines = ["Central hub option E, doubled (Ayoub, 2026-11-19, proposal): turret + one shaft + holder cups per unit",
-             f"base: layout-v1 body {2*BODY_W:.0f} x {2*BODY_D:.0f}, chamfer {CHAMFER:.0f}; stack face r {FACE:.0f}",
+             f"base: base_330_js plate {2*BODY_W:.0f} x {2*BODY_D:.0f} (unchanged); stack face r {FACE:.0f}",
+             "perimeter limits not designed for in this version (Ayoub, 2026-11-20): reported only",
              f"states: {len(S)} (front builds 3 towers while the rear holds its stack, then the rear), "
              f"margin {MARGIN} mm",
              f"highest point (robot + held stone; column = beacon mast, excluded [GR F.3]): {zmax:.1f} mm (limit 350 [GR F.3])",

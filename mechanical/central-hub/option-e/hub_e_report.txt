@@ -1,14 +1,11 @@
 Central hub option E, doubled (Ayoub, 2026-11-19, proposal): turret + one shaft + holder cups per unit
-base: layout-v1 body 300 x 292, chamfer 30; stack face r 168
+base: base_330_js plate 336 x 260 (unchanged); stack face r 171
+perimeter limits not designed for in this version (Ayoub, 2026-11-20): reported only
 states: 585 (front builds 3 towers while the rear holds its stack, then the rear), margin 3.0 mm
-highest point (robot + held stone; column = beacon mast, excluded [GR F.3]): 347.0 mm (limit 350 [GR F.3])
+highest point (robot + held stone; column = beacon mast, excluded [GR F.3]): 349.5 mm (limit 350 [GR F.3])
 lowest stone corner during a spin: 4.8 mm (> 0 = clears the table)
-perimeter at start (both stacks out of count, FAQ Q1): 1176 mm (limit 1200 [GR F.3])
-perimeter deployed (both turrets out + holders up, FAQ Q10): 1182 mm (limit 1400)
-largest perimeter seen in the sequence: 1179 mm
+perimeter at start (both stacks out of count, FAQ Q1): 1248 mm (limit 1200 [GR F.3])
+perimeter deployed (both turrets out + holders up, FAQ Q10): 1248 mm (limit 1400)
+largest perimeter seen in the sequence: 1248 mm
 clashes: 0
 free volumes entered by a part: 0
-  FREE Grail lift (front-right): 64 x 88 x 252 mm = 1.42 L, x 82..146, y 22..110, z 78..330
-  FREE launcher (rear-left): 64 x 88 x 252 mm = 1.42 L, x -146..-82, y -110..-22, z 78..330
-  pumps F (3x): 34 x 90 x 35 mm = 0.11 L, x -146..-112, y 25..115, z 78..113
-  pumps R (3x): 34 x 90 x 35 mm = 0.11 L, x 112..146, y -115..-25, z 78..113

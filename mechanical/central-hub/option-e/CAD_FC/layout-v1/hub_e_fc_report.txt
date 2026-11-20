@@ -1,0 +1,53 @@
+Central hub - option E (doubled) - FreeCAD model report (fc/hub_e_fc.py)
+
+Solid clash check (FreeCAD booleans, > 1 mm3) of the saved poses + 13 extra poses. Left out by design:
+parts of one group, turret hubs on the column, screw + rod through their plates and carriage, the turn
+pinion in its gear sector, cups on stone faces, stones of one stack (shrunk 1 %% when checked together).
+Reserved volumes (Grail lift, launcher) are checked against every part and stone.
+
+HUB_E_HOME                 highest 348.0  perimeter 1176  no clashes
+    home: both stacks set down, shaft cups on the top stones, holder cups on the lower ones
+HUB_E_1_FRONT_TOP_TURN45   highest 348.0  perimeter 1176  no clashes
+    front top stone lifted 8 and turned 45 deg, rear holds its stack
+HUB_E_2_FRONT_TOP_SPIN     highest 348.0  perimeter 1179  no clashes
+    front top stone at 90 deg, spinning (45), rear holds its stack
+HUB_E_3_REAR_MIDDLE_UP     highest 348.0  perimeter 1179  no clashes
+    front done (its towers left behind); rear middle stone stood up beside the robot, rear top tower 340 mm behind
+HUB_E_DEPLOYED             highest 348.0  perimeter 1182  no clashes
+    both turrets at 90, cups spun, holders up 15 (every mechanism open, FAQ Q10), no stones
+
+extra poses (13): no clashes
+highest point of the mechanism + held stones over all poses: 348.0 mm (limit 350 [GR F.3]; the column is the beacon mast)
+
+Parts (both units): 2 NEMA17 + 2 T8 screws (283) + brass nuts + 2 GT2 belts + 4 GT2 20T pulleys + 2 x 608;
+2 guide rods 8 mm (284) + 2 LM8UU; 4 MG996R (2 turn, 2 spin) + 2 MG90S (holder lift); 2 printed 60 T gear
+sectors + 2 printed 30 T pinions (m 1); 10 VS2-S30 cups (2 shaft + 8 holder); column 20 mm aluminium tube.
+Printed (ABS, D-023, blue in the model): 2 bottom plates (with their 60 T sector) + 2 top plates, 2 carriages,
+2 holder frames, 4 holder slide posts, 4 turn servo posts, 2 pinions (with hub), 2 MG90S cradles, column foot,
+2 hub clamp collars, beacon plug. Bought: 2 round servo horns (MG996R kit).
+
+Fasteners (fc/hub_e_hw.py, both units, counted in HUB_E_HOME):
+    4 x M2x8 screw (servo kit, self-tapping)
+    4 x SHCS M2x8 ISO 4762
+    8 x SHCS M3x10 ISO 4762
+   24 x SHCS M3x12 ISO 4762
+    3 x SHCS M3x16 ISO 4762
+    6 x SHCS M3x20 ISO 4762
+    1 x SHCS M3x30 ISO 4762
+    8 x SHCS M3x8 ISO 4762
+    1 x SHCS M4x12 ISO 4762
+    4 x SHCS M4x20 ISO 4762
+    1 x SHCS M4x40 ISO 4762
+   16 x heat-set insert M3 (K6 L6)
+    1 x heat-set insert M4
+    4 x hex nut M2 ISO 4032
+   24 x hex nut M3 ISO 4032
+    8 x hex nut M5 ISO 4032
+    5 x nyloc nut M4 DIN 985
+    4 x set screw M4x4 ISO 4026
+    4 x shaft collar 8 mm DIN 705 (D16 b8)
+   18 x washer M3 DIN 125
+   11 x washer M4 DIN 125
+  159   total
+
+Wrote CAD_FC/HUB_E_*.FCStd + CAD_FC/HUB_E_HOME.step

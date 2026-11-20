@@ -3,9 +3,13 @@
 #   turret (bottom + top plate, printed) turned 0 -> 90 deg by an MG996R through a 2:1 spur pair (60 T sector on the
 #   hub, 30 T pinion, m 1); one carriage on a T8 screw + 8 mm rod, NEMA17 + GT2 belt 1:1; spin MG996R + VS2-S30 cup;
 #   holder frame with 2 cups per lower stone (x = +-100), lifted 15 mm by an MG90S.
-# Every number comes from fc/check_e.py (box model), so the two agree. Concept level: printed parts as plain blocks
-# with their holes, bought parts as outer shapes, gear teeth trapezoidal, no screws.
+# Every number comes from fc/check_e.py (box model), so the two agree. Printed parts (blue) as plain blocks with their
+# holes, bought parts as outer shapes, gear teeth trapezoidal. Since 2026-11-20 every screw, nut, washer, heat-set
+# insert and collar is drawn by fc/hub_e_hw.py, with its holes, counterbores and nut pockets cut into the parts.
 #
+# Base (2026-11-20): mechanical/base_330_js as it is, loaded from base_330_js/CAD/base_330_js_assembly.FCStd (plate,
+# 37D motors + hinges, JSUMO worst-case envelope, both odometry modules, 4 ball units). The layout-v1 version is in
+# CAD_FC/layout-v1/ (snapshot).
 # Run from mechanical/central-hub/option-e/ (GUI, so the files keep their colours; closes itself):
 #   "D:/FreeCad/bin/FreeCAD.exe" fc/hub_e_fc.py
 # or without colours:  "D:/FreeCad/bin/freecadcmd.exe" fc/hub_e_fc.py
@@ -24,16 +28,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import check_e as ce            # noqa: E402
+import hub_e_hw as hw           # noqa: E402
+import types                    # noqa: E402
 V = App.Vector
 OUT = os.path.join(ROOT, "CAD_FC")
 UNAME = {"F": "front", "R": "rear"}
 LNAME = {"T": "top", "M": "middle", "B": "bottom"}
 
+BLUE = (0.10, 0.38, 0.88)                       # every 3D-printed part (Ayoub, 2026-11-20)
 COL = dict(stone=(0.85, 0.70, 0.44), held=(0.88, 0.54, 0.17), tower=(0.66, 0.51, 0.29),
-           turF=(0.17, 0.42, 0.83), turR=(0.83, 0.50, 0.17), car=(0.48, 0.12, 0.64), hold=(0.18, 0.55, 0.34),
+           turF=BLUE, turR=BLUE, car=BLUE, hold=BLUE, print=BLUE, blackox=(0.13, 0.13, 0.15), zinc=(0.80, 0.81, 0.83),
            servo=(0.12, 0.12, 0.14), steel=(0.70, 0.72, 0.75), brass=(0.80, 0.65, 0.25), cup=(0.95, 0.95, 0.95),
-           alu=(0.62, 0.65, 0.70), floor=(0.86, 0.86, 0.84), wheel=(0.08, 0.08, 0.08), dark=(0.30, 0.30, 0.32),
-           belt=(0.15, 0.15, 0.15), gear=(0.95, 0.85, 0.20), reserve_grail=(0.95, 0.77, 0.06),
+           alu=(0.62, 0.65, 0.70), floor=(0.86, 0.86, 0.84), plate=(0.87, 0.78, 0.60), envelope=(0.30, 0.30, 0.32), wheel=(0.08, 0.08, 0.08), dark=(0.30, 0.30, 0.32),
+           belt=(0.15, 0.15, 0.15), gear=BLUE, reserve_grail=(0.95, 0.77, 0.06),
            reserve_launch=(0.91, 0.30, 0.24), reserve_pump=(0.60, 0.65, 0.66))
 
 
@@ -155,79 +162,118 @@ def gt2_pulley(x, y, z0):
     return cyl_z(x, y, z0, z0 + 1, 8.0).fuse(cyl_z(x, y, z0 + 1, z0 + 7, 6.1)).fuse(cyl_z(x, y, z0 + 7, z0 + 8, 8.0))
 
 
-# ---------------------------------------------------------------- fixed robot
+# ---------------------------------------------------------------- fixed robot: base_330_js as it is
+BASE_FC = os.path.normpath(os.path.join(ROOT, "..", "..", "base_330_js", "CAD", "base_330_js_assembly.FCStd"))
+BASE_PARTS = {"plate": "plate", "odo_bracket": "print", "odo_arm": "print", "dead_wheel": "wheel", "amt102": "dark",
+              "shaft_D6": "steel", "bearing_696": "steel", "eclip_shim": "steel", "bearing_F623": "steel",
+              "spring": "steel", "screws_M3": "blackox", "hinges_PH": "dark", "motors_37D_PH": "dark",
+              "wheels_JS7444_nominal_PH": "wheel", "wheels_JS7444_ENVELOPE": "envelope",
+              "ball_units_KSM15_PH": "steel", "ball_holders": "print", "ball_shims": "print"}
+_BASE = {}
+
+
+def base_shapes():
+    """the parts of mechanical/base_330_js/CAD/base_330_js_assembly.FCStd (clapets module A left out)"""
+    if not _BASE:
+        doc = App.openDocument(BASE_FC)
+        for o in doc.Objects:
+            if o.Name in BASE_PARTS:
+                _BASE[o.Name] = o.Shape.copy()
+        App.closeDocument(doc.Name)
+    return _BASE
+
+
 def robot():
     out = {}
-    oct_ = ce.body_outline()
-    w = Part.makePolygon([V(x, y, ce.FLOOR_Z[0]) for x, y in oct_] + [V(oct_[0][0], oct_[0][1], ce.FLOOR_Z[0])])
-    floor = Part.Face(w).extrude(V(0, 0, ce.FLOOR_Z[1] - ce.FLOOR_Z[0]))
-    for sx in (1, -1):                                       # slots for the odometry wheel + encoder
-        x0, x1 = sorted((sx * ce.ODOM_SLOT["X"][0], sx * ce.ODOM_SLOT["X"][1]))
-        y0, y1 = ce.ODOM_SLOT["Y"]
-        floor = floor.cut(Part.makeBox(x1 - x0, y1 - y0, 20, V(x0, y0, ce.FLOOR_Z[0] - 5)))
-    out["floor"] = ("robot", floor, "floor")
-    for sx, side in ((1, "R"), (-1, "L")):
-        out["wheel " + side] = ("robot", Part.makeCylinder(37, 44, V(sx * (102 if sx > 0 else 146), 0, 37), V(1, 0, 0)), "wheel")
-        out["drive motor " + side] = ("robot", Part.makeCylinder(18.5, 68, V(sx * (32 if sx > 0 else 100), 0, 37),
-                                                                 V(1, 0, 0)), "dark")
-        for sy in (1, -1):
-            out["caster %s%s" % (side, "F" if sy > 0 else "B")] = (
-                "robot", cyl_z(sx * 124, sy * 120, 4, 21, 12).fuse(Part.makeSphere(7.9, V(sx * 124, sy * 120, 7.9))),
-                "dark")
-    for sx, side in ((1, "R"), (-1, "L")):                  # odometry (reserve from robot/fc/layout.py)
-        out["odometry wheel " + side] = ("odom", Part.makeCylinder(ce.ODOM_R, ce.ODOM_W, V(
-            sx * ce.ODOM_X - ce.ODOM_W / 2, ce.ODOM_Y, ce.ODOM_R), V(1, 0, 0)), "wheel")
-        xe0, xe1 = sorted((sx * (ce.ODOM_X + ce.AMT102["X"][0]), sx * (ce.ODOM_X + ce.AMT102["X"][1])))
-        z0, z1 = ce.AMT102["Z"]
-        out["odometry AMT102 " + side] = ("odom", Part.makeBox(xe1 - xe0, 2 * ce.AMT102["Y"], z1 - z0, V(
-            xe0, ce.ODOM_Y - ce.AMT102["Y"], z0)), "dark")
+    for n, s in base_shapes().items():
+        out["base " + n] = ("robot", s.copy(), BASE_PARTS[n])
     out["column"] = ("column", tube_z(0, 0, ce.FLOOR_Z[1], 350, ce.R_COL, ce.R_COL - 2), "alu")
     out["beacon support"] = ("beacon", tube_z(0, 0, 350, 430, 40, 37).fuse(cyl_z(0, 0, 350, 353, 40)), "dark")
-    out["L4 roof pad"] = ("grail", Part.makeBox(74, 96, 5, V(76, 26, 330)), "reserve_grail")
     return out
 
 
+def pinion_rot(u, th):
+    """tooth phase of the turn pinion so it meshes the hub sector (sector teeth at world angle 90 + phi - 6 k)"""
+    alpha = 90.0 + ce.PINION_PSI[u]                           # hub -> pinion, math angle
+    e0 = ((90.0 + ce.UNITS[u]["phi0"] - alpha) + 3.0) % 6.0 - 3.0
+    return alpha + 186.0 - 2.0 * e0 - 2.0 * th
+
+
 def fixed_unit(u, th):
-    """turn MG996R + pinion (turns 2x the turret), holder slide posts, holder MG90S"""
+    """turn MG996R on 2 printed posts + horn + printed pinion (turns 2x the turret), holder slide posts with feet,
+    holder MG90S in a printed cradle"""
     out = {}
     T = ce.TURN[u]
     (x0, y0), sx = T["shaft"], T["sx"]
-    zb = ce.FLOOR_Z[1] + T["block"]
+    z1 = ce.FLOOR_Z[1]
+    zb = z1 + T["block"]
+    m = ce.MG996
+    xa, xb = sorted((x0 - sx * m["SHAFT_OFF"], x0 + sx * (m["L"] - m["SHAFT_OFF"])))
     out["turn MG996R " + u] = ("fixed" + u, mg996r_upright(x0, y0, sx, zb), "servo")
     if T["block"]:
-        m = ce.MG996
-        xa, xb = sorted((x0 - sx * m["SHAFT_OFF"], x0 + sx * (m["L"] - m["SHAFT_OFF"])))
-        out["turn servo block " + u] = ("fixed" + u, Part.makeBox(xb - xa, m["W"], T["block"],
-                                                                  V(xa, y0 - m["W"] / 2, ce.FLOOR_Z[1])), "dark")
+        out["turn servo block " + u] = ("fixed" + u, Part.makeBox(xb - xa, m["W"], T["block"], V(xa, y0 - m["W"] / 2, z1)),
+                                        "print")
+    zE = zb + 26.5                                            # ear bottom: 2 printed posts under the ears
+    for side, p0 in (("A", xa - 10), ("B", xb)):
+        out["turn servo post %s %s" % (u, side)] = ("fixed" + u, Part.makeBox(10, 22, zE - z1, V(p0, y0 - 11, z1)), "print")
+    top = zb + m["H"]
+    horn = cyl_z(x0, y0, top, top + 4, 4.5).fuse(cyl_z(x0, y0, top + 2, top + 4, 10.5)).cut(cyl_z(x0, y0, top, top + 4, 3.0))
+    for dy in (-7, 7):
+        horn = horn.cut(cyl_z(x0, y0 + dy, top, top + 4, 1.1))
+    out["turn horn " + u] = ("fixed" + u, horn, "dark")      # round horn of the servo kit
     g0, g1 = T["gear_z"]
-    out["turn shaft " + u] = ("fixed" + u, cyl_z(x0, y0, zb + ce.MG996["H"] + 4, g0, 3.0), "steel")
-    # pinion turns -2 x the turret; half a tooth offset so it meshes the hub sector
-    out["turn pinion " + u] = ("fixed" + u, gear(30, 1.0, r_in=3.0, z0=g0, z1=g1, cx=x0, cy=y0,
-                                                 rot=-2 * th + 6.0), "gear")
+    # printed pinion + hub down to the horn (2 M2 from under the horn), M3 down the bore into the spline;
+    # pinion turns -2 x the turret
+    pin = gear(30, 1.0, r_in=hw.CLR[3], z0=g0, z1=g1, cx=x0, cy=y0, rot=pinion_rot(u, th))
+    pin = pin.fuse(cyl_z(x0, y0, top + 4, g0, 10.0)).cut(cyl_z(x0, y0, top + 4, g1, hw.CLR[3]))
+    for dy in (-7, 7):
+        pin = pin.cut(cyl_z(x0, y0 + dy, top + 4, top + 10, 0.8))
+    out["turn pinion " + u] = ("fixed" + u, pin, "gear")
     phi = ce.UNITS[u]["phi0"]
-    for t in (-1, 1):
-        out["holder post %s%+d" % (u, t)] = ("fixed" + u, to_unit(lbox((118, 128), sorted((t * 92, t * 108)), (26, 195)),
-                                                                   phi), "hold")
-    mg = lbox((105, 117.2), (115, 137.8), (26, 54.5)).fuse(Part.makeCylinder(3, 4, V(111, 120, 54.5)))
+    p0, p1 = ce.HOLD_POST_T
+    for t in (-1, 1):                                         # slide posts + a foot inboard (2 floor screws each)
+        tt = sorted((t * p0, t * p1))
+        post = lbox((118, 128), tt, (z1, 195)).fuse(lbox((108, 118), tt, (z1, z1 + 10)))
+        out["holder post %s%+d" % (u, t)] = ("fixed" + u, to_unit(post, phi), "hold")
+    T0 = ce.MG90S_T                                           # MG90S 22.8 x 12.2, ears 32.5 long at 16 from the bottom
+    mg = lbox((105, 117.2), (T0, T0 + 22.8), (z1, z1 + 28.5)).fuse(Part.makeCylinder(3, 4, V(111, T0 + 5, z1 + 28.5))).fuse(
+        lbox((105, 117.2), (T0 - 4.85, T0 + 27.65), (z1 + 16, z1 + 18.5)))
     out["holder MG90S " + u] = ("fixed" + u, to_unit(mg, phi), "servo")
+    cradle = lbox((101, 120), (T0 - 6.5, T0 + 33), (z1, z1 + 16)).cut(lbox((104.8, 117.4), (T0 - 0.2, T0 + 23), (z1, z1 + 16)))
+    out["holder MG90S cradle " + u] = ("fixed" + u, to_unit(cradle, phi), "print")
     return out
 
 
 # ---------------------------------------------------------------- turret, carriage, holder
+def belt_strip(c1, c2, o0, o1, z0, z1):
+    """flat strip between two pulley centres (local r, t), offset o0..o1 from the centre line"""
+    d = np.array(c2, float) - np.array(c1, float)
+    d /= np.linalg.norm(d)
+    n = np.array([-d[1], d[0]])
+    pts = [np.array(c1) + n * o0, np.array(c2) + n * o0, np.array(c2) + n * o1, np.array(c1) + n * o1]
+    w = Part.makePolygon([V(p[0], p[1], z0) for p in pts] + [V(pts[0][0], pts[0][1], z0)])
+    return Part.Face(w).extrude(V(0, 0, z1 - z0))
+
+
 def turret(u, th):
     U = ce.UNITS[u]
     phi = U["phi0"] + th
     g = "tur" + u
     zb, zh, zt, zht = U["zb"], U["zh"], U["zt"], U["zht"]
     P5 = ce.PLATE_T
+    R, (rr, rt) = ce.R_SCREW, ce.ROD
     out = {}
     hub_b = Part.makeCylinder(ce.R_HUB, P5, V(0, 0, zh)).cut(Part.makeCylinder(ce.R_COL + 0.3, P5, V(0, 0, zh)))
+    if u == "R":                                     # spacer boss (r 18, 3 tall) on the front gear's top face
+        hub_b = hub_b.fuse(tube_z(0, 0, zh - 3, zh, 18, ce.R_COL + 0.3))
     web_b = lbox(ce.WEB_R, (-10, 10), (zh, zh + P5)).cut(Part.makeCylinder(ce.R_HUB, P5, V(0, 0, zh)))
-    riser_b = lbox(ce.RISER_R, (-10, 10), (zb, zh + P5))
-    spoke_b = lbox((ce.RISER_R[1], 78), (-10, 10), (zb, zb + P5))
-    pad_b = lbox((78, 98), (-10, 40), (zb, zb + P5)).cut(cyl_z(ce.R_SCREW, 0, zb, zb + P5, 5.0)).cut(
-        cyl_z(ce.R_SCREW, ce.T_ROD, zb, zb + P5, 4.0))
-    out["bottom plate " + u] = (g, to_unit(hub_b.fuse(web_b).fuse(riser_b).fuse(spoke_b).fuse(pad_b), phi), "tur" + u)
+    bot = hub_b.fuse(web_b).fuse(lbox((ce.WEB_R[1] if zh == zb else ce.RISER_R[1], 56.0), (-10, 10), (zb, zb + P5)))
+    if zh != zb:
+        bot = bot.fuse(lbox(ce.RISER_R, (-10, 10), (zb, zh + P5)))
+    for r, t in ce.PAD_B:                            # pad within r 76 of the axis (it turns over the wheel envelope)
+        bot = bot.fuse(lbox(r, t, (zb, zb + P5)))
+    bot = bot.cut(cyl_z(R, 0, zb, zb + P5, 5.0)).cut(cyl_z(rr, rt, zb, zb + P5, 4.0))
+    out["bottom plate " + u] = (g, to_unit(bot, phi), "tur" + u)
     a0, a1 = -ce.GEAR_SECTOR[1], -ce.GEAR_SECTOR[0]           # polar offsets -> local angles
     g0, g1 = ce.TURN[u]["gear_z"]
     sector = gear(60, 1.0, a0, a1, r_in=ce.R_COL + 0.3, z0=g0, z1=g1)
@@ -236,25 +282,28 @@ def turret(u, th):
     out["turn gear sector " + u] = (g, to_unit(sector, phi), "gear")
     # top plate
     hub_t = Part.makeCylinder(ce.R_HUB, P5, V(0, 0, zht)).cut(Part.makeCylinder(ce.R_COL + 0.3, P5, V(0, 0, zht)))
+    if u == "F":                                     # spacer boss down to 1 mm over the rear top hub
+        hub_t = hub_t.fuse(tube_z(0, 0, zht - 3, zht, 18, ce.R_COL + 0.3))
     web_t = lbox(ce.WEB_R, (-10, 10), (zht, zht + P5)).cut(Part.makeCylinder(ce.R_HUB, P5, V(0, 0, zht)))
-    spoke_t = lbox((ce.WEB_R[1] if zht == zt else ce.RISER_R[1], 78), (-21, 21), (zt, zt + P5))
-    pad_t = lbox((74, 102), (-14, 40), (zt, zt + P5)).cut(cyl_z(ce.R_SCREW, 0, zt, zt + P5, 11.0)).cut(
-        cyl_z(ce.R_SCREW, ce.T_ROD, zt, zt + P5, 4.0))
+    spoke_t = lbox((ce.WEB_R[1] if zht == zt else 31.0, ce.PAD_T["r"][0]), (-21, 21), (zt, zt + P5))
+    pad_t = lbox(ce.PAD_T["r"], ce.PAD_T["t"], (zt, zt + P5))
     top = hub_t.fuse(web_t).fuse(spoke_t).fuse(pad_t)
     if zht != zt:
         top = top.fuse(lbox((25, 31), (-30, -20), (zht, zt + P5))).fuse(
             lbox((ce.WEB_R[0], 30), (-30, 10), (zht, zht + P5)).cut(Part.makeCylinder(ce.R_HUB, P5, V(0, 0, zht))))
-    nema, rn = nema17_local(ce.NEMA_R, 0.0, zt)
-    top = top.cut(Part.makeCylinder(11.5, P5, V(rn, 0, zt)))
+    nema, rn = nema17_local((ce.NEMA_C[0] - 21.15, ce.NEMA_C[0] + 21.15), ce.NEMA_C[1], zt)
+    top = top.cut(cyl_z(rn, ce.NEMA_C[1], zt, zt + P5, 11.5)).cut(cyl_z(R, 0, zt, zt + P5, 11.0)).cut(
+        cyl_z(rr, rt, zt, zt + P5, 4.0))
     out["top plate " + u] = (g, to_unit(top, phi), "tur" + u)
-    out["608 bearing " + u] = (g, to_unit(tube_z(ce.R_SCREW, 0, zt, zt + 7, 11, 4), phi), "steel")
+    out["608 bearing " + u] = (g, to_unit(tube_z(R, 0, zt, zt + 7, 11, 4), phi), "steel")
     out["NEMA17 " + u] = (g, to_unit(nema, phi), "servo")
-    out["T8 screw " + u] = ("screw" + u, to_unit(cyl_z(ce.R_SCREW, 0, zb + P5 + 1, 347, 4.0), phi), "steel")
-    out["guide rod " + u] = ("screw" + u, to_unit(cyl_z(ce.R_SCREW, ce.T_ROD, zb, zt + P5, 4.0), phi), "steel")
+    out["T8 screw " + u] = ("screw" + u, to_unit(cyl_z(R, 0, zb + P5 + 1, 349, 4.0), phi), "steel")
+    out["guide rod " + u] = ("screw" + u, to_unit(cyl_z(rr, rt, zb, zt + P5, 4.0), phi), "steel")
     zp = zt + P5 + 1 + 0.5
-    pul = gt2_pulley(rn, 0, zp).fuse(gt2_pulley(ce.R_SCREW, 0, zp))
+    pul = gt2_pulley(rn, ce.NEMA_C[1], zp).fuse(gt2_pulley(R, 0, zp))
     out["GT2 pulleys " + u] = (g, to_unit(pul, phi), "steel")
-    belt = lbox((rn, ce.R_SCREW), (6.1, 7.5), (zp + 1, zp + 7)).fuse(lbox((rn, ce.R_SCREW), (-7.5, -6.1), (zp + 1, zp + 7)))
+    c1, c2 = (R, 0.0), (rn, ce.NEMA_C[1])
+    belt = belt_strip(c1, c2, 6.1, 7.5, zp + 1, zp + 7).fuse(belt_strip(c1, c2, -7.5, -6.1, zp + 1, zp + 7))
     out["GT2 belt " + u] = (g, to_unit(belt, phi), "belt")
     return out
 
@@ -263,22 +312,32 @@ def carriage(u, th, zc, spin, held):
     phi = ce.UNITS[u]["phi0"] + th
     g = "car" + u
     out = {}
-    blk = lbox((77, 106), (-10, 40), (zc + 10, zc + 40)).cut(cyl_z(ce.R_SCREW, 0, zc + 10, zc + 40, 5.2)).cut(
-        cyl_z(ce.R_SCREW, ce.T_ROD, zc + 10, zc + 40, 7.6))
-    arm = lbox((106, 144), (-17, 38), (zc + 10, zc + 14))
-    drop = lbox((136, 140), (-17, 38), (zc - 12, zc + 10)).cut(lbox((136, 140), (-10.5, 30.8), (zc - 10.2, zc + 10.2)))
+    R, (rr, rt) = ce.R_SCREW, ce.ROD
+    DF = ce.DF
+    z0 = zc + ce.CAR_A                                        # block bottom (the cup axis is at zc, under it)
+    z1 = z0 + ce.CAR_H
+    zl = z0 + ce.CAR_LOW_H
+    blk = lbox(ce.CAR_R, (ce.CAR_T[0], ce.CAR_T_LOW), (z0, zl)).fuse(lbox(ce.CAR_R, ce.CAR_T, (zl, z1)))
+    blk = blk.cut(cyl_z(R, 0, z0, z1, 4.6)).cut(cyl_z(R, 0, z0 + 4, z1 - 12, 5.2)).cut(
+        cyl_z(R, 0, z1 - 12, z1, 11.3))                       # T8: screw clearance, nut body, flange pocket (open top)
+    blk = blk.cut(cyl_z(rr, rt, z0, z1, 4.6)).cut(cyl_z(rr, rt, z0 + 2, z1, 7.6))   # LM8UU on a ledge
+    arm = lbox((ce.CAR_R[1], 144 + DF), (-17, 12.5), (z0, z0 + 4)).fuse(lbox((94, 144 + DF), (12.5, 38), (z0, z0 + 4)))
+    drop = lbox((136 + DF, 140 + DF), (-17, 38), (zc - 12, z0 + 4)).cut(
+        lbox((136 + DF, 140 + DF), (-10.5, 30.8), (zc - 10.2, zc + 10.2)))
     out["carriage " + u] = (g, to_unit(blk.fuse(arm).fuse(drop), phi), "car")
-    nut = tube_z(ce.R_SCREW, 0, zc + 13, zc + 28, 5.1, 4.0).fuse(tube_z(ce.R_SCREW, 0, zc + 28, zc + 31.5, 11, 4.0))
+    nut = tube_z(R, 0, z1 - 23.5, z1 - 12, 5.1, 4.0).fuse(tube_z(R, 0, z1 - 12, z1 - 8.5, 11, 4.0))   # T8 nut, 15 long
+    for a in range(4):
+        nut = nut.cut(cyl_z(R + 8 * math.cos(a * math.pi / 2), 8 * math.sin(a * math.pi / 2), z1 - 12, z1 - 8.5, 1.75))
     out["T8 nut " + u] = (g, to_unit(nut, phi), "brass")
-    out["LM8UU " + u] = (g, to_unit(tube_z(ce.R_SCREW, ce.T_ROD, zc + 13, zc + 37, 7.5, 4.0), phi), "steel")
-    face = 143.2
+    out["LM8UU " + u] = (g, to_unit(tube_z(rr, rt, z0 + 2, z0 + 26, 7.5, 4.0), phi), "steel")
+    face = 143.2 + DF
     out["spin MG996R " + u] = (g, to_unit(mg996r_local(face, 0.0, zc), phi), "servo")
     # horn + adapter + cup turn with the spin; a tab on the horn shows the angle
     sp = math.radians(spin)
-    tab = lbox((147, 149.5), (-2, 2), (0, 11))
+    tab = lbox((147 + DF, 149.5 + DF), (-2, 2), (0, 11))
     rot = np.array([[1, 0, 0], [0, math.cos(sp), -math.sin(sp)], [0, math.sin(sp), math.cos(sp)]])
     tab = moved(tab, rot, (0, 0, zc))
-    horn = cyl_r(147, 149.5, 10, 0, zc).fuse(cyl_r(149.5, 150, 8, 0, zc)).fuse(tab)
+    horn = cyl_r(147 + DF, 149.5 + DF, 10, 0, zc).fuse(cyl_r(149.5 + DF, 150 + DF, 8, 0, zc)).fuse(tab)
     out["spin horn " + u] = (g, to_unit(horn, phi), "dark")
     out["shaft cup " + u] = (g + "cup", to_unit(vs2_cup_local(ce.FACE, 0, zc), phi), "cup")
     if held:
@@ -290,9 +349,10 @@ def carriage(u, th, zc, spin, held):
 def holder(u, L):
     phi = ce.UNITS[u]["phi0"]
     g = "hold" + u
-    fr = lbox((128, 146), (-110, 110), (30 + L, 38 + L))
+    DF = ce.DF
+    fr = lbox((128 + DF, 146 + DF), (-110, 110), (30 + L, 38 + L))
     for t in (-ce.HOLD_X, ce.HOLD_X):
-        fr = fr.fuse(lbox((128, 150), (t - 10, t + 10), (38 + L, ce.HOLD_TOP + L)))
+        fr = fr.fuse(lbox((128 + DF, 150 + DF), (t - 10, t + 10), (38 + L, ce.HOLD_TOP + L)))
     out = {"holder frame " + u: (g, to_unit(fr, phi), "hold")}
     for t in (-ce.HOLD_X, ce.HOLD_X):
         for lv in ("B", "M"):
@@ -330,13 +390,19 @@ def pose(st):
         P.update(carriage(u, st["th"][u], st["zc"][u], st["spin"][u], st["held"][u]))
         P.update(holder(u, st["L"][u]))
     P.update(stones(st))
+    hw.apply(P, st, HF)
     return P
+
+
+HF = types.SimpleNamespace(ce=ce, cyl_z=cyl_z, cyl_r=cyl_r, to_unit=to_unit)
 
 
 # ---------------------------------------------------------------- checks
 def allowed(na, ga, nb, gb):
     if ga == gb:
         return True
+    if nb in hw.JOINS.get(na, ()) or na in hw.JOINS.get(nb, ()):
+        return True                                          # fastener through a part of another group (floor...)
     pair = {ga, gb}
     if "reserve" in pair or "beacon" in pair or "grail" in pair:
         return True                                          # checked separately
@@ -421,7 +487,8 @@ def perimeter(P):
 
 
 # ---------------------------------------------------------------- save
-GROUP_LABEL = {"robot": "Robot_base_layout_v1", "odom": "Odometry", "column": "Column_and_beacon", "beacon": "Column_and_beacon",
+GROUP_LABEL = {"robot": "Base_330_js", "odom": "Odometry", "column": "Column_and_beacon", "beacon": "Column_and_beacon",
+               "colhw": "Column_and_beacon",
                "grail": "Reserved_volumes", "reserve": "Reserved_volumes"}
 
 
@@ -443,11 +510,11 @@ def save(name, P):
     doc = App.newDocument(name)
     groups = {}
     for n, (g, s, ck) in P.items():
-        lab = group_label(g)
+        lab = group_label(g) + ("_fasteners" if n in hw.FASTENERS else "")
         if lab not in groups:
             groups[lab] = doc.addObject("App::DocumentObjectGroup", lab)
         o = doc.addObject("Part::Feature", n.replace(" ", "_").replace("+", "p").replace("-", "m").replace("(", "")
-                          .replace(")", "").replace("x", "x"))
+                          .replace(")", "").replace(".", "_"))
         o.Label = n
         o.Shape = s
         groups[lab].addObject(o)
@@ -459,6 +526,8 @@ def save(name, P):
                 o.ViewObject.Transparency = 70
             if ck == "cup":
                 o.ViewObject.Transparency = 20
+            if ck == "envelope":                     # JSUMO worst-case envelope (checked against every part)
+                o.ViewObject.Transparency = 85
     doc.recompute()
     if App.GuiUp:
         import FreeCADGui as Gui
@@ -512,7 +581,7 @@ def main():
              % len(extra))
     R.append("parts of one group, turret hubs on the column, screw + rod through their plates and carriage, the turn")
     R.append("pinion in its gear sector, cups on stone faces, stones of one stack (shrunk 1 %% when checked together).")
-    R.append("Reserved volumes (Grail lift, launcher) are checked against every part and stone.")
+    R.append("Base = mechanical/base_330_js as it is (plate, 37D motors + hinges, JSUMO worst-case envelope, both odometry modules, ball units).")
     R.append("")
     allbad, ztop = 0, 0.0
     for name, label, st in poses:
@@ -527,6 +596,7 @@ def main():
         R.append("    " + label)
         R += ["    " + b for b in bad + res]
         if name == "HUB_E_HOME":
+            bom = dict(hw.BOM)
             Part.makeCompound([s for n, (g, s, _) in P.items() if g not in ("reserve",)]).exportStep(
                 os.path.join(OUT, "HUB_E_HOME.step"))
     nb = 0
@@ -543,11 +613,18 @@ def main():
     R.append("highest point of the mechanism + held stones over all poses: %.1f mm (limit 350 [GR F.3]; the column"
              " is the beacon mast)" % ztop)
     R.append("")
-    R.append("Parts (both units): 2 NEMA17 + 2 T8 screws (283) + brass nuts + 2 GT2 belts + 4 GT2 20T pulleys + 2 x 608;")
-    R.append("2 guide rods 8 mm (284) + 2 LM8UU; 4 MG996R (2 turn, 2 spin) + 2 MG90S (holder lift); 2 printed 60 T gear")
+    R.append("Parts (both units): 2 NEMA17 + 2 T8 screws (278) + brass nuts + 2 GT2 belts + 4 GT2 20T pulleys + 2 x 608;")
+    R.append("2 guide rods 8 mm (276, e-clip groove at the bottom) + 2 LM8UU; 4 MG996R (2 turn, 2 spin) + 2 MG90S (holder lift); 2 printed 60 T gear")
     R.append("sectors + 2 printed 30 T pinions (m 1); 10 VS2-S30 cups (2 shaft + 8 holder); column 20 mm aluminium tube.")
-    R.append("Printed (ABS, D-023): 2 bottom + 2 top turret plates, 2 carriages, 2 holder frames, 4 holder slide posts,")
-    R.append("1 servo block. Wrote CAD_FC/HUB_E_*.FCStd + CAD_FC/HUB_E_HOME.step")
+    R.append("Printed (ABS, D-023, blue in the model): 2 bottom plates (with their 60 T sector) + 2 top plates, 2 carriages,")
+    R.append("2 holder frames, 4 holder slide posts, 4 turn servo posts, 2 pinions (with hub), 2 MG90S cradles, column foot,")
+    R.append("1 hub clamp collar, beacon plug. Bought: 2 round servo horns (MG996R kit).")
+    R.append("")
+    R.append("Fasteners (fc/hub_e_hw.py, both units, counted in HUB_E_HOME):")
+    R += ["  %3d x %s" % (n, k) for k, n in sorted(bom.items())]
+    R.append("  %3d   total" % sum(bom.values()))
+    R.append("")
+    R.append("Wrote CAD_FC/HUB_E_*.FCStd + CAD_FC/HUB_E_HOME.step")
     txt = "\n".join(R)
     with open(os.path.join(ROOT, "hub_e_fc_report.txt"), "w", encoding="utf-8") as f:
         f.write(txt + "\n")

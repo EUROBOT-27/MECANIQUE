@@ -37,7 +37,7 @@ def placement_z(th):
 
 class Scene:
     def __init__(self, doc):
-        self.doc, self.objs = doc, {}
+        self.doc, self.objs, self.base = doc, {}, {}
 
     def add(self, name, shape, ck, transp=0):
         o = self.doc.addObject("Part::Feature", "o%d" % len(self.objs))
@@ -48,6 +48,7 @@ class Scene:
         o.ViewObject.LineColor = tuple(x * 0.45 for x in c)
         o.ViewObject.Transparency = transp
         self.objs[name] = o
+        self.base[name] = o.Placement.copy()     # a shape may carry its position as a placement: keep it
         return o
 
 
@@ -55,10 +56,7 @@ def build(doc):
     sc = Scene(doc)
     # fixed: robot, column, beacon, fixed drives (pinions move)
     for n, (g, s, ck) in hf.robot().items():
-        if n == "L4 roof pad":
-            sc.add(n, s, ck, 60)
-        else:
-            sc.add(n, s, ck)
+        sc.add(n, s, ck, 85 if ck == "envelope" else 0)       # base_330_js; JSUMO worst-case envelope see-through
     for u in "FR":
         for n, (g, s, ck) in hf.fixed_unit(u, 0.0).items():
             sc.add(n, s, ck)
@@ -87,29 +85,32 @@ SPIN = ("spin horn", "shaft cup")
 
 def show(sc, st):
     O = sc.objs
+
+    def put(n, pl):                              # frame motion on top of the part's own placement
+        O[n].Placement = pl.multiply(sc.base[n])
     for u in "FR":
         th, zc, sp, L = st["th"][u], st["zc"][u], st["spin"][u], st["L"][u]
         pz = placement_z(th)
         for n in TURRET:
-            O["%s %s" % (n, u)].Placement = pz
+            put("%s %s" % (n, u), pz)
         pc = pz.multiply(App.Placement(V(0, 0, zc), App.Rotation()))
         for n in CARR:
-            O["%s %s" % (n, u)].Placement = pc
+            put("%s %s" % (n, u), pc)
         ur, _, _, _ = ce.frame(ce.UNITS[u]["phi0"])
         ps = pc.multiply(App.Placement(V(0, 0, 0), App.Rotation(V(-ur[0], -ur[1], 0), sp)))
         for n in SPIN:
-            O["%s %s" % (n, u)].Placement = ps
+            put("%s %s" % (n, u), ps)
         x0, y0 = ce.TURN[u]["shaft"]
-        O["turn pinion " + u].Placement = App.Placement(V(0, 0, 0), App.Rotation(V(0, 0, 1), -2 * th), V(x0, y0, 0))
+        put("turn pinion " + u, App.Placement(V(0, 0, 0), App.Rotation(V(0, 0, 1), -2 * th), V(x0, y0, 0)))
         ph = App.Placement(V(0, 0, L), App.Rotation())
         for n, o in O.items():
             if n.startswith(("holder frame " + u, "holder cup " + u)):
-                o.Placement = ph
+                put(n, ph)
         for lv in "TMB":
             o = O.get("stone %s%s" % (u, lv))
             if o is not None:
                 o.ViewObject.Visibility = lv in st["stack"][u]
-                o.Placement = ph
+                put("stone %s%s" % (u, lv), ph)
         h = O["held " + u]
         if st["held"][u]:
             b = ce.stone_box("h", ce.UNITS[u]["phi0"] + th, zc, sp)

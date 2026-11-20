@@ -14,7 +14,9 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Doubled flip-bar: re-check the start perimeter on a smaller footprint (`layout-v1`, 300 × 292); on base_330 it is 1265 > 1200 — Ayoub
 - [ ] Plywood test of one ring (elastic + MG90S latch + cup + home-made stone): holds through swing and stop? stone stands after venting? — Ayoub — due 2026-11-22
 - [ ] Review `mechanical/central-hub/CONNECTIONS.md` + option A CAD + `OPTION_B.md` (option A clashes fixed 2026-11-15; reports clean) — Ayoub — due 2026-11-22
-- [ ] Central hub: **option C** (`central-hub/OPTION_C.md`) and **option D** (`central-hub/option-d/`, FreeCAD model + `option_d_freecad.gif`) solve the holder-cup problem of B. Option E (doubled, `central-hub/option-e/`, start perimeter 1176 OK) is the newest. Pick B / C / D / E — Ayoub — due 2026-11-22
+- [ ] Central hub: **option C** (`central-hub/OPTION_C.md`) and **option D** (`central-hub/option-d/`, FreeCAD model + `option_d_freecad.gif`) solve the holder-cup problem of B. Option E (doubled, `central-hub/option-e/`) now on base_330_js (start perimeter 1248; layout-v1 version 1176 in `CAD_FC/layout-v1/`). Pick B / C / D / E — Ayoub — due 2026-11-22
+- [ ] Option E on base_330_js: check against Seif's Flipper (right side bay, D-029); rear towers are set on the right — Ayoub
+- [ ] Option E on base_330_js: start perimeter 1248 > 1200 → holders that start inside the plate and slide / fold out (if E is kept) — Ayoub
 - [ ] Option D, if kept: ring spacing (rings touch, add washer / 1 mm shoulder), choose the N20 gearbox + test torque, agree 6 DC channels with encoders with Hamza Bjaoui, print test of ring + pinion in ABS — Ayoub
 - [ ] Add FAQ question "may the robot drag a quarry stack on the table?" to `project/rules-digest.md` — Ayoub
 - [ ] Check the hub against `mechanical/layout-v1/` (round Ø300 body, wheels, battery, electronics around the hub) — Ayoub
@@ -24,6 +26,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Ask Seif / Hamza Sammoud to send FAQ questions (Q1 first: does a carried stone count in the perimeter?) — Ayoub
 
 ## Done
+- [x] Option E: all fasteners drawn (`fc/hub_e_hw.py`), printed parts blue, moved onto base_330_js unchanged (0 clashes in both checks), GIFs regenerated + stack-visibility bug fixed — 2026-11-20
 - [x] Odometry (2 × AMT102 wheels) added to central hub option E at x ±82, y +36; checks clean, CAD + GIFs regenerated — 2026-11-20
 - [x] Flip-bar doubled front + rear (`flipbar_double_fc.py`, `CAD/flipbar_double.FCStd`): no clashes, start perimeter 1265 on base_330 — 2026-11-20
 - [x] Central hub option E (doubled): box check, FreeCAD model + poses, `option_e_freecad.gif`, pushed — 2026-11-19
