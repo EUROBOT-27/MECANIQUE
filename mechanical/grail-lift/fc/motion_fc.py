@@ -4,7 +4,7 @@
 #        servo/cradle), Grail clear of the robot below the roof, release (nothing touches the Grail at the end)
 #   GIF (GUI):          "C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/motion_fc.py
 #     -> CAD_FC/motion/grail_lift_<v>.gif (side view + 3D), copied to mechanical/simulations/grail_lift/
-#   Version: set GRAIL_V=v1 (default v2).
+#   Version: set GRAIL_V=v1 / v3 / v4 (default v2).
 import os
 import shutil
 import sys
@@ -22,6 +22,11 @@ SIM = os.path.normpath(os.path.join(C.ROOT, "..", "simulations", "grail_lift"))
 GUI = App.GuiUp
 # pairs that touch by design in these simplified models (gear mesh, wheels in the slot, pin in its cap, horn on shaft)
 EXPECTED = {frozenset(p) for p in (("CAR_PINION_20T", "RACK_M1"), ("CAR_VWHEELS", "COL_2020"), ("CAR_SLIDERS", "COL_2020"), ("SCREW_T8", "NUT_T8_brass"), ("SCREW_T8", "BEARING_608_BLOCK"), ("SCREW_T8", "COUPLER_5x8"), ("COUPLER_5x8", "NEMA17_LIFT"),
+                                   ("CAR_BELT_ARM", "BELT_CLAMP_bracket"), ("CAR_BELT_ARM", "CAR_SLIDE_FRAME"), ("BELT_CLAMP_bracket", "BELT_GT2_loop"),
+                                   ("CAR_BELT_ARM", "BELT_GT2_loop"), ("BELT_GT2_loop", "PULLEY_GT2_20T"), ("BELT_GT2_loop", "IDLER_GT2_20T"),
+                                   ("BELT_GT2_free_run", "PULLEY_GT2_20T"), ("BELT_GT2_free_run", "IDLER_GT2_20T"),
+                                   ("TENSIONER_X_printer", "IDLER_GT2_20T"), ("TENSIONER_X_printer", "BELT_GT2_loop"),
+                                   ("TENSIONER_X_printer", "BELT_GT2_free_run"), ("NEMA17_BELT", "PULLEY_GT2_20T"), ("GUIDE_RODS_D8", "SCS8UU_x2"), ("GUIDE_RODS_D8", "ROD2_BUSHING_printed"), ("CAR_BELT_ARM", "SCS8UU_x2"),
                                    ("PIVOT_PIN_M3", "CRADLE_printed"), ("SERVO_HORN_ROUND", "SERVO_MG996R"),
                                    ("PIVOT_PIN_M3", "U_BRACKET_steel"), ("SERVO_HORN_ROUND", "U_BRACKET_steel"),
                                    ("REAL_RACK_1M_280", "REAL_PINION_20T_1M"), ("REAL_NEMA14_SHAFT", "REAL_COUPLING_liaison"),

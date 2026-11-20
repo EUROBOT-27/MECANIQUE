@@ -8,6 +8,8 @@ at the top of each file point to Maatoug's PC (`C:/Projects/EUROBOT/...`). Chang
 | `freecad/render_any.py` | Opens FreeCAD files in the GUI and saves iso / front / top / right PNG views | FreeCAD GUI (macro) |
 | `freecad/dump_fcstd.py` | Headless dump of FreeCAD files: objects, types, bounding boxes, key dimensions, spreadsheets | `freecadcmd dump_fcstd.py` |
 | `solidworks/inspect3dm.cs` | Opens a Rhino `.3dm` in SOLIDWORKS and lists the components / bodies / boxes | compile with `csc`, needs the SOLIDWORKS interop DLLs |
+| `solidworks/dump_asm.cs` | Opens a SOLIDWORKS assembly (or one part, `.SLDPRT` or a foreign part) and writes `sw_dump.json` (components + transforms, mates with their geometry, part masses + dimensions, missing files) and STEP of every part + the assembly. Used for `mechanical/grail2/` | `csc -platform:x64 -r:SolidWorks.Interop.sldworks.dll -r:SolidWorks.Interop.swconst.dll dump_asm.cs`, then `dump_asm.exe <file.SLDASM> <out_dir>` with SOLIDWORKS running |
+| `solidworks/import_to_step.cs` | Imports a foreign part (Inventor `.ipt`, …) into the running SOLIDWORKS with `LoadFile4` and saves it as STEP AP214 (for files `OpenDoc6` refuses) | same build as `dump_asm`, then `import_to_step.exe <in_file> <out.step>` |
 | `solidworks/feats.cs`, `closedoc.cs` | Related SOLIDWORKS API helpers (feature list, close document) | same |
 
 The main generator scripts for the clapets v5 design are in `mechanical/clapets/clapets-v5/fc/`.

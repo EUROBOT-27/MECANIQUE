@@ -1,0 +1,37 @@
+GRAIL2 - Baha's 'essai mecanisme vis ecrou 1.0' (SOLIDWORKS, 2026-11-19) rebuilt in FreeCAD
+Frame: x = flip axis direction, y = magnet side (0 on the screw axis), z up, z 0 = NEMA17 bottom.
+
+Sources: missing in the assembly folder (suppressed): Nema 17.SLDPRT
+Sources: missing in the assembly folder (suppressed): T8 nut.SLDPRT
+Sources: missing in the assembly folder (suppressed): Tower Pro MG 996R Servomotor.SLDPRT
+Sources: missing in the assembly folder (suppressed): [3879] Servo Motor Horn for MG995 MG996 Series Motor SunRobotics_in_fron (1).SLDPRT
+Sources: missing in the assembly folder (suppressed): multipurpose bracket (1).SLDPRT
+Sources: missing in the assembly folder (suppressed): support en u.SLDPRT
+Sources: magnet axis as saved: 7.8 deg above +y, passes 0.00 mm from the servo axis (re-aligned to flip 0)
+Coupling CXJH-C-D25 bores: [2.58, 3.0, 4.2, 5.0, 10.0] mm; screw Ø8.0, NEMA17 shaft Ø5.0
+
+Clashes at the model pose (common volume > 0.5 mm3; 'by design' = parts fastened / shaft in bore):
+  APPROX_HORN_ROUND              x REF_SERVO_MG996R                    64.4 mm3  by design
+  REAL_COUPLING_CXJH_D25_d5_e5   x SCREW_PROXY                        238.9 mm3  by design
+  REAL_COUPLING_CXJH_D25_d5_e5   x SW_SUPPORT_STEPPER                   7.5 mm3  CLASH
+lift down: first solid contact at -45 mm: REF_NUT_T8 x REAL_COUPLING_CXJH_D25_d5_e5
+lift up: first solid contact at +164 mm: ADD_SCS8UU_x2 x ADD_TOP_PLATE_608_printed
+
+LIFT (screw lead 8 mm/turn)
+  nut on the screw: -44.6 (nut on the coupling) .. +231.4 (nut at the screw top) mm from the model pose
+  usable travel: -44.0 .. +163.0  = 207.0 mm = 25.9 screw turns
+  carriage top at the model pose z 204.1 (flip 0); fixed screw top z 365.6; mechanism height (motor bottom -> screw top) 365.6 mm vs 350
+  carriage top reaches 350 mm at lift +145.9 (if the motor bottom were on the table)
+  GUIDE (added): Ø8 rod at y -32, z 47..365.6 (cut 319 mm), 2 SCS8UU on a printed plate, top plate + 608 on the screw top
+
+FLIP about the servo axis (0 = magnet pointing out along +y, +90 = magnet up, -90 = magnet down)
+  free arc around 0 (2 deg steps): -44 .. +156 deg  (span 200 deg)
+  stop going up at +158: REAL_MAGNET_5KG x SCREW_PROXY (1 mm3)
+  stop going down at -46: APPROX_U_BRACKET x APPROX_SERVO_BRACKET (9 mm3)
+  at +180 (the '180' pose): REAL_MAGNET_5KG x SW_NUT_MOUNT (2 mm3); REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (5 mm3)
+  at -180 (the '180' pose): REAL_MAGNET_5KG x SW_NUT_MOUNT (2 mm3); REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (5 mm3)
+  highest flip-group point over the free arc: z 240.8 at +76 deg (lift 0)
+  magnet at flip 0: face at y 110.3 (110.3 beyond the screw axis), centre z 182.9; Ø25
+
+Masses (SOLIDWORKS, as modelled): see sw_export/sw_dump.json
+Objects: SW_* exact, REAL_*/REF_* bought parts, APPROX_* rebuilt (shape assumed), SCREW_PROXY = Ø8 for checks.

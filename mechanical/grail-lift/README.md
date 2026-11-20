@@ -1,6 +1,10 @@
 # Grail lift: put our Grail on the roof (L4)
 
-> **Where we are (2026-11-11, Maatoug + Claude)**
+> **Where we are (2026-11-20, Maatoug + Claude)**
+> - **v4 = v3 with the printer's belt instead of the T8 screw** (proposal, Maatoug wants the lead screw gone). Uses the
+>   belt parts on the bench from the Two Trees printer: knob tensioner (X axis), GT2 6 mm belt, belt bracket, + a NEMA17
+>   and a 20T pulley. Same path as v3 (worst margin 2.5 mm, `CAD_FC/v4_report.txt`): the belt changes nothing in the
+>   motion. Not yet in the full robot (`../robot/fc/layout.py` still says v3). See "v4 (belt)" below.
 > - **v3 = the compact one, mounted in the full robot** (`../robot/`): on the left side face, in the 88 mm band
 >   between the front and back clapets' door units, above the drive wheel. Picks the Grail **by its top** (park with
 >   the Grail under the arm, +-25 mm), flips it 180 deg over the side edge, sets it down through a roof slot, and the
@@ -12,6 +16,18 @@
 > - **Needs from others:** clapets rails / top tie must stop below the roof (300) where the Grail lands (they reach
 >   381-391 now, CDC + robot report); roof at 305 and the left side for the lift (Seif's roof layout); real U-bracket
 >   dimensions; the 3 missing v1 SLDPRT from Baha.
+
+## v4 (belt) in short: what changes from v3
+| | |
+|---|---|
+| Drive | NEMA17 **lying on the roof** (same corner as v3's motor), shaft along -y, GT2 20T pulley above the roof (axis z 326); motor top z 347.3 (limit 350) |
+| Belt | open GT2 6 mm loop through a roof slot, down to the printer's **X tensioner** (knob + 20T idler, axis z 53) beside the drive motor; cut **~650 mm** (586 pitch loop + the two ends in the bracket) |
+| Guide (no profile) | **2 Ø8 smooth rods** (lab) instead of v3's 2020 column + slider shoes: rod 1 carries **2 SCS8UU** blocks (lab has 3; vendor model `../resources/linear-motion/vendor/SCS8UU.step`), rod 2 a printed bushing that only stops the carriage turning. Rods z 76 … 346 (cut 270 mm), held by a printed base above the wheel (z 76 … 92) and a printed top clamp above the roof (post down to the roof at y > 44). The lab's SK8 supports don't fit here (42 wide: rod 2's would stick out of the side face, rod 1's would hit the door units or the arm sweep), they are used in grail2 |
+| Carriage | v3's carriage plate with the SCS8UU blocks bolted on it; the nut arm becomes a printed **belt arm** carrying the printer's **belt bracket** (both belt ends clamped on its wall) |
+| Numbers | 40 mm per motor turn (20T x 2 mm), 0.0125 mm per 1/16 step; load 0.025 N.m on the pulley (NEMA17 ~0.4) |
+| To do | Ø~30 hole in the base plate for the tensioner knob (goes down to z 10); a printed mount for the tensioner plate (not modelled); an end stop / bumper: **a belt is not self-locking**, if the stepper is unpowered (e-stop, end of match) the carriage slides down (from the park pose it falls ~130 mm until the arm meets the robot) |
+| Pulleys | the 20T idler and motor pulley are measured stand-ins (the toothed meshes are 100 MB as STEP); the other printer parts are exact (from the GrabCAD model, `../resources/two-trees-bluer-v2-parts/SOURCE.md`) |
+| Generator | `fc/v4_fc.py` (= v3_fc.py + `belt_drive()`; belt numbers in `class G`) |
 
 ## v3 (compact) in short
 | | |
@@ -37,7 +53,9 @@ have to fit in a ~45 mm tall band. A 2nd motion is needed.
 | `fc/grail_common.py` | Shared helpers (frame, simple parts, joints file, sequence replay) |
 | `fc/v1_fc.py` | v1 rebuilt → `CAD_FC/GRAIL_LIFT_V1.FCStd`, `joints_v1.json`, `v1_report.txt` |
 | `fc/v2_fc.py` | **v2 generator** (dimensions in `class G`) + motion planner → `GRAIL_LIFT_V2.FCStd`, `joints_v2.json`, `v2_report.txt`, STEP |
-| `fc/sliders_fc.py` | **Slider motion study** in the FreeCAD GUI (v1 and v2) |
+| `fc/v3_fc.py` | **v3** (compact, T8) → `GRAIL_LIFT_V3.FCStd`, `joints_v3.json`, `v3_report.txt` |
+| `fc/v4_fc.py` | **v4** (v3 + printer belt) → `GRAIL_LIFT_V4.FCStd`, `joints_v4.json`, `v4_report.txt` (~15 min) |
+| `fc/sliders_fc.py` | **Slider motion study** in the FreeCAD GUI (v1 … v4) |
 | `fc/motion_fc.py` | Plays the planned cycle: checks (headless) + GIF (GUI) → `CAD_FC/motion/`, copied to `../simulations/grail_lift/` |
 | `docs/` | `CDC.md` (requirements), `REVIEW_v1.md` (v1 review + parts check), v1 preview image |
 
@@ -46,6 +64,7 @@ have to fit in a ~45 mm tall band. A 2nd motion is needed.
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/v1_fc.py        # v1 rebuild (~20 s)
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/v2_fc.py        # v2 model + planned path (~4 min)
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/v3_fc.py        # v3 (compact) + planned path (~6 min); then python tools/sync_robot.py
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/v4_fc.py        # v4 (belt) + planned path (~15 min)
 "C:/Program Files/FreeCAD 1.1/bin/freecad.exe"    fc/sliders_fc.py   # sliders (or Macro > Macros... > Execute)
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/motion_fc.py    # full-cycle checks (~7 min)
 set GRAIL_GIF_ONLY=1 & "C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/motion_fc.py   # GIF only (~10 min)

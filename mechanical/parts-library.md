@@ -43,8 +43,8 @@ Source: **Ender** = the disassembled printer. **Correction 2026-10-27: it is a T
 | Lead screw T8 | Tr8, lead ? (8 mm on the Ender) | ~3 | Ender + Lab | seen | 314f82e3, 71b33ca8, a45eb9fd, 3a536510, c29d0350 | | Measure each length and lead (mm per turn). For lifts: Grail, gate (~110 mm Z) |
 | T8 brass flange nut | 4-hole flange | ~4 | Ender + Lab | seen | 3a536510, c29d0350, c349f2d1 | | |
 | Smooth rod (linear shaft) | Ø8 mm ? | ~6 | Lab | seen | 71b33ca8, a45eb9fd | | Check Ø (8?) and that they're hardened/straight; some have turned/threaded ends |
-| Linear bearing block SCS8UU ? | aluminium housing, 4 holes, for Ø8 rod | 3 | Lab | seen | a45eb9fd | | Pair with the Ø8 rods for a guided slide |
-| Shaft support SK8 ? | aluminium, clamp, 2 holes | 1–2 | Lab | seen | 71b33ca8, a45eb9fd | | Holds rod ends |
+| Linear bearing block SCS8UU ? | aluminium housing, 4 holes, for Ø8 rod | 3 | Lab | seen | a45eb9fd | | Pair with the Ø8 rods for a guided slide. CAD: `resources/linear-motion/vendor/SCS8UU.step` (vendor SLDPRT, holes 24 × 16); used in grail2 + grail-lift v4 (2026-11-20) |
+| Shaft support SK8 ? | aluminium, clamp, 2 holes | 1–2 | Lab | seen | 71b33ca8, a45eb9fd | | Holds rod ends. CAD: `resources/linear-motion/vendor/SoporteVertical_SK8.step` (vendor Inventor file). A flange support (SHF8?) is also in photo a45eb9fd |
 | V-wheels (POM, with bearings) | for V-slot, 625ZZ? | ≥ 5 + those on carriages | Ender | seen | c5f6b2e7, a45eb9fd, b6e9494c | | Count total |
 | Eccentric spacers / plain spacers | for V-wheels | ? | Ender | unverified | | | |
 | GT2 belt | 6 mm wide | 2+ pieces | Ender | seen | c5f6b2e7, fd140e84 | | Measure lengths |

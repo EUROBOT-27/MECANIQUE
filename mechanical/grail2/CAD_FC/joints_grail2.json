@@ -1,0 +1,631 @@
+{
+ "name": "grail2",
+ "fcstd": "GRAIL2.FCStd",
+ "lift": {
+  "objects": [
+   "SW_NUT_MOUNT",
+   "SW_BLOC_ROTATION_180",
+   "SW_PIN_TIGE_D5x60",
+   "REF_NUT_T8",
+   "REF_SERVO_MG996R",
+   "APPROX_SERVO_BRACKET",
+   "REAL_SERVO_ARM_4PAD_unmated",
+   "ADD_SCS8UU_x2",
+   "ADD_GUIDE_PLATE_printed",
+   "APPROX_U_BRACKET",
+   "APPROX_HORN_ROUND",
+   "REAL_MAGNET_5KG"
+  ],
+  "label": "Lift (mm from the model pose)",
+  "min": -44.0,
+  "max": 163.0,
+  "base": 0.0
+ },
+ "flip": {
+  "objects": [
+   "APPROX_U_BRACKET",
+   "APPROX_HORN_ROUND",
+   "REAL_MAGNET_5KG"
+  ],
+  "axis_point": [
+   0.0,
+   57.285,
+   186.144
+  ],
+  "axis_dir": [
+   1,
+   0,
+   0
+  ],
+  "label": "Flip about the servo axis (deg, 0 = magnet pointing +y, + = up)",
+  "min": -180.0,
+  "max": 180.0,
+  "free": [
+   -44.0,
+   156.0
+  ],
+  "base": 0.0
+ },
+ "screw": {
+  "objects": [
+   "SW_SCREW_T8_L300_lead8",
+   "REAL_COUPLING_CXJH_D25_d5_e5"
+  ],
+  "lead": 8.0
+ },
+ "fixed": [
+  "REF_NEMA17",
+  "SW_SUPPORT_STEPPER",
+  "ADD_GUIDE_ROD_D8",
+  "ADD_SK8_rod_foot",
+  "ADD_SK8_BRACKET_printed",
+  "ADD_TOP_PLATE_608_printed"
+ ],
+ "expected": [
+  [
+   "REF_NUT_T8",
+   "SCREW_PROXY"
+  ],
+  [
+   "ADD_TOP_PLATE_608_printed",
+   "SCREW_PROXY"
+  ],
+  [
+   "ADD_GUIDE_PLATE_printed",
+   "SW_NUT_MOUNT"
+  ],
+  [
+   "REAL_COUPLING_CXJH_D25_d5_e5",
+   "REF_NEMA17"
+  ],
+  [
+   "ADD_GUIDE_PLATE_printed",
+   "ADD_SCS8UU_x2"
+  ],
+  [
+   "APPROX_SERVO_BRACKET",
+   "SW_BLOC_ROTATION_180"
+  ],
+  [
+   "APPROX_U_BRACKET",
+   "REAL_MAGNET_5KG"
+  ],
+  [
+   "ADD_SK8_BRACKET_printed",
+   "SW_SUPPORT_STEPPER"
+  ],
+  [
+   "ADD_SK8_BRACKET_printed",
+   "ADD_SK8_rod_foot"
+  ],
+  [
+   "SW_NUT_MOUNT",
+   "SW_PIN_TIGE_D5x60"
+  ],
+  [
+   "ADD_GUIDE_ROD_D8",
+   "ADD_SK8_rod_foot"
+  ],
+  [
+   "ADD_GUIDE_PLATE_printed",
+   "SW_PIN_TIGE_D5x60"
+  ],
+  [
+   "REF_NEMA17",
+   "SW_SUPPORT_STEPPER"
+  ],
+  [
+   "APPROX_HORN_ROUND",
+   "APPROX_U_BRACKET"
+  ],
+  [
+   "REAL_COUPLING_CXJH_D25_d5_e5",
+   "SCREW_PROXY"
+  ],
+  [
+   "ADD_GUIDE_ROD_D8",
+   "ADD_SCS8UU_x2"
+  ],
+  [
+   "APPROX_HORN_ROUND",
+   "REF_SERVO_MG996R"
+  ],
+  [
+   "REF_NUT_T8",
+   "SW_NUT_MOUNT"
+  ],
+  [
+   "ADD_GUIDE_ROD_D8",
+   "ADD_TOP_PLATE_608_printed"
+  ],
+  [
+   "APPROX_U_BRACKET",
+   "SW_BLOC_ROTATION_180"
+  ],
+  [
+   "APPROX_SERVO_BRACKET",
+   "REF_SERVO_MG996R"
+  ],
+  [
+   "ADD_GUIDE_PLATE_printed",
+   "SW_BLOC_ROTATION_180"
+  ],
+  [
+   "SW_BLOC_ROTATION_180",
+   "SW_PIN_TIGE_D5x60"
+  ]
+ ],
+ "ignore": [
+  "REAL_SERVO_ARM_4PAD_unmated",
+  "SW_SCREW_T8_L300_lead8"
+ ],
+ "colors": {
+  "SW_BLOC_ROTATION_180": [
+   0.15,
+   0.35,
+   0.85
+  ],
+  "SW_NUT_MOUNT": [
+   0.95,
+   0.55,
+   0.1
+  ],
+  "SW_SUPPORT_STEPPER": [
+   0.75,
+   0.75,
+   0.75
+  ],
+  "SW_SCREW_T8_L300_lead8": [
+   0.85,
+   0.85,
+   0.9
+  ],
+  "REF_NUT_T8": [
+   0.8,
+   0.65,
+   0.2
+  ],
+  "REF_NEMA17": [
+   0.15,
+   0.15,
+   0.15
+  ],
+  "REF_SERVO_MG996R": [
+   0.1,
+   0.1,
+   0.1
+  ],
+  "APPROX_U_BRACKET": [
+   0.9,
+   0.2,
+   0.2
+  ],
+  "APPROX_SERVO_BRACKET": [
+   0.5,
+   0.5,
+   0.55
+  ],
+  "APPROX_HORN_ROUND": [
+   0.95,
+   0.95,
+   0.95
+  ],
+  "REAL_MAGNET_5KG": [
+   0.6,
+   0.6,
+   0.6
+  ],
+  "REAL_COUPLING_CXJH_D25_d5_e5": [
+   0.7,
+   0.7,
+   0.75
+  ],
+  "SW_PIN_TIGE_D5x60": [
+   0.3,
+   0.3,
+   0.3
+  ],
+  "REAL_SERVO_ARM_4PAD_unmated": [
+   1.0,
+   0.0,
+   1.0
+  ],
+  "ADD_GUIDE_ROD_D8": [
+   0.85,
+   0.85,
+   0.9
+  ],
+  "ADD_SCS8UU_x2": [
+   0.75,
+   0.78,
+   0.82
+  ],
+  "ADD_GUIDE_PLATE_printed": [
+   0.2,
+   0.7,
+   0.3
+  ],
+  "ADD_SK8_rod_foot": [
+   0.75,
+   0.78,
+   0.82
+  ],
+  "ADD_SK8_BRACKET_printed": [
+   0.2,
+   0.7,
+   0.3
+  ],
+  "ADD_TOP_PLATE_608_printed": [
+   0.2,
+   0.7,
+   0.3
+  ]
+ },
+ "h_max": 350.0,
+ "flip_blocked": {
+  "-180": [
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (2 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (5 mm3)"
+  ],
+  "-178": [
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (20 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (39 mm3)"
+  ],
+  "-176": [
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (47 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (90 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (1 mm3)"
+  ],
+  "-174": [
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (80 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (153 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (2 mm3)"
+  ],
+  "-172": [
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (117 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (224 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "-170": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (1 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (157 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (301 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "-168": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (11 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (201 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (384 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (4 mm3)"
+  ],
+  "-166": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (29 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (248 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (470 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (4 mm3)"
+  ],
+  "-164": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (52 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (293 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (560 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "-162": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (71 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (303 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (649 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "-160": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (86 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (288 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (708 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (2 mm3)"
+  ],
+  "-158": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (90 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (276 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (710 mm3)",
+   "REAL_MAGNET_5KG x SCREW_PROXY (1 mm3)"
+  ],
+  "-156": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (85 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (271 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (681 mm3)"
+  ],
+  "-154": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (79 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (259 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (656 mm3)"
+  ],
+  "-152": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (73 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (237 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (626 mm3)"
+  ],
+  "-150": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (69 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (199 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (573 mm3)"
+  ],
+  "-148": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (65 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (151 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (482 mm3)"
+  ],
+  "-146": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (62 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (112 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (384 mm3)"
+  ],
+  "-144": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (59 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (78 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (291 mm3)"
+  ],
+  "-142": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (56 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (49 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (212 mm3)"
+  ],
+  "-140": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (54 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (25 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (144 mm3)"
+  ],
+  "-138": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (52 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (12 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (84 mm3)"
+  ],
+  "-136": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (50 mm3)",
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (1 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (42 mm3)"
+  ],
+  "-134": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (48 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (14 mm3)"
+  ],
+  "-132": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (46 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (1 mm3)"
+  ],
+  "-130": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (45 mm3)"
+  ],
+  "-128": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (44 mm3)"
+  ],
+  "-126": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (43 mm3)"
+  ],
+  "-124": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (42 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (6 mm3)"
+  ],
+  "-122": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (41 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (16 mm3)"
+  ],
+  "-120": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (36 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (33 mm3)"
+  ],
+  "-118": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (28 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (56 mm3)"
+  ],
+  "-116": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (19 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (86 mm3)"
+  ],
+  "-114": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (10 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (124 mm3)"
+  ],
+  "-112": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (2 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (172 mm3)"
+  ],
+  "-110": [
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (231 mm3)"
+  ],
+  "-108": [
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (300 mm3)"
+  ],
+  "-106": [
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (377 mm3)"
+  ],
+  "-104": [
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (456 mm3)"
+  ],
+  "-102": [
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (534 mm3)"
+  ],
+  "-100": [
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (621 mm3)"
+  ],
+  "-98": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (1 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (723 mm3)"
+  ],
+  "-96": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (12 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (818 mm3)"
+  ],
+  "-94": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (23 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (891 mm3)"
+  ],
+  "-92": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (34 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (942 mm3)"
+  ],
+  "-90": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (35 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (981 mm3)"
+  ],
+  "-88": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (35 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (942 mm3)"
+  ],
+  "-86": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (35 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (891 mm3)"
+  ],
+  "-84": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (35 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (818 mm3)"
+  ],
+  "-82": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (35 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (723 mm3)"
+  ],
+  "-80": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (35 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (602 mm3)"
+  ],
+  "-78": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (35 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (534 mm3)"
+  ],
+  "-76": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (36 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (456 mm3)"
+  ],
+  "-74": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (36 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (377 mm3)"
+  ],
+  "-72": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (36 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (300 mm3)"
+  ],
+  "-70": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (37 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (231 mm3)"
+  ],
+  "-68": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (37 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (172 mm3)"
+  ],
+  "-66": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (38 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (124 mm3)"
+  ],
+  "-64": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (38 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (86 mm3)"
+  ],
+  "-62": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (39 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (56 mm3)"
+  ],
+  "-60": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (40 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (33 mm3)"
+  ],
+  "-58": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (41 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (16 mm3)"
+  ],
+  "-56": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (42 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (6 mm3)"
+  ],
+  "-54": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (43 mm3)"
+  ],
+  "-52": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (44 mm3)"
+  ],
+  "-50": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (38 mm3)"
+  ],
+  "-48": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (24 mm3)"
+  ],
+  "-46": [
+   "APPROX_U_BRACKET x APPROX_SERVO_BRACKET (9 mm3)"
+  ],
+  "158": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (1 mm3)"
+  ],
+  "160": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (2 mm3)"
+  ],
+  "162": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "164": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "166": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (4 mm3)"
+  ],
+  "168": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (4 mm3)"
+  ],
+  "170": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "172": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (3 mm3)"
+  ],
+  "174": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (2 mm3)"
+  ],
+  "176": [
+   "REAL_MAGNET_5KG x SCREW_PROXY (1 mm3)"
+  ],
+  "180": [
+   "REAL_MAGNET_5KG x SW_NUT_MOUNT (2 mm3)",
+   "REAL_MAGNET_5KG x SW_BLOC_ROTATION_180 (5 mm3)"
+  ]
+ },
+ "sequence": [
+  [
+   0,
+   0.0,
+   0.0,
+   "model pose (as saved in SOLIDWORKS)"
+  ],
+  [
+   2.5,
+   -44.0,
+   0.0,
+   "lift down to the bottom stop"
+  ],
+  [
+   4.0,
+   109.2,
+   0.0,
+   "lift up to the highest pose under 350 (motor on the table)"
+  ],
+  [
+   2.0,
+   109.2,
+   156.0,
+   "flip up to the stop"
+  ],
+  [
+   3.0,
+   109.2,
+   -44.0,
+   "flip down to the stop"
+  ],
+  [
+   1.0,
+   109.2,
+   0.0,
+   "flip back to 0"
+  ],
+  [
+   3.0,
+   0.0,
+   0.0,
+   "back to the model pose"
+  ]
+ ]
+}

@@ -106,6 +106,7 @@ Hardware availability in Tunisia is limited, and imports take time (orders from 
 | `mechanical/clapets/` | Clapets (stack gripper + suction head), one self-contained folder per version `clapets-v5` … `v8` (index: `README.md`) |
 | `mechanical/robot/` | **Full robot, rebuilt from the mechanisms** (`fc/layout.py` = every placement number) + Gazebo export `sim/excalibot_fc/`. Auto-sync is local only (hooks rebuild + copy into the sim clone); publish to GitHub by hand: `python tools/sync_robot.py --push` |
 | `mechanical/grail-lift/` | Grail lift (L4): Baha's v1 (SolidWorks, rebuilt in FreeCAD), v2 concept, requirements (`docs/CDC.md`), slider motion study |
+| `mechanical/grail2/` | Baha's lead-screw Grail lift (SolidWorks in `sw/`), rebuilt in FreeCAD + motion check (`fc/grail2_fc.py`, `README.md`) |
 | `mechanical/simulations/` | All mechanism animations / motion studies / simulation videos (index: `INDEX.md`) |
 | `mechanical/design-principles.md` | Our design + testing standard (from the Aerobotix 2026 study) |
 | `software/` | Software work (ROS, navigation, interfaces) — has its own `CLAUDE.md` |

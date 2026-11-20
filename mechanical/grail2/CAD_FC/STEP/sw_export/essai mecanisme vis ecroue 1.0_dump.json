@@ -1,0 +1,15 @@
+{
+  "assembly": "C:/Projects/EUROBOT/Eurobot 2027-ALL/mechanical/grail2/sw/essai mecanisme vis ecroue 1.0.SLDPRT",
+  "open_errors": 0, "open_warnings": 0,
+  "config": "Default",
+  "components": [
+  ],
+  "mates": [
+
+  ],
+  "parts": [
+    {"path": "C:/Projects/EUROBOT/Eurobot 2027-ALL/mechanical/grail2/sw/essai mecanisme vis ecroue 1.0.SLDPRT", "title": "essai mecanisme vis ecroue 1.0.SLDPRT", "material": "", "mass_g": 0, "volume_cm3": 0, "com": [0, 0, 0], "solid_bodies": 0, "box": [-8.5, -54.994799, 0, 45.5, 81.888807, 0],
+     "features": [
+       {"type": "ProfileFeature", "name": "Sketch1", "dims": {"D1": 37, "D2": 8.5, "D3": 25, "D4": 8.5, "D5": 25}}]}
+  ]
+}

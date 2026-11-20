@@ -66,6 +66,8 @@ Nothing goes loose in `mechanical/` itself: a new SolidWorks file goes into its 
   makes L4 possible (coordinated lift + 180° flip over the roof edge, club steel U servo bracket, 4 V-wheels, NEMA17).
   Requirements: `grail-lift/docs/CDC.md` (key result: a straight lift cannot do L4 under 350 mm, CDC D1).
   Review of v1: `grail-lift/docs/REVIEW_v1.md`. Slider motion study: `grail-lift/fc/sliders_fc.py`. Not a decision yet.
+- **grail2 (2026-11-19)** = Baha's lead-screw lift (`grail2/`): NEMA17 + T8 lead-8 screw lifts a box that flips an electromagnet with an MG996R. Rebuilt in FreeCAD from the SolidWorks export (`grail2/fc/grail2_fc.py`, slider study `fc/sliders_fc.py`). Flip −44…+156° (180° blocked by the screw); over 350 mm, Ø5 coupling for an Ø8 screw: see `grail2/README.md`. 2026-11-20: translation guide added (Ø8 rod + 2 SCS8UU + top plate with a 608 on the screw), lift 207 mm. Not a decision.
+- **v4 (2026-11-20, Maatoug, proposal)** = v3 with the T8 screw replaced by the Two Trees printer's belt (NEMA17 lying on the roof + 20T pulley, GT2 belt down to the printer's knob tensioner, printer belt bracket on the carriage arm): `grail-lift/fc/v4_fc.py`. Same path as v3; belt not self-locking (end stop needed). Robot still built with v3.
 - **v3 (2026-11-11) = the compact variant used in the full robot**: side face above the wheel, top grip, flip over the
   side edge, Grail set down through a roof slot (`grail-lift/fc/v3_fc.py`, reads `robot/fc/layout.py`).
 

@@ -1,0 +1,34 @@
+{
+  "assembly": "C:/Projects/EUROBOT/Eurobot 2027-ALL/mechanical/resources/linear-motion/vendor/SCS8UU.SLDPRT",
+  "open_errors": 0, "open_warnings": 0,
+  "config": "Défaut",
+  "components": [
+  ],
+  "mates": [
+
+  ],
+  "parts": [
+    {"path": "C:/Projects/EUROBOT/Eurobot 2027-ALL/mechanical/resources/linear-motion/vendor/SCS8UU.SLDPRT", "title": "SCS8UU.SLDPRT", "material": "", "mass_g": 16.224546, "volume_cm3": 16.224546, "com": [0.00286, -1.314574, -15], "solid_bodies": 1, "box": [-17.03, -10.973805, -30, 17.03, 11.026195, 0],
+     "features": [
+       {"type": "ProfileFeature", "name": "Esquisse1", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "Extrusion", "name": "Boss.-Extru.1", "dims": {"D1": 30, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1", "of": "Boss.-Extru.1", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ICE", "name": "Boss.-Extru.2", "dims": {"D1": 28, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1<3>", "of": "Boss.-Extru.2", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ICE", "name": "Boss.-Extru.3", "dims": {"D1": 30, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1<4>", "of": "Boss.-Extru.3", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ICE", "name": "Boss.-Extru.4", "dims": {"D1": 28.5, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1<5>", "of": "Boss.-Extru.4", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ICE", "name": "Enlèv. mat.-Extru.1", "dims": {"D1": 1.5, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1<6>", "of": "Enlèv. mat.-Extru.1", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ICE", "name": "Enlèv. mat.-Extru.2", "dims": {"D1": 2, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1<7>", "of": "Enlèv. mat.-Extru.2", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ICE", "name": "Enlèv. mat.-Extru.3", "dims": {"D1": 1.8, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1<8>", "of": "Enlèv. mat.-Extru.3", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ICE", "name": "Enlèv. mat.-Extru.4", "dims": {"D1": 1.8, "D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "sketch", "name": "Esquisse1<9>", "of": "Enlèv. mat.-Extru.4", "dims": {"D1": 8, "D2": 22, "D3": 34.06, "D4": 17.03, "D5": 32, "D6": 8, "D7": 4}},
+       {"type": "ProfileFeature", "name": "Esquisse2", "dims": {"D1": 3.3, "D2": 3.3, "D3": 3.3, "D4": 3.3, "D5": 0, "D6": 0, "D7": 0, "D8": 0, "D9": 24, "D10": 16, "D11": 7, "D12": 5.03}},
+       {"type": "ICE", "name": "Enlèv. mat.-Extru.5", "dims": {"D1": 21.8, "D1": 3.3, "D2": 3.3, "D3": 3.3, "D4": 3.3, "D5": 0, "D6": 0, "D7": 0, "D8": 0, "D9": 24, "D10": 16, "D11": 7, "D12": 5.03}},
+       {"type": "sketch", "name": "Esquisse2", "of": "Enlèv. mat.-Extru.5", "dims": {"D1": 3.3, "D2": 3.3, "D3": 3.3, "D4": 3.3, "D5": 0, "D6": 0, "D7": 0, "D8": 0, "D9": 24, "D10": 16, "D11": 7, "D12": 5.03}}]}
+  ]
+}

@@ -24,3 +24,25 @@ out. All files are in **printer coordinates** (mm); `fc/v7_fc.py` places them in
 | `lead_nut_TR8x8.step` | TR8x8 brass nut, flange 1.5 mm from one end (Porca Trapezoidal TR8x8-4) | converted from the STL |
 
 Not taken: the lead screw (TR8x8, 400 mm in the printer) is a plain Ø8 cylinder in our CAD, cut to length.
+
+## Belt-axis parts (Maatoug + Claude, 2026-11-20), for the Grail lift v4 (`mechanical/grail-lift/fc/v4_fc.py`)
+Same download, unzipped on Maatoug's PC into `mechanical/resources/3d-printer-two-trees-bluer-v2-1.snapshot.4/` (only the
+`.stp` + the X / Y / heatbed named STLs; not committed). These are the parts on the bench: the belt, the knob tensioner,
+the belt bracket. **Mesh** = solid made from the named STL (triangulated faces, exact size, no true cylinders).
+
+| File | Part (Portuguese name) | Source |
+|---|---|---|
+| `tensioner_X_plate.step` | X tensioner: mounting plate 60 × 3 × 20 (Peça 1 Conj. Tensor Eixo X) | mesh |
+| `tensioner_X_body.step` | X tensioner: blue body (Peça 2) | mesh |
+| `tensioner_X_slider.step` | X tensioner: sliding block holding the idler (Peça 3) | mesh |
+| `tensioner_X_knob_screw.step` | X tensioner: knob + M5x20 screw (Parafuso M5x20 Tensor Eixo X) | mesh |
+| `tensioner_Y_body.step`, `tensioner_Y_slider.step`, `tensioner_Y_cover.step` | Y tensioner (Peça 1, Peça 2, Chapa Proteção) | mesh |
+| `belt_Y_GT2.step` | Y belt as mounted in the printer, GT2 6 mm (Correia do Eixo Y) | .stp (volume ratio 1.01) |
+| `belt_X_GT2.step` | X belt as mounted (Correia do Eixo X) | mesh |
+| `pulley_X_motor_GT2.step` | GT2 20T motor pulley (Polia Sincronizadora GT2 Motor de Passo Eixo X) | mesh |
+| `carriage_plate_X.step` | blue X carriage plate, 3 V-wheels (Chapa Roldanas do Eixo X no Hot End) | mesh |
+| `belt_clamp_bracket_Y.step` | black bent bracket holding both Y belt ends, 28 × 20 × 13 (União Correia Eixo Y Sob a Base da Mesa) | mesh |
+
+Not converted: the 20T idlers (`Polia GT2 Tensora 20T ID5 OD18 W6`) and the Y motor pulley: 100 MB as mesh STEP. The
+generators use measured stand-ins instead (idler: Ø17 flanges, Ø12.2 teeth x 6, bore 5, 8.6 wide; motor pulley: Ø15.5,
+16 long, bore 5).

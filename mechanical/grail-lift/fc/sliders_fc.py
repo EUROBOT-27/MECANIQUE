@@ -3,7 +3,7 @@
 #          or in FreeCAD: Macro > Macros... > browse to this file > Execute.
 #   Needs CAD_FC/GRAIL_LIFT_V2.FCStd + joints_v2.json (fc/v2_fc.py) and/or GRAIL_LIFT_V1.FCStd + joints_v1.json (fc/v1_fc.py).
 # Panel (right dock):
-#   * Version v1 (Baha's essai mecanisme 1, rebuilt) / v2 (concept)
+#   * Version v4 (v3 + printer belt) / v3 (compact, T8) / v2 (concept) / v1 (Baha's essai mecanisme 1, rebuilt)
 #   * Lift, Flip (v1: tilt), Grail approach (the robot driving in, moves the free Grail along x) sliders
 #   * Magnet ON: the Grail follows the arm from where it is; OFF: it stays where it is (no gravity: watch "Grail bottom")
 #   * Sequence slider + Play: the planned cycle (joints_*.json) - the other sliders follow it
@@ -26,7 +26,12 @@ except ImportError:                                   # older FreeCAD shim
     from PySide import QtGui as QtWidgets
 
 EXPECTED = {frozenset(p) for p in (("CAR_PINION_20T", "RACK_M1"), ("CAR_VWHEELS", "COL_2020"), ("CAR_SLIDERS", "COL_2020"), ("SCREW_T8", "NUT_T8_brass"), ("SCREW_T8", "BEARING_608_BLOCK"), ("SCREW_T8", "COUPLER_5x8"), ("COUPLER_5x8", "NEMA17_LIFT"), ("CAR_SPACERS", "CAR_VWHEELS"),
-                                   ("CAR_SPACERS", "CAR_PLATE"), ("PIVOT_PIN_M3", "CRADLE_printed"),
+                                   ("CAR_SPACERS", "CAR_PLATE"), ("CAR_BELT_ARM", "BELT_CLAMP_bracket"), ("CAR_BELT_ARM", "CAR_SLIDE_FRAME"), ("BELT_CLAMP_bracket", "BELT_GT2_loop"),
+                                   ("CAR_BELT_ARM", "BELT_GT2_loop"), ("BELT_GT2_loop", "PULLEY_GT2_20T"), ("BELT_GT2_loop", "IDLER_GT2_20T"),
+                                   ("BELT_GT2_free_run", "PULLEY_GT2_20T"), ("BELT_GT2_free_run", "IDLER_GT2_20T"),
+                                   ("TENSIONER_X_printer", "IDLER_GT2_20T"), ("TENSIONER_X_printer", "BELT_GT2_loop"),
+                                   ("TENSIONER_X_printer", "BELT_GT2_free_run"), ("NEMA17_BELT", "PULLEY_GT2_20T"), ("GUIDE_RODS_D8", "SCS8UU_x2"), ("GUIDE_RODS_D8", "ROD2_BUSHING_printed"), ("CAR_BELT_ARM", "SCS8UU_x2"),
+                                   ("PIVOT_PIN_M3", "CRADLE_printed"),
                                    ("SERVO_HORN_ROUND", "SERVO_MG996R"), ("PIVOT_PIN_M3", "U_BRACKET_steel"),
                                    ("SERVO_HORN_ROUND", "U_BRACKET_steel"), ("REAL_RACK_1M_280", "REAL_PINION_20T_1M"),
                                    ("REAL_NEMA14_SHAFT", "REAL_COUPLING_liaison"), ("REAL_PINION_20T_1M", "REAL_COUPLING_liaison"))}
@@ -186,7 +191,7 @@ class Panel(QtWidgets.QWidget):
         self.st = None
         lay = QtWidgets.QVBoxLayout(self)
         self.ver = QtWidgets.QComboBox()
-        self.ver.addItems([v for v in ("v3", "v2", "v1") if os.path.exists(os.path.join(C.CAD, "joints_%s.json" % v))])
+        self.ver.addItems([v for v in ("v4", "v3", "v2", "v1") if os.path.exists(os.path.join(C.CAD, "joints_%s.json" % v))])
         self.ver.currentTextChanged.connect(self.load)
         lay.addWidget(QtWidgets.QLabel("Grail lift version"))
         lay.addWidget(self.ver)

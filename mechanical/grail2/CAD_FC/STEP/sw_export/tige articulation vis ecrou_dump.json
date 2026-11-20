@@ -1,0 +1,21 @@
+{
+  "assembly": "C:/Projects/EUROBOT/Eurobot 2027-ALL/mechanical/grail2/sw/tige articulation vis ecrou.SLDPRT",
+  "open_errors": 0, "open_warnings": 0,
+  "config": "Default",
+  "components": [
+  ],
+  "mates": [
+
+  ],
+  "parts": [
+    {"path": "C:/Projects/EUROBOT/Eurobot 2027-ALL/mechanical/grail2/sw/tige articulation vis ecrou.SLDPRT", "title": "tige articulation vis ecrou.SLDPRT", "material": "", "mass_g": 1.133833, "volume_cm3": 1.133833, "com": [-9.9E-05, -0.000236, 30.000008], "solid_bodies": 1, "box": [-2.521, -2.890951, -0.021, 2.521, 2.890951, 60.021],
+     "features": [
+       {"type": "ProfileFeature", "name": "Sketch1", "dims": {"D1": 5}},
+       {"type": "Extrusion", "name": "Boss-Extrude1", "dims": {"D1": 60, "D1": 5}},
+       {"type": "sketch", "name": "Sketch1", "of": "Boss-Extrude1", "dims": {"D1": 5}},
+       {"type": "SweepThread", "name": "Thread1", "dims": {"D8": 0, "D7": 0.3175, "D6": 5, "D4": 15, "D1": 0, "Pitch": 0.3175, "Profile_Land": 0.079375, "Profile_Angle": 60, "Profile_Height": 0.171852}},
+       {"type": "sketch", "name": "Thread Profile1", "of": "Thread1", "dims": {"Pitch": 0.3175, "Profile_Land": 0.079375, "Profile_Angle": 60, "Profile_Height": 0.171852}},
+       {"type": "SweepThread", "name": "Thread2", "dims": {"D8": 0, "D7": 0.3175, "D6": 5, "D4": 15, "D1": 0, "Pitch": 0.3175, "Profile_Land": 0.079375, "Profile_Angle": 60, "Profile_Height": 0.171852}},
+       {"type": "sketch", "name": "Thread Profile2", "of": "Thread2", "dims": {"Pitch": 0.3175, "Profile_Land": 0.079375, "Profile_Angle": 60, "Profile_Height": 0.171852}}]}
+  ]
+}
