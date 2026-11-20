@@ -12,13 +12,19 @@ CARRIAGE / DRIVE
   pinion: gear 5 wide must pass the slot lip (6.35): gear tip x 121.20 vs the back face x 118.0 (gear dips 3.20 into the slot)
 
 COLUMN FIXATION: SADDLE
-  SADDLE_SOCLE (printed ABS, one part, 167 g at 60 pct, 198 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 88; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
-  legs on the free plate zones (Seif's sketch): x 80..128 y -60..-47; x 80..128 y 47..60; x 25..74 y -42..-24; x 25..66 y 24..40
+  SADDLE_SOCLE (printed ABS, one part, 171 g at 60 pct, 204 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 88; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
+  legs on the free plate zones (Seif's sketch): x 80..128 y -60..-45; x 80..128 y 45..60; x 25..74 y -42..-24; x 25..66 y 24..40
   PLATE HOLES TO ADD (not in the plate yet, Seif will confirm): 8 x Ø4.4 for M4 at (88, -53.5), (120, -53.5), (88, 53.5), (120, 53.5), (33, -33.0), (66, -33.0), (33, 32.0), (58, 32.0); M4 x 16 from the top through a Ø9 channel + nut under the plate
   top (all variants): 2020 cross-member along x, x 40..118, z 260..280, corner bracket in the back slot's top end (z 260..280) -> the arm's lower edge above x 98..138: 285.4..339.9
   TOP_MEMBER_2020      x 40..118 y -6..14 z 260..280: clear
   TOP_L_BRACKET        x 98..118 y -6..14 z 260..283: clear
-  SADDLE_SOCLE         x 25..141 y -60..60 z 16..112: X_PLATE @pick (boxes meet, real gap 4.5); V_WHEELS_x3 @pick (boxes meet, real gap 5.1); M5x25_SCREWS @pick (boxes meet, real gap 7.7); M5_SPACERS @pick (boxes meet, real gap 13.0); NEMA17 @pick (boxes meet, real gap 17.6); MOTOR_BRACKET @pick (boxes meet, real gap 7.5)
+  SCR_M5x10_TOP_x2     x 104..125 y -0..8 z 266..288: X_PLATE @top (boxes meet, real gap 10.4); V_WHEELS_x3 @top (boxes meet, real gap 5.9); M5x25_SCREWS @top (boxes meet, real gap 13.4)
+  TNUT_M5_TOP_x2       x 103..124 y -1..9 z 265..278: X_PLATE @top (boxes meet, real gap 7.9); V_WHEELS_x3 @top (boxes meet, real gap 3.5); M5x25_SCREWS @top (boxes meet, real gap 10.9)
+  SADDLE_SOCLE         x 25..141 y -60..60 z 12..112: X_PLATE @pick (boxes meet, real gap 4.5); V_WHEELS_x3 @pick (boxes meet, real gap 5.1); M5x25_SCREWS @pick (boxes meet, real gap 8.2); M5_SPACERS @pick (boxes meet, real gap 13.0); NEMA17 @pick (boxes meet, real gap 18.0); MOTOR_BRACKET @pick (boxes meet, real gap 6.2); SCR_M3x20_TABS_x4 @pick (boxes meet, real gap 12.8); SERVO_MOUNT @pick (boxes meet, real gap 8.3)
+  SCR_M4x16_FLOOR_x8   x 30..124 y -57..57 z 10..30: clear
+  NUT_M4_FLOOR_x8      x 29..124 y -57..57 z 8..12: clear
+  SCR_M5x12_HEEL_x2    x 106..123 y -0..8 z 92..110: X_PLATE @pick (boxes meet, real gap 10.5); V_WHEELS_x3 @pick (boxes meet, real gap 6.6); M5x25_SCREWS @pick (boxes meet, real gap 13.9)
+  TNUT_M5_HEEL_x2      x 120..124 y -1..9 z 91..111: X_PLATE @pick (boxes meet, real gap 7.9); V_WHEELS_x3 @pick (boxes meet, real gap 3.5); M5x25_SCREWS @pick (boxes meet, real gap 10.9)
 
 CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 168)
   step                        act.top  act.out Grail.bot Grail.top Grail inside robot?
@@ -50,6 +56,8 @@ SUMMARY
   at the start (stowed): 16.8 mm past the face -> bump ~2 mm
   Grail entering the robot body before it lands: never
   Grail highest point in the cycle: 412.3 (only the Grail may pass 350, in the castle [G E.2])
+  chamfers 1 mm on the printed parts (convex straight edges between planar faces; refused edges left sharp): MOTOR_BRACKET 32/44, SERVO_MOUNT 29/67, SADDLE_SOCLE 137/152
+  form fits: saddle tongues in the plate's wheel well (y); heel key in the column's back slot; servo mount lip on the X plate's lower edge; motor bracket steps on the X plate tabs' ends; arm on the horn's disc pocket
   roof slot for the arm: x 107.8..169.0, y -20.2..20.2
   plate top at the place 274.5 vs the arm's lower edge above x 121..143: 278.8..308.8
   profile top 280 vs the arm's lower edge above the profile (x 118..138): 285.4..312.6
@@ -58,15 +66,17 @@ SUMMARY
 
 FIT ON BASE_330_JS (real distances to the base's parts from ../../base_330_js/CAD/base_330_js_assembly.FCStd; pick + top poses; < 3 mm listed)
   SADDLE_SOCLE                   - plate                        0.00 mm  sits on the plate (expected)
+  SCR_M4x16_FLOOR_x8             - plate                        0.00 mm  through the plate: holes to add (expected)
+  NUT_M4_FLOOR_x8                - plate                        0.00 mm  through the plate: holes to add (expected)
   SADDLE_SOCLE                   - clapets_v7_moduleA           3.00 mm  close
-  nearest others: SADDLE_SOCLE - hinges_PH 4.0; SADDLE_SOCLE - odo_bracket 4.2; SADDLE_SOCLE - motors_37D_PH 4.5; SADDLE_SOCLE - wheels_JS7444_ENVELOPE 5.0; SADDLE_SOCLE - wheels_JS7444_nominal_PH 7.0; SADDLE_SOCLE - screws_M3 7.2; SADDLE_SOCLE - amt102 11.9; SADDLE_SOCLE - spring 14.9
+  nearest others: SADDLE_SOCLE - hinges_PH 4.0; SADDLE_SOCLE - odo_bracket 4.2; SADDLE_SOCLE - motors_37D_PH 4.5; SADDLE_SOCLE - wheels_JS7444_ENVELOPE 5.0; SADDLE_SOCLE - wheels_JS7444_nominal_PH 7.0; SADDLE_SOCLE - screws_M3 7.2; NUT_M4_FLOOR_x8 - clapets_v7_moduleA 8.0; SCR_M4x16_FLOOR_x8 - clapets_v7_moduleA 8.9
 
 PRINTED PARTS (print/)
   FLIPPER_ARM: hub Ø24 with the round horn's disc in a Ø21.4 pocket (+ Ø9.8 boss recess), 4 x M2 x 12 from +y into the horn holes at r 7.2 (Ø2.5, T9 coupon); Ø5 x 16 pin pressed 6 deep from +y (pushed in LAST, through the 625); bar 14 x 10; cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud + nut in a pocket; 1 solid(s), 12 g ABS (60 pct)
-  FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 142.8..150.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 102.0, 152.0), 2 x M3 into the plate's tapped holes (y 23.7, z 117.0, 137.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 x 12 + nuts in pockets; 625 cheek (seat Ø16.2 open on +y, lip on the arm side); 1 solid(s), 29 g ABS (60 pct)
-  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs, 4 x M3x25 at (x 131, z 151), (x 137, z 151), (x 131, z 103), (x 137, z 103) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 13 g ABS (60 pct)
+  FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 142.8..150.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 102.0, 152.0), 2 x M3 into the plate's tapped holes (y 23.7, z 117.0, 137.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 x 12 + nuts in pockets; 625 cheek (seat Ø16.2 open on +y, lip on the arm side); 1 solid(s), 30 g ABS (60 pct)
+  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs (steps on the tab ends), 4 x M3x20 at (x 131, z 151), (x 137, z 151), (x 131, z 103), (x 137, z 103) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 15 g ABS (60 pct)
   FLIPPER_RACK_192: Seif's rack cut to 192 (rack frame, as printed before)
-  servo body y -50.4..-6.6; SERVO_MOUNT y -30.0..34.0
+  servo body y -50.4..-6.6; SERVO_MOUNT y -33.0..34.0
 
 PARTS (📦 library · 🇹🇳 local · ✈️ import)
   Two Trees X carriage: plate + 3 V-wheels + 3 M5x25 + nyloc + spacers + eccentric 📦 · 2020 profile cut to 192 📦 · NEMA17 📦 (40 mm; shorter later) · rack m1 printed (Seif's, fits) cut to 140 · pinion v2 printed (M3 insert K5) · MG996R + round horn 📦 · 625 + Ø5 pin 📦/🇹🇳 · electromagnet Ø30 🇹🇳 · upper wheel screws M5x25 -> M5x35 🇹🇳 · 2 x M3x16 + 2 x M3 self-tap + 4 x M2x6 + M4 nut

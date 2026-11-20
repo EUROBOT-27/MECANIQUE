@@ -162,6 +162,9 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
         armp = armp.cut(cyl(FIT["m2"] / 2, 30, (px + a_, y_db - 2, pz + b_), (0, 1, 0)))
         armp = armp.cut(cyl(2.2, 1.6, (px + a_, arm_y / 2 - 1.5, pz + b_), (0, 1, 0)))         # head below the +y face
     arm["ARM_PRINTED"] = armp.removeSplitter()
+    arm["SCR_M2x12_HORN_x4"] = Part.makeCompound([screw(2, 12, (px + a_, arm_y / 2 - 1.5, pz + b_), (0, -1, 0))
+                                                  for (a_, b_) in ((0, 7.2), (7.2, 0), (0, -7.2), (-7.2, 0))])
+    arm["NUT_M4_MAGNET"] = nut(4, (X_PICK, 0, ztop - 0.6 - NUT[4][1]), (0, 0, 1))
     arm["SHAFT_5"] = cyl(2.5, y625[1] + 2 - (arm_y / 2 - 6.0), (px, arm_y / 2 - 6.0, pz), (0, 1, 0))
     arm["MAGNET_D30"] = magnet_down(X_PICK, zf)
     # ---- SERVO_MOUNT: plate under the ears (servo side of the ears = -y of the ear flange)
@@ -193,6 +196,9 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
     mount = mount.cut(cyl(3.0, 30, (px, -10, pz), (0, 1, 0)))                                   # shaft clearance
     body["SERVO_MOUNT"] = mount.removeSplitter()
     body["BEARING_625"] = cyl(8, 5, (px, y625[0], pz), (0, 1, 0)).cut(cyl(2.5, 7, (px, y625[0] - 1, pz), (0, 1, 0)))
+    body["SCR_M3x10_SERVO_x2"] = Part.makeCompound([screw(3, 10, (px - 5.0, ear_y1, pz + hx), (0, -1, 0))
+                                                    for hx in SERVO_EAR["holes_x"]])
+    body["NUT_M3_SERVO_x2"] = Part.makeCompound([nut(3, (px - 5.0, sp_y0, pz + hx), (0, 1, 0)) for hx in SERVO_EAR["holes_x"]])
     info = dict(dy=dy, ear_y=(ear_y0, ear_y1), plate_y=(sp_y0, sp_y1), plate_x=(sx0, sx1), plate_z=(sz0, sz1),
                 cup_top=ztop, joiner_z=(zb0, zb1))
     return arm, body, info
@@ -216,6 +222,104 @@ def robot_context(slot=None):
     out["CTX_ROOF"] = roof
     out["CTX_WHEEL_R"] = cyl(WHEEL["r"], WHEEL["x1"] - WHEEL["x0"], (WHEEL["x0"], 0, WHEEL["z"]), (1, 0, 0))
     return out
+
+
+# ------------------------------------------------------------------ fasteners (simple models, in their holes)
+SHCS = {2: (3.8, 2.0), 3: (5.5, 3.0), 4: (7.0, 4.0), 5: (8.5, 5.0)}      # socket head (ISO 4762): head Ø, height
+BHCS = {3: (5.7, 1.65), 4: (7.6, 2.2), 5: (9.5, 2.75)}                   # button head (ISO 7380)
+NUT = {2: (4.0, 1.6), 3: (5.5, 2.4), 4: (7.0, 3.2), 5: (8.0, 4.0)}       # hex nut: across flats, height
+
+
+def _orient(shape, c, axis):
+    a = Vector(*axis)
+    a.normalize()
+    shape.Placement = App.Placement(Vector(*c), App.Rotation(Vector(0, 0, 1), a))
+    return shape
+
+
+def screw(d, L, c, axis, button=False):
+    """Screw whose head bears at point c, shank going along axis for L."""
+    hd, hk = (BHCS if button else SHCS)[d]
+    head = Part.makeCylinder(hd / 2, hk, Vector(0, 0, -hk))
+    shank = Part.makeCylinder(d / 2 * 0.96, L, Vector(0, 0, 0))
+    return _orient(head.fuse(shank).removeSplitter(), c, axis)
+
+
+def nut(d, c, axis):
+    """Hex nut, one face at c, extending along axis."""
+    s_, m = NUT[d]
+    r = s_ / math.sqrt(3)
+    pts = [Vector(r * math.cos(math.radians(60 * k)), r * math.sin(math.radians(60 * k)), 0) for k in range(6)]
+    n = Part.Face(Part.makePolygon(pts + [pts[0]])).extrude(Vector(0, 0, m))
+    n = n.cut(Part.makeCylinder(d / 2, m + 2, Vector(0, 0, -1)))
+    return _orient(n, c, axis)
+
+
+def tnut(c, axis, along):
+    """M5 drop-in T-nut for 2020 (10 long x 10 wide x 4 deep), centre c, screw axis = axis, slot along 'along'."""
+    a, l_ = Vector(*axis), Vector(*along)
+    a.normalize()
+    l_.normalize()
+    w = a.cross(l_)
+    b = Part.makeBox(4.0, 10.0, 10.0, Vector(-2.0, -5.0, -5.0))
+    m = App.Matrix(a.x, w.x, l_.x, 0, a.y, w.y, l_.y, 0, a.z, w.z, l_.z, 0, 0, 0, 0, 1)
+    b = b.cut(Part.makeCylinder(2.5, 6, Vector(-3, 0, 0), Vector(1, 0, 0)))
+    b.transformShape(m)
+    b.translate(Vector(*c))
+    return b
+
+
+def insert(K, L, c, axis):
+    """Heat-set insert: cylinder K x L from c along axis (into the part)."""
+    return _orient(Part.makeCylinder(K / 2, L).cut(Part.makeCylinder(1.5, L + 2, Vector(0, 0, -1))), c, axis)
+
+
+def chamfer_outer(shape, size=1.0, min_len=4.0):
+    """1 mm chamfer on the convex straight edges between two planar faces (design-principles edge rule). Tries all
+    edges at once, then halves of the set; edges the kernel refuses are left sharp. Returns (shape, done, tried)."""
+    sol = shape.Solids[0] if len(shape.Solids) == 1 else shape
+    cands = []
+    for e in sol.Edges:
+        if e.Curve.__class__.__name__ != "Line" or e.Length < min_len:
+            continue
+        fs = sol.ancestorsOfType(e, Part.Face)
+        if len(fs) != 2 or any(f.Surface.__class__.__name__ != "Plane" for f in fs):
+            continue
+        mid = e.valueAt(0.5 * (e.FirstParameter + e.LastParameter))
+        t = e.tangentAt(e.FirstParameter)
+        n0 = fs[0].normalAt(*fs[0].Surface.parameter(mid))
+        n1 = fs[1].normalAt(*fs[1].Surface.parameter(mid))
+        if abs(n0.dot(n1)) > 0.2:                        # only ~90 deg edges
+            continue
+        v0 = n0.cross(t)
+        if fs[0].distToShape(Part.Vertex(mid + v0 * 0.5))[0] > 0.05:
+            v0 = -v0
+        if n1.dot(v0) < -0.5:                            # convex
+            cands.append(e)
+
+    def works(es):
+        try:
+            r = sol.makeChamfer(size, es)
+            return r if r.isValid() and len(r.Solids) == 1 else None
+        except Exception:
+            return None
+
+    def best(es, depth=0):
+        if not es:
+            return []
+        if works(es) is not None:
+            return es
+        if len(es) == 1 or depth > 6:
+            return []
+        h = len(es) // 2
+        a, b = best(es[:h], depth + 1), best(es[h:], depth + 1)
+        if a and b and works(a + b) is not None:
+            return a + b
+        return a if len(a) >= len(b) else b
+
+    ok = best(cands)
+    out = works(ok) if ok else None
+    return (out if out is not None else sol), len(ok), len(cands)
 
 
 # ------------------------------------------------------------------ poses + checks

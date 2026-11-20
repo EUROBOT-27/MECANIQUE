@@ -78,6 +78,18 @@ Same flip and cycle as before: highest point 335.7, the Grail never enters the b
 16.8 mm past the face (perimeter 1192 + ~2), 84 mm out at flip 45° (+~50, budget 1400).
 **Polish (2026-11-20):** magnet wire hole Ø3.8 through the cup's top (beside the M4 stud); zip-tie anchor (2 slots) on
 the servo mount's base for the servo + magnet cables.
+**Finish (2026-11-20, Seif: chamfers, ribs, form fits, screws in their holes):**
+- **Chamfers 1 mm** on the printed parts' convex straight edges (design-principles edge rule), computed on the finished
+  solids: saddle 137/152, motor bracket 32/44, servo mount 29/67 (edges the kernel refuses stay sharp; count in the report).
+- **Ribs:** gusset behind the column heel; 2 stiffening flanges on the motor bracket (top and bottom, away from the
+  wheel); 2 gussets where the servo plate's web meets the servo mount's base; the saddle's edge ribs.
+- **Form fits (guidage par forme):** the saddle's 2 tongues drop into the plate's wheel well (centre it in y); a key on
+  the heel enters the column's back slot below the rack; the servo mount's lip hooks the X plate's lower edge; the motor
+  bracket's bridges have steps that butt on the X plate tabs' ends; the arm sits on the horn's disc pocket.
+- **Every fastener modelled in its hole** (groups `8a/8b/8c_SCREWS_…`, moving with their part): saddle 8 × M4 × 16 +
+  nuts under the plate; heel 2 × M5 × 12 + T-nuts; top bracket 2 × M5 × 10 + T-nuts; upper wheel screws M5 × 35 (eccentric
+  M5 × 25 kept) + nylocs on the servo mount; 2 × M3 × 12 into the X plate; servo 2 × M3 × 10 + nuts; NEMA 4 × M3 × 8 button
+  heads; tabs 4 × M3 × 20 (tip 3.5 mm off the column); horn 4 × M2 × 12; magnet M4 nut; pinion M3 insert + M3 × 6 set screw.
 **Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
 electronics (Seif's idea, `../concepts/electronics-column.md`).
 

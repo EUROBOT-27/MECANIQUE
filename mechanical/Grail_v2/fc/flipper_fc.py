@@ -200,6 +200,12 @@ def build(doc, groups):
     # pinion local z (motor-side face at 0) -> +y; place hub face at face_y + boss gap
     pin.Placement = App.Placement(Vector(pin_x, face_y + G.PIN_BOSS_GAP, pin_z), App.Rotation(Vector(1, 0, 0), -90))
     lift["PINION_v2"] = pin
+    ins = C.insert(5.0, 4.0, (8.0, 0, 8.0), (-1, 0, 0))                     # M3 insert K5 L4, radial, 8 from the hub face
+    sscr = C._orient(Part.makeCylinder(1.45, 6.0), (2.05, 0, 8.0), (1, 0, 0))   # M3 x 6 set screw on the shaft flat
+    for sh_ in (ins, sscr):
+        sh_.Placement = pin.Placement.multiply(sh_.Placement)
+    lift["INSERT_M3_PINION"] = ins
+    lift["SCR_M3x6_SET_PINION"] = sscr
     # ---------------- MOTOR_BRACKET (printed): plate in x-z between the motor face and the eccentric wheel (4.5 thick,
     # 0.5 off the wheel), NEMA17 pattern 31 (M3) + Ø23 pilot; two bridges to the X plate's back tabs (above / below the
     # eccentric wheel, |z - zc| >= 14), 2 x M3 each into the tabs (drill Ø2.5 + tap M3: the tabs have no holes)
@@ -211,6 +217,9 @@ def build(doc, groups):
     mb = C.box(pin_x - 21.15, xback - 0.6, by0, by1, zc - 34.0, pin_z + 21.15)
     for zz0, zz1 in ((zc + 14.0, zc + 34.0), (zc - 34.0, zc - 14.0)):
         mb = mb.fuse(C.box(tab_x0, xback - 0.6, by1 - 0.5, tab_y, zz0, zz1))
+        mb = mb.fuse(C.box(tab_x0 - 2.5, tab_x0, by1 - 0.5, tab_y + 2.7, zz0, zz1))          # step on the tab's end (form fit)
+    for fz0, fz1 in ((pin_z + 18.0, pin_z + 21.15), (pin_z - 21.15, pin_z - 18.0)):          # stiffening flanges (+y side)
+        mb = mb.fuse(C.box(pin_x - 21.15, G.XC - 8.0, by1 - 0.5, by1 + 6.0, fz0, fz1))
     mb = mb.removeSplitter()
     mb = mb.cut(C.cyl(11.5, 20, (pin_x, by0 - 1, pin_z), (0, 1, 0)))                         # pilot Ø23
     for dx in (-15.5, 15.5):
@@ -225,7 +234,17 @@ def build(doc, groups):
             mb = mb.cut(C.cyl(C.FIT["m3"] / 2, 40, (xx, by0 - 1, zz), (0, 1, 0)))
             mb = mb.cut(C.cyl(3.35, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                       # head counterbore
             tab_screws.append((xx, zz))
-    lift["MOTOR_BRACKET"] = mb.removeSplitter()
+    mb, ch_done, ch_tried = C.chamfer_outer(mb.removeSplitter())
+    lift["MOTOR_BRACKET"] = mb
+    G.CHAMFERS = {"MOTOR_BRACKET": (ch_done, ch_tried)}
+    scr = []
+    for dx in (-15.5, 15.5):
+        for dz in (-15.5, 15.5):
+            hx, hz = pin_x + dx, pin_z + dz
+            cb_ = hx + 2.75 > info_wheel_x0 - 1 and abs(hz - zc) < 14
+            scr.append(C.screw(3, 8, (hx, by1 - (1.8 if cb_ else 0.0), hz), (0, -1, 0), button=True))
+    lift["SCR_M3x8_NEMA_x4"] = Part.makeCompound(scr)
+    lift["SCR_M3x20_TABS_x4"] = Part.makeCompound([C.screw(3, 20, (xx, by0 + 3.5, zz), (0, 1, 0)) for xx, zz in tab_screws])
     # ---------------- flip head (arm + servo + cheek) + its base on the X plate's front face = one printed SERVO_MOUNT
     arm, head, hinfo = C.flip_head(G.PX, G.Z_PICK)
     xf = plate_bb.XMax                                     # X plate front face
@@ -246,7 +265,23 @@ def build(doc, groups):
     base = base.cut(C.cyl(5.5, 6.5, (xf - 0.1, ecc[0], ecc[1]), (1, 0, 0)))
     for zz in (zc + 24.0, zc + 31.0):                    # zip-tie anchor: servo + magnet cables up the base's front face
         base = base.cut(C.box(xf - 1, xb1 + 1, G.YC + 2.0, G.YC + 6.0, zz - 1.0, zz + 1.0))
+    plate_edge_y = G.YC + 200.9 - P_Z                    # X plate's -y edge
+    base = base.fuse(C.box(xf, xb1, plate_edge_y - 2.4, min(sp_y0, G.YC - 34.0) + 1.0, zc - 30.0, zc + 30.0))       # lip root
+    base = base.fuse(C.box(xf - 2.9, xf + 0.5, plate_edge_y - 2.4, plate_edge_y - 0.2, zc - 30.0, zc + 30.0))     # lip on the edge (form fit)
+    for gz in (hinfo["plate_z"][0] + 0.0, None):          # gussets base / servo-plate web (top and bottom)
+        pass
+    wz0 = max(zc - 33.0, hinfo["plate_z"][0])
+    wz1 = min(zc + 33.0, hinfo["plate_z"][1])
+    for gz0 in (wz0, wz1 - 3.0):
+        tri = Part.Face(Part.makePolygon([Vector(xb1 - 0.5, sp_y1 - 0.5, 0), Vector(xb1 + 7.0, sp_y1 - 0.5, 0),
+                                          Vector(xb1 - 0.5, sp_y1 + 7.5, 0), Vector(xb1 - 0.5, sp_y1 - 0.5, 0)])).extrude(Vector(0, 0, 3.0))
+        tri.translate(Vector(0, 0, gz0))
+        base = base.fuse(tri)
     head["SERVO_MOUNT"] = head["SERVO_MOUNT"].fuse(base).removeSplitter()
+    sm, ch_done, ch_tried = C.chamfer_outer(head["SERVO_MOUNT"])
+    head["SERVO_MOUNT"] = sm
+    G.CHAMFERS["SERVO_MOUNT"] = (ch_done, ch_tried)
+    head["SCR_M3x12_PLATE_x2"] = Part.makeCompound([C.screw(3, 12, (xb1 - 3.5, y, z), (-1, 0, 0)) for (y, z) in m3])
     # the 2 upper wheel nylocs move onto the base's front (screws M5x25 -> M5x35)
     nuts = sorted(lift["M5_NYLOC"].Solids, key=lambda s: s.BoundBox.Center.y)
     moved_nuts = []
@@ -256,16 +291,23 @@ def build(doc, groups):
             n2.translate(Vector(G.BASE_T, 0, 0))
         moved_nuts.append(n2)
     lift["M5_NYLOC"] = Part.makeCompound(moved_nuts)
+    scs = sorted(lift["M5x25_SCREWS"].Solids, key=lambda s_: s_.BoundBox.Center.y)
+    new = [scs[0]]
+    for s_ in scs[1:]:
+        b_ = s_.BoundBox
+        new.append(C.screw(5, 35, (b_.XMin + 5.0, b_.Center.y, b_.Center.z), (1, 0, 0)))
+    lift["M5x25_SCREWS"] = Part.makeCompound(new)          # eccentric wheel: M5x25 kept; upper wheels: M5x35
     lift.update(head)
     arm_all.update(arm)
     hinfo.update(base_x=(xf, xb1), m5=m5, m3=m3, ecc=ecc)
     fixp = fixation(zc)
+    isf = lambda n_: n_.startswith(("SCR_", "NUT_", "TNUT_", "INSERT_", "M5x25_SCREWS", "M5_NYLOC"))
     for n, s in fixp.items():
-        C.add(doc, n, s, "1b_FIXATION_" + G.FIX, groups)
+        C.add(doc, n, s, "8a_SCREWS_column" if isf(n) else "1b_FIXATION_" + G.FIX, groups)
     for n, s in arm_all.items():
-        C.add(doc, n, s, "3_ARM_pick_pose", groups)
+        C.add(doc, n, s, "8c_SCREWS_arm" if isf(n) else "3_ARM_pick_pose", groups)
     for n, s in lift.items():
-        C.add(doc, n, s, "2_CARRIAGE_pick_pose", groups)
+        C.add(doc, n, s, "8b_SCREWS_carriage" if isf(n) else "2_CARRIAGE_pick_pose", groups)
     for n, s in fixed.items():
         C.add(doc, n, s, "1_COLUMN_fixed", groups)
     g, plate = C.grail()
@@ -354,8 +396,8 @@ class SB:
     Y_OUT = 60.0                          # deck |y| for x >= 70
     Y_IN = 55.0                           # deck |y| for x < 70 (clapets rails at y 58, x 30..51)
     # legs on the free plate zones: (x0, x1), (y0, y1)
-    LEGS = (((80.0, 128.0), (-60.0, -47.0)),    # beside the wheel well, back (odometry bracket from x 132)
-            ((80.0, 128.0), (47.0, 60.0)),      # beside the wheel well, front (clapets door unit from y 69)
+    LEGS = (((80.0, 128.0), (-60.0, -45.2)),    # beside the wheel well, back (odometry bracket from x 132), to the well edge
+            ((80.0, 128.0), (45.2, 60.0)),      # beside the wheel well, front (clapets door unit from y 69)
             ((25.0, 74.0), (-42.0, -24.0)),     # beside the drive motor, back (hinge |y| <= 20; keep y > -43.5 for a back module socle)
             ((25.0, 66.0), (24.0, 40.0)))       # beside the drive motor, front (clapets socle from y 43.5)
     FOOT_T = 10.0                         # foot above the plate; the screw head sits in a Ø9 channel from the deck top
@@ -392,6 +434,16 @@ def saddle_socle():
     body = body.fuse(C.box(hx0, hx1, hy0, hy1, zd - 1, SB.HEEL_Z1))
     for (x0, x1), (y0, y1), h in SB.RIBS:
         body = body.fuse(C.box(x0, x1, y0, y1, zd - 1, zd + h))
+    # form fit: a tongue under each well-side leg drops into the plate's wheel well (centres the saddle in y)
+    for sgn in (1, -1):
+        y_a, y_b = sorted((sgn * 45.2, sgn * 42.7))
+        body = body.fuse(C.box(82.0, 126.0, y_a, y_b, SB.Z_PLATE - 4.0, SB.Z_PLATE + 0.5))
+    # form fit: key on the heel's front face into the column's back slot (below the rack), and a gusset behind the heel
+    body = body.fuse(C.box(hx1 - 0.5, hx1 + 1.4, G.YC - 2.8, G.YC + 2.8, zt + 0.5, SB.HEEL_Z1 - 2.0))
+    gus = Part.Face(Part.makePolygon([Vector(hx0 + 0.5, 0, zd - 0.5), Vector(hx0 + 0.5, 0, SB.HEEL_Z1 - 3.0),
+                                      Vector(hx0 - 14.0, 0, zd - 0.5), Vector(hx0 + 0.5, 0, zd - 0.5)])).extrude(Vector(0, 4.0, 0))
+    gus.translate(Vector(0, G.YC + 1.0, 0))
+    body = body.fuse(gus)
     body = body.removeSplitter()
     # cut-outs: wheel tunnel (R45 around the worst-case envelope), drive motor + hinge, odometry module
     body = body.cut(C.cyl(r, SB.TUN_X[1] - SB.TUN_X[0], (SB.TUN_X[0], 0.0, C.WHEEL["z"]), (1, 0, 0)))
@@ -403,7 +455,7 @@ def saddle_socle():
     # heel: 2 x M5 along x into T-nuts in the back slot, heads in counterbores on the heel's inner face
     for zz in SB.HEEL_SCREWS_Z:
         body = body.cut(C.cyl(C.FIT["m5"] / 2, hx1 - hx0 + 2, (hx0 - 1, G.YC, zz), (1, 0, 0)))
-        body = body.cut(C.cyl(4.6, 4.0, (hx0 - 0.01, G.YC, zz), (1, 0, 0)))
+        body = body.cut(C.cyl(4.6, 5.2, (hx0 - 0.01, G.YC, zz), (1, 0, 0)))
     # floor: M4 from the top: Ø9 access channel from the deck top down to the foot, Ø4.6 through the foot (nut under the plate)
     for (x, y) in SB.SCREWS:
         body = body.cut(C.cyl(C.FIT["m4"] / 2, SB.FOOT_T + 2, (x, y, SB.Z_PLATE - 1), (0, 0, 1)))
@@ -412,13 +464,15 @@ def saddle_socle():
     for (x0, x1, y0, y1, z0, z1) in SB.POCKETS:
         body = body.cut(C.box(x0, x1, y0, y1, z0, z1))
     body = body.removeSplitter()
+    body, ch_done, ch_tried = C.chamfer_outer(body)
+    G.CHAMFERS["SADDLE_SOCLE"] = (ch_done, ch_tried)
     info = dict(deck_top=zd, crown=C.WHEEL["z"] + r, mass=C.mass_of(body), mass_full=mass_full, solids=len(body.Solids),
                 deck_under=C.WHEEL["z"] + r, wheel_gap=SB.CLR, drive_gap=SB.MOTOR_CUT[3] - 62.5)
     return body, info
 
 
 def fixation(zc):
-    """Column fixation parts for G.FIX (robot frame)."""
+    """Column fixation parts for G.FIX (robot frame). Fasteners (SCR_ / NUT_ / TNUT_) in their holes."""
     out = {}
     xb = G.XC - 10                                       # column back face
     y0, y1 = G.YC - 10, G.YC + 10
@@ -426,11 +480,22 @@ def fixation(zc):
     # ---- top (all variants): 2020 cross-member along x under the roof, back face of the column -> core
     out["TOP_MEMBER_2020"] = C.box(core_x, xb, y0, y1, G.PROF_Z1 - 20, G.PROF_Z1)
     out["TOP_L_BRACKET"] = l_bracket(xb, G.PROF_Z1, False)                               # in the back slot's top end
+    zt_ = G.PROF_Z1 - 10.0
+    out["SCR_M5x10_TOP_x2"] = Part.makeCompound([C.screw(5, 10, (xb - 3.0, G.YC, zt_), (1, 0, 0)),
+                                                 C.screw(5, 10, (xb - 10.0, G.YC, G.PROF_Z1 + 3.0), (0, 0, -1))])
+    out["TNUT_M5_TOP_x2"] = Part.makeCompound([C.tnut((xb + 4.0, G.YC, zt_), (1, 0, 0), (0, 0, 1)),
+                                               C.tnut((xb - 10.0, G.YC, G.PROF_Z1 - 4.0), (0, 0, 1), (1, 0, 0))])
     if G.FIX == "slot":
         out["BOTTOM_MEMBER_2020"] = C.box(core_x, xb, y0, y1, G.PROF_Z0 - 20, G.PROF_Z0)  # above the drive motor
         out["BOTTOM_L_BRACKET"] = l_bracket(xb, G.PROF_Z0, True, h_z=G.SOCLE_INFO["deck_top"])
     elif G.FIX == "saddle":
         out["SADDLE_SOCLE"], G.SOCLE_INFO = saddle_socle()
+        ft = SB.Z_PLATE + SB.FOOT_T
+        out["SCR_M4x16_FLOOR_x8"] = Part.makeCompound([C.screw(4, 16, (x, y, ft), (0, 0, -1)) for (x, y) in SB.SCREWS])
+        out["NUT_M4_FLOOR_x8"] = Part.makeCompound([C.nut(4, (x, y, SB.Z_PLATE - 5.0), (0, 0, -1)) for (x, y) in SB.SCREWS])
+        hx0 = SB.HEEL[0]
+        out["SCR_M5x12_HEEL_x2"] = Part.makeCompound([C.screw(5, 12, (hx0 + 5.2, G.YC, z), (1, 0, 0)) for z in SB.HEEL_SCREWS_Z])
+        out["TNUT_M5_HEEL_x2"] = Part.makeCompound([C.tnut((xb + 4.0, G.YC, z), (1, 0, 0), (0, 0, 1)) for z in SB.HEEL_SCREWS_Z])
     elif G.FIX == "bridge":
         out["BRIDGE_SOCLE"], G.SOCLE_INFO = bridge_socle()
         out["BOTTOM_L_BRACKET"] = l_bracket(xb, G.PROF_Z0, True, h_z=G.SOCLE_INFO["deck_top"])
@@ -667,6 +732,10 @@ def main():
          "CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x %.0f)" % C.FACE]
     r += lines
     r += ["", "SUMMARY"] + C.summary_lines(worst, start_out)
+    r += ["  chamfers 1 mm on the printed parts (convex straight edges between planar faces; refused edges left sharp): %s"
+          % ", ".join("%s %d/%d" % (k, v[0], v[1]) for k, v in getattr(G, "CHAMFERS", {}).items()),
+          "  form fits: saddle tongues in the plate's wheel well (y); heel key in the column's back slot; servo mount lip on "
+          "the X plate's lower edge; motor bracket steps on the X plate tabs' ends; arm on the horn's disc pocket"]
     r += ["  roof slot for the arm: %s" % ("x %.1f..%.1f, y %.1f..%.1f" % slot if slot else "none"),
           "  plate top at the place %.1f vs the arm's lower edge above x %.0f..%.0f: %.1f..%.1f"
           % (plate_top_place, pb.XMin, pb.XMax, arm_lower_at(pb.XMax), arm_lower_at(pb.XMin)),
@@ -718,7 +787,7 @@ def main():
            hi["m3"][0][0], ", ".join("%.1f" % z for _, z in hi["m3"]), hi["plate_y"][0], hi["plate_y"][1], hi["ear_y"][0],
            hi["ear_y"][1], len(lift["SERVO_MOUNT"].Solids), C.mass_of(lift["SERVO_MOUNT"]) * 1000),
         "  FLIPPER_MOTOR_BRACKET: plate %.1f thick at y %.1f..%.1f (motor face side; %.1f off the eccentric wheel), "
-        "NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs, 4 x M3x25 at %s (DRILL Ø2.5 + TAP M3 in the "
+        "NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs (steps on the tab ends), 4 x M3x20 at %s (DRILL Ø2.5 + TAP M3 in the "
         "tabs); %d solid(s), %.0f g ABS (60 pct)" % (G.BRACKET_T, info["bracket_y"][0], info["bracket_y"][1],
                                                     info["ecc_ymin"] - info["bracket_y"][1],
                                                     ", ".join("(x %.0f, z %.0f)" % t_ for t_ in info["tab_screws"]),
@@ -779,7 +848,8 @@ def b330_checks(ctx, fixed, fix, parts, steps):
     for (on, cn), d in sorted(worst.items(), key=lambda kv: kv[1]):
         if d < 3.0:
             note = "sits on the plate (expected)" if cn == "plate" and on.startswith(("SADDLE", "BRIDGE")) else (
-                "CLASH" if d < 0.01 else "close")
+                "through the plate: holes to add (expected)" if cn == "plate" and on.startswith(("SCR_M4", "NUT_M4")) else (
+                    "CLASH" if d < 0.01 else "close"))
             if cn == "wheels_JS7444_ENVELOPE":
                 note += " (worst-case wheel Ø80)"
             lines.append("  %-30s - %-26s %6.2f mm  %s" % (on, cn, d, note))
@@ -797,6 +867,8 @@ COLOURS = [  # (name prefix, rgb, transparency)
     ("BRONZE", (0.70, 0.50, 0.20), 0), ("NEMA17", (0.15, 0.15, 0.17), 0), ("SERVO_MG996R", (0.10, 0.20, 0.60), 0),
     ("SERVO_HORN", (0.92, 0.92, 0.92), 0), ("BEARING", (0.70, 0.70, 0.72), 0), ("SHAFT", (0.60, 0.60, 0.62), 0),
     ("MAGNET", (0.85, 0.10, 0.10), 0), ("GRAIL_PLATE", (0.40, 0.40, 0.40), 0), ("GRAIL", (0.95, 0.75, 0.10), 0),
+    ("SCR_", (0.22, 0.22, 0.25), 0), ("NUT_", (0.70, 0.70, 0.72), 0), ("TNUT_", (0.55, 0.55, 0.60), 0),
+    ("INSERT_", (0.80, 0.65, 0.20), 0), ("M5x25_SCREWS", (0.22, 0.22, 0.25), 0), ("M5_NYLOC", (0.70, 0.70, 0.72), 0),
     ("CTX_ROOF", (0.85, 0.85, 0.70), 60),
     ("B330_plate", (0.82, 0.70, 0.50), 0), ("B330_wheels_JS7444_ENVELOPE", (1.0, 0.6, 0.6), 80),
     ("B330_wheels", (0.25, 0.15, 0.12), 0), ("B330_motors", (0.55, 0.55, 0.58), 0), ("B330_hinges", (0.30, 0.30, 0.35), 0),
