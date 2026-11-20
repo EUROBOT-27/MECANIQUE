@@ -52,27 +52,39 @@ Two Trees Bluer V2 **X-axis carriage** on the real **2020**, Seif's **printed ra
 - **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20), face 5 mm past the eccentric wheel. Body at y −70…−33:
   **18 mm past the Grail bay** (y −52) toward the back module. A shorter NEMA is a quick fix (motor + pinion hub).
 
-### Column fixation: three variants to choose from (Seif, 2026-11-20)
-The 2020's bottom end sits right above the right wheel (x 106–150, top z 74). Run with `FLIPPER_FIX=slot|bridge|inward`
-→ `CAD_FC/FLIPPER_<VARIANT>.FCStd` + report. The top fixation is the same in all three: a **2020 cross-member along x**
-from the column's back face inward to the core (x 40), z 255–275, joint plate on top (6–7 mm under the arm's path).
+### Column fixation: **BRIDGE chosen** (Seif, 2026-11-20)
+The 2020's bottom end sits right above the right wheel (x 106–150, top z 74). Three variants were built
+(`FLIPPER_FIX=slot|bridge|inward` → `CAD_FC/FLIPPER_<VARIANT>.FCStd` + report); Seif chose **BRIDGE** ("it could help a
+lot"). SLOT (corner brackets in the back slot onto a cross-member above the drive motor) and INWARD (column over the drive
+motor, motor leaving the bay inward) stay as records.
 
-| | **SLOT** | **BRIDGE** | **INWARD** |
-|---|---|---|---|
-| Idea | 2020 corner brackets in the back slot's **free ends** (rack cut to the pinion travel) | a plate **arching over the wheel**, legs to the floor beside it | column **over the drive motor** (x 85), on a saddle above it |
-| Bottom | L-bracket (z 78–98) onto a 2020 cross-member along x, z 58–78, above the drive motor (top 55.5) | plate z 76–81, x 96–124, legs at y −45…−40 and 38…42; column bolted through its end hole (M5) | saddle z 57–60, legs at y ±21–25 beside the drive motor; column bolted through its end hole |
-| Moves | nothing | everything 3 mm up (column 81–278) | column, carriage, motor 25 mm inward; servo mount reaches **53 mm** to the pivot (28 now) |
-| Parts | 2 × 2020 cross-members + 2 corner brackets 📦 | printed / alu arch + top member | printed / alu saddle + top member |
-| Fits | all clear; motor 18 mm past the bay (y) | all clear; motor 18 mm past the bay (y) | all clear, but **the NEMA, pinion and motor bracket leave the bay inward (x 46–66)**, toward the back module |
-| Checks | same cycle for all: highest point 335.7, the Grail never enters the body, nothing in the Grail's swept zone | | |
+**`FLIPPER_BRIDGE_SOCLE`** (printed ABS, one part, 89 g at 60 %, `print/`), drawn like the clapets socle but stiffer:
+| | |
+|---|---|
+| Shape | block x 80–148, y −52…38, z 26 (floor plate top) … 83, with a **tunnel R43 around the wheel** (wheel R37: 6 mm all round), from x 101 (5 mm inside the wheel's inner face) to past the right face |
+| Over the wheel | deck underside z 80 (wheel top 74), deck top 83; **pad** to z 86 under the column only |
+| Back | full wall, 9 thick, y −52…−43 (the back module's butterfly plate is at y −53) |
+| Front | the support is the **inner block above the drive motor** (x 80–101): the front module's door unit starts at y 40 (z ≥ 53), so no leg beside the wheel there |
+| Drive motor | cut-out x < 104, \|y\| < 22, z < 60: 3.5 mm clear |
+| Ribs on the deck | along y beside the column (4 tall), along the back wall's top (12), front edge (4), front corner (12): heights set by what the carriage brings down at the pick (steel plate 87.5, wheels 88, motor bracket 91, servo mount 92 / 97) |
+| Column | M5 × 12 button head from under the deck into its end (head counterbored) + a 2020 corner bracket in the back slot's free bottom (z 86–106), M5 down through the deck into a nut in a side pocket |
+| Floor | 5 × M4 through the full height (57) into the floor plate, heads counterbored flush with the deck, at (90, −48), (118, −48), (144, −48), (88, 30), (86, 0) |
+| Clearances (real distances, pick pose) | wheel 5–6, drive motor 3.5, X plate 3.8, wheels 3.1, motor bracket 4.0, servo mount 3.2 |
+| Top of the column | 2020 cross-member along x to the core (x 40–100, z 260–280) + corner bracket in the back slot's top end; 5.4 mm under the arm's path |
+
+Knock-on of BRIDGE: the column stands at z 86–280; the carriage's lowest plate centre is z 125 (wheels 2 mm above the
+column's end, steel plate 4.5 mm above the deck), pivot 13 above it; the pinion sits 4 mm above the plate centre (its top
+clears the top cross-member); the rack is at z 117–257. Cycle checks unchanged: highest point 335.7, the Grail never enters
+the body, nothing in its swept zone.
 
 ### Printed parts so far (`print/`, robot frame at the pick pose)
 | Part | What | Fixing |
 |---|---|---|
 | `FLIPPER_ARM` (12 g) | hub Ø24 + bar 14 × 10 + magnet cup (seat Ø30.3, 18 deep, magnet face 4 mm proud), one solid | round horn's disc in a Ø21.4 pocket + Ø9.8 boss recess, **4 × M2 × 12** from +y into the horn holes (Ø2.5, as the tested T9 pinion); Ø5 steel pin pressed 6 deep from +y; magnet M4 stud + nut in a pocket |
 | `FLIPPER_SERVO_MOUNT` (30 g) | base 8 thick on the X plate's front + servo plate under the ears (body cut-out) + 625 cheek joined under the pivot, one solid | **2 × M5×35** replacing the upper wheel screws (nylocs move to the base's front), **2 × M3** into the plate's 2 tapped holes (Ø2.5, 20 apart), recess for the eccentric's nyloc; servo: **2 × M3 × 12 + nuts in pockets**; **625 seat Ø16.2 open on +y**, lip on the arm side |
-| `FLIPPER_MOTOR_BRACKET` (15 g) | plate 4.5 thick between the motor face and the eccentric wheel (0.5 mm off it), NEMA17 4 × M3 + Ø23 pilot, 2 bridges to the X plate's back tabs (above / below the wheel) | 4 × M3×25 into the tabs: **drill Ø2.5 + tap M3** (the tabs have no holes) |
-| `FLIPPER_RACK_140` | Seif's rack cut to the pinion's travel | slid into the back slot from the profile's end, V back on the cavity's inner faces |
+| `FLIPPER_MOTOR_BRACKET` (13 g) | plate 4.5 thick between the motor face and the eccentric wheel (0.5 mm off it), NEMA17 4 × M3 + Ø23 pilot, 2 bridges to the X plate's back tabs (above / below the wheel) | 4 × M3×25 into the tabs: **drill Ø2.5 + tap M3** (the tabs have no holes) |
+| `FLIPPER_RACK_140` | Seif's rack cut to the pinion's travel (z 117–257) | slid into the back slot from the profile's end, V back on the cavity's inner faces |
+| `FLIPPER_BRIDGE_SOCLE` (89 g) | the socle over the wheel (above) | 5 × M4 to the floor plate; column: M5 into its end + corner bracket |
 | `FLIPPER_PINION` | below (39 long, 5 mm teeth) | M3 insert K5 + set screw on the shaft flat |
 
 Checks (report): no body part enters the zone the Grail sweeps (radius ≥ 58.5 from the axis, −87…143°); the servo body
@@ -87,6 +99,7 @@ M4 Ø4.6, M5 Ø5.6, nut pockets M3 6.0 × 6.9 × 2.8 / M4 7.4 × 8.4 × 3.6, Ø5
 | `FLIPPER_ARM` | the hub's −y face (horn pocket) down, arm plane on the bed | hub axis vertical: horn pocket, M2 holes and pin hole round and coaxial; bar loads along the layers. The cup seat (axis horizontal) needs supports: loose fit (Ø30.3) |
 | `FLIPPER_SERVO_MOUNT` | −y down (servo plate side) | 625 seat axis vertical (round); servo plate and cheek flat; the base is a wall, its M5/M3 holes print horizontal (teardrop OK) |
 | `FLIPPER_MOTOR_BRACKET` | the motor face (y −33) down | plate flat, motor holes + pilot vertical; bridges grow up from it |
+| `FLIPPER_BRIDGE_SOCLE` | the floor face (z 26) down | tunnel = an arch over the bed (bridges up to 86 wide: support inside the tunnel); screw holes vertical; ribs on top |
 | `FLIPPER_PINION` | the gear face down | axis vertical (teeth, D bore, insert hole horizontal on the hub) |
 | `FLIPPER_RACK_197` | as Seif printed it | |
 (STEP/STL are in the robot frame at the pick pose: rotate in the slicer.)
@@ -168,7 +181,7 @@ In `archive/` (script + report).
 Run (from this folder):
 ```
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_pinion_fc.py     # first: flipper_fc.py reads print/FLIPPER_PINION.step
-set FLIPPER_FIX=slot& "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_fc.py     # ~1 min; slot | bridge | inward
+set FLIPPER_FIX=bridge& "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_fc.py   # ~1 min; bridge (chosen) | slot | inward
 set FLIPPER_PRINT=1& ...                                                                         # also write the print files
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_s_fc.py
 ```
