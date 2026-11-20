@@ -97,6 +97,10 @@ electronics (Seif's idea, `../concepts/electronics-column.md`).
 (`freecad.exe fc/flipper_gif.py`, ~2 min). Three panels: 3D, side view (red line = 350 mechanism limit), close view of the
 pinion on the rack following the carriage (column and wheels hidden). Magnet red = ON, grey = OFF.
 
+**Views (2026-11-20):** `sim/views/`: 7 stills at the pick pose (3D front-right / back-left, front, back, right, left,
+top; red line = 350 mechanism limit) + `flipper_all_views.png` (contact sheet), by `fc/flipper_views.py`
+(`freecad.exe fc/flipper_views.py`, < 1 min).
+
 **Way back (Seif, 2026-11-20): put → go down → turn back.** After the release (lower 6), the carriage lowers **14 more**
 (pivot z 220), the arm turns back 180 → 0, then the carriage lowers to the pick. The window is narrow: the cup's circle
 (r ~91 around the pivot) rises ~10 mm above its release height early in the turn back, so with less than 12 mm of drop
