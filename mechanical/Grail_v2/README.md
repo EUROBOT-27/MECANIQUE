@@ -1,16 +1,12 @@
 # Grail v2: top grip + 180° flip onto the roof (Flipper and Flipper-S)
 
 > **Where we are (2026-11-20, Seif + Claude)**
-> - **Now placed on Ayoub's `base_330_js`** (Seif: "take base 330 js as reference"): `CAD_FC/FLIPPER_B330.FCStd` =
->   **the Flipper alone** (colours, everything visible, numbered groups) + `FLIPPER_B330_report.txt` (fit checked against
->   the real base parts). With the base around it: `set FLIPPER_CONTEXT=1` → `FLIPPER_B330_IN_BASE.FCStd`.
->   The column stands on a printed **saddle** over the drive wheel + motor (section "On base_330_js").
-> - **Two versions (D-029): Flipper (rack lift, was "B") and Flipper-S (lead-screw lift, was "B2").** Same flip.
->   Electromagnet Ø30 first. **Flipper is the priority: taken all the way to printing.**
-> - **Flipper is now built from real parts** (`fc/flipper_fc.py`): Two Trees X carriage (plate + 3 V-wheels + fasteners),
->   real 2020, real NEMA17, Seif's printed rack, new pinion (`fc/flipper_pinion_fc.py`, print files in `print/`).
-> - Both pass the checks so far (bounding boxes only, no clash check yet).
-> - **Later: a suction-cup version**, also for the **gate lintel** (see below).
+> - **Two versions (D-029): Flipper** (rack lift, was "B") and **Flipper-S** (lead-screw lift, was "B2"), same flip,
+>   Ø30 electromagnet first. **Flipper is the priority, on Ayoub's `base_330_js`.**
+> - Flipper: real parts (Two Trees X carriage, 2020, NEMA17), printed saddle, rack, pinion, motor bracket, servo mount,
+>   arm, top cap. **Static and motion collision checks: 0 clashes** (forward cycle + way back). GIF and views in `sim/`.
+> - **Waiting on Seif:** the 8 saddle holes in the base plate (positions below), then printing.
+> - **Later:** a suction-cup version, also for the **gate lintel**.
 
 Fresh start after Baha's Grail v1 (`../Grail_v1/`). Earlier Grail lift work (Maatoug, v1–v3): `../grail-lift/`
 (reference). Requirements: `../grail-lift/docs/CDC.md`.
@@ -18,236 +14,130 @@ Fresh start after Baha's Grail v1 (`../Grail_v1/`). Earlier Grail lift work (Maa
 ## How it works
 1. The magnet comes down onto the Grail's **top** (Grail on the floor, 10 mm from the right face).
 2. **Lift** with the arm pointing down-outward.
-3. Near the top, the servo **flips the arm 180°** about an axis along the right face. The Grail swings out, over the
-   top, and comes down **upside down** above the roof.
-4. **Lower** until the Grail sits on the roof. **Magnet off.**
-5. **Lower 6 mm more**: the magnet leaves the Grail straight down, into a **slot in the roof**. This is also the
-   stowed pose at the start.
+3. At the top, the servo **flips the arm 180°** about an axis along the right face. The Grail swings out, over the
+   top, and comes down **upside down** onto the Grail deck.
+4. **Lower 6** until the Grail sits on the deck. **Magnet off.**
+5. **Lower 6 more** (the magnet leaves the Grail straight down, into the deck's slot) and **14 more**, then **turn the arm
+   back** 180 → 0 and lower to the pick height (Seif: "put, go down, then rotate").
 
-Why a flip: a top grip can't end above the Grail. With the Grail on the roof (bottom ≥ 301), a magnet on its top would
-be at about 386 > 350 [GR F.3]. Turned over, the gripper ends **under** the Grail.
+Why a flip: a top grip can't end above the Grail. With the Grail on the roof (bottom > 300), a magnet on its top would
+be above 350 [GR F.3]. Turned over, the gripper ends **under** the Grail.
 
-Why the flip axis is at x 152.5 (2.5 mm past the face): a 180° turn maps the pick pose onto the place pose only if the
-axis is halfway between them (Grail centre x 195 on the floor, x 110 on the roof).
+## Flipper on base_330_js (`fc/flipper_fc.py` → `CAD_FC/FLIPPER_B330.FCStd` + `_report.txt`)
+Robot frame = `../base_330_js` (`CAD/base_330_js_assembly.FCStd`): X = wheel axis, +Y = front (clapets), z 0 = table,
+right face = plate edge **x 168**. The Flipper sits over the right drive wheel, between the front clapets and the future
+back module (back-right corner).
 
-| Common numbers (`fc/common.py`, from layout-v1) | |
+| Key numbers | |
 |---|---|
-| Right face | x 150 |
-| Roof | top 306 (plate 300–306), strip y ±38 |
-| Grail bay (layout-v1, T1 back) | x 66–150, y −52…40, z 78–300 (right wheel + drive motor under it) |
-| Grail | 70 × 70 × 80, 150 g, steel plate on its top |
-| Magnet | 12 V, **Ø30** (same model as `../grail-lift/sw/Magnet 5KG.step`, Ø30 version); height 22 + M4 stud **assumed** (P30/22) 🇹🇳; seat Ø30.3 (Baha's, intentional) |
-| Flip head (`common.flip_head`) | MG996R lying, body down, horn on −y; Ø5 shaft into a **625** in a +y cheek joined under the pivot (the arm and the Grail never go there); arm + magnet cup |
+| Grail | 70 × 70 × 80, steel plate on its top; picked at x 178–248, placed upside down at x 93–163, y ±35 |
+| Grail deck | **top z 320** (6 mm plate, slot for the arm x 108–169, y ±20); the rest of the robot's top can be at 350. Placeholder: supports not designed. Env `GRAIL_ROOF` |
+| Flip | axis along y at **x 170.5** (halfway between pick and place); **LZ 80** (pivot above the Grail's top at the pick) |
+| Pivot height | 160 (pick) → 246 (flip) → 240 (place) → 234 (magnet off) → **220 (turn back)** → 160 |
+| Lift | **86 up** (+ 6 + 6 + 14 down after the flip); travel = deck 320 − Grail 80 − 2 × LZ + 6 |
+| Height | highest actuator point **344** (flip 150°), limit 350; the deck can't go above ~324 (the arm swings ~24 above the place height) |
+| Perimeter | start (stowed) 16.8 mm past the face (~+2); **100.5 out at flip 60°** (~+69, deployed budget 1400) |
+| Flip torque | 2.6 kg·cm at 65° (MG996R ~9.4: 3.6×) |
+| Magnet | 12 V, **Ø30** × 22 + M4 stud (**height and stud assumed**, P30/22: to measure); seat Ø30.3 (intentional) |
 
-## Flipper: rack lift from real parts (`fc/flipper_fc.py`)
-Two Trees Bluer V2 **X-axis carriage** on the real **2020**, Seif's **printed rack** (m1, `parts/cremaillere.STL`),
-**NEMA17** + **pinion v2**, flip head from `common.flip_head` (MG996R + 625 cheek + arm + Ø30 magnet in a cup).
-- **Why it looks like Baha's:** the X plate sits 2 mm from the profile's front face and its wheels ride the two side
-  faces, so the rack goes in the **back face's slot**. The NEMA shaft runs along y, and the motor must clear the
-  eccentric wheel (5 mm, Seif): hence a **long pinion hub**.
-- **Rack slid in from the profile's end** (Seif, 2026-11-20), like a T-nut: wide part in the slot cavity, **V back on
-  the cavity's inner faces** (seat computed from the real sections: nose 6.2 below the face, 0.45 play to the lips).
-  Its teeth are then 1.2 mm below the face, so the **pinion's 5 mm gear dips 3.2 mm into the slot** (lip 6.35 wide).
-  That is exactly why Baha's rack has a 5.7 tooth strip and his pinion 5 mm teeth.
-- **Rack cut to the pinion's travel** (z 114–254, 140 long): the back slot stays free at both ends for fixations.
-- Placement (robot frame): profile centre y 4, x 110 (or 85, INWARD variant); plate faces the right face (+x); the
-  servo mount on the plate's front reaches the flip axis x 152.5. **LZ 80** (was 58): pivot 160 → 232 (flip) → 226 (place)
-  → 220 (stowed), 78 mm of travel.
-- **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20), face 5 mm past the eccentric wheel. Body at y −70…−33:
-  **18 mm past the Grail bay** (y −52) toward the back module. A shorter NEMA is a quick fix (motor + pinion hub).
+**Lift:** Two Trees Bluer V2 **X carriage** (steel plate + 3 V-wheels) on a real **2020 cut to 168.5** (z 84.5–253),
+Seif's **printed m1 rack** cut to **110** (z 119–229), **slid in from the profile's end** like a T-nut (V back on the slot
+cavity's inner faces). **NEMA17** (standard 40 mm for now; shorter = quick fix) rides on the carriage, **pinion v2**
+(5 mm teeth dip 3.2 into the slot). The rack back-drives when the NEMA is off.
 
-### On base_330_js: the SADDLE (Seif, 2026-11-20)
-Placed on Ayoub's `../base_330_js` (336 × 260 plate, JSUMO wheels, odometry outside the wheel), read straight from its
-assembly (`../base_330_js/CAD/base_330_js_assembly.FCStd`, same frame: X = wheel axis, Y = front (clapets) / back, z 0 =
-table). Right face = plate edge **x 168**: flip axis x 170.5, Grail picked at x 178–248, placed at x 93–163, y ±35,
-between the front clapets and the future **back module** (Seif: it goes in the back-right corner).
+**Column fixation:**
+- **Bottom: printed saddle** (`FLIPPER_SADDLE_SOCLE`, 169 g ABS) over the drive wheel + motor + odometry, on 4 legs on the
+  free plate zones (Seif's sketch). Tunnel R45 around the worst-case wheel Ø80 (crown 82, deck top 85). The column stands
+  in a **blind socket** (3.5 deep + 3 mm collar), a **heel** on its back face (2 × M5 into T-nuts, key in the slot, 2 side
+  gussets), **2 tongues** in the plate's wheel well (centre it in y). **Floor: 8 × M4 × 16 + nuts under the plate.**
+- **Top:** 2020 cross-member (x 40–118, z 233–253) **beside** the column, tops flush: **blind joint** (M5 head slid into
+  the column's back slot from the open top) + printed **TOP_CAP** (4 thick: countersunk M5 into the column's end, M5 into a
+  T-nut in the cross-member). Where the cross-member goes next: a centre column, or rings on the front / back modules'
+  profiles carrying floors for the electronics (`../concepts/electronics-column.md`).
 
-**`FLIPPER_SADDLE_SOCLE`** (printed ABS, one part, **167 g** at 60 % after 12 lightening pockets, was 198, `print/`): a deck over the drive wheel, the drive motor
-and the odometry module, on **4 legs on the free plate zones of Seif's sketch**:
-| | |
-|---|---|
-| Legs | beside the wheel well: x 80–128, y −60…−47 and 47…60 (odometry bracket from x 132, clapets door unit from y 69); beside the drive motor: x 25–74, y −42…−24 and x 25–66, y 24…40 (hinge \|y\| ≤ 20, clapets socle from y 43.5) |
-| Deck | x 25–141, y ±60 (±55 where x < 70: clapets rails at y 58), underside z 67 (drive motor top 62.5) and z 70 over the odometry module (bracket 61.2, screws 64.2), **tunnel R45 around the worst-case wheel Ø80** (5 mm): crown 82, deck top 85 |
-| Column | **blind socket** (Seif): 3.5 deep pocket 20.4 × 20.4 (profile end at z 84.5, 2.5 floor over the wheel tunnel's crown) + 3 mm collar to z 88.5 (the carriage passes 1 mm above at the pick); a **heel on its back face** (x 106–118, to z 112) with **2 × M5 into T-nuts** in the back slot's free bottom (z 96, 106); top: 2020 cross-member inward (z 260–280) + corner bracket in the back slot's top end |
-| Ribs | back and front edges (7 tall, under the NEMA / outside the carriage) |
-| Lightening | pockets **open at the bottom inside the 4 legs** (3 mm walls round the screw channels, 7 mm cap under the deck) + a grid **under the deck over the drive motor** (4 mm top skin, 3 mm ribs). The crown over the wheel, the pad, the heel and the ribs are untouched |
-| Floor | **8 × M4 × 16** from the top through Ø9 channels, nut under the plate. **Plate holes not added yet** (Seif confirms first): Ø4.4 at (88, −53.5), (120, −53.5), (88, 53.5), (120, 53.5), (33, −33), (66, −33), (33, 32), (58, 32) |
-| Clearances (real distances) | clapets rails 3.0, hinge 4.0, odometry bracket 4.2, drive motor 4.5, worst-case wheel 5.0 (nominal 7.0), X plate at the pick 4.5, carriage wheels 5.1 |
+**Way back window:** the cup turns on a circle (r ~91 around the pivot) that rises ~10 mm above its release height early
+in the turn back. With less than 12 mm of drop after the release it hits the placed Grail; with more than 14 the arm's bar
+meets the column's top. Hence the drop of 14, the **4 × 45° chamfer filed on the column's +x top edge**, the cap stopping
+4 short of that face (3 × 45° edge) and its **countersunk** column screw.
 
-Same flip and cycle as before: highest point 335.7, the Grail never enters the body, nothing in its swept zone; start
-16.8 mm past the face (perimeter 1192 + ~2), 84 mm out at flip 45° (+~50, budget 1400).
-**Polish (2026-11-20):** magnet wire hole Ø3.8 through the cup's top (beside the M4 stud); zip-tie anchor (2 slots) on
-the servo mount's base for the servo + magnet cables.
-**Finish (2026-11-20, Seif: chamfers, ribs, form fits, screws in their holes):**
-- **Chamfers 1 mm** on the printed parts' convex straight edges (design-principles edge rule), computed on the finished
-  solids: saddle 137/152, motor bracket 32/44, servo mount 29/67 (edges the kernel refuses stay sharp; count in the report).
-- **Ribs:** gusset behind the column heel; 2 stiffening flanges on the motor bracket (top and bottom, away from the
-  wheel); 2 gussets where the servo plate's web meets the servo mount's base; the saddle's edge ribs.
-- **Form fits (guidage par forme):** the saddle's 2 tongues drop into the plate's wheel well (centre it in y); a key on
-  the heel enters the column's back slot below the rack; the servo mount's lip hooks the X plate's lower edge; the motor
-  bracket's bridges have steps that butt on the X plate tabs' ends; the arm sits on the horn's disc pocket.
-- **Every fastener modelled in its hole** (groups `8a/8b/8c_SCREWS_…`, moving with their part): saddle 8 × M4 × 16 +
-  nuts under the plate; heel 2 × M5 × 12 + T-nuts; top bracket 2 × M5 × 10 + T-nuts; upper wheel screws M5 × 35 (eccentric
-  M5 × 25 kept) + nylocs on the servo mount; 2 × M3 × 12 into the X plate; servo 2 × M3 × 10 + nuts; NEMA 4 × M3 × 8 button
-  heads; tabs 4 × M3 × 20 (tip 3.5 mm off the column); horn 4 × M2 × 12; magnet M4 nut; pinion M3 insert + M3 × 6 set screw.
-**Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
-electronics (Seif's idea, `../concepts/electronics-column.md`).
+**Clearances (real distances):** saddle ↔ base parts: clapets rails 3.0, hinge 4.0, odometry bracket 4.2, drive motor
+4.5, worst-case wheel 5.0; saddle ↔ carriage at the pick: X plate 3.3, wheels 3.9, motor bracket 4.1. Motion: see Checks.
 
-**GIF (2026-11-20):** `sim/flipper_cycle.gif` (+ stills), rendered from the FCStd by `fc/flipper_gif.py`
-(`freecad.exe fc/flipper_gif.py`, ~2 min). Three panels: 3D, side view (red line = 350 mechanism limit), close view of the
-pinion on the rack following the carriage (column and wheels hidden). Magnet red = ON, grey = OFF.
+**For the back module:** the NEMA rides at x 89–131, y −70…−11, z 110–272 (column x 118–138, y −6…14); Grail spot
+x 93–163, y ±35.
 
-**Views (2026-11-20):** `sim/views/`: 7 stills at the pick pose (3D front-right / back-left, front, back, right, left,
-top; red line = 350 mechanism limit) + `flipper_all_views.png` (contact sheet), by `fc/flipper_views.py`
-(`freecad.exe fc/flipper_views.py`, < 1 min).
-
-**Way back (Seif, 2026-11-20): put → go down → turn back.** After the release (lower 6), the carriage lowers **14 more**
-(pivot z 220), the arm turns back 180 → 0, then the carriage lowers to the pick. The window is narrow: the cup's circle
-(r ~91 around the pivot) rises ~10 mm above its release height early in the turn back, so with less than 12 mm of drop
-the cup hits the placed Grail; with more than ~14 the arm's bar meets the column's top. To get margin at 14:
-**file a 4 × 45° chamfer on the column's +x top edge**, the top cap stops 4 short of that face with a 3 × 45° edge,
-and its column screw is a **countersunk M5 × 12, flush**. Motion check of the way back (`FLIPPER_MOTION=back`
-→ `CAD_FC/FLIPPER_motion_check_back.txt`, 43 poses, ~3 min; the carriage heights and arm angles themselves are already
-covered by the forward check): **0 clashes**; tightest: arm ↔ cap screw 2.6, arm ↔ column 3.1, magnet ↔ placed Grail 3.2.
-
-**Motion collision check (2026-11-20): 0 clashes** (`fc/flipper_motion_check.py` → `CAD_FC/FLIPPER_motion_check.txt`,
-~25 min). 65 poses: lift every 4 mm, flip every 5° at the top, lower 6 to place, magnet off + lower 6 (the way back uses
-the same poses without the Grail). Real overlaps between the moving parts (carriage, arm, Grail) and everything fixed
-(column, rack, saddle, top joint, base plate, Grail deck, 350 limit sheet, base_330_js parts), arm vs carriage, Grail vs
-everything, + closest approaches. Tightest: pinion ↔ column 0.6 (bottom), horn screws ↔ servo mount 1.5 (flip 70°),
-Grail ↔ deck 1.5 while lowering, arm ↔ deck 2.0 (flip 160°). The first run found the arm's bar in the corner of the top
-cross-member at the stowed pose (the cross-member was on top of the column): **top joint redone**: cross-member butts on
-the column's back face, tops flush at 253, blind joint (M5 head in the back slot from the open top, Ø5 access hole in the
-+x face) + printed `TOP_CAP` 4 thick over both tops (`print/FLIPPER_TOP_CAP`). Shared check lists: `fc/check_common.py`.
-
-**Static collision check (2026-11-20): 0 clashes** (`fc/flipper_static_check.py` → `CAD_FC/FLIPPER_static_check.txt`).
-Real overlap volumes between every pair of solids, pick pose (as built) and place pose (ghosts), with the real base plate,
-the Grail deck (z 314–320, arm slot) and a 1 mm sheet at z 350–351 for the height limit, plus the base_330_js parts.
-Fixed on the way: the top cross-member and its bracket were inside each other (cross-member later moved beside the column, see the motion check; profile 168.5), T-nuts resized to the real slot
-(8 wide, 2.5 deep), heel M5 holes through the key, the saddle tongues 0.2 into the plate (now 0.2 off the wheel well's
-edge, joined to the legs above the plate), the magnet nut turned 30°. Overlaps listed as expected: threads, pressed parts,
-the gear mesh (tooth phase not set in a static model), holes still to drill (base plate × 8, X plate tabs × 2).
-**Not the Flipper:** in `base_330_js`, the clapets v7 module A reaches z 372.5–379.5 (3 parts), over the 350 limit.
-
-**Grail deck at 320 (Seif, 2026-11-20):** the Grail lands on a **landing deck at z 320** (L4 needs > 300); the rest of
-the robot's top can be at 350 (different top heights). Earlier numbers here used 306 (layout-v1's roof strip, carried over
-without asking). The Flipper's highest point is ~ deck + 24 (the arm swings above the place height), so the deck can't
-go above ~324. With 320 and LZ 80: travel 80 + 12 = **92** (pivot 160 → 246 flip → 240 place → 234 stowed), **2020 profile
-168.5** (z 84.5–253, in the saddle's socket), **rack 110** (z 119–229, `print/FLIPPER_RACK_110`), top cross-member beside the column, tops flush at 253 + printed cap to 257,
-**highest point 344** (limit 350), roof slot x 108–169, y ±20. Env `GRAIL_ROOF` changes the deck height.
-
-**Fixes after Seif's review (2026-11-20):**
-- **The arm's cup hit the column at the place / stowed pose.** The Grail's roof spot is right above the column, and the
-  magnet + cup hang 26 mm under the roof top (z 280 at the place, 274 after the 6 mm release); the column top was 280.
-  **LZ 58 → 80**: the pivot sits higher above the Grail at the pick and lower under the roof at the place, the travel
-  shrinks 122 → 78 and the **column top drops to 237** (arm's lowest edge above it 280+). LZ 70 was not enough (0.7 mm).
-  Cost: 100 mm out while flipping (perimeter ~1261), flip torque 2.6 kg·cm (3.6×); highest point 330.
-- Saddle: **edge ribs removed**; the gusset behind the heel (it blocked the heel's screws) → **2 gussets on the heel's sides**.
-- **Motor bracket wraps around the X plate** (its shape follows the plate, which it hit at a small bent tab); its bridges
-  moved off the NEMA's screw heads (one was buried under a bridge, behind a tab), tab screws at zc+29 / zc−25, flanges past
-  the heads. Real check: 0 overlap with the plate, wheel, NEMA and every screw.
-- **Motor bracket redrawn explicitly (no wall under 2.5 mm)**, Seif: thin faces / edges unprintable. The automatic "wrap" cut
-  against the X plate left slivers (~0.6 mm next to the small bent tab), and the upper bridge was joined by only 2.6 mm.
-  Now: plate zc ±34 (backs both bridges fully), flanges 3 × 6.5 on its top / bottom edges, upper bridge butts on the
-  plate's small bent tab, lower bridge wraps the tab's end with a 2.7 step, **one M3 × 20 per bridge** (centred:
-  counterbore walls ≥ 3; two did not fit). 0 overlap with the plate (0.03 gap at the bolted faces), wheel 0.5, NEMA + screws 0.
-- **Why the travel is 78 now:** lift travel = roof 306 − Grail 80 − 2 × LZ (+ 6 over + 6 release): the 180° turn lifts the
-  Grail by twice the arm's vertical reach, the lift does the rest. LZ 80 → 66 + 12. Getting LZ 58 (122) back needs the
-  column out of the area under the Grail's roof spot (e.g. beside the flip plane in y).
-- The report now checks the arm (cup included) against the column, its fixation and the carriage at the place and stowed
-  poses with real distances.
-
-**For the back module:** the Flipper's NEMA rides at x 89–131, y −70…−11, z 110–272 (column x 118–138, y −6…14) and its
-roof spot is x 93–163, y ±35.
-
-Run in the **GUI** (colours, ~3 min, closes itself): `"C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/flipper_fc.py`
-(`set FLIPPER_PRINT=1` first to rewrite the print files). `freecadcmd` gives the same file without colours.
-
-### Column fixation on layout-v1: BRIDGE (Seif, 2026-11-20; superseded by the SADDLE on base_330_js)
-The 2020's bottom end sits right above the right wheel (x 106–150, top z 74). Three variants were built
-(`FLIPPER_FIX=slot|bridge|inward` → `CAD_FC/FLIPPER_<VARIANT>.FCStd` + report); Seif chose **BRIDGE** ("it could help a
-lot"). SLOT (corner brackets in the back slot onto a cross-member above the drive motor) and INWARD (column over the drive
-motor, motor leaving the bay inward) stay as records.
-
-**`FLIPPER_BRIDGE_SOCLE`** (printed ABS, one part, 89 g at 60 %, `print/`), drawn like the clapets socle but stiffer:
-| | |
-|---|---|
-| Shape | block x 80–148, y −52…38, z 26 (floor plate top) … 83, with a **tunnel R43 around the wheel** (wheel R37: 6 mm all round), from x 101 (5 mm inside the wheel's inner face) to past the right face |
-| Over the wheel | deck underside z 80 (wheel top 74), deck top 83; **pad** to z 86 under the column only |
-| Back | full wall, 9 thick, y −52…−43 (the back module's butterfly plate is at y −53) |
-| Front | the support is the **inner block above the drive motor** (x 80–101): the front module's door unit starts at y 40 (z ≥ 53), so no leg beside the wheel there |
-| Drive motor | cut-out x < 104, \|y\| < 22, z < 60: 3.5 mm clear |
-| Ribs on the deck | along y beside the column (4 tall), along the back wall's top (12), front edge (4), front corner (12): heights set by what the carriage brings down at the pick (steel plate 87.5, wheels 88, motor bracket 91, servo mount 92 / 97) |
-| Column | M5 × 12 button head from under the deck into its end (head counterbored) + a 2020 corner bracket in the back slot's free bottom (z 86–106), M5 down through the deck into a nut in a side pocket |
-| Floor | 5 × M4 through the full height (57) into the floor plate, heads counterbored flush with the deck, at (90, −48), (118, −48), (144, −48), (88, 30), (86, 0) |
-| Clearances (real distances, pick pose) | wheel 5–6, drive motor 3.5, X plate 3.8, wheels 3.1, motor bracket 4.0, servo mount 3.2 |
-| Top of the column | 2020 cross-member along x to the core (x 40–100, z 260–280) + corner bracket in the back slot's top end; 5.4 mm under the arm's path |
-
-Knock-on of BRIDGE: the column stands at z 86–280; the carriage's lowest plate centre is z 125 (wheels 2 mm above the
-column's end, steel plate 4.5 mm above the deck), pivot 13 above it; the pinion sits 4 mm above the plate centre (its top
-clears the top cross-member); the rack is at z 117–257. Cycle checks unchanged: highest point 335.7, the Grail never enters
-the body, nothing in its swept zone.
-
-### Printed parts so far (`print/`, robot frame at the pick pose)
-| Part | What | Fixing |
-|---|---|---|
-| `FLIPPER_ARM` (12 g) | hub Ø24 + bar 14 × 10 + magnet cup (seat Ø30.3, 18 deep, magnet face 4 mm proud), one solid | round horn's disc in a Ø21.4 pocket + Ø9.8 boss recess, **4 × M2 × 12** from +y into the horn holes (Ø2.5, as the tested T9 pinion); Ø5 steel pin pressed 6 deep from +y; magnet M4 stud + nut in a pocket |
-| `FLIPPER_SERVO_MOUNT` (30 g) | base 8 thick on the X plate's front + servo plate under the ears (body cut-out) + 625 cheek joined under the pivot, one solid | **2 × M5×35** replacing the upper wheel screws (nylocs move to the base's front), **2 × M3** into the plate's 2 tapped holes (Ø2.5, 20 apart), recess for the eccentric's nyloc; servo: **2 × M3 × 12 + nuts in pockets**; **625 seat Ø16.2 open on +y**, lip on the arm side |
-| `FLIPPER_MOTOR_BRACKET` (13 g) | plate 4.5 thick between the motor face and the eccentric wheel (0.5 mm off it), NEMA17 4 × M3 + Ø23 pilot, 2 bridges to the X plate's back tabs (above / below the wheel) | 4 × M3×25 into the tabs: **drill Ø2.5 + tap M3** (the tabs have no holes) |
-| `FLIPPER_RACK_140` | Seif's rack cut to the pinion's travel (z 117–257) | slid into the back slot from the profile's end, V back on the cavity's inner faces |
-| `FLIPPER_BRIDGE_SOCLE` (89 g) | the socle over the wheel (above) | 5 × M4 to the floor plate; column: M5 into its end + corner bracket |
-| `FLIPPER_PINION` | below (39 long, 5 mm teeth) | M3 insert K5 + set screw on the shaft flat |
-
-Checks (report): no body part enters the zone the Grail sweeps (radius ≥ 58.5 from the axis, −87…143°); the servo body
-stays in the bay (y −50.4).
+### Printed parts (`print/`, ABS on the Bambu X1 Carbon, D-023; STEP/STL in the robot frame at the pick pose: rotate in the slicer)
+| Part | What | Fixing | Bed face |
+|---|---|---|---|
+| `FLIPPER_ARM` (~14 g) | hub Ø24 + bar 14 × 10 + magnet cup (seat Ø30.3, wire hole Ø3.8) | round horn's disc in a Ø21.4 pocket, **4 × M2 × 12** into the horn; Ø5 pin pressed 6 deep (last, through the 625); magnet M4 nut in a pocket | hub's −y face (horn pocket) down; the cup needs supports (loose fit) |
+| `FLIPPER_SERVO_MOUNT` (30 g) | base on the X plate's front + servo plate + 625 cheek joined under the pivot; zip-tie slots; lip on the X plate's lower edge | **2 × M5 × 35** replacing the upper wheel screws (nylocs on its front), **2 × M3 × 12** into the plate's tapped holes; servo **2 × M3 × 10 + nuts**; **625** seat Ø16.2 | −y (servo plate side) down |
+| `FLIPPER_MOTOR_BRACKET` (14 g) | plate 4.5 between the motor face and the eccentric wheel (0.5 off it), flanges, 2 bridges to the X plate's bottom tabs (form fits); no wall < 2.5 | NEMA **4 × M3 × 8** (button heads; one counterbored next to the wheel); **2 × M3 × 20** into the tabs: **drill Ø2.5 + tap M3** (no holes there) | motor face (y −33) down |
+| `FLIPPER_PINION` | m1 20T, 5 mm involute teeth, hub Ø16, Ø12 neck, D bore Ø5.15 / 4.6 (`fc/flipper_pinion_fc.py`) | **M3 insert K5** + M3 × 6 set screw on the shaft's flat | gear face down |
+| `FLIPPER_RACK_110` | Seif's rack (`parts/cremaillere.STL`) cut to 110 | slid into the back slot from the column's top end | as Seif printed it |
+| `FLIPPER_SADDLE_SOCLE` (169 g) | see "Column fixation"; 12 lightening pockets (201 g without) | 8 × M4 × 16 to the base plate (Ø9 channels from the top); heel 2 × M5 × 12 + T-nuts | floor face (z 16.5) down; supports inside the tunnel |
+| `FLIPPER_TOP_CAP` (~3 g) | 4 thick over the column + cross-member tops | **countersunk M5 × 12** into the column's end (flush), M5 × 8 button into a T-nut | bottom down |
 
 Fits: ABS values from the clapets v7 coupons (`common.FIT`): bearing seat +0.2, horn pocket Ø21.4, M2 Ø2.5, M3 Ø3.5,
-M4 Ø4.6, M5 Ø5.6, nut pockets M3 6.0 × 6.9 × 2.8 / M4 7.4 × 8.4 × 3.6, Ø5 pin press Ø5.0.
+M4 Ø4.6, M5 Ø5.6, nut pockets M3 6.0 × 6.9 × 2.8 / M4 7.4 × 8.4 × 3.6, Ø5 pin press Ø5.0. Chamfers 1 mm on the convex
+straight edges (count per part in the report; the kernel refuses some). Every fastener is modelled in its hole
+(groups `8a/8b/8c_SCREWS_…`).
 
-### Print orientation (ABS, Bambu X1 Carbon, D-023)
-| Part | Bed face | Why |
-|---|---|---|
-| `FLIPPER_ARM` | the hub's −y face (horn pocket) down, arm plane on the bed | hub axis vertical: horn pocket, M2 holes and pin hole round and coaxial; bar loads along the layers. The cup seat (axis horizontal) needs supports: loose fit (Ø30.3) |
-| `FLIPPER_SERVO_MOUNT` | −y down (servo plate side) | 625 seat axis vertical (round); servo plate and cheek flat; the base is a wall, its M5/M3 holes print horizontal (teardrop OK) |
-| `FLIPPER_MOTOR_BRACKET` | the motor face (y −33) down | plate flat, motor holes + pilot vertical; bridges grow up from it |
-| `FLIPPER_BRIDGE_SOCLE` | the floor face (z 26) down | tunnel = an arch over the bed (bridges up to 86 wide: support inside the tunnel); screw holes vertical; ribs on top |
-| `FLIPPER_PINION` | the gear face down | axis vertical (teeth, D bore, insert hole horizontal on the hub) |
-| `FLIPPER_RACK_197` | as Seif printed it | |
-(STEP/STL are in the robot frame at the pick pose: rotate in the slicer.)
+### Workshop operations (not printed)
+1. **2020 column:** cut to **168.5**; tap M5 its top end hole; **Ø5 access hole** through the +x face at z 243 (blind
+   joint); **file a 4 × 45° chamfer on the +x top edge**.
+2. **2020 cross-member:** cut (x 40–118); tap M5 its column-side end hole (blind joint).
+3. **X plate:** drill Ø2.5 + tap M3 in the 2 bottom tabs (positions in the report, "FLIPPER_MOTOR_BRACKET").
+4. **Base plate:** 8 × Ø4.4 at (88, −53.5), (120, −53.5), (88, 53.5), (120, 53.5), (33, −33), (66, −33), (33, 32),
+   (58, 32) — **not in the plate model yet: Seif confirms first.**
 
 ### Assembly order
-1. Carriage: drill Ø2.5 + tap M3 the X plate's two back tabs (2 holes each, `FLIPPER_report.txt` gives the positions).
-2. NEMA17 on `FLIPPER_MOTOR_BRACKET` (4 × M3; the one next to the wheel is a button head in its counterbore). Pinion
-   on the shaft (M3 insert + set screw on the flat). Bracket onto the tabs (4 × M3 × 25).
-3. `FLIPPER_SERVO_MOUNT` on the X plate's front: the 2 upper wheel screws become M5 × 35 through the base (nylocs on its
-   front), 2 × M3 into the plate's tapped holes. MG996R into the servo plate (2 × M3 × 12 + nuts). 625 pressed into its
-   seat from +y.
-4. Round horn screwed to `FLIPPER_ARM` (4 × M2 × 12 from +y). Arm + horn onto the servo spline (no centre screw: the pin
-   holds the arm). Then push the **Ø5 pin through the 625 into the hub** (press).
-5. Magnet into the cup (M4 nut in its pocket). Carriage onto the 2020 (eccentric to preload), rack in the back slot.
+1. Saddle onto the base plate (8 × M4 × 16 + nuts). Column into its socket, heel screws into the T-nuts.
+2. NEMA17 on the motor bracket (4 × M3 × 8), pinion on the shaft (insert + set screw on the flat). Bracket onto the X
+   plate's tabs (2 × M3 × 20).
+3. Servo mount on the X plate's front (2 × M5 × 35 for the upper wheels, 2 × M3 × 12). MG996R into it (2 × M3 × 10 +
+   nuts). 625 pressed into its seat from +y.
+4. Round horn screwed to the arm (4 × M2 × 12). Arm + horn onto the servo spline, then the **Ø5 pin through the 625 into
+   the hub** (press). Magnet into the cup (M4 nut).
+5. Carriage onto the column from the top (eccentric to preload), rack slid into the back slot, then the cross-member:
+   blind-joint screw head into the back slot from the top, tighten through the access hole; top cap (countersunk M5 +
+   M5 × 8 into the T-nut).
 
-### Pinion v2 (`fc/flipper_pinion_fc.py` → `print/FLIPPER_PINION.step/.stl`)
-Redo of Baha's `parts/el_pignon.STEP` (m1 20T, 5 mm teeth at the end of a Ø10.5 × 29 hub, Ø5.1 bore, radial hole for an
-**M3 insert K 5.0** = D-025 read backwards, 2 solids). His geometry was right for a rack inside the slot (5 mm teeth on a
-long hub); what was weak was the hub. The new one:
-- **involute teeth 5 wide** (they enter the slot: lip 6.35), one solid, **D bore** Ø5.15 / flat 4.6
-- **hub Ø16 × 25** (6 mm of wall for the 4 mm insert, 8 mm from the motor end; el pignon had 2.7 mm), then a
-  **Ø12 × 9 neck** where it passes the profile's back face; gear centre 37 mm from the motor face (motor 5 mm past the wheel)
-- stiffness at 10 N on the teeth: steel shaft ~0.02 mm, hub ~0.3 MPa; teeth ~6 MPa (ABS fine)
+### Checks (all on base_330_js, real solids)
+| Check | Script → result | Result |
+|---|---|---|
+| Fit + cycle table | `fc/flipper_fc.py` → `CAD_FC/FLIPPER_B330_report.txt` | highest 344, Grail never inside the body, arm vs column / carriage at place + stowed |
+| Static collision | `fc/flipper_static_check.py` → `CAD_FC/FLIPPER_static_check.txt` (~2 min) | **0 clashes**: pick pose + place pose vs base plate, deck, 350 sheet, base_330_js parts. Expected overlaps listed (threads, pressed parts, gear mesh, holes still to drill) |
+| Motion, forward | `fc/flipper_motion_check.py` → `CAD_FC/FLIPPER_motion_check.txt` (~25 min) | **0 clashes** over 65 poses; tightest: pinion ↔ column 0.6 (bottom), horn screws ↔ servo mount 1.5 (flip 70°), Grail ↔ deck 1.5, arm ↔ deck 2.0 (flip 160°) |
+| Motion, way back | `FLIPPER_MOTION=back` → `CAD_FC/FLIPPER_motion_check_back.txt` (~3 min) | **0 clashes** over 43 poses; arm ↔ cap screw 2.6, arm ↔ column 3.1, magnet ↔ placed Grail 3.2 |
+
+Shared lists of expected overlaps: `fc/check_common.py`. All printed parts are checked as valid single solids before
+export (a chamfer step had left the saddle invalid on 2026-11-20; fixed in `common.chamfer_outer`).
+**Not the Flipper:** in `base_330_js`, the clapets v7 module A reaches z 372.5–379.5, over the 350 limit.
+
+### Pictures (`sim/`)
+- `sim/flipper_cycle.gif` (+ stills): full cycle and the way back; 3D, side view (red line = 350 mechanism limit),
+  close view of the pinion on the rack. Magnet red = ON. `freecad.exe fc/flipper_gif.py` (~2 min).
+- `sim/views/`: 7 views at the pick pose + `flipper_all_views.png`. `freecad.exe fc/flipper_views.py` (< 1 min).
+
+### To do (Flipper)
+1. **Seif:** confirm the 8 base-plate holes → add them to the plate.
+2. Grail deck supports and the roof around it (the deck is a placeholder); cross-member anchor (centre column / rings).
+3. Measure the magnet (height 22 + M4 stud assumed).
+4. Bottom endstop / homing; magnet cable loop around the flip axis; sprung magnet mount (CDC D4).
+5. Rack back-drive when the NEMA is off: accept, or a brake.
+6. Shorter NEMA once Seif knows what we have (motor length + pinion `HUB_L`).
 
 ## Flipper-S: lead-screw lift (`fc/flipper_s_fc.py`, was B2; on hold, Flipper first)
 The Flipper flip on the hardware of Baha's "essai vis ecrou corrigé" (`../Grail_v1/essai vise ecrou corrigé/`).
+**Still on layout-v1** (right face x 150, roof 306): to move to base_330_js like the Flipper.
 LZ 50, pivot 130 → 262 (flip) → 256 (place) → 250 (stowed), 138 mm of travel.
 - **T8 screw + flange nut**, **2 × Ø8 rods + 4 LM8UU** (2 per rod, carriage 48 tall), **608** in a bottom and a top plate.
   Column in a line along x at **y −28**: rods x 77 / 125, screw x 97. That keeps it behind the arm.
 - **Motor not under the screw** (the right wheel and drive motor are there): the NEMA17 **stands on the bottom plate**
-  (the bay floor, z 78–88), shaft down. A **GT2 belt 1:1** (pulleys z 64–78, loop ~135) drives the screw, at x ≤ 105:
-  off the wheel (x ≥ 106) and above the drive motor.
-- Flip head as written before `common.flip_head` existed (same design, own copy: to switch to `flip_head`).
+  (the bay floor, z 78–88), shaft down. A **GT2 belt 1:1** (pulleys z 64–78, loop ~135) drives the screw, at x ≤ 105.
+- Flip head as written before `common.flip_head` existed (own copy: to switch to `flip_head`).
 
-Report `CAD_FC/FLIPPER_S_report.txt` (Ø30 magnet): highest point 338; the Grail never enters the body; 78.5 mm out at
-flip 45°; carriage 2 mm under the top plate at the flip; everything inside the bay except the pulleys + belt under its
-floor.
+Report `CAD_FC/FLIPPER_S_report.txt`: highest point 338; the Grail never enters the body; 78.5 mm out at flip 45°.
 
 ## Flipper vs Flipper-S
 | | Flipper (rack) | Flipper-S (lead screw) |
@@ -256,8 +146,8 @@ floor.
 | Guide | Two Trees X carriage on a 2020 (📦) | 2 × Ø8 rods + 4 LM8UU (rods 📦, LM8UU 🇹🇳 or from the SCS8UU 📦) |
 | Power off / e-stop | carriage drops (back-driven) | holds (T8×8 may creep; T8×2 holds but 4× slower) |
 | Moving mass | ~0.7 kg (motor rides) | lighter |
-| Fits the Grail bay | yes, except the 40 mm NEMA (14 mm past y −52) | yes |
 | Tested | rack printed, fits the profile | — |
+| State | on base_330_js, checked, print files | layout-v1 |
 
 ## Later: suction-cup version, also for the gate lintel (Seif, 2026-11-20)
 Same mechanism with a **suction cup instead of the magnet**:
@@ -267,46 +157,41 @@ Same mechanism with a **suction cup instead of the magnet**:
 - **Grail:** the same cup picks the Grail by its top (no steel plate needed).
 Details and numbers once the electromagnet version works. Concept notes: `../concepts/gate-lintel.md`.
 
-## Archived: A, C (not chosen, 2026-11-19) and the B concept (superseded by Flipper)
-In `archive/` (script + report).
-- **A, pivot:** one servo, no lift, axis fixed at z 193. Arm 121 mm long: **128 mm out** while turning (perimeter +~96),
-  and the Grail slides onto the roof sideways.
-- **C, rolling:** one NEMA17. A half gear R60 rolls on a fixed rack, so height sets the angle. **The Grail dips 8–35 mm
-  below the roof top** while crossing the roof edge (the axle is still low at 110–170°).
-- **B concept:** simplified carriage, column at y −70 (outside the bay). Replaced by `fc/flipper_fc.py`.
+## History (2026-11-19 → 11-20, short)
+- A (pivot), B (lift + flip), C (rolling) generated in parallel; B chosen and rebuilt from real parts as the Flipper.
+  A / C / the B concept: `archive/` (A: 128 mm out while turning; C: the Grail dips below the roof top at the edge).
+- On **layout-v1** three column fixations were built (`archive/layout_v1/FLIPPER_SLOT/BRIDGE/INWARD`, older code state);
+  Seif chose BRIDGE, then moved the Flipper to **base_330_js** (saddle).
+- **LZ 58 → 80:** the cup hit the column at the place pose (the Grail's spot is right above the column); the longer arm
+  shortens the lift (each mm of LZ takes 2 mm of lift).
+- **Grail deck 306 → 320** (Seif): 306 came from layout-v1's roof strip, carried over without asking.
+- Seif's reviews: motor bracket wrapped round the X plate, then redrawn with no wall < 2.5; saddle edge ribs removed, heel
+  gussets on its sides; blind socket under the column; the top cross-member moved beside the column after the motion
+  check found the arm in its corner; the way back changed to "down, then turn back".
 
 ## Files
 | Path | What |
 |---|---|
-| `fc/common.py` | robot context (layout-v1 numbers), Grail, magnet, MG996R placement, **`flip_head()`**, rack-lift unit, cycle table |
-| `fc/flipper_fc.py` | **Flipper** generator (real parts; numbers in `class G`) |
-| `fc/flipper_pinion_fc.py` | **pinion v2** → `print/FLIPPER_PINION.step/.stl` |
-| `fc/flipper_s_fc.py` | **Flipper-S** generator (numbers in `class G`) |
-| `parts/` | inputs: `cremaillere.STL` (Seif's rack, m1, fits the profile), `el_pignon.STEP` (Baha's pinion) |
-| `print/` | print files |
-| `CAD_FC/FLIPPER_SLOT/BRIDGE/INWARD.FCStd`, `FLIPPER_S.FCStd`, `FLIPPER_PINION.FCStd` | models: pick pose + ghost at the place pose + robot context (body, roof with the slot, right wheel, drive motor, Grail bay) |
-| `CAD_FC/*_report.txt` | cycle table + summary + layout envelope + parts (📦 / 🇹🇳 / ✈️) |
-| `archive/` | A, C, B concept |
+| `fc/common.py` | Grail, magnet, MG996R, **`flip_head()`**, fasteners, `chamfer_outer`, base selection (`GRAIL_BASE`, default b330), deck height, cycle table |
+| `fc/flipper_fc.py` | **Flipper** generator (numbers in `class G`, saddle in `class SB`); GUI run sets the colours |
+| `fc/flipper_pinion_fc.py` | **pinion v2** → `print/FLIPPER_PINION.step/.stl` (run first: the Flipper reads it) |
+| `fc/flipper_static_check.py`, `fc/flipper_motion_check.py`, `fc/check_common.py` | collision checks |
+| `fc/flipper_gif.py`, `fc/flipper_views.py` | pictures (`sim/`) |
+| `fc/flipper_s_fc.py` | **Flipper-S** generator (layout-v1) |
+| `CAD_FC/FLIPPER_B330.FCStd` + `_report.txt` | **the Flipper** (colours, numbered groups, ghost at the place pose, base plate, deck, 350 sheet). `FLIPPER_CONTEXT=1` adds the whole base → `FLIPPER_B330_IN_BASE.FCStd` |
+| `CAD_FC/FLIPPER_S.FCStd`, `FLIPPER_PINION.FCStd` | Flipper-S, pinion |
+| `print/` | print files (7 parts) |
+| `sim/` | GIF, stills, views |
+| `parts/` | inputs: `cremaillere.STL` (Seif's rack), `el_pignon.STEP` (Baha's pinion) |
+| `archive/` | A, C, B concept; `layout_v1/` fixation variants |
 | Real bought parts | `../resources/two-trees-bluer-v2-parts/` (X carriage, profile, NEMA17: see its `SOURCE.md`) |
 
-Run (from this folder):
+Run (from this folder; never edit the `.FCStd` by hand):
 ```
-"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_pinion_fc.py     # first: flipper_fc.py reads print/FLIPPER_PINION.step
-set FLIPPER_FIX=bridge& "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_fc.py   # ~1 min; bridge (chosen) | slot | inward
-set FLIPPER_PRINT=1& ...                                                                         # also write the print files
-"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_s_fc.py
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_pinion_fc.py
+set FLIPPER_PRINT=1& "C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/flipper_fc.py        # GUI: colours, ~3 min, closes itself
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_static_check.py
+"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_motion_check.py                 # set FLIPPER_MOTION=back for the way back only
+"C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/flipper_gif.py
+"C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/flipper_views.py
 ```
-Never edit the `.FCStd` by hand: change the generator and re-run it. Colours are only set when run from the FreeCAD GUI.
-
-## To printing (Flipper)
-1. ~~Printed parts drawn for real~~ (2026-11-20): arm + magnet cup, servo mount + 625 cheek, motor bracket, rack 197.
-   Still to do on them: ABS fits from the clapets v7 coupons (holes, 625 seat, servo cut-out), print orientation.
-2. ~~X plate holes~~ (sliced: Ø7.5 eccentric, 2 × Ø5.4 upper wheels, 2 × Ø2.5 tapped M3 20 apart; the back tabs have
-   no holes: drill for the motor bracket).
-3. Roof slot (x ~90–151, y ±20) and how the Grail sits on both sides of it; check against layout-v1's roof.
-4. Bottom endstop / homing; magnet cable loop around the flip axis; sprung magnet mount (CDC D4).
-5. Back-drive of the rack (carriage drops when the NEMA is off): accept, or a brake / self-locking choice.
-6. Shorter NEMA once Seif knows what we have (motor length + pinion `HUB_L`).
-7. **Next (Seif, 2026-11-20): Seif validates the polished model → static collision check → motion check → GIF render
-   (with colours).**
-8. STEP / STL / DXF print files + a short assembly sheet.

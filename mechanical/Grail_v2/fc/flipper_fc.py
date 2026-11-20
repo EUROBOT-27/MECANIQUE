@@ -853,6 +853,9 @@ def main():
                   + ((("FLIPPER_SADDLE_SOCLE", info["fix"]["SADDLE_SOCLE"]),) if "SADDLE_SOCLE" in info["fix"] else ())
                   + ((("FLIPPER_TOP_CAP", info["fix"]["TOP_CAP"]),) if "TOP_CAP" in info["fix"] else ())
                   if os.environ.get("FLIPPER_PRINT") else ()):
+        s_ = C.valid_copy(s_)
+        if not s_.isValid() or len(s_.Solids) != 1:
+            raise RuntimeError("print part %s: valid %s, %d solids" % (n, s_.isValid(), len(s_.Solids)))
         s_.exportStep(os.path.join(PRINT, n + ".step"))
         MeshPart.meshFromShape(Shape=s_, LinearDeflection=0.05, AngularDeflection=0.2).write(os.path.join(PRINT, n + ".stl"))
     hi = info["head"]

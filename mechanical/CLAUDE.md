@@ -65,6 +65,8 @@ Nothing goes loose in `mechanical/` itself: a new SolidWorks file goes into its 
   Two versions in parallel, same flip + MG996R: **Flipper** (was B) = rack lift on the real Two Trees X carriage (2020 + V-wheels + NEMA17 pinion), **Flipper-S** (was B2) = lead-screw
   lift (T8 + 2 × Ø8 rods / LM8UU, NEMA17 on the bay floor by GT2 belt). Electromagnet first; suction-cup version later,
   also for the gate lintel (`concepts/gate-lintel.md`). Generators `Grail_v2/fc/`, status + next steps in its README.
+- Flipper (2026-11-20): on `base_330_js` (printed saddle over the right drive wheel), Grail deck at z 320, static + motion
+  checks 0 clashes, 7 print files; waiting on Seif for the 8 base-plate holes. Pictures in `Grail_v2/sim/` (kept there, not in `simulations/`).
 - `Grail_v1/`: Baha's SolidWorks designs (screw, rack from STLs, corrigé) + `REVIEW.md`. Reference.
 - Seif placed these two folders directly in `mechanical/` (exception to the "nothing loose" rule below).
 

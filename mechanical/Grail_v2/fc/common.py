@@ -289,10 +289,12 @@ def insert(K, L, c, axis):
 
 def chamfer_outer(shape, size=1.0, min_len=4.0):
     """1 mm chamfer on the convex straight edges between two planar faces (design-principles edge rule). Tries all
-    edges at once, then halves of the set; edges the kernel refuses are left sharp. Returns (shape, done, tried)."""
-    sol = shape.Solids[0] if len(shape.Solids) == 1 else shape
+    edges at once, then halves of the set; edges the kernel refuses are left sharp. Returns (shape, done, tried).
+    Every attempt runs on a fresh deep copy (edges picked by index): a failed makeChamfer can raise the tolerances of the
+    edges it touched, and on a shared solid that left the final part invalid (the saddle, 2026-11-20)."""
+    sol = (shape.Solids[0] if len(shape.Solids) == 1 else shape).copy()
     cands = []
-    for e in sol.Edges:
+    for ie, e in enumerate(sol.Edges):
         if e.Curve.__class__.__name__ != "Line" or e.Length < min_len:
             continue
         fs = sol.ancestorsOfType(e, Part.Face)
@@ -308,11 +310,12 @@ def chamfer_outer(shape, size=1.0, min_len=4.0):
         if fs[0].distToShape(Part.Vertex(mid + v0 * 0.5))[0] > 0.05:
             v0 = -v0
         if n1.dot(v0) < -0.5:                            # convex
-            cands.append(e)
+            cands.append(ie)
 
     def works(es):
         try:
-            r = sol.makeChamfer(size, es)
+            s2 = sol.copy()
+            r = s2.makeChamfer(size, [s2.Edges[i] for i in es])
             return r if r.isValid() and len(r.Solids) == 1 else None
         except Exception:
             return None
@@ -332,7 +335,16 @@ def chamfer_outer(shape, size=1.0, min_len=4.0):
 
     ok = best(cands)
     out = works(ok) if ok else None
-    return (out if out is not None else sol), len(ok), len(cands)
+    out = valid_copy(out if out is not None else sol)
+    return out, len(ok), len(cands)
+
+
+def valid_copy(shape):
+    """Deep copy (later booleans on the original can't touch it), repaired if the kernel finds it invalid."""
+    c = shape.copy()
+    if not c.isValid():
+        c.fix(1e-6, 1e-6, 1e-6)
+    return c
 
 
 # ------------------------------------------------------------------ poses + checks
@@ -413,7 +425,7 @@ def save(doc, name, report_lines):
 
 def add(doc, name, shape, group=None, groups=None):
     o = doc.addObject("Part::Feature", name)
-    o.Shape = shape
+    o.Shape = shape.copy()                    # deep copy: checks run later on `shape` can't change the stored part
     if groups is not None and group:
         if group not in groups:
             groups[group] = doc.addObject("App::DocumentObjectGroup", group)

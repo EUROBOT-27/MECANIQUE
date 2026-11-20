@@ -106,7 +106,7 @@ Hardware availability in Tunisia is limited, and imports take time (orders from 
 | `mechanical/clapets/` | Clapets (stack gripper + suction head), one self-contained folder per version `clapets-v5` … `v8` (index: `README.md`) |
 | `mechanical/robot/` | **Full robot, rebuilt from the mechanisms** (`fc/layout.py` = every placement number) + Gazebo export `sim/excalibot_fc/`. Auto-sync is local only (hooks rebuild + copy into the sim clone); publish to GitHub by hand: `python tools/sync_robot.py --push` |
 | `mechanical/grail-lift/` | Grail lift (L4): Baha's v1 (SolidWorks, rebuilt in FreeCAD), v2 concept, requirements (`docs/CDC.md`), slider motion study |
-| `mechanical/Grail_v2/` | **Grail lift (D-029)**: top grip + 180° flip onto the roof, versions **Flipper** (rack, was B) and **Flipper-S** (lead screw, was B2), generators in `fc/`; suction-cup version later (gate lintel too) |
+| `mechanical/Grail_v2/` | **Grail lift (D-029)**: top grip + 180° flip onto a Grail deck at 320, versions **Flipper** (rack, on base_330_js: checked, print files in `print/`, pictures in `sim/`) and **Flipper-S** (lead screw, on hold); generators + checks in `fc/`, everything in its README |
 | `mechanical/Grail_v1/` | Baha's Grail designs (screw, rack, corrigé) + review; reference for Grail_v2 |
 | `mechanical/simulations/` | All mechanism animations / motion studies / simulation videos (index: `INDEX.md`) |
 | `mechanical/design-principles.md` | Our design + testing standard (from the Aerobotix 2026 study) |

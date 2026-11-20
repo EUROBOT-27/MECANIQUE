@@ -13,7 +13,7 @@ CARRIAGE / DRIVE
   pinion: gear 5 wide must pass the slot lip (6.35): gear tip x 121.20 vs the back face x 118.0 (gear dips 3.20 into the slot)
 
 COLUMN FIXATION: SADDLE
-  SADDLE_SOCLE (printed ABS, one part, 170 g at 60 pct, 201 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 84; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
+  SADDLE_SOCLE (printed ABS, one part, 169 g at 60 pct, 201 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 84; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
   legs on the free plate zones (Seif's sketch): x 80..128 y -60..-45; x 80..128 y 45..60; x 25..74 y -42..-24; x 25..66 y 24..40
   PLATE HOLES TO ADD (not in the plate yet, Seif will confirm): 8 x Ø4.4 for M4 at (88, -53.5), (120, -53.5), (88, 53.5), (120, 53.5), (33, -33.0), (66, -33.0), (33, 32.0), (58, 32.0); M4 x 16 from the top through a Ø9 channel + nut under the plate
   top: 2020 cross-member x 40..118, z 233..253, butting on the column's back face, tops flush: blind joint (M5 head in the back slot, slid in from the top; Ø5 access hole in the +x face) + printed TOP_CAP 4 thick (z 253..257) -> the arm's lower edge above x 98..138: 294.2..369.5
@@ -21,7 +21,7 @@ COLUMN FIXATION: SADDLE
   TOP_CAP              x 96..134 y -6..14 z 253..257: clear
   SCR_M5_TOP_x3        x 101..133 y -1..9 z 238..260: X_PLATE @top (boxes meet, real gap 8.2); V_WHEELS_x3 @top (boxes meet, real gap 4.9); M5x25_SCREWS @top (boxes meet, real gap 11.8)
   TNUT_M5_TOP_x1       x 101..111 y 0..8 z 248..251: clear
-  SADDLE_SOCLE         x 25..141 y -60..60 z 16..112: X_PLATE @pick (boxes meet, real gap 0.0); V_WHEELS_x3 @pick (boxes meet, real gap 3.4); M5x25_SCREWS @pick (boxes meet, real gap 7.7); M5_SPACERS @pick (boxes meet, real gap 0.0); NEMA17 @pick (boxes meet, real gap 17.6); MOTOR_BRACKET @pick (boxes meet, real gap 3.7); SCR_M3x20_TABS_x2 @pick (boxes meet, real gap 11.7); SERVO_MOUNT @pick (boxes meet, real gap 6.2)
+  SADDLE_SOCLE         x 25..141 y -60..60 z 16..112: X_PLATE @pick (boxes meet, real gap 3.3); V_WHEELS_x3 @pick (boxes meet, real gap 3.9); M5x25_SCREWS @pick (boxes meet, real gap 8.2); M5_SPACERS @pick (boxes meet, real gap 11.8); NEMA17 @pick (boxes meet, real gap 18.0); MOTOR_BRACKET @pick (boxes meet, real gap 4.1); SCR_M3x20_TABS_x2 @pick (boxes meet, real gap 12.2); SERVO_MOUNT @pick (boxes meet, real gap 6.7)
   SCR_M4x16_FLOOR_x8   x 30..124 y -57..57 z 10..30: clear
   NUT_M4_FLOOR_x8      x 29..124 y -57..57 z 8..12: clear
   SCR_M5x12_HEEL_x2    x 106..123 y -0..8 z 92..110: X_PLATE @pick (boxes meet, real gap 10.5); V_WHEELS_x3 @pick (boxes meet, real gap 6.6); M5x25_SCREWS @pick (boxes meet, real gap 13.9)
