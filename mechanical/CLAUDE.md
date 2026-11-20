@@ -60,7 +60,17 @@ Nothing goes loose in `mechanical/` itself: a new SolidWorks file goes into its 
   version named in `layout.py`; a generator change counts only once its FCStd is rewritten. Details: `robot/README.md`.
 - A mechanism that needs the robot around it (e.g. Grail lift v3) reads `layout.py` too.
 
-## Grail lift (2026-11-10)
+## Grail lift (D-029, 2026-11-20): `Grail_v2/`
+- **Top grip + 180° flip**: the Grail lands upside down on the roof, the gripper ends under it in a roof slot.
+  Two versions in parallel, same flip + MG996R: **Flipper** (was B) = rack lift on the real Two Trees X carriage (2020 + V-wheels + NEMA17 pinion), **Flipper-S** (was B2) = lead-screw
+  lift (T8 + 2 × Ø8 rods / LM8UU, NEMA17 on the bay floor by GT2 belt). Electromagnet first; suction-cup version later,
+  also for the gate lintel (`concepts/gate-lintel.md`). Generators `Grail_v2/fc/`, status + next steps in its README.
+- Flipper (2026-11-20): on `base_330_js` (printed saddle over the right drive wheel), Grail deck at z 320, static + motion
+  checks 0 clashes, 7 print files; waiting on Seif for the 8 base-plate holes. Pictures in `Grail_v2/sim/` (kept there, not in `simulations/`).
+- `Grail_v1/`: Baha's SolidWorks designs (screw, rack from STLs, corrigé) + `REVIEW.md`. Reference.
+- Seif placed these two folders directly in `mechanical/` (exception to the "nothing loose" rule below).
+
+## Grail lift, earlier work (2026-11-10, reference)
 - `grail-lift/`: **v1** = Baha's "essai mecanisme 1" (SolidWorks rack + pinion lift + servo-tilted electromagnet), files in
   `sw/` (3 custom parts still on Baha's PC → rebuilt approximately in FreeCAD); **v2** = concept that keeps the idea and
   makes L4 possible (coordinated lift + 180° flip over the roof edge, club steel U servo bracket, 4 V-wheels, NEMA17).

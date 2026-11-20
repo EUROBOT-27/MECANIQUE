@@ -46,3 +46,17 @@ the belt bracket. **Mesh** = solid made from the named STL (triangulated faces, 
 Not converted: the 20T idlers (`Polia GT2 Tensora 20T ID5 OD18 W6`) and the Y motor pulley: 100 MB as mesh STEP. The
 generators use measured stand-ins instead (idler: Ø17 flanges, Ø12.2 teeth x 6, bore 5, 8.6 wide; motor pulley: Ø15.5,
 16 long, bore 5).
+## X-axis carriage (added 2026-11-20 for the Grail Flipper, `../../Grail_v2/fc/flipper_fc.py`)
+Extracted headless from the same `.stp` (`Part.read`). Each named STL's box was matched against the solids' **exact**
+boxes (`optimalBoundingBox`; the quick `BoundBox` of B-spline solids is too big and missed the plate and the profile),
+then filtered by volume. Printer coordinates.
+
+| File | Part | Check |
+|---|---|---|
+| `x_carriage_plate.step` | X carriage plate (Chapa Roldanas do Eixo X no Hot End): steel 2.7 thick, 75 × 67, bent top flange + 2 bottom tabs; 2 mm from the profile's front face | volume 14335 (STL 14336) |
+| `v_wheels_X.step` | its 3 V-wheels (2 on one side, 1 on the eccentric) | 3 solids |
+| `m5x25_wheel_screws_X.step` | 3 × M5x25 | 3 solids, 569 each |
+| `m5_nyloc_nuts_X.step`, `m5_spacers_X.step`, `eccentric_spacer_X.step`, `bronze_washers_X.step` | wheel fasteners | ratio 1.00 |
+| `profile_2020_X_350.step` | 2020 V-slot profile, 350 (Perfil Alumínio Eixo X) | ratio 1.00 |
+| `nema17_X.step` | X motor **assembly** (body + GT2 pulley + 4 screws), B-spline surfaces | ratio 1.02 (the Flipper uses `nema17.step`) |
+| `gt2_pulley_20T_X.step` | GT2 20T motor pulley | ratio 0.99 |

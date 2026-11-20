@@ -499,3 +499,7 @@ Template:
   Grail spot. B must move its column into the bay (as B2). Gate lintel stays 3rd in the build order (D-010); its
   stone passes 350 mid-flip (FAQ Q9 yes, castle only: check where the gate is built). Files and checks:
   `mechanical/Grail_v2/README.md`.
+- Update 2026-11-20 (Seif): version B is named **Flipper** (rack lift, now placed on base_330_js on a printed saddle over
+  the right drive wheel) and B2 **Flipper-S**. The **Grail lands on a deck at z 320** (L4 > 300); the rest of the robot's
+  top can be at 350 (different top heights). The Flipper can't place higher than ~324 (its arm swings above the place
+  height, actuators ≤ 350).

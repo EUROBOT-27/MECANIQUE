@@ -1,0 +1,72 @@
+FLIPPER (rack lift, real Two Trees X carriage + NEMA17 + printed rack) - fc/flipper_fc.py
+Grail 70 x 70 x 80 picked by its top at x 195.0, placed upside down at x 110.0 (roof top 306); magnet Ø30 x 22
+Flip axis x 152.5; LZ 58; pivot z 138.0 (pick) -> 254.0 (flip) -> 248.0 (place) -> 242.0 (stowed); travel 122.0
+Column: real 2020 at x 110, y 4, z 78..275; plate centre z 116.0 (pick) .. 232.0 (flip), pivot 22.0 above it
+
+CARRIAGE / DRIVE
+  wheels on the profile: wheel extents -36.9..+37.0 around the plate centre -> on the profile from plate z 114.9 to 238.0 (travel uses 116.0..232.0: OK)
+  rack: slid in from the end, V back on the cavity's inner faces (2D sections; play to the lips 0.45): nose 6.20 below the face; pitch line x 102.20 (tips -1.20 past the back face), z 114.0..254.0; pinion centre x 92.20, z 126.0 (pick) .. 242.0 (flip), on the rack: OFF THE RACK
+  motor face y -33.0 (eccentric wheel edge -28.0, gap 5.0); pinion 39.0 long; gear centre y 4.0 vs rack centre 4.0; motor body x 71.2..113.2 y -70.0..-11.1 z 105.0..151.0 (pick)
+  lift: ~0.71 kg moving -> 6.9 N on the rack, 0.069 N.m on the motor (NEMA17 ~0.4); the rack can be back-driven: at 100 s / e-stop the carriage drops (Grail already released at the end; mid-carry it falls)
+
+  pinion: gear 5 wide must pass the slot lip (6.35): gear tip x 103.20 vs the back face x 100.0 (gear dips 3.20 into the slot)
+
+COLUMN FIXATION: SLOT
+  rack cut to the pinion's travel (z 114..254, 140 long): the back slot is free at both ends
+  bottom: 2020 corner bracket in the back slot (z 78..98) onto a 2020 cross-member along x, z 58..78, x 40..100 (above the drive motor, top 55.5)
+  top (all variants): 2020 cross-member along x, x 40..100, z 255..275, joint plate on top (z 275..278) -> the arm's lower edge above x 80..120: 285.4..339.9
+  TOP_MEMBER_2020      x 40..100 y -6..14 z 255..275: clear
+  TOP_L_BRACKET        x 80..120 y -6..14 z 275..278: clear
+  BOTTOM_MEMBER_2020   x 40..100 y -6..14 z 58..78: clear
+  BOTTOM_L_BRACKET     x 80..100 y -6..14 z 75..98: clear
+
+CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 150)
+  step                        act.top  act.out Grail.bot Grail.top Grail inside robot?
+  lift 138.0, flip 0            160.6     63.2       0.0      80.0 
+  lift 167.0, flip 0            189.6     63.2      29.0     109.0 
+  lift 196.0, flip 0            218.6     63.2      58.0     138.0 
+  lift 225.0, flip 0            247.6     63.2      87.0     167.0 
+  lift 254.0, flip 0            276.6     63.2     116.0     196.0 
+  flip  15 at 254.0             276.6     75.1     122.6     218.0 
+  flip  30 at 254.0             276.6     82.0     138.2     242.5 
+  flip  45 at 254.0             276.6     84.2     161.7     267.8 
+  flip  60 at 254.0             290.5     81.5     191.5     292.1 
+  flip  75 at 254.0             304.3     73.4     225.5     313.8 
+  flip  90 at 254.0             314.6     60.5     261.5     331.5 
+  flip 105 at 254.0             326.6     51.4     276.3     364.6 
+  flip 120 at 254.0             333.5     39.0     289.5     390.1 
+  flip 135 at 254.0             335.7     24.1     300.3     406.4 
+  flip 150 at 254.0             333.0     16.8     308.0     412.3 
+  flip 165 at 254.0             324.9     16.8     312.0     407.4 
+  flip 170 at 254.0             321.1     16.8     312.4     403.4 
+  flip 175 at 254.0             316.8     16.8     312.4     398.2 
+  flip 180 at 254.0             312.0     16.8     312.0     392.0 
+  lower to place 248.0          306.0     16.8     306.0     386.0 
+  magnet off, lower 6           300.0     16.8     306.0     386.0 
+
+SUMMARY
+  highest actuator point over the cycle: 335.7 (flip 135 at 254.0, limit 350, design 348) -> OK
+  max protrusion past the right face: 84.2 mm (flip  45 at 254.0) -> perimeter bump ~45 mm (estimate, narrow protrusion mid-side, side 292)
+  at the start (stowed): 16.8 mm past the face -> bump ~2 mm
+  Grail entering the robot body before it lands: never
+  Grail highest point in the cycle: 412.3 (only the Grail may pass 350, in the castle [G E.2])
+  roof slot for the arm: x 89.8..151.0, y -20.2..20.2
+  plate top at the place 263.5 vs the arm's lower edge above x 103..125: 278.8..308.8
+  profile top 275 vs the arm's lower edge above the profile (x 100..120): 285.4..312.6
+  Grail nearest point to the axis 58.5, sweeping -87..143 deg; servo reaches 38.4, 625 11.3; body points inside the Grail's swept zone: none
+  flip torque max 2.1 kg.cm at 60 deg (MG996R ~9.4: 4.4x)
+
+LAYOUT ENVELOPE (bounding boxes vs layout-v1: Grail bay x 66..150, y -52..40, z 78..300; right wheel; drive motor)
+  NEMA17 @pick                       y -70.0..-11.1 (bay -52..40)
+  NEMA17 @top                        y -70.0..-11.1 (bay -52..40)
+
+PRINTED PARTS (print/)
+  FLIPPER_ARM: hub Ø24 with the round horn's disc in a Ø21.4 pocket (+ Ø9.8 boss recess), 4 x M2 x 12 from +y into the horn holes at r 7.2 (Ø2.5, T9 coupon); Ø5 x 16 pin pressed 6 deep from +y (pushed in LAST, through the 625); bar 14 x 10; cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud + nut in a pocket; 1 solid(s), 12 g ABS (60 pct)
+  FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 124.8..132.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 91.0, 141.0), 2 x M3 into the plate's tapped holes (y 23.7, z 106.0, 126.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 x 12 + nuts in pockets; 625 cheek (seat Ø16.2 open on +y, lip on the arm side); 1 solid(s), 29 g ABS (60 pct)
+  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs, 4 x M3x25 at (x 113, z 140), (x 119, z 140), (x 113, z 92), (x 119, z 92) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 14 g ABS (60 pct)
+  FLIPPER_RACK_197: Seif's rack cut to 197 (rack frame, as printed before)
+  servo body y -50.4..-6.6 (bay from y -52); SERVO_MOUNT y -30.0..34.0
+
+PARTS (📦 library · 🇹🇳 local · ✈️ import)
+  Two Trees X carriage: plate + 3 V-wheels + 3 M5x25 + nyloc + spacers + eccentric 📦 · 2020 profile cut to 197 📦 · NEMA17 📦 (40 mm; shorter later) · rack m1 printed (Seif's, fits) cut to 140 · pinion v2 printed (M3 insert K5) · MG996R + round horn 📦 · 625 + Ø5 pin 📦/🇹🇳 · electromagnet Ø30 🇹🇳 · upper wheel screws M5x25 -> M5x35 🇹🇳 · 2 x M3x16 + 2 x M3 self-tap + 4 x M2x6 + M4 nut
+  printed ABS: motor bracket, servo bracket + 625 cheek, arm + magnet cup (~12 g), pinion

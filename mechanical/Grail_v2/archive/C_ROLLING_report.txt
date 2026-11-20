@@ -1,0 +1,44 @@
+GRAIL v2 - C ROLLING (one NEMA17: lift + flip by a half gear rolling on a fixed rack) - fc/c_rolling_fc.py
+Grail 70 x 70 x 80, 150 g, picked by its top at x 195.0, placed upside down at x 110.0 on the roof (top 306)
+Sector pitch radius 60 (m1, 65 teeth on 180 + 2 x 8 deg); fixed rack pitch line x 92.5, y -50..-42
+Axle x 152.5; z 98.8 (pick) -> 287.2 (place), travel 188.5 = pi x 60. LZ = 18.8 (axle above the Grail top at the pick).
+
+CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 150)
+  step                        act.top  act.out Grail.bot Grail.top Grail inside robot?
+  z  98.8 turn   0.0            159.7     63.5       0.0      80.0 
+  z 109.2 turn  10.0            170.2     63.4      13.3     104.2 
+  z 119.7 turn  20.0            180.7     61.8      29.5     128.6 
+  z 130.2 turn  30.0            191.2     59.5      48.4     152.7 
+  z 140.6 turn  40.0            201.6     56.7      69.8     176.1 
+  z 151.1 turn  50.0            212.1     52.2      93.4     198.4 
+  z 161.6 turn  60.0            222.6     46.2     118.7     219.3 
+  z 172.1 turn  70.0            233.1     38.9     145.3     238.5 
+  z 182.5 turn  80.0            243.5     30.5     172.8     255.6 
+  z 193.0 turn  90.0            254.0     21.3     200.5     270.5 
+  z 203.5 turn 100.0            264.4     21.4     214.1     296.9 
+  z 213.9 turn 110.0            273.3     31.0     227.4     320.5 YES (3 pts, lowest z 293.2, x 143.6)
+  z 224.4 turn 120.0            281.4     39.8     240.3     340.9 YES (6 pts, lowest z 270.6, x 147.5)
+  z 234.9 turn 130.0            289.1     47.5     252.7     357.7 YES (3 pts, lowest z 279.5, x 139.5)
+  z 245.4 turn 140.0            295.1     53.8     264.5     370.8 YES (3 pts, lowest z 287.0, x 132.0)
+  z 255.8 turn 150.0            299.6     58.6     275.8     380.1 YES (3 pts, lowest z 293.3, x 125.1)
+  z 266.3 turn 160.0            303.8     61.8     286.5     385.6 YES (3 pts, lowest z 298.5, x 119.0)
+  z 276.8 turn 170.0            314.3     63.4     296.5     387.5 YES (6 pts, lowest z 296.5, x 148.4)
+  z 287.2 turn 180.0            324.7     63.5     306.0     386.0 
+  off, down 2 (turn 178.1)      322.7     63.5     306.0     386.0 
+  off, down 6 (turn 174.3)      318.7     63.5     306.0     386.0 
+
+SUMMARY
+  highest actuator point over the cycle: 327.7 (fixed parts, limit 350, design 348) -> OK
+  max protrusion past the right face: 63.5 mm (off, down 6 (turn 174.3)) -> perimeter bump ~26 mm (estimate, narrow protrusion mid-side, side 292)
+  at the start (stowed): 63.5 mm past the face -> bump ~26 mm
+  Grail entering the robot body before it lands: z 213.9 turn 110.0, z 224.4 turn 120.0, z 234.9 turn 130.0, z 245.4 turn 140.0, z 255.8 turn 150.0, z 266.3 turn 160.0, z 276.8 turn 170.0
+  Grail highest point in the cycle: 387.5 (only the Grail may pass 350, in the castle [G E.2])
+  roof slot for the arm: x 81.0..151.0, y -83.1..14.5
+  pick: the magnet comes down onto the Grail 10 deg off vertical (rolling path)
+  release: magnet off, carriage down: the magnet face leaves the Grail 43 deg below horizontal
+  torque about the axle max 1.2 kg.cm (z 146) -> 0.21 kg at the sector teeth; lift pinion ~0.9 kg.cm (NEMA17 ~4)
+  at 100 s / e-stop the carriage can drop: the arm rolls back down with it (Grail already released)
+
+PARTS (📦 library · 🇹🇳 local · ✈️ import)
+  NEMA17 📦 · 2020 + V-wheels 📦 · lift rack m1 + 20T pinion printed (Seif's print fits) · fixed flip rack m1 printed · half gear R60 printed ABS · Ø8 axle + 2 x 608 📦 · electromagnet 🇹🇳 · NO servo
+  arm + sector ~24 g ABS (sector 15 g)

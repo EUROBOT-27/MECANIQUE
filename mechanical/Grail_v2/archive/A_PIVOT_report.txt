@@ -1,0 +1,47 @@
+GRAIL v2 - A PIVOT (one MG996R, no lift) - fc/a_pivot_fc.py
+Grail 70 x 70 x 80, 150 g, picked by its top at x 195.0 (floor), placed upside down at x 110.0 on the roof (top 306)
+Pivot (axis along y): x 152.5 (2.5 past the face), z 193.0. Magnet face 120.7 mm from the pivot.
+
+CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 150)
+  step                        act.top  act.out Grail.bot Grail.top Grail inside robot?
+  turn   0 (Grail held)         204.0     61.0       0.0      80.0 
+  turn  10 (Grail held)         204.0     76.3       4.2      95.2 
+  turn  20 (Grail held)         204.0     92.8      14.2     113.3 
+  turn  30 (Grail held)         204.0    106.6      29.6     133.9 
+  turn  40 (Grail held)         204.0    117.3      50.0     156.3 
+  turn  50 (Grail held)         204.0    124.4      74.7     179.7 
+  turn  60 (Grail held)         204.0    127.9     103.0     203.6 
+  turn  70 (Grail held)         219.6    127.5     134.0     227.2 
+  turn  80 (Grail held)         236.2    123.3     166.9     249.7 
+  turn  90 (Grail held)         251.5    115.5     200.5     270.5 
+  turn 100 (Grail held)         266.8    108.6     220.0     302.8 
+  turn 110 (Grail held)         283.3     98.4     238.7     331.8 
+  turn 120 (Grail held)         297.1     85.4     256.0     356.6 
+  turn 130 (Grail held)         307.8     69.8     271.4     376.4 
+  turn 140 (Grail held)         314.9     52.2     284.4     390.7 
+  turn 150 (Grail held)         318.4     33.0     294.6     398.9 
+  turn 160 (Grail held)         318.0     13.5     301.8     400.9 
+  turn 170 (Grail held)         313.8     13.5     305.6     396.5 
+  turn 175 (Grail held)         310.4     13.5     306.2     392.0 
+  turn 178 (Grail held)         307.9     13.5     306.2     388.6 
+  turn 180 = place              306.0     13.5     306.0     386.0 
+  turn 185 (released)           303.0     13.5     306.0     386.0 
+  turn 190 (released)           299.1     13.5     306.0     386.0 
+  turn 195 (released)           294.4     13.5     306.0     386.0 
+  turn 200 (released)           288.9     13.5     306.0     386.0 
+
+SUMMARY
+  highest actuator point over the cycle: 318.4 (turn 150 (Grail held), limit 350, design 348) -> OK
+  max protrusion past the right face: 127.9 mm (turn  60 (Grail held)) -> perimeter bump ~96 mm (estimate, narrow protrusion mid-side, side 292)
+  at the start (stowed): 16.5 mm past the face -> bump ~2 mm
+  Grail entering the robot body before it lands: never
+  Grail highest point in the cycle: 400.9 (only the Grail may pass 350, in the castle [G E.2])
+  roof slot for the arm: x 80.3..151.0, y -14.5..14.5
+  arm range: 200 deg (pick -> place -> park) = servo 167 deg through 18 T -> 15 T (x1.20); MG996R ~180 deg
+  torque: arm shaft max 3.0 kg.cm at turn 75 deg -> servo 3.6 kg.cm (MG996R ~9.4 at 6 V: 2.6x margin)
+  release: magnet off at 180, arm keeps turning: the magnet face leaves the Grail going 22 deg below horizontal, inward (slides under it: sprung magnet / small gap needed)
+  landing: the Grail arrives on the roof moving mostly sideways (tangent of the turn): see the 175/178 rows
+
+PARTS (📦 library · 🇹🇳 local · ✈️ import)
+  MG996R + round horn 📦 · gears m1 18T / 15T printed · Ø8 shaft 📦 (Ender rod, cut) · 2 x 608 📦 · electromagnet 12 V 5 kg 🇹🇳 · arm + tip + bearing block printed ABS
+  arm (bar + tip + hub) ~14 g ABS

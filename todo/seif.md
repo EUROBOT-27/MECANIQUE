@@ -5,6 +5,10 @@ Tasks for Maatoug go in `todo/maatoug.md` under `From Seif`.
 Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 
 ## Now (current focus)
+- [ ] **Flipper (Grail lift, D-029): confirm the 8 saddle holes in the base plate** (positions in `mechanical/Grail_v2/README.md`), then add them to the plate — Seif
+- [ ] **Flipper: print the 7 parts in ABS** (`mechanical/Grail_v2/print/`), measure the magnet (height + stud), do the workshop operations (cut 2020 to 168.5 + chamfer + access hole, tap the X plate tabs) — Seif
+- [ ] Flipper: design the Grail deck supports and the cross-member anchor (centre column / rings, `mechanical/concepts/electronics-column.md`); move Flipper-S to base_330_js later — Seif
+- [ ] Tell Ayoub: in base_330_js the clapets module A reaches z 372–380 (> 350) — Seif
 - [ ] **Door sheet + foam too high in the lift-turn (360.8 > 350):** cut the top ≥ 11 mm (~14) off the door sheet DXF, check the top stone is still gripped (`mechanical/layout-v1/README.md`, update 2026-11-19) — Seif
 - [ ] **Choose + log front / back** with the layout results: front A+B with doors folding only to 46°/78° (S3) or 52°/82° (S1), back T1 alone; start 1142 / 1135, deployed 1333 / 1329 (not logged yet, Seif 2026-11-19) — Seif
 - [ ] Check tipping margin (stack centre 93 mm past the front casters) and the 4 mm drive motor / socle overlap — Seif
@@ -78,6 +82,7 @@ Format: `- [ ] task — owner — due YYYY-MM-DD (optional)`
 - [ ] Add a `/weekly` review command once the daily routine is working — Seif
 
 ## Done
+- [x] Flipper taken to print files on base_330_js: saddle, motor bracket, servo mount, arm, pinion, rack, top cap; static + motion checks 0 clashes; GIF + views; Grail deck at 320 (D-029 updated) — 2026-11-20
 - [x] Layout v1 run with T1: doors fold less costs only ~19 / ~12 mm, passes Q10 (1333 / 1329); layout_fc.py takes T1 + back t1 — 2026-11-19
 - [x] Module B v1 = T1 turning plate designed (`mechanical/suction-v1/`, D-027, D-028): pumps + valves in the robot, tubes through a hollow shaft, cups at the stone centres for layout-v1 (replaces the "cups 26 mm too high" rework), print files in STEP/STL/DXF, full-cycle check — 2026-11-19
 - [x] suction-v1: valves vs pump-off / pumps placement decided: one pump + one valve per cup, both in the robot (D-028) — 2026-11-19

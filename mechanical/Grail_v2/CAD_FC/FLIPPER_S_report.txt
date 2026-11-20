@@ -1,0 +1,54 @@
+FLIPPER-S (lead-screw lift from the corrige) - fc/flipper_s_fc.py
+Grail 70 x 70 x 80, picked by its top at x 195.0, placed upside down at x 110.0 (roof top 306)
+Flip axis x 152.5; pivot z 130.0 (pick) -> 262.0 (flip) -> 256.0 (place) -> 250.0 (stowed); lift travel 138.0
+Column at y -28: rods x (77.0, 125.0), screw x 97.0, plates z (78.0, 88.0) / (290.0, 300.0); carriage 48 tall, pivot 22 above its bottom
+
+CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 150)
+  step                        act.top  act.out Grail.bot Grail.top Grail inside robot?
+  lift 130.0, flip 0            156.0     61.0       0.0      80.0 
+  lift 163.0, flip 0            189.0     61.0      33.0     113.0 
+  lift 196.0, flip 0            222.0     61.0      66.0     146.0 
+  lift 229.0, flip 0            255.0     61.0      99.0     179.0 
+  lift 262.0, flip 0            288.0     61.0     132.0     212.0 
+  flip  15 at 262.0             288.0     71.0     138.4     233.8 
+  flip  30 at 262.0             288.0     77.3     153.2     257.4 
+  flip  45 at 262.0             290.6     78.5     175.4     281.4 
+  flip  60 at 262.0             303.7     74.6     203.5     304.1 
+  flip  75 at 262.0             313.8     65.7     235.6     323.9 
+  flip  90 at 262.0             320.5     52.5     269.5     339.5 
+  flip 105 at 262.0             330.5     43.7     282.2     370.5 
+  flip 120 at 262.0             336.8     32.1     293.5     394.1 
+  flip 135 at 262.0             338.0     18.4     302.7     408.7 
+  flip 150 at 262.0             334.1     14.5     309.1     413.3 
+  flip 165 at 262.0             325.2     14.5     312.2     407.6 
+  flip 170 at 262.0             321.2     14.5     312.5     403.5 
+  flip 175 at 262.0             316.8     14.5     312.5     398.3 
+  flip 180 at 262.0             312.0     14.5     312.0     392.0 
+  lower to place 256.0          306.0     14.5     306.0     386.0 
+  magnet off, lower 6           300.0     14.5     306.0     386.0 
+
+SUMMARY
+  highest actuator point over the cycle: 338.0 (flip 135 at 262.0, limit 350, design 348) -> OK
+  max protrusion past the right face: 78.5 mm (flip  45 at 262.0) -> perimeter bump ~40 mm (estimate, narrow protrusion mid-side, side 292)
+  at the start (stowed): 14.5 mm past the face -> bump ~1 mm
+  Grail entering the robot body before it lands: never
+  Grail highest point in the cycle: 413.3 (only the Grail may pass 350, in the castle [G E.2])
+  roof slot for the arm: x 93.0..151.0, y -17.0..17.0
+  carriage top at the flip 288.0 vs top plate 290.0 -> 2.0 mm
+  nut flange bottom at the pick 104.5 vs bottom plate 88.0 -> 16.5 mm
+  Grail nearest point to the axis 50.6; servo reaches 38.4, 625 cheek 45.6 (both must stay below)
+  flip torque max 2.0 kg.cm at 60 deg (MG996R ~9.4: 4.8x). Lift: ~0.43 kg moving -> 0.015 N.m on the screw (NEMA17 ~0.4)
+  GT2 belt 1:1: centre distance 47.5 -> closed loop ~135 mm (pick the nearest stock loop, tensioner or slotted motor plate)
+
+LAYOUT ENVELOPE (bounding boxes vs layout-v1 volumes; the right bay is x 66..150, y +-40, z 78..300)
+  PULLEY_SCREW_GT2_20T                     x 89.0..105.0: not over the wheel (x 106..150)
+  PULLEY_MOTOR_GT2_20T                     x 79.5..95.5: not over the wheel (x 106..150)
+  GT2_BELT                                 x 81.0..103.5: not over the wheel (x 106..150)
+  NEMA17_upside_down                       over the wheel: bottom 88.0 vs wheel top 74.0 at |y| 0.0 -> OK
+  NEMA17_SHAFT                             x 85.0..90.0: not over the wheel (x 106..150)
+  SCREW_T8                                 x 93.0..101.0: not over the wheel (x 106..150)
+  BOTTOM_PLATE                             over the wheel: bottom 78.0 vs wheel top 74.0 at |y| 0.0 -> OK
+
+PARTS (📦 library · 🇹🇳 local · ✈️ import)
+  T8 screw ~234 mm (Ender T8x8, cut) 📦 · T8 flange nut 📦 · 2 x Ø8 rod 222 mm 📦 · 4 x LM8UU 🇹🇳 (or from the 3 SCS8UU 📦) · 2 x 608 📦 · 2 x GT2 20T pulley 📦 + closed GT2 loop 🇹🇳 · NEMA17 📦 · MG996R + horn 📦 · 625 + Ø5 shaft 📦/🇹🇳 · electromagnet 🇹🇳
+  printed ABS: carriage, top/bottom plates, motor plate, servo bracket + 625 cheek, arm (~10 g) + tip
