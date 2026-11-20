@@ -1,6 +1,9 @@
 # Grail v2: top grip + 180° flip onto the roof (Flipper and Flipper-S)
 
 > **Where we are (2026-11-20, Seif + Claude)**
+> - **Now placed on Ayoub's `base_330_js`** (Seif: "take base 330 js as reference"): `CAD_FC/FLIPPER_B330.FCStd`
+>   (colours, everything visible, numbered groups, the real base parts loaded as reference) + `FLIPPER_B330_report.txt`.
+>   The column stands on a printed **saddle** over the drive wheel + motor (section "On base_330_js").
 > - **Two versions (D-029): Flipper (rack lift, was "B") and Flipper-S (lead-screw lift, was "B2").** Same flip.
 >   Electromagnet Ø30 first. **Flipper is the priority: taken all the way to printing.**
 > - **Flipper is now built from real parts** (`fc/flipper_fc.py`): Two Trees X carriage (plate + 3 V-wheels + fasteners),
@@ -52,7 +55,32 @@ Two Trees Bluer V2 **X-axis carriage** on the real **2020**, Seif's **printed ra
 - **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20), face 5 mm past the eccentric wheel. Body at y −70…−33:
   **18 mm past the Grail bay** (y −52) toward the back module. A shorter NEMA is a quick fix (motor + pinion hub).
 
-### Column fixation: **BRIDGE chosen** (Seif, 2026-11-20)
+### On base_330_js: the SADDLE (Seif, 2026-11-20)
+Placed on Ayoub's `../base_330_js` (336 × 260 plate, JSUMO wheels, odometry outside the wheel), read straight from its
+assembly (`../base_330_js/CAD/base_330_js_assembly.FCStd`, same frame: X = wheel axis, Y = front (clapets) / back, z 0 =
+table). Right face = plate edge **x 168**: flip axis x 170.5, Grail picked at x 178–248, placed at x 93–163, y ±35,
+between the front clapets and the future **back module** (Seif: it goes in the back-right corner).
+
+**`FLIPPER_SADDLE_SOCLE`** (printed ABS, one part, ~208 g at 60 %, `print/`): a deck over the drive wheel, the drive motor
+and the odometry module, on **4 legs on the free plate zones of Seif's sketch**:
+| | |
+|---|---|
+| Legs | beside the wheel well: x 80–128, y −60…−47 and 47…60 (odometry bracket from x 132, clapets door unit from y 69); beside the drive motor: x 25–74, y −42…−24 and x 25–66, y 24…40 (hinge \|y\| ≤ 20, clapets socle from y 43.5) |
+| Deck | x 25–141, y ±60 (±55 where x < 70: clapets rails at y 58), underside z 67 (drive motor top 62.5) and z 70 over the odometry module (bracket 61.2, screws 64.2), **tunnel R45 around the worst-case wheel Ø80** (5 mm): crown 82, deck top 85 |
+| Column | pad to z 88 + a **heel on its back face** (x 106–118, to z 112) with **2 × M5 into T-nuts** in the back slot's free bottom (z 96, 106); top: 2020 cross-member inward (z 260–280) + corner bracket in the back slot's top end |
+| Ribs | back and front edges (7 tall, under the NEMA / outside the carriage) |
+| Floor | **8 × M4 × 16** from the top through Ø9 channels, nut under the plate. **Plate holes not added yet** (Seif confirms first): Ø4.4 at (88, −53.5), (120, −53.5), (88, 53.5), (120, 53.5), (33, −33), (66, −33), (33, 32), (58, 32) |
+| Clearances (real distances) | clapets rails 3.0, hinge 4.0, odometry bracket 4.2, drive motor 4.5, worst-case wheel 5.0 (nominal 7.0), X plate at the pick 4.5, carriage wheels 5.1 |
+
+Same flip and cycle as before: highest point 335.7, the Grail never enters the body, nothing in its swept zone; start
+16.8 mm past the face (perimeter 1192 + ~2), 84 mm out at flip 45° (+~50, budget 1400).
+**For the back module:** the Flipper's NEMA rides at x 89–131, y −70…−11, z 110–272 (column x 118–138, y −6…14) and its
+roof spot is x 93–163, y ±35.
+
+Run in the **GUI** (colours, ~3 min, closes itself): `"C:/Program Files/FreeCAD 1.1/bin/freecad.exe" fc/flipper_fc.py`
+(`set FLIPPER_PRINT=1` first to rewrite the print files). `freecadcmd` gives the same file without colours.
+
+### Column fixation on layout-v1: BRIDGE (Seif, 2026-11-20; superseded by the SADDLE on base_330_js)
 The 2020's bottom end sits right above the right wheel (x 106–150, top z 74). Three variants were built
 (`FLIPPER_FIX=slot|bridge|inward` → `CAD_FC/FLIPPER_<VARIANT>.FCStd` + report); Seif chose **BRIDGE** ("it could help a
 lot"). SLOT (corner brackets in the back slot onto a cross-member above the drive motor) and INWARD (column over the drive

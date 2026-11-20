@@ -20,15 +20,28 @@ sys.path.insert(0, os.path.join(MECH, "grail-lift", "fc"))
 import grail_common as GC                                              # noqa: E402  (profile, rack, pinion, V-wheel)
 
 # ------------------------------------------------------------------ robot context (layout-v1, A+B front)
-FACE = 150.0            # right body face x
-BODY_Y = 146.0          # body y +-
+# Robot base the Grail lift is placed on (env GRAIL_BASE):
+#   b330      (default since 2026-11-20, Seif): Ayoub's base_330_js (336 x 260 plate, JSUMO wheels, odometry outside
+#             the wheel); frame = its assembly frame: X = wheel axis, Y = front (clapets) / back, Z up, z 0 = table
+#   layout_v1 : Seif's layout-v1 (300 x 292 body)
+BASE = os.environ.get("GRAIL_BASE", "b330")
+B330_ASM = os.path.join(os.path.normpath(os.path.join(HERE, "..", "..")), "base_330_js", "CAD", "base_330_js_assembly.FCStd")
+if BASE == "b330":
+    FACE = 168.0        # right edge of the 336 plate
+    BODY_Y = 130.0
+    WHEEL = dict(x0=79.0, x1=131.0, r=40.0, z=37.0)    # JSUMO worst-case envelope Ø80 x 52 (nominal Ø74 x 44, x 81..125)
+    PLATE_TOP = 16.5
+else:
+    FACE = 150.0        # right body face x
+    BODY_Y = 146.0      # body y +-
+    WHEEL = dict(x0=106.0, x1=150.0, r=37.0, z=37.0)    # right drive wheel envelope (axis along x)
+    PLATE_TOP = 26.0
 ROOF_BOT, ROOF_TOP = 300.0, 306.0
-ROOF_Y = 38.0           # roof strip y +- (between the two clapets lifts)
-WHEEL = dict(x0=106.0, x1=150.0, r=37.0, z=37.0)    # right drive wheel envelope (axis along x)
+ROOF_Y = 38.0           # roof strip y +- (between the front and back modules' lifts)
 BAY = dict(x0=66.0, x1=150.0, y=40.0, z0=78.0, z1=300.0)   # right side bay reserved for the Grail (layout-v1)
 H_MAX = 350.0           # [GR F.3]
 H_DESIGN = 348.0        # keep 2 mm
-SIDE_L = 292.0          # side length of the hull for the perimeter-bump estimate (body Y)
+SIDE_L = 2 * BODY_Y     # side length of the hull for the perimeter-bump estimate
 
 # ------------------------------------------------------------------ Grail + magnet
 G_W = 70.0              # Grail footprint (x and y)
@@ -185,8 +198,15 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
 
 
 def robot_context(slot=None):
-    """Reference solids: body (ghost box up to the roof plate), roof strip (with slot), right wheel."""
+    """Reference solids: body (ghost box up to the roof plate), roof strip (with slot), right wheel.
+    On base_330_js only the roof strip: the real base parts are loaded from its assembly (flipper_fc)."""
     out = {}
+    if BASE == "b330":
+        roof = box(-FACE, FACE, -ROOF_Y, ROOF_Y, ROOF_BOT, ROOF_TOP)
+        if slot:
+            roof = roof.cut(box(slot[0], slot[1], slot[2], slot[3], ROOF_BOT - 1, ROOF_TOP + 1))
+        out["CTX_ROOF_STRIP"] = roof
+        return out
     out["CTX_BODY_ghost"] = box(-FACE, FACE, -BODY_Y, BODY_Y, 21, ROOF_BOT).cut(
         box(BAY["x0"], BAY["x1"] + 1, -BAY["y"], BAY["y"], BAY["z0"], BAY["z1"] + 1))
     roof = box(-FACE, FACE, -ROOF_Y, ROOF_Y, ROOF_BOT, ROOF_TOP)
