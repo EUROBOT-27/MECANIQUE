@@ -124,7 +124,7 @@ def build(doc, groups):
     fixed, lift, arm_all = {}, {}, {}
     zc = G.ZC_PICK
     G.H_P = G.Z_PICK - zc
-    G.PROF_Z1 = round(zc + (G.Z_PLACE + G.OVER - G.Z_PICK) + 37.0 + 1.0, 1)
+    G.PROF_Z1 = round(zc + (G.Z_PLACE + G.OVER - G.Z_PICK) + 37.0 + 3.0, 1)   # wheels at the top + 3 (cross-member on top)
     M = printer_to_robot(zc)
     # ---------------- fixed column: real 2020 cut to length, rack
     Mp = printer_to_robot(zc)
@@ -453,8 +453,10 @@ def saddle_socle():
         body = body.fuse(C.box(x0, x1, y0, y1, zd - 1, zd + h))
     # form fit: a tongue under each well-side leg drops into the plate's wheel well (centres the saddle in y)
     for sgn in (1, -1):
-        y_a, y_b = sorted((sgn * 45.2, sgn * 42.7))
+        y_a, y_b = sorted((sgn * 44.8, sgn * 42.3))          # 0.2 off the well edge (|y| 45.0), 2.5 thick
         body = body.fuse(C.box(82.0, 126.0, y_a, y_b, SB.Z_PLATE - 4.0, SB.Z_PLATE + 0.5))
+        y_a, y_b = sorted((sgn * 45.6, sgn * 42.3))          # joins the tongue to the leg above the plate
+        body = body.fuse(C.box(82.0, 126.0, y_a, y_b, SB.Z_PLATE, SB.Z_PLATE + 3.0))
     # form fit: key on the heel's front face into the column's back slot (below the rack), and a gusset behind the heel
     body = body.fuse(C.box(hx1 - 0.5, hx1 + 1.4, G.YC - 2.8, G.YC + 2.8, zt + 0.5, SB.HEEL_Z1 - 2.0))
     for gy in (hy0, hy1 - 3.0):                          # gussets on both sides of the heel (its screws in the middle)
@@ -472,7 +474,7 @@ def saddle_socle():
     body = body.cut(C.box(ox0, ox1, oy0, oy1, 0.0, oz))
     # heel: 2 x M5 along x into T-nuts in the back slot, heads in counterbores on the heel's inner face
     for zz in SB.HEEL_SCREWS_Z:
-        body = body.cut(C.cyl(C.FIT["m5"] / 2, hx1 - hx0 + 2, (hx0 - 1, G.YC, zz), (1, 0, 0)))
+        body = body.cut(C.cyl(C.FIT["m5"] / 2, hx1 - hx0 + 6, (hx0 - 1, G.YC, zz), (1, 0, 0)))   # through the key too
         body = body.cut(C.cyl(4.6, 5.2, (hx0 - 0.01, G.YC, zz), (1, 0, 0)))
     # floor: M4 from the top: Ø9 access channel from the deck top down to the foot, Ø4.6 through the foot (nut under the plate)
     for (x, y) in SB.SCREWS:
@@ -496,13 +498,17 @@ def fixation(zc):
     y0, y1 = G.YC - 10, G.YC + 10
     core_x = 40.0                                        # cross-members run inward to here (core structure, x <= 64)
     # ---- top (all variants): 2020 cross-member along x under the roof, back face of the column -> core
-    out["TOP_MEMBER_2020"] = C.box(core_x, xb, y0, y1, G.PROF_Z1 - 20, G.PROF_Z1)
-    out["TOP_L_BRACKET"] = l_bracket(xb, G.PROF_Z1, False)                               # in the back slot's top end
-    zt_ = G.PROF_Z1 - 10.0
-    out["SCR_M5x10_TOP_x2"] = Part.makeCompound([C.screw(5, 10, (xb - 3.0, G.YC, zt_), (1, 0, 0)),
-                                                 C.screw(5, 10, (xb - 10.0, G.YC, G.PROF_Z1 + 3.0), (0, 0, -1))])
-    out["TNUT_M5_TOP_x2"] = Part.makeCompound([C.tnut((xb + 4.0, G.YC, zt_), (1, 0, 0), (0, 0, 1)),
-                                               C.tnut((xb - 10.0, G.YC, G.PROF_Z1 - 4.0), (0, 0, 1), (1, 0, 0))])
+    # top: the cross-member lies ON the column's top (x 40 .. the column's front face), M5 x 30 down through it into the
+    # column's end hole (tapped M5), + an inside corner bracket: vertical leg in the back slot's free top (above the rack),
+    # horizontal leg under the cross-member
+    z1 = G.PROF_Z1
+    out["TOP_MEMBER_2020"] = C.box(core_x, G.XC + 10.0, y0, y1, z1, z1 + 20.0)
+    out["TOP_L_BRACKET"] = C.box(xb - 3.0, xb, y0, y1, z1 - 20.0, z1).fuse(C.box(xb - 20.0, xb, y0, y1, z1 - 3.0, z1)).removeSplitter()
+    out["SCR_M5_TOP_x3"] = Part.makeCompound([C.screw(5, 30, (G.XC, G.YC, z1 + 20.0), (0, 0, -1)),
+                                              C.screw(5, 8, (xb - 3.0, G.YC, z1 - 10.0), (1, 0, 0)),
+                                              C.screw(5, 8, (xb - 12.0, G.YC, z1 - 3.0), (0, 0, 1))])
+    out["TNUT_M5_TOP_x2"] = Part.makeCompound([C.tnut((xb + 3.25, G.YC, z1 - 10.0), (1, 0, 0), (0, 0, 1)),
+                                               C.tnut((xb - 12.0, G.YC, z1 + 3.25), (0, 0, 1), (1, 0, 0))])
     if G.FIX == "slot":
         out["BOTTOM_MEMBER_2020"] = C.box(core_x, xb, y0, y1, G.PROF_Z0 - 20, G.PROF_Z0)  # above the drive motor
         out["BOTTOM_L_BRACKET"] = l_bracket(xb, G.PROF_Z0, True, h_z=G.SOCLE_INFO["deck_top"])
@@ -513,7 +519,7 @@ def fixation(zc):
         out["NUT_M4_FLOOR_x8"] = Part.makeCompound([C.nut(4, (x, y, SB.Z_PLATE - 5.0), (0, 0, -1)) for (x, y) in SB.SCREWS])
         hx0 = SB.HEEL[0]
         out["SCR_M5x12_HEEL_x2"] = Part.makeCompound([C.screw(5, 12, (hx0 + 5.2, G.YC, z), (1, 0, 0)) for z in SB.HEEL_SCREWS_Z])
-        out["TNUT_M5_HEEL_x2"] = Part.makeCompound([C.tnut((xb + 4.0, G.YC, z), (1, 0, 0), (0, 0, 1)) for z in SB.HEEL_SCREWS_Z])
+        out["TNUT_M5_HEEL_x2"] = Part.makeCompound([C.tnut((xb + 3.25, G.YC, z), (1, 0, 0), (0, 0, 1)) for z in SB.HEEL_SCREWS_Z])
     elif G.FIX == "bridge":
         out["BRIDGE_SOCLE"], G.SOCLE_INFO = bridge_socle()
         out["BOTTOM_L_BRACKET"] = l_bracket(xb, G.PROF_Z0, True, h_z=G.SOCLE_INFO["deck_top"])
@@ -576,6 +582,19 @@ def main():
         base_ctx = load_b330_context()                 # always loaded for the fit checks
         for n, s in (base_ctx.items() if WITH_CTX else ()):
             C.add(doc, "B330_" + n, s, "7_BASE_330_JS_reference", groups)
+        # always in the file (Seif: see the roof and the base plate for the checks): the real base plate, the Grail deck
+        # (z ROOF_BOT..ROOF_TOP, arm slot cut) and the robot's top at 350 with an opening over the Flipper's zone (the arm
+        # swings up to ~344 inside the outline there). Deck supports / roof frame: not designed yet.
+        if not WITH_CTX:
+            C.add(doc, "B330_plate", base_ctx["plate"], "6_ROBOT_CONTEXT", groups)
+        deck = C.box(C.X_PLACE - C.G_W / 2 - 8.0, C.FACE, -C.G_W / 2 - 10.0, C.G_W / 2 + 10.0, C.ROOF_BOT, C.ROOF_TOP)
+        if slot:
+            deck = deck.cut(C.box(slot[0], slot[1] + 5, slot[2], slot[3], C.ROOF_BOT - 1, C.ROOF_TOP + 1))
+        C.add(doc, "CTX_GRAIL_DECK", deck, "6_ROBOT_CONTEXT", groups)
+        G.TOP_OPENING = (C.X_PLACE - C.G_W / 2 - 13.0, C.FACE + 1, -C.G_W / 2 - 15.0, C.G_W / 2 + 15.0)
+        # the 350 limit as a 1 mm sheet just above it (z 350..351): anything touching it is over the height limit
+        top350 = C.box(-C.FACE, C.FACE, -C.BODY_Y, C.BODY_Y, 350.0, 351.0)
+        C.add(doc, "CTX_LIMIT_350", top350, "6_ROBOT_CONTEXT", groups)
     else:
         drive = C.box(32, 100, -18.5, 18.5, 18.5, 55.5)
         C.add(doc, "CTX_DRIVE_MOTOR_R", drive, "6_ROBOT_CONTEXT", groups)
@@ -660,9 +679,9 @@ def main():
                  "inward": ["  column at x %.0f (over the drive motor), on a saddle z %.0f..%.0f with legs at y +-21..25 beside the drive motor; "
                             "column bolted through its end hole (M5); servo mount base -> pivot reach %.0f mm"
                             % (G.XC, G.PROF_Z0 - 3, G.PROF_Z0, G.PX - (G.XC + 14.8))]}[G.FIX]
-    fix_lines.append("  top (all variants): 2020 cross-member along x, x 40..%.0f, z %.0f..%.0f, corner bracket in the back slot's "
-                     "top end (z %.0f..%.0f) -> the arm's lower edge above x %.0f..%.0f: %.1f..%.1f"
-                     % (G.XC - 10, G.PROF_Z1 - 20, G.PROF_Z1, G.PROF_Z1 - 20, G.PROF_Z1, G.XC - 30, G.XC + 10,
+    fix_lines.append("  top: 2020 cross-member ON the column's top, along x 40..%.0f, z %.0f..%.0f, M5 x 30 into the column's end + "
+                     "inside corner bracket (back slot z %.0f..%.0f / cross-member underside) -> the arm's lower edge above x %.0f..%.0f: %.1f..%.1f"
+                     % (G.XC + 10, G.PROF_Z1, G.PROF_Z1 + 20, G.PROF_Z1 - 20, G.PROF_Z1, G.XC - 30, G.XC + 10,
                         G.Z_PLACE + (G.PX - (G.XC + 10)) / (G.PX - C.X_PLACE) * (C.ROOF_TOP - G.Z_PLACE) - 7.0,
                         G.Z_PLACE + (G.PX - min(G.XC - 30, C.X_PLACE)) / (G.PX - C.X_PLACE) * (C.ROOF_TOP - G.Z_PLACE) - 7.0))
     wheel_box = App.BoundBox(C.WHEEL["x0"], -C.WHEEL["r"], 0, C.WHEEL["x1"], C.WHEEL["r"], 2 * C.WHEEL["r"])
@@ -909,7 +928,8 @@ COLOURS = [  # (name prefix, rgb, transparency)
     ("MAGNET", (0.85, 0.10, 0.10), 0), ("GRAIL_PLATE", (0.40, 0.40, 0.40), 0), ("GRAIL", (0.95, 0.75, 0.10), 0),
     ("SCR_", (0.22, 0.22, 0.25), 0), ("NUT_", (0.70, 0.70, 0.72), 0), ("TNUT_", (0.55, 0.55, 0.60), 0),
     ("INSERT_", (0.80, 0.65, 0.20), 0), ("M5x25_SCREWS", (0.22, 0.22, 0.25), 0), ("M5_NYLOC", (0.70, 0.70, 0.72), 0),
-    ("CTX_ROOF", (0.85, 0.85, 0.70), 60),
+    ("CTX_ROOF", (0.85, 0.85, 0.70), 60), ("CTX_GRAIL_DECK", (0.80, 0.70, 0.45), 30),
+    ("CTX_LIMIT_350", (0.95, 0.30, 0.30), 85), ("B330_plate", (0.82, 0.70, 0.50), 0),
     ("B330_plate", (0.82, 0.70, 0.50), 0), ("B330_wheels_JS7444_ENVELOPE", (1.0, 0.6, 0.6), 80),
     ("B330_wheels", (0.25, 0.15, 0.12), 0), ("B330_motors", (0.55, 0.55, 0.58), 0), ("B330_hinges", (0.30, 0.30, 0.35), 0),
     ("B330_odo", (0.15, 0.35, 0.80), 0), ("B330_amt", (0.10, 0.55, 0.20), 0), ("B330_dead_wheel", (0.10, 0.10, 0.10), 0),

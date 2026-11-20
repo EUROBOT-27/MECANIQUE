@@ -168,7 +168,7 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
     arm["ARM_PRINTED"] = armp.removeSplitter()
     arm["SCR_M2x12_HORN_x4"] = Part.makeCompound([screw(2, 12, (px + a_, arm_y / 2 - 1.5, pz + b_), (0, -1, 0))
                                                   for (a_, b_) in ((0, 7.2), (7.2, 0), (0, -7.2), (-7.2, 0))])
-    arm["NUT_M4_MAGNET"] = nut(4, (X_PICK, 0, ztop - 0.6 - NUT[4][1]), (0, 0, 1))
+    arm["NUT_M4_MAGNET"] = nut(4, (X_PICK, 0, ztop - 0.6 - NUT[4][1]), (0, 0, 1), rot=30.0)   # flats across the 7.4 pocket
     arm["SHAFT_5"] = cyl(2.5, y625[1] + 2 - (arm_y / 2 - 6.0), (px, arm_y / 2 - 6.0, pz), (0, 1, 0))
     arm["MAGNET_D30"] = magnet_down(X_PICK, zf)
     # ---- SERVO_MOUNT: plate under the ears (servo side of the ears = -y of the ear flange)
@@ -259,15 +259,16 @@ def nut(d, c, axis, rot=0.0):
     return _orient(n, c, axis)
 
 
-def tnut(c, axis, along):
-    """M5 drop-in T-nut for 2020 (10 long x 10 wide x 4 deep), centre c, screw axis = axis, slot along 'along'."""
+def tnut(c, axis, along, depth=2.5, width=8.0, length=10.0):
+    """M5 T-nut for the 2020 slot, sized to the measured cavity (8 wide in the 2.0..4.5 mm deep zone behind the lips):
+    centre c, screw axis = axis (into the profile), slot along 'along'."""
     a, l_ = Vector(*axis), Vector(*along)
     a.normalize()
     l_.normalize()
     w = a.cross(l_)
-    b = Part.makeBox(4.0, 10.0, 10.0, Vector(-2.0, -5.0, -5.0))
+    b = Part.makeBox(depth, width, length, Vector(-depth / 2, -width / 2, -length / 2))
     m = App.Matrix(a.x, w.x, l_.x, 0, a.y, w.y, l_.y, 0, a.z, w.z, l_.z, 0, 0, 0, 0, 1)
-    b = b.cut(Part.makeCylinder(2.5, 6, Vector(-3, 0, 0), Vector(1, 0, 0)))
+    b = b.cut(Part.makeCylinder(2.5, depth + 2, Vector(-depth / 2 - 1, 0, 0), Vector(1, 0, 0)))
     b.transformShape(m)
     b.translate(Vector(*c))
     return b

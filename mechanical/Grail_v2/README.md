@@ -93,11 +93,21 @@ the servo mount's base for the servo + magnet cables.
 **Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
 electronics (Seif's idea, `../concepts/electronics-column.md`).
 
+**Static collision check (2026-11-20): 0 clashes** (`fc/flipper_static_check.py` → `CAD_FC/FLIPPER_static_check.txt`).
+Real overlap volumes between every pair of solids, pick pose (as built) and place pose (ghosts), with the real base plate,
+the Grail deck (z 314–320, arm slot) and a 1 mm sheet at z 350–351 for the height limit, plus the base_330_js parts.
+Fixed on the way: the top cross-member and its bracket were inside each other (cross-member now lies **on** the column's
+top, M5 × 30 into the column's tapped end + inside corner bracket; profile 168.5), T-nuts resized to the real slot
+(8 wide, 2.5 deep), heel M5 holes through the key, the saddle tongues 0.2 into the plate (now 0.2 off the wheel well's
+edge, joined to the legs above the plate), the magnet nut turned 30°. Overlaps listed as expected: threads, pressed parts,
+the gear mesh (tooth phase not set in a static model), holes still to drill (base plate × 8, X plate tabs × 2).
+**Not the Flipper:** in `base_330_js`, the clapets v7 module A reaches z 372.5–379.5 (3 parts), over the 350 limit.
+
 **Grail deck at 320 (Seif, 2026-11-20):** the Grail lands on a **landing deck at z 320** (L4 needs > 300); the rest of
 the robot's top can be at 350 (different top heights). Earlier numbers here used 306 (layout-v1's roof strip, carried over
 without asking). The Flipper's highest point is ~ deck + 24 (the arm swings above the place height), so the deck can't
 go above ~324. With 320 and LZ 80: travel 80 + 12 = **92** (pivot 160 → 246 flip → 240 place → 234 stowed), **2020 profile
-166.5** (z 84.5–251, in the saddle's socket), **rack 110** (z 119–229, `print/FLIPPER_RACK_110`), top cross-member z 231–251 (43 mm under the arm),
+168.5** (z 84.5–253, in the saddle's socket), **rack 110** (z 119–229, `print/FLIPPER_RACK_110`), top cross-member **on** the column's top, z 253–273 (21 mm under the arm's lowest edge),
 **highest point 344** (limit 350), roof slot x 108–169, y ±20. Env `GRAIL_ROOF` changes the deck height.
 
 **Fixes after Seif's review (2026-11-20):**

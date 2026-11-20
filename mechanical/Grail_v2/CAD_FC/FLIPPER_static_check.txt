@@ -1,0 +1,34 @@
+FLIPPER static collision check (real overlap volumes > 1.0 mm3) - fc/flipper_static_check.py
+
+== PICK pose (as built) incl. base_330_js: 184 pairs with touching boxes
+  CLASHES: 0
+  base_330_js parts above the 350 limit (not the Flipper): 3
+    B330_clapets_v7_moduleA_8    z max 372.5
+    B330_clapets_v7_moduleA_7    z max 372.5
+    B330_clapets_v7_moduleA_6    z max 379.5
+  expected overlaps: 15
+       463.2 mm3  B330_plate                   x SCR_M4x16_FLOOR_x8           base plate hole to add (Seif confirms)
+       452.4 mm3  SCR_M5_TOP_x3                x TOP_MEMBER_2020              through a Ø5.5 hole drilled across the cross-member
+       268.9 mm3  NEMA17                       x PINION_v2                    on the motor shaft
+       150.9 mm3  TNUT_M5_TOP_x2               x TOP_MEMBER_2020              T-nut in the cross-member's slot (model)
+       108.6 mm3  SCR_M5_TOP_x3                x TOP_L_BRACKET                through the bracket's hole
+        77.8 mm3  M5_NYLOC                     x M5x25_SCREWS                 bought wheel stack
+        22.8 mm3  NEMA17                       x SCR_M3x8_NEMA_x4             thread in the motor
+        21.8 mm3  SERVO_HORN                   x SERVO_MG996R                 horn on the spline
+        21.6 mm3  PROFILE_2020                 x SCR_M5_TOP_x3                M5 in the column's tapped end hole
+        19.4 mm3  SCR_M3x20_TABS_x2            x X_PLATE                      tab: drill Ø2.5 + tap M3 (hole not in the model)
+        13.4 mm3  SCR_M3x12_PLATE_x2           x X_PLATE                      thread in the plate's tapped hole
+        12.5 mm3  INSERT_M3_PINION             x PINION_v2                    heat-set insert pressed in
+        11.3 mm3  SCR_M2x12_HORN_x4            x SERVO_HORN                   self-tapping into the horn holes
+         8.2 mm3  PINION_v2                    x RACK_m1_printed              gear mesh: tooth phase not set in a static model (centre distance 10.0 = m1 20T)
+         2.2 mm3  NEMA17                       x SCR_M3x6_SET_PINION          set screw on the shaft's flat
+
+== PLACE pose (ghost parts) vs fixed parts + base, and among themselves: 45 pairs with touching boxes
+  CLASHES: 0
+  expected overlaps: 5
+      4900.0 mm3  PLACE_GRAIL                  x CTX_LIMIT_350                the Grail may pass 350 once on the deck [G E.2]
+       268.9 mm3  PLACE_NEMA17                 x PLACE_PINION_v2              on the motor shaft
+        69.5 mm3  PLACE_SERVO_HORN             x PLACE_SERVO_MG996R           horn on the spline
+        13.6 mm3  PLACE_PINION_v2              x RACK_m1_printed              gear mesh: tooth phase not set in a static model (centre distance 10.0 = m1 20T)
+        11.3 mm3  PLACE_SCR_M2x12_HORN_x4      x PLACE_SERVO_HORN             self-tapping into the horn holes
+
