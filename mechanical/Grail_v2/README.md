@@ -51,8 +51,8 @@ Two Trees Bluer V2 **X-axis carriage** on the real **2020**, Seif's **printed ra
   That is exactly why Baha's rack has a 5.7 tooth strip and his pinion 5 mm teeth.
 - **Rack cut to the pinion's travel** (z 114–254, 140 long): the back slot stays free at both ends for fixations.
 - Placement (robot frame): profile centre y 4, x 110 (or 85, INWARD variant); plate faces the right face (+x); the
-  servo mount on the plate's front reaches the flip axis x 152.5. **LZ 58:** pivot 138 → 254 (flip) → 248 (place)
-  → 242 (stowed), 122 mm of travel.
+  servo mount on the plate's front reaches the flip axis x 152.5. **LZ 80** (was 58): pivot 160 → 232 (flip) → 226 (place)
+  → 220 (stowed), 78 mm of travel.
 - **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20), face 5 mm past the eccentric wheel. Body at y −70…−33:
   **18 mm past the Grail bay** (y −52) toward the back module. A shorter NEMA is a quick fix (motor + pinion hub).
 
@@ -92,6 +92,19 @@ the servo mount's base for the servo + magnet cables.
   heads; tabs 4 × M3 × 20 (tip 3.5 mm off the column); horn 4 × M2 × 12; magnet M4 nut; pinion M3 insert + M3 × 6 set screw.
 **Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
 electronics (Seif's idea, `../concepts/electronics-column.md`).
+
+**Fixes after Seif's review (2026-11-20):**
+- **The arm's cup hit the column at the place / stowed pose.** The Grail's roof spot is right above the column, and the
+  magnet + cup hang 26 mm under the roof top (z 280 at the place, 274 after the 6 mm release); the column top was 280.
+  **LZ 58 → 80**: the pivot sits higher above the Grail at the pick and lower under the roof at the place, the travel
+  shrinks 122 → 78 and the **column top drops to 237** (arm's lowest edge above it 280+). LZ 70 was not enough (0.7 mm).
+  Cost: 100 mm out while flipping (perimeter ~1261), flip torque 2.6 kg·cm (3.6×); highest point 330.
+- Saddle: **edge ribs removed**; the gusset behind the heel (it blocked the heel's screws) → **2 gussets on the heel's sides**.
+- **Motor bracket wraps around the X plate** (its shape follows the plate, which it hit at a small bent tab); its bridges
+  moved off the NEMA's screw heads (one was buried under a bridge, behind a tab), tab screws at zc+29 / zc−25, flanges past
+  the heads. Real check: 0 overlap with the plate, wheel, NEMA and every screw.
+- The report now checks the arm (cup included) against the column, its fixation and the carriage at the place and stowed
+  poses with real distances.
 
 **For the back module:** the Flipper's NEMA rides at x 89–131, y −70…−11, z 110–272 (column x 118–138, y −6…14) and its
 roof spot is x 93–163, y ±35.

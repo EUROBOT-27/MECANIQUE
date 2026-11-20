@@ -198,7 +198,7 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
     body["BEARING_625"] = cyl(8, 5, (px, y625[0], pz), (0, 1, 0)).cut(cyl(2.5, 7, (px, y625[0] - 1, pz), (0, 1, 0)))
     body["SCR_M3x10_SERVO_x2"] = Part.makeCompound([screw(3, 10, (px - 5.0, ear_y1, pz + hx), (0, -1, 0))
                                                     for hx in SERVO_EAR["holes_x"]])
-    body["NUT_M3_SERVO_x2"] = Part.makeCompound([nut(3, (px - 5.0, sp_y0, pz + hx), (0, 1, 0)) for hx in SERVO_EAR["holes_x"]])
+    body["NUT_M3_SERVO_x2"] = Part.makeCompound([nut(3, (px - 5.0, sp_y0, pz + hx), (0, 1, 0), rot=30.0) for hx in SERVO_EAR["holes_x"]])
     info = dict(dy=dy, ear_y=(ear_y0, ear_y1), plate_y=(sp_y0, sp_y1), plate_x=(sx0, sx1), plate_z=(sz0, sz1),
                 cup_top=ztop, joiner_z=(zb0, zb1))
     return arm, body, info
@@ -245,11 +245,11 @@ def screw(d, L, c, axis, button=False):
     return _orient(head.fuse(shank).removeSplitter(), c, axis)
 
 
-def nut(d, c, axis):
-    """Hex nut, one face at c, extending along axis."""
+def nut(d, c, axis, rot=0.0):
+    """Hex nut, one face at c, extending along axis (rot turns it about its axis, deg)."""
     s_, m = NUT[d]
     r = s_ / math.sqrt(3)
-    pts = [Vector(r * math.cos(math.radians(60 * k)), r * math.sin(math.radians(60 * k)), 0) for k in range(6)]
+    pts = [Vector(r * math.cos(math.radians(60 * k + rot)), r * math.sin(math.radians(60 * k + rot)), 0) for k in range(6)]
     n = Part.Face(Part.makePolygon(pts + [pts[0]])).extrude(Vector(0, 0, m))
     n = n.cut(Part.makeCylinder(d / 2, m + 2, Vector(0, 0, -1)))
     return _orient(n, c, axis)

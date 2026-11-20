@@ -33,7 +33,9 @@ BAY = dict(x0=66.0, x1=150.0, y0=-52.0, y1=40.0, z0=78.0, z1=300.0)     # GRAIL_
 
 class G:
     # ---- flip geometry
-    LZ = 58.0                                # pivot above the Grail top at the pick (= under the roof top at the place)
+    LZ = float(os.environ.get("FLIPPER_LZ", "80"))   # pivot above the Grail top at the pick (= under the roof top at the
+                                              # place). 80 (was 58): the travel shrinks so the column top stays under the
+                                              # magnet cup, which hangs 26 mm under the roof top right above the column
     PX = (C.X_PICK + C.X_PLACE) / 2
     Z_PICK = C.G_H + LZ
     Z_PLACE = C.ROOF_TOP - LZ
@@ -50,7 +52,7 @@ class G:
     FIX = os.environ.get("FLIPPER_FIX", "saddle" if C.BASE == "b330" else "bridge")
     XC, YC = C.FACE - {"inward": 65.0}.get(FIX, 40.0), 4.0
     PROF_Z0 = {"bridge": 86.0, "inward": 60.0, "saddle": 88.0}.get(FIX, 78.0)   # slot: bay floor; bridge/saddle: on the deck
-    PROF_Z1 = {"bridge": 280.0, "saddle": 280.0}.get(FIX, 275.0)   # under the arm's path at the place
+    PROF_Z1 = None                            # computed in build(): wheels at the top of the travel + 1
     # ---- carriage: plate centre height at the pick; pivot H_P above it
     H_P = None                                # computed: Z_PICK - ZC_PICK
     ZC_PICK = {"bridge": 125.0, "saddle": 127.0}.get(FIX, 116.0)   # lowest plate centre. bridge/saddle: PROF_Z0 + 39 = wheels 2 mm above the
@@ -121,6 +123,7 @@ def build(doc, groups):
     fixed, lift, arm_all = {}, {}, {}
     zc = G.ZC_PICK
     G.H_P = G.Z_PICK - zc
+    G.PROF_Z1 = round(zc + (G.Z_PLACE + G.OVER - G.Z_PICK) + 37.0 + 1.0, 1)
     M = printer_to_robot(zc)
     # ---------------- fixed column: real 2020 cut to length, rack
     Mp = printer_to_robot(zc)
@@ -214,11 +217,11 @@ def build(doc, groups):
     tab_y = G.YC + 219.9 - P_Z                           # tabs: y tab_y .. tab_y + 2.7, x 105.4 .. 121.9
     tab_x0 = G.XC + 242.3 - P_Y
     info_wheel_x0 = C.bb(wheels[0]).XMin
-    mb = C.box(pin_x - 21.15, xback - 0.6, by0, by1, zc - 34.0, pin_z + 21.15)
-    for zz0, zz1 in ((zc + 14.0, zc + 34.0), (zc - 34.0, zc - 14.0)):
+    mb = C.box(pin_x - 21.15, xback - 0.6, by0, by1, zc - 34.0, pin_z + 21.6)
+    for zz0, zz1 in ((zc + 23.0, zc + 34.0), (zc - 34.0, zc - 16.0)):     # bridges clear the NEMA screw heads
         mb = mb.fuse(C.box(tab_x0, xback - 0.6, by1 - 0.5, tab_y, zz0, zz1))
         mb = mb.fuse(C.box(tab_x0 - 2.5, tab_x0, by1 - 0.5, tab_y + 2.7, zz0, zz1))          # step on the tab's end (form fit)
-    for fz0, fz1 in ((pin_z + 18.0, pin_z + 21.15), (pin_z - 21.15, pin_z - 18.0)):          # stiffening flanges (+y side)
+    for fz0, fz1 in ((pin_z + 18.6, pin_z + 21.6), (pin_z - 21.6, pin_z - 18.6)):            # stiffening flanges (+y side), past the heads
         mb = mb.fuse(C.box(pin_x - 21.15, G.XC - 8.0, by1 - 0.5, by1 + 6.0, fz0, fz1))
     mb = mb.removeSplitter()
     mb = mb.cut(C.cyl(11.5, 20, (pin_x, by0 - 1, pin_z), (0, 1, 0)))                         # pilot Ø23
@@ -229,11 +232,16 @@ def build(doc, groups):
             if hx + 2.75 > info_wheel_x0 - 1 and abs(hz - zc) < 14:                               # head next to the wheel:
                 mb = mb.cut(C.cyl(2.9, 1.9, (hx, by1 - 1.8, hz), (0, 1, 0)))                     # button head, counterbored
     tab_screws = []
-    for zz in (zc + 24.0, zc - 24.0):
+    for zz in (zc + 29.0, zc - 25.0):                    # on the tabs, inside the bridges
         for xx in (G.XC + 3.0, G.XC + 9.0):
             mb = mb.cut(C.cyl(C.FIT["m3"] / 2, 40, (xx, by0 - 1, zz), (0, 1, 0)))
             mb = mb.cut(C.cyl(3.35, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                       # head counterbore
             tab_screws.append((xx, zz))
+    try:
+        xpl = lift["X_PLATE"].makeOffsetShape(0.3, 0.01, join=2)
+    except Exception:
+        xpl = lift["X_PLATE"]
+    mb = mb.cut(xpl)                                     # wraps around the X plate (its tabs) instead of passing through
     mb, ch_done, ch_tried = C.chamfer_outer(mb.removeSplitter())
     lift["MOTOR_BRACKET"] = mb
     G.CHAMFERS = {"MOTOR_BRACKET": (ch_done, ch_tried)}
@@ -244,7 +252,7 @@ def build(doc, groups):
             cb_ = hx + 2.75 > info_wheel_x0 - 1 and abs(hz - zc) < 14
             scr.append(C.screw(3, 8, (hx, by1 - (1.8 if cb_ else 0.0), hz), (0, -1, 0), button=True))
     lift["SCR_M3x8_NEMA_x4"] = Part.makeCompound(scr)
-    lift["SCR_M3x20_TABS_x4"] = Part.makeCompound([C.screw(3, 20, (xx, by0 + 3.5, zz), (0, 1, 0)) for xx, zz in tab_screws])
+    lift["SCR_M3x20_TABS_x4"] = Part.makeCompound([C.screw(3, 20, (xx, by0 + 3.4, zz), (0, 1, 0)) for xx, zz in tab_screws])
     # ---------------- flip head (arm + servo + cheek) + its base on the X plate's front face = one printed SERVO_MOUNT
     arm, head, hinfo = C.flip_head(G.PX, G.Z_PICK)
     xf = plate_bb.XMax                                     # X plate front face
@@ -414,8 +422,7 @@ class SB:
                (51.0, 71.0, -19.0, -3.0, 66.9, 81.0), (51.0, 71.0, 3.0, 19.0, 66.9, 81.0),
                (28.0, 48.0, -52.0, -45.0, 66.9, 81.0), (51.0, 71.0, -52.0, -45.0, 66.9, 81.0),
                (28.0, 48.0, 45.0, 52.0, 66.9, 81.0), (51.0, 63.0, 45.0, 52.0, 66.9, 81.0))
-    RIBS = (((80.0, 141.0), (-60.0, -54.0), 7.0),   # back edge (under the NEMA, bottom ~110)
-            ((80.0, 141.0), (54.0, 60.0), 7.0))     # front edge
+    RIBS = ()                             # edge ribs removed (Seif 2026-11-20: unnecessary)
 
 
 def saddle_socle():
@@ -440,10 +447,11 @@ def saddle_socle():
         body = body.fuse(C.box(82.0, 126.0, y_a, y_b, SB.Z_PLATE - 4.0, SB.Z_PLATE + 0.5))
     # form fit: key on the heel's front face into the column's back slot (below the rack), and a gusset behind the heel
     body = body.fuse(C.box(hx1 - 0.5, hx1 + 1.4, G.YC - 2.8, G.YC + 2.8, zt + 0.5, SB.HEEL_Z1 - 2.0))
-    gus = Part.Face(Part.makePolygon([Vector(hx0 + 0.5, 0, zd - 0.5), Vector(hx0 + 0.5, 0, SB.HEEL_Z1 - 3.0),
-                                      Vector(hx0 - 14.0, 0, zd - 0.5), Vector(hx0 + 0.5, 0, zd - 0.5)])).extrude(Vector(0, 4.0, 0))
-    gus.translate(Vector(0, G.YC + 1.0, 0))
-    body = body.fuse(gus)
+    for gy in (hy0, hy1 - 3.0):                          # gussets on both sides of the heel (its screws in the middle)
+        gus = Part.Face(Part.makePolygon([Vector(hx0 + 0.5, 0, zd - 0.5), Vector(hx0 + 0.5, 0, SB.HEEL_Z1 - 3.0),
+                                          Vector(hx0 - 14.0, 0, zd - 0.5), Vector(hx0 + 0.5, 0, zd - 0.5)])).extrude(Vector(0, 3.0, 0))
+        gus.translate(Vector(0, gy, 0))
+        body = body.fuse(gus)
     body = body.removeSplitter()
     # cut-outs: wheel tunnel (R45 around the worst-case envelope), drive motor + hinge, odometry module
     body = body.cut(C.cyl(r, SB.TUN_X[1] - SB.TUN_X[0], (SB.TUN_X[0], 0.0, C.WHEEL["z"]), (1, 0, 0)))
@@ -565,6 +573,24 @@ def main():
         C.add(doc, "CTX_BACK_BUTTERFLY", C.box(-95, 95, -56, -53, 81, 271), "6_ROBOT_CONTEXT", groups)         # layout-v1 B plate
         C.add(doc, "CTX_GRAIL_BAY", C.box(BAY["x0"], BAY["x1"], BAY["y0"], BAY["y1"], BAY["z0"], BAY["z1"]), "6_ROBOT_CONTEXT", groups)
 
+    # ---- arm (cup + magnet included) vs the column, its fixation and the carriage at place + stowed: real distances
+    arm_lines = []
+    targets = [(n, s_, None) for n, s_ in list(fixed.items()) + list(info["fix"].items()) if not n.startswith(("SCR_", "NUT_", "TNUT_"))]
+    targets += [(n, s_, "lift") for n, (s_, g) in parts.items() if g == "lift" and not n.startswith(("SCR_", "NUT_", "M5", "INSERT"))]
+    for st_ in (steps[-2], steps[-1]):
+        for an, (ash, ag) in parts.items():
+            if ag != "arm" or an in ("SERVO_HORN",):
+                continue
+            a_ = C.moved(ash, st_["pls"]["arm"])
+            for tn, tsh, tg in targets:
+                t_ = C.moved(tsh, st_["pls"]["lift"]) if tg else tsh
+                if not a_.BoundBox.intersect(t_.BoundBox):
+                    continue
+                d_ = a_.distToShape(t_)[0]
+                if d_ < 0.01 and a_.common(t_).Volume < 0.001:
+                    continue
+                if d_ < 3.0:
+                    arm_lines.append("  %-14s - %-20s %s: %.2f mm%s" % (an, tn, st_["label"], d_, "  CLASH" if d_ < 0.01 else ""))
     # ---- base_330_js: real distances between our parts (pick + top poses) and the base's parts
     b330_lines = b330_checks(base_ctx, fixed, info["fix"], parts, steps) if C.BASE == "b330" else []
     # ---- layout envelope (bounding boxes vs the bay, the wheel, the drive motor); pick + top poses
@@ -732,6 +758,8 @@ def main():
          "CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x %.0f)" % C.FACE]
     r += lines
     r += ["", "SUMMARY"] + C.summary_lines(worst, start_out)
+    r += ["  arm (cup + magnet) vs column / fixation / carriage at the place and stowed poses (real distances, < 3 mm listed): "
+          + ("none" if not arm_lines else "")] + arm_lines
     r += ["  chamfers 1 mm on the printed parts (convex straight edges between planar faces; refused edges left sharp): %s"
           % ", ".join("%s %d/%d" % (k, v[0], v[1]) for k, v in getattr(G, "CHAMFERS", {}).items()),
           "  form fits: saddle tongues in the plate's wheel well (y); heel key in the column's back slot; servo mount lip on "

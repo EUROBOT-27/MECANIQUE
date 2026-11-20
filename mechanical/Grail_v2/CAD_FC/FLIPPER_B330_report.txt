@@ -1,26 +1,26 @@
 FLIPPER (rack lift, real Two Trees X carriage + NEMA17 + printed rack) - fc/flipper_fc.py
 Grail 70 x 70 x 80 picked by its top at x 213.0, placed upside down at x 128.0 (roof top 306); magnet Ø30 x 22
-Flip axis x 170.5; LZ 58; pivot z 138.0 (pick) -> 254.0 (flip) -> 248.0 (place) -> 242.0 (stowed); travel 122.0
-Column: real 2020 at x 128, y 4, z 88..280; plate centre z 127.0 (pick) .. 243.0 (flip), pivot 11.0 above it
+Flip axis x 170.5; LZ 80; pivot z 160.0 (pick) -> 232.0 (flip) -> 226.0 (place) -> 220.0 (stowed); travel 78.0
+Column: real 2020 at x 128, y 4, z 88..237; plate centre z 127.0 (pick) .. 199.0 (flip), pivot 33.0 above it
 
 CARRIAGE / DRIVE
-  wheels on the profile: wheel extents -36.9..+37.0 around the plate centre -> on the profile from plate z 124.9 to 243.0 (travel uses 127.0..243.0: OK)
-  rack: slid in from the end, V back on the cavity's inner faces (2D sections; play to the lips 0.45): nose 6.20 below the face; pitch line x 120.20 (tips -1.20 past the back face), z 119.0..259.0; pinion centre x 110.20, z 131.0 (pick) .. 247.0 (flip), on the rack: OK
+  wheels on the profile: wheel extents -36.9..+37.0 around the plate centre -> on the profile from plate z 124.9 to 200.0 (travel uses 127.0..199.0: OK)
+  rack: slid in from the end, V back on the cavity's inner faces (2D sections; play to the lips 0.45): nose 6.20 below the face; pitch line x 120.20 (tips -1.20 past the back face), z 119.0..215.0; pinion centre x 110.20, z 131.0 (pick) .. 203.0 (flip), on the rack: OK
   motor face y -33.0 (eccentric wheel edge -28.0, gap 5.0); pinion 39.0 long; gear centre y 4.0 vs rack centre 4.0; motor body x 89.2..131.2 y -70.0..-11.1 z 110.0..156.0 (pick)
   lift: ~0.71 kg moving -> 6.9 N on the rack, 0.069 N.m on the motor (NEMA17 ~0.4); the rack can be back-driven: at 100 s / e-stop the carriage drops (Grail already released at the end; mid-carry it falls)
 
   pinion: gear 5 wide must pass the slot lip (6.35): gear tip x 121.20 vs the back face x 118.0 (gear dips 3.20 into the slot)
 
 COLUMN FIXATION: SADDLE
-  SADDLE_SOCLE (printed ABS, one part, 171 g at 60 pct, 204 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 88; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
+  SADDLE_SOCLE (printed ABS, one part, 169 g at 60 pct, 201 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 88; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
   legs on the free plate zones (Seif's sketch): x 80..128 y -60..-45; x 80..128 y 45..60; x 25..74 y -42..-24; x 25..66 y 24..40
   PLATE HOLES TO ADD (not in the plate yet, Seif will confirm): 8 x Ø4.4 for M4 at (88, -53.5), (120, -53.5), (88, 53.5), (120, 53.5), (33, -33.0), (66, -33.0), (33, 32.0), (58, 32.0); M4 x 16 from the top through a Ø9 channel + nut under the plate
-  top (all variants): 2020 cross-member along x, x 40..118, z 260..280, corner bracket in the back slot's top end (z 260..280) -> the arm's lower edge above x 98..138: 285.4..339.9
-  TOP_MEMBER_2020      x 40..118 y -6..14 z 260..280: clear
-  TOP_L_BRACKET        x 98..118 y -6..14 z 260..283: clear
-  SCR_M5x10_TOP_x2     x 104..125 y -0..8 z 266..288: X_PLATE @top (boxes meet, real gap 10.4); V_WHEELS_x3 @top (boxes meet, real gap 5.9); M5x25_SCREWS @top (boxes meet, real gap 13.4)
-  TNUT_M5_TOP_x2       x 103..124 y -1..9 z 265..278: X_PLATE @top (boxes meet, real gap 7.9); V_WHEELS_x3 @top (boxes meet, real gap 3.5); M5x25_SCREWS @top (boxes meet, real gap 10.9)
-  SADDLE_SOCLE         x 25..141 y -60..60 z 12..112: X_PLATE @pick (boxes meet, real gap 4.5); V_WHEELS_x3 @pick (boxes meet, real gap 5.1); M5x25_SCREWS @pick (boxes meet, real gap 8.2); M5_SPACERS @pick (boxes meet, real gap 13.0); NEMA17 @pick (boxes meet, real gap 18.0); MOTOR_BRACKET @pick (boxes meet, real gap 6.2); SCR_M3x20_TABS_x4 @pick (boxes meet, real gap 12.8); SERVO_MOUNT @pick (boxes meet, real gap 8.3)
+  top (all variants): 2020 cross-member along x, x 40..118, z 217..237, corner bracket in the back slot's top end (z 217..237) -> the arm's lower edge above x 98..138: 280.2..355.5
+  TOP_MEMBER_2020      x 40..118 y -6..14 z 217..237: clear
+  TOP_L_BRACKET        x 98..118 y -6..14 z 217..240: clear
+  SCR_M5x10_TOP_x2     x 104..125 y -0..8 z 223..245: X_PLATE @top (boxes meet, real gap 10.4); V_WHEELS_x3 @top (boxes meet, real gap 6.1); M5x25_SCREWS @top (boxes meet, real gap 13.5)
+  TNUT_M5_TOP_x2       x 103..124 y -1..9 z 222..235: X_PLATE @top (boxes meet, real gap 7.9); V_WHEELS_x3 @top (boxes meet, real gap 3.5); M5x25_SCREWS @top (boxes meet, real gap 10.9)
+  SADDLE_SOCLE         x 25..141 y -60..60 z 12..112: X_PLATE @pick (boxes meet, real gap 4.5); V_WHEELS_x3 @pick (boxes meet, real gap 5.1); M5x25_SCREWS @pick (boxes meet, real gap 8.2); M5_SPACERS @pick (boxes meet, real gap 13.0); NEMA17 @pick (boxes meet, real gap 18.0); MOTOR_BRACKET @pick (boxes meet, real gap 5.5); SCR_M3x20_TABS_x4 @pick (boxes meet, real gap 12.9); SERVO_MOUNT @pick (boxes meet, real gap 9.0)
   SCR_M4x16_FLOOR_x8   x 30..124 y -57..57 z 10..30: clear
   NUT_M4_FLOOR_x8      x 29..124 y -57..57 z 8..12: clear
   SCR_M5x12_HEEL_x2    x 106..123 y -0..8 z 92..110: X_PLATE @pick (boxes meet, real gap 10.5); V_WHEELS_x3 @pick (boxes meet, real gap 6.6); M5x25_SCREWS @pick (boxes meet, real gap 13.9)
@@ -28,41 +28,54 @@ COLUMN FIXATION: SADDLE
 
 CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 168)
   step                        act.top  act.out Grail.bot Grail.top Grail inside robot?
-  lift 138.0, flip 0            164.5     63.2       0.0      80.0 
-  lift 167.0, flip 0            193.5     63.2      29.0     109.0 
-  lift 196.0, flip 0            222.5     63.2      58.0     138.0 
-  lift 225.0, flip 0            251.5     63.2      87.0     167.0 
-  lift 254.0, flip 0            280.5     63.2     116.0     196.0 
-  flip  15 at 254.0             280.5     75.1     122.6     218.0 
-  flip  30 at 254.0             280.5     82.0     138.2     242.5 
-  flip  45 at 254.0             280.5     84.2     161.7     267.8 
-  flip  60 at 254.0             290.5     81.5     191.5     292.1 
-  flip  75 at 254.0             304.3     73.4     225.5     313.8 
-  flip  90 at 254.0             314.6     60.5     261.5     331.5 
-  flip 105 at 254.0             326.6     51.4     276.3     364.6 
-  flip 120 at 254.0             333.5     39.0     289.5     390.1 
-  flip 135 at 254.0             335.7     24.1     300.3     406.4 
-  flip 150 at 254.0             333.0     16.8     308.0     412.3 
-  flip 165 at 254.0             324.9     16.8     312.0     407.4 
-  flip 170 at 254.0             321.1     16.8     312.4     403.4 
-  flip 175 at 254.0             316.8     16.8     312.4     398.2 
-  flip 180 at 254.0             312.0     16.8     312.0     392.0 
-  lower to place 248.0          306.0     16.8     306.0     386.0 
+  lift 160.0, flip 0            182.6     63.2       0.0      80.0 
+  lift 178.0, flip 0            200.6     63.2      18.0      98.0 
+  lift 196.0, flip 0            218.6     63.2      36.0     116.0 
+  lift 214.0, flip 0            236.6     63.2      54.0     134.0 
+  lift 232.0, flip 0            254.6     63.2      72.0     152.0 
+  flip  15 at 232.0             254.6     80.8      79.4     174.8 
+  flip  30 at 232.0             254.6     93.0      97.2     201.5 
+  flip  45 at 232.0             254.6     99.7     124.2     230.2 
+  flip  60 at 232.0             257.5    100.5     158.5     259.1 
+  flip  75 at 232.0             276.6     94.7     197.8     286.2 
+  flip  90 at 232.0             292.6     82.5     239.5     309.5 
+  flip 105 at 232.0             310.3     72.7     259.9     348.3 
+  flip 120 at 232.0             322.5     58.0     278.5     379.1 
+  flip 135 at 232.0             329.2     39.6     293.9     399.9 
+  flip 150 at 232.0             330.0     19.4     305.0     409.3 
+  flip 165 at 232.0             324.2     16.8     311.2     406.6 
+  flip 170 at 232.0             320.8     16.8     312.1     403.0 
+  flip 175 at 232.0             316.7     16.8     312.3     398.1 
+  flip 180 at 232.0             312.0     16.8     312.0     392.0 
+  lower to place 226.0          306.0     16.8     306.0     386.0 
   magnet off, lower 6           300.0     16.8     306.0     386.0 
 
 SUMMARY
-  highest actuator point over the cycle: 335.7 (flip 135 at 254.0, limit 350, design 348) -> OK
-  max protrusion past the right face: 84.2 mm (flip  45 at 254.0) -> perimeter bump ~50 mm (estimate, narrow protrusion mid-side, side 260)
+  highest actuator point over the cycle: 330.0 (flip 150 at 232.0, limit 350, design 348) -> OK
+  max protrusion past the right face: 100.5 mm (flip  60 at 232.0) -> perimeter bump ~69 mm (estimate, narrow protrusion mid-side, side 260)
   at the start (stowed): 16.8 mm past the face -> bump ~2 mm
   Grail entering the robot body before it lands: never
-  Grail highest point in the cycle: 412.3 (only the Grail may pass 350, in the castle [G E.2])
-  chamfers 1 mm on the printed parts (convex straight edges between planar faces; refused edges left sharp): MOTOR_BRACKET 32/44, SERVO_MOUNT 29/67, SADDLE_SOCLE 137/152
+  Grail highest point in the cycle: 409.3 (only the Grail may pass 350, in the castle [G E.2])
+  arm (cup + magnet) vs column / fixation / carriage at the place and stowed poses (real distances, < 3 mm listed): 
+  ARM_PRINTED    - SERVO_MG996R         lower to place 226.0: 1.80 mm
+  ARM_PRINTED    - SERVO_MOUNT          lower to place 226.0: 2.00 mm
+  ARM_PRINTED    - BEARING_625          lower to place 226.0: 3.00 mm
+  SCR_M2x12_HORN_x4 - SERVO_MG996R         lower to place 226.0: 1.81 mm
+  SCR_M2x12_HORN_x4 - SERVO_MOUNT          lower to place 226.0: 1.50 mm
+  SHAFT_5        - SERVO_MOUNT          lower to place 226.0: 2.50 mm
+  ARM_PRINTED    - SERVO_MG996R         magnet off, lower 6: 1.80 mm
+  ARM_PRINTED    - SERVO_MOUNT          magnet off, lower 6: 2.00 mm
+  ARM_PRINTED    - BEARING_625          magnet off, lower 6: 3.00 mm
+  SCR_M2x12_HORN_x4 - SERVO_MG996R         magnet off, lower 6: 1.81 mm
+  SCR_M2x12_HORN_x4 - SERVO_MOUNT          magnet off, lower 6: 1.50 mm
+  SHAFT_5        - SERVO_MOUNT          magnet off, lower 6: 2.50 mm
+  chamfers 1 mm on the printed parts (convex straight edges between planar faces; refused edges left sharp): MOTOR_BRACKET 38/57, SERVO_MOUNT 30/71, SADDLE_SOCLE 123/135
   form fits: saddle tongues in the plate's wheel well (y); heel key in the column's back slot; servo mount lip on the X plate's lower edge; motor bracket steps on the X plate tabs' ends; arm on the horn's disc pocket
   roof slot for the arm: x 107.8..169.0, y -20.2..20.2
-  plate top at the place 274.5 vs the arm's lower edge above x 121..143: 278.8..308.8
-  profile top 280 vs the arm's lower edge above the profile (x 118..138): 285.4..312.6
-  Grail nearest point to the axis 58.5, sweeping -87..143 deg; servo reaches 38.4, 625 11.3; body points inside the Grail's swept zone: none
-  flip torque max 2.1 kg.cm at 60 deg (MG996R ~9.4: 4.4x)
+  plate top at the place 230.5 vs the arm's lower edge above x 121..143: 271.2..312.6
+  profile top 237 vs the arm's lower edge above the profile (x 118..138): 280.2..317.8
+  Grail nearest point to the axis 80.4, sweeping -87..134 deg; servo reaches 38.4, 625 11.3; body points inside the Grail's swept zone: none
+  flip torque max 2.6 kg.cm at 65 deg (MG996R ~9.4: 3.6x)
 
 FIT ON BASE_330_JS (real distances to the base's parts from ../../base_330_js/CAD/base_330_js_assembly.FCStd; pick + top poses; < 3 mm listed)
   SADDLE_SOCLE                   - plate                        0.00 mm  sits on the plate (expected)
@@ -72,12 +85,12 @@ FIT ON BASE_330_JS (real distances to the base's parts from ../../base_330_js/CA
   nearest others: SADDLE_SOCLE - hinges_PH 4.0; SADDLE_SOCLE - odo_bracket 4.2; SADDLE_SOCLE - motors_37D_PH 4.5; SADDLE_SOCLE - wheels_JS7444_ENVELOPE 5.0; SADDLE_SOCLE - wheels_JS7444_nominal_PH 7.0; SADDLE_SOCLE - screws_M3 7.2; NUT_M4_FLOOR_x8 - clapets_v7_moduleA 8.0; SCR_M4x16_FLOOR_x8 - clapets_v7_moduleA 8.9
 
 PRINTED PARTS (print/)
-  FLIPPER_ARM: hub Ø24 with the round horn's disc in a Ø21.4 pocket (+ Ø9.8 boss recess), 4 x M2 x 12 from +y into the horn holes at r 7.2 (Ø2.5, T9 coupon); Ø5 x 16 pin pressed 6 deep from +y (pushed in LAST, through the 625); bar 14 x 10; cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud + nut in a pocket; 1 solid(s), 12 g ABS (60 pct)
+  FLIPPER_ARM: hub Ø24 with the round horn's disc in a Ø21.4 pocket (+ Ø9.8 boss recess), 4 x M2 x 12 from +y into the horn holes at r 7.2 (Ø2.5, T9 coupon); Ø5 x 16 pin pressed 6 deep from +y (pushed in LAST, through the 625); bar 14 x 10; cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud + nut in a pocket; 1 solid(s), 14 g ABS (60 pct)
   FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 142.8..150.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 102.0, 152.0), 2 x M3 into the plate's tapped holes (y 23.7, z 117.0, 137.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 x 12 + nuts in pockets; 625 cheek (seat Ø16.2 open on +y, lip on the arm side); 1 solid(s), 30 g ABS (60 pct)
-  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs (steps on the tab ends), 4 x M3x20 at (x 131, z 151), (x 137, z 151), (x 131, z 103), (x 137, z 103) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 15 g ABS (60 pct)
-  FLIPPER_RACK_192: Seif's rack cut to 192 (rack frame, as printed before)
+  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs (steps on the tab ends), 4 x M3x20 at (x 131, z 156), (x 137, z 156), (x 131, z 102), (x 137, z 102) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 13 g ABS (60 pct)
+  FLIPPER_RACK_149: Seif's rack cut to 149 (rack frame, as printed before)
   servo body y -50.4..-6.6; SERVO_MOUNT y -33.0..34.0
 
 PARTS (📦 library · 🇹🇳 local · ✈️ import)
-  Two Trees X carriage: plate + 3 V-wheels + 3 M5x25 + nyloc + spacers + eccentric 📦 · 2020 profile cut to 192 📦 · NEMA17 📦 (40 mm; shorter later) · rack m1 printed (Seif's, fits) cut to 140 · pinion v2 printed (M3 insert K5) · MG996R + round horn 📦 · 625 + Ø5 pin 📦/🇹🇳 · electromagnet Ø30 🇹🇳 · upper wheel screws M5x25 -> M5x35 🇹🇳 · 2 x M3x16 + 2 x M3 self-tap + 4 x M2x6 + M4 nut
-  printed ABS: motor bracket, servo bracket + 625 cheek, arm + magnet cup (~12 g), pinion
+  Two Trees X carriage: plate + 3 V-wheels + 3 M5x25 + nyloc + spacers + eccentric 📦 · 2020 profile cut to 149 📦 · NEMA17 📦 (40 mm; shorter later) · rack m1 printed (Seif's, fits) cut to 96 · pinion v2 printed (M3 insert K5) · MG996R + round horn 📦 · 625 + Ø5 pin 📦/🇹🇳 · electromagnet Ø30 🇹🇳 · upper wheel screws M5x25 -> M5x35 🇹🇳 · 2 x M3x16 + 2 x M3 self-tap + 4 x M2x6 + M4 nut
+  printed ABS: motor bracket, servo bracket + 625 cheek, arm + magnet cup (~14 g), pinion
