@@ -116,4 +116,4 @@ other** (held on both sides). DEPOT = carriage +300 mm, tray turned 180°.
 - Doesn't fit the robot: 520 mm tall (screw 453, rods 478) and the tray at z 385–425 at the DEPOT (> 350 [GR F.3]).
   The motor under the screw has no room in layout-v1 (right wheel + drive motor under the bay). The tray is not a top
   grip, and there is no Grail or magnet in the model.
-→ Rebuilt as **Grail v2 Flipper-S (was B2)** (`../Grail_v2/fc/b2_screw_fc.py`).
+→ Rebuilt as **Grail v2 Flipper-S (was B2)** (`../Grail_v2/fc/flipper_s_fc.py`).
