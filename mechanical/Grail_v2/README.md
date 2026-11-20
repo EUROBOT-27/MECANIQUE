@@ -103,6 +103,14 @@ electronics (Seif's idea, `../concepts/electronics-column.md`).
 - **Motor bracket wraps around the X plate** (its shape follows the plate, which it hit at a small bent tab); its bridges
   moved off the NEMA's screw heads (one was buried under a bridge, behind a tab), tab screws at zc+29 / zc−25, flanges past
   the heads. Real check: 0 overlap with the plate, wheel, NEMA and every screw.
+- **Motor bracket redrawn explicitly (no wall under 2.5 mm)**, Seif: thin faces / edges unprintable. The automatic "wrap" cut
+  against the X plate left slivers (~0.6 mm next to the small bent tab), and the upper bridge was joined by only 2.6 mm.
+  Now: plate zc ±34 (backs both bridges fully), flanges 3 × 6.5 on its top / bottom edges, upper bridge butts on the
+  plate's small bent tab, lower bridge wraps the tab's end with a 2.7 step, **one M3 × 20 per bridge** (centred:
+  counterbore walls ≥ 3; two did not fit). 0 overlap with the plate (0.03 gap at the bolted faces), wheel 0.5, NEMA + screws 0.
+- **Why the travel is 78 now:** lift travel = roof 306 − Grail 80 − 2 × LZ (+ 6 over + 6 release): the 180° turn lifts the
+  Grail by twice the arm's vertical reach, the lift does the rest. LZ 80 → 66 + 12. Getting LZ 58 (122) back needs the
+  column out of the area under the Grail's roof spot (e.g. beside the flip plane in y).
 - The report now checks the arm (cup included) against the column, its fixation and the carriage at the place and stowed
   poses with real distances.
 

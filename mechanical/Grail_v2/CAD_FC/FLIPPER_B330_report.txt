@@ -20,7 +20,7 @@ COLUMN FIXATION: SADDLE
   TOP_L_BRACKET        x 98..118 y -6..14 z 217..240: clear
   SCR_M5x10_TOP_x2     x 104..125 y -0..8 z 223..245: X_PLATE @top (boxes meet, real gap 10.4); V_WHEELS_x3 @top (boxes meet, real gap 6.1); M5x25_SCREWS @top (boxes meet, real gap 13.5)
   TNUT_M5_TOP_x2       x 103..124 y -1..9 z 222..235: X_PLATE @top (boxes meet, real gap 7.9); V_WHEELS_x3 @top (boxes meet, real gap 3.5); M5x25_SCREWS @top (boxes meet, real gap 10.9)
-  SADDLE_SOCLE         x 25..141 y -60..60 z 12..112: X_PLATE @pick (boxes meet, real gap 4.5); V_WHEELS_x3 @pick (boxes meet, real gap 5.1); M5x25_SCREWS @pick (boxes meet, real gap 8.2); M5_SPACERS @pick (boxes meet, real gap 13.0); NEMA17 @pick (boxes meet, real gap 18.0); MOTOR_BRACKET @pick (boxes meet, real gap 5.5); SCR_M3x20_TABS_x4 @pick (boxes meet, real gap 12.9); SERVO_MOUNT @pick (boxes meet, real gap 9.0)
+  SADDLE_SOCLE         x 25..141 y -60..60 z 12..112: X_PLATE @pick (boxes meet, real gap 4.5); V_WHEELS_x3 @pick (boxes meet, real gap 5.1); M5x25_SCREWS @pick (boxes meet, real gap 8.2); M5_SPACERS @pick (boxes meet, real gap 13.0); NEMA17 @pick (boxes meet, real gap 18.0); MOTOR_BRACKET @pick (boxes meet, real gap 4.0); SCR_M3x20_TABS_x2 @pick (boxes meet, real gap 12.1); SERVO_MOUNT @pick (boxes meet, real gap 9.0)
   SCR_M4x16_FLOOR_x8   x 30..124 y -57..57 z 10..30: clear
   NUT_M4_FLOOR_x8      x 29..124 y -57..57 z 8..12: clear
   SCR_M5x12_HEEL_x2    x 106..123 y -0..8 z 92..110: X_PLATE @pick (boxes meet, real gap 10.5); V_WHEELS_x3 @pick (boxes meet, real gap 6.6); M5x25_SCREWS @pick (boxes meet, real gap 13.9)
@@ -69,7 +69,7 @@ SUMMARY
   SCR_M2x12_HORN_x4 - SERVO_MG996R         magnet off, lower 6: 1.81 mm
   SCR_M2x12_HORN_x4 - SERVO_MOUNT          magnet off, lower 6: 1.50 mm
   SHAFT_5        - SERVO_MOUNT          magnet off, lower 6: 2.50 mm
-  chamfers 1 mm on the printed parts (convex straight edges between planar faces; refused edges left sharp): MOTOR_BRACKET 38/57, SERVO_MOUNT 30/71, SADDLE_SOCLE 123/135
+  chamfers 1 mm on the printed parts (convex straight edges between planar faces; refused edges left sharp): MOTOR_BRACKET 38/39, SERVO_MOUNT 30/71, SADDLE_SOCLE 123/135
   form fits: saddle tongues in the plate's wheel well (y); heel key in the column's back slot; servo mount lip on the X plate's lower edge; motor bracket steps on the X plate tabs' ends; arm on the horn's disc pocket
   roof slot for the arm: x 107.8..169.0, y -20.2..20.2
   plate top at the place 230.5 vs the arm's lower edge above x 121..143: 271.2..312.6
@@ -87,7 +87,7 @@ FIT ON BASE_330_JS (real distances to the base's parts from ../../base_330_js/CA
 PRINTED PARTS (print/)
   FLIPPER_ARM: hub Ø24 with the round horn's disc in a Ø21.4 pocket (+ Ø9.8 boss recess), 4 x M2 x 12 from +y into the horn holes at r 7.2 (Ø2.5, T9 coupon); Ø5 x 16 pin pressed 6 deep from +y (pushed in LAST, through the 625); bar 14 x 10; cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud + nut in a pocket; 1 solid(s), 14 g ABS (60 pct)
   FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 142.8..150.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 102.0, 152.0), 2 x M3 into the plate's tapped holes (y 23.7, z 117.0, 137.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 x 12 + nuts in pockets; 625 cheek (seat Ø16.2 open on +y, lip on the arm side); 1 solid(s), 30 g ABS (60 pct)
-  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs (steps on the tab ends), 4 x M3x20 at (x 131, z 156), (x 137, z 156), (x 131, z 102), (x 137, z 102) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 13 g ABS (60 pct)
+  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's bottom tabs (upper butts on the small bent tab, lower wraps the tab's end), 2 x M3x20 at (x 133, z 156), (x 130, z 102) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 14 g ABS (60 pct)
   FLIPPER_RACK_149: Seif's rack cut to 149 (rack frame, as printed before)
   servo body y -50.4..-6.6; SERVO_MOUNT y -33.0..34.0
 

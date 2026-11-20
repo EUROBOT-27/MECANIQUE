@@ -209,20 +209,30 @@ def build(doc, groups):
         sh_.Placement = pin.Placement.multiply(sh_.Placement)
     lift["INSERT_M3_PINION"] = ins
     lift["SCR_M3x6_SET_PINION"] = sscr
-    # ---------------- MOTOR_BRACKET (printed): plate in x-z between the motor face and the eccentric wheel (4.5 thick,
-    # 0.5 off the wheel), NEMA17 pattern 31 (M3) + Ø23 pilot; two bridges to the X plate's back tabs (above / below the
-    # eccentric wheel, |z - zc| >= 14), 2 x M3 each into the tabs (drill Ø2.5 + tap M3: the tabs have no holes)
+    # ---------------- MOTOR_BRACKET (printed), drawn explicitly so no wall is under 2.5 mm (Seif: thin bits unprintable):
+    #   plate (4.5 thick) between the motor face and the eccentric wheel (0.5 off it), z zc-34..zc+34 so it backs both
+    #   bridges fully; NEMA17 4 x M3 + Ø23 pilot; flanges (3 x 6.5) on its top and bottom edges, away from the wheel;
+    #   two bridges to the X plate's bottom tabs, one M3 each (drill Ø2.5 + tap M3 in the tab). Form fit: the upper bridge
+    #   butts on the plate's small bent tab, the lower one wraps the tab's end with a 2.7 step (0.3 clearance).
     xback = G.XC + 12.1                                  # X plate main sheet, back face
     by0, by1 = face_y, face_y + G.BRACKET_T
-    tab_y = G.YC + 219.9 - P_Z                           # tabs: y tab_y .. tab_y + 2.7, x 105.4 .. 121.9
-    tab_x0 = G.XC + 242.3 - P_Y
+    tab_y = G.YC + 219.9 - P_Z                           # bottom tabs: y tab_y .. tab_y + 2.7
+    xp = lift["X_PLATE"]
+    def _bb_in(x0, x1, y0, y1, z0, z1):
+        c_ = xp.common(C.box(x0, x1, y0, y1, z0, z1))
+        return c_.BoundBox if c_.Volume > 0.01 else None
+    low_tab = _bb_in(G.XC - 20, xback, tab_y - 0.1, tab_y + 2.8, zc - 36, zc - 12)
+    small_tab = _bb_in(G.XC - 12, G.XC, tab_y - 12.0, tab_y - 0.5, zc + 12, zc + 36)
+    up_x0 = (small_tab.XMax if small_tab else G.XC - 3.5) + 0.3
+    low_x0 = low_tab.XMin if low_tab else G.XC - 4.6
     info_wheel_x0 = C.bb(wheels[0]).XMin
-    mb = C.box(pin_x - 21.15, xback - 0.6, by0, by1, zc - 34.0, pin_z + 21.6)
-    for zz0, zz1 in ((zc + 23.0, zc + 34.0), (zc - 34.0, zc - 16.0)):     # bridges clear the NEMA screw heads
-        mb = mb.fuse(C.box(tab_x0, xback - 0.6, by1 - 0.5, tab_y, zz0, zz1))
-        mb = mb.fuse(C.box(tab_x0 - 2.5, tab_x0, by1 - 0.5, tab_y + 2.7, zz0, zz1))          # step on the tab's end (form fit)
-    for fz0, fz1 in ((pin_z + 18.6, pin_z + 21.6), (pin_z - 21.6, pin_z - 18.6)):            # stiffening flanges (+y side), past the heads
-        mb = mb.fuse(C.box(pin_x - 21.15, G.XC - 8.0, by1 - 0.5, by1 + 6.0, fz0, fz1))
+    x_end = xback - 0.6
+    mb = C.box(pin_x - 21.15, x_end, by0, by1, zc - 34.0, zc + 34.0)
+    mb = mb.fuse(C.box(up_x0, x_end, by1 - 0.5, tab_y - 0.05, zc + 23.0, zc + 34.0))            # upper bridge
+    mb = mb.fuse(C.box(low_x0, x_end, by1 - 0.5, tab_y - 0.05, zc - 34.0, zc - 16.0))           # lower bridge
+    mb = mb.fuse(C.box(low_x0 - 3.0, low_x0 - 0.3, by1 - 0.5, tab_y + 3.0, zc - 34.0, zc - 16.0))  # step round the tab's end
+    for fz0, fz1 in ((zc + 31.0, zc + 34.0), (zc - 34.0, zc - 31.0)):                            # edge flanges (+y side)
+        mb = mb.fuse(C.box(pin_x - 21.15, low_x0 - 3.0, by1 - 0.5, by1 + 6.0, fz0, fz1))
     mb = mb.removeSplitter()
     mb = mb.cut(C.cyl(11.5, 20, (pin_x, by0 - 1, pin_z), (0, 1, 0)))                         # pilot Ø23
     for dx in (-15.5, 15.5):
@@ -232,16 +242,11 @@ def build(doc, groups):
             if hx + 2.75 > info_wheel_x0 - 1 and abs(hz - zc) < 14:                               # head next to the wheel:
                 mb = mb.cut(C.cyl(2.9, 1.9, (hx, by1 - 1.8, hz), (0, 1, 0)))                     # button head, counterbored
     tab_screws = []
-    for zz in (zc + 29.0, zc - 25.0):                    # on the tabs, inside the bridges
-        for xx in (G.XC + 3.0, G.XC + 9.0):
-            mb = mb.cut(C.cyl(C.FIT["m3"] / 2, 40, (xx, by0 - 1, zz), (0, 1, 0)))
-            mb = mb.cut(C.cyl(3.35, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                       # head counterbore
-            tab_screws.append((xx, zz))
-    try:
-        xpl = lift["X_PLATE"].makeOffsetShape(0.3, 0.01, join=2)
-    except Exception:
-        xpl = lift["X_PLATE"]
-    mb = mb.cut(xpl)                                     # wraps around the X plate (its tabs) instead of passing through
+    for zz, x0_ in ((zc + 28.5, up_x0), (zc - 25.0, low_x0)):   # one M3 per bridge, centred (counterbore walls >= 3)
+        xx = 0.5 * (x0_ + x_end)
+        mb = mb.cut(C.cyl(C.FIT["m3"] / 2, 40, (xx, by0 - 1, zz), (0, 1, 0)))
+        mb = mb.cut(C.cyl(3.35, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                           # head counterbore
+        tab_screws.append((xx, zz))
     mb, ch_done, ch_tried = C.chamfer_outer(mb.removeSplitter())
     lift["MOTOR_BRACKET"] = mb
     G.CHAMFERS = {"MOTOR_BRACKET": (ch_done, ch_tried)}
@@ -252,7 +257,7 @@ def build(doc, groups):
             cb_ = hx + 2.75 > info_wheel_x0 - 1 and abs(hz - zc) < 14
             scr.append(C.screw(3, 8, (hx, by1 - (1.8 if cb_ else 0.0), hz), (0, -1, 0), button=True))
     lift["SCR_M3x8_NEMA_x4"] = Part.makeCompound(scr)
-    lift["SCR_M3x20_TABS_x4"] = Part.makeCompound([C.screw(3, 20, (xx, by0 + 3.4, zz), (0, 1, 0)) for xx, zz in tab_screws])
+    lift["SCR_M3x20_TABS_x2"] = Part.makeCompound([C.screw(3, 20, (xx, by0 + 3.4, zz), (0, 1, 0)) for xx, zz in tab_screws])
     # ---------------- flip head (arm + servo + cheek) + its base on the X plate's front face = one printed SERVO_MOUNT
     arm, head, hinfo = C.flip_head(G.PX, G.Z_PICK)
     xf = plate_bb.XMax                                     # X plate front face
@@ -815,7 +820,7 @@ def main():
            hi["m3"][0][0], ", ".join("%.1f" % z for _, z in hi["m3"]), hi["plate_y"][0], hi["plate_y"][1], hi["ear_y"][0],
            hi["ear_y"][1], len(lift["SERVO_MOUNT"].Solids), C.mass_of(lift["SERVO_MOUNT"]) * 1000),
         "  FLIPPER_MOTOR_BRACKET: plate %.1f thick at y %.1f..%.1f (motor face side; %.1f off the eccentric wheel), "
-        "NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs (steps on the tab ends), 4 x M3x20 at %s (DRILL Ø2.5 + TAP M3 in the "
+        "NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's bottom tabs (upper butts on the small bent tab, lower wraps the tab's end), 2 x M3x20 at %s (DRILL Ø2.5 + TAP M3 in the "
         "tabs); %d solid(s), %.0f g ABS (60 pct)" % (G.BRACKET_T, info["bracket_y"][0], info["bracket_y"][1],
                                                     info["ecc_ymin"] - info["bracket_y"][1],
                                                     ", ".join("(x %.0f, z %.0f)" % t_ for t_ in info["tab_screws"]),
