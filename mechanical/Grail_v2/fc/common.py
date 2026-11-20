@@ -152,6 +152,7 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
     armp = hub.fuse(collar).fuse(barp).fuse(cup).removeSplitter()
     armp = armp.cut(cyl(MAG_SEAT / 2, cup_h + 0.1, (X_PICK, 0, zc0 - 0.1), (0, 0, 1)))       # magnet seat
     armp = armp.cut(cyl(FIT["m4"] / 2, 10, (X_PICK, 0, zc0 + cup_h - 1), (0, 0, 1)))           # M4 stud hole
+    armp = armp.cut(cyl(1.9, 10, (X_PICK - 9.5, 0, zc0 + cup_h - 1), (0, 0, 1)))                # magnet wires (Ø3.8)
     nw, nl, nt = FIT["nut_m4"]
     armp = armp.cut(box(X_PICK - nw / 2, X_PICK + nw / 2, -nl / 2 - 6, nl / 2, ztop - nt - 0.6, ztop - 0.6))  # M4 nut pocket, open -y
     armp = armp.cut(cyl(FIT["horn_pocket"] / 2, y_dt - y_db + 1.0, (px, y_db - 1.0, pz), (0, 1, 0)))   # horn disc pocket

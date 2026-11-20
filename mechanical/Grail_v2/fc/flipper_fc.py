@@ -244,6 +244,8 @@ def build(doc, groups):
     for (y, z) in m3:
         base = base.cut(C.cyl(C.FIT["m3"] / 2, 40, (xf - 1, y, z), (1, 0, 0))).cut(C.cyl(3.35, 4, (xb1 - 3.5, y, z), (1, 0, 0)))
     base = base.cut(C.cyl(5.5, 6.5, (xf - 0.1, ecc[0], ecc[1]), (1, 0, 0)))
+    for zz in (zc + 24.0, zc + 31.0):                    # zip-tie anchor: servo + magnet cables up the base's front face
+        base = base.cut(C.box(xf - 1, xb1 + 1, G.YC + 2.0, G.YC + 6.0, zz - 1.0, zz + 1.0))
     head["SERVO_MOUNT"] = head["SERVO_MOUNT"].fuse(base).removeSplitter()
     # the 2 upper wheel nylocs move onto the base's front (screws M5x25 -> M5x35)
     nuts = sorted(lift["M5_NYLOC"].Solids, key=lambda s: s.BoundBox.Center.y)
@@ -361,6 +363,15 @@ class SB:
     HEEL = (106.0, 118.0, -5.0, 13.0)     # heel on the column back face, within its width (the carriage tabs pass beside it)
     HEEL_Z1 = 112.0
     HEEL_SCREWS_Z = (96.0, 106.0)         # 2 x M5 into T-nuts in the back slot (free z 88..119 below the rack)
+    # lightening, keeping the stiffness: pockets open at the BOTTOM inside the legs (3 mm walls round the screw channels,
+    # 7 mm cap under the deck) and a grid under the deck over the drive motor (4 mm top skin, 3 mm ribs). The 3 mm crown
+    # over the wheel, the pad, the heel and the ribs are not touched. (x0, x1, y0, y1, z0, z1)
+    POCKETS = ((95.0, 113.0, -57.0, -50.0, 16.4, 60.0), (95.0, 113.0, 50.0, 57.0, 16.4, 60.0),          # legs beside the well
+               (40.0, 59.0, -39.0, -27.0, 16.4, 60.0), (40.0, 51.0, 27.0, 37.0, 16.4, 60.0),           # legs beside the motor
+               (28.0, 48.0, -19.0, -3.0, 66.9, 81.0), (28.0, 48.0, 3.0, 19.0, 66.9, 81.0),             # deck over the motor
+               (51.0, 71.0, -19.0, -3.0, 66.9, 81.0), (51.0, 71.0, 3.0, 19.0, 66.9, 81.0),
+               (28.0, 48.0, -52.0, -45.0, 66.9, 81.0), (51.0, 71.0, -52.0, -45.0, 66.9, 81.0),
+               (28.0, 48.0, 45.0, 52.0, 66.9, 81.0), (51.0, 63.0, 45.0, 52.0, 66.9, 81.0))
     RIBS = (((80.0, 141.0), (-60.0, -54.0), 7.0),   # back edge (under the NEMA, bottom ~110)
             ((80.0, 141.0), (54.0, 60.0), 7.0))     # front edge
 
@@ -397,8 +408,11 @@ def saddle_socle():
     for (x, y) in SB.SCREWS:
         body = body.cut(C.cyl(C.FIT["m4"] / 2, SB.FOOT_T + 2, (x, y, SB.Z_PLATE - 1), (0, 0, 1)))
         body = body.cut(C.cyl(4.5, zd + 20 - (SB.Z_PLATE + SB.FOOT_T), (x, y, SB.Z_PLATE + SB.FOOT_T), (0, 0, 1)))
+    mass_full = C.mass_of(body)
+    for (x0, x1, y0, y1, z0, z1) in SB.POCKETS:
+        body = body.cut(C.box(x0, x1, y0, y1, z0, z1))
     body = body.removeSplitter()
-    info = dict(deck_top=zd, crown=C.WHEEL["z"] + r, mass=C.mass_of(body), solids=len(body.Solids),
+    info = dict(deck_top=zd, crown=C.WHEEL["z"] + r, mass=C.mass_of(body), mass_full=mass_full, solids=len(body.Solids),
                 deck_under=C.WHEEL["z"] + r, wheel_gap=SB.CLR, drive_gap=SB.MOTOR_CUT[3] - 62.5)
     return body, info
 
@@ -471,12 +485,13 @@ def main():
                 xs += [b.XMin, min(b.XMax, C.FACE)]
                 ys += [b.YMin, b.YMax]
     slot = (min(xs) - 2, C.FACE + 1, min(ys) - 2, max(ys) + 2) if xs else None
-    for n, s in C.robot_context(slot).items():
+    WITH_CTX = bool(os.environ.get("FLIPPER_CONTEXT"))
+    for n, s in (C.robot_context(slot).items() if (WITH_CTX or C.BASE != "b330") else ()):
         C.add(doc, n, s, "6_ROBOT_CONTEXT", groups)
     base_ctx = {}
     if C.BASE == "b330":
-        base_ctx = load_b330_context()
-        for n, s in base_ctx.items():
+        base_ctx = load_b330_context()                 # always loaded for the fit checks
+        for n, s in (base_ctx.items() if WITH_CTX else ()):
             C.add(doc, "B330_" + n, s, "7_BASE_330_JS_reference", groups)
     else:
         drive = C.box(32, 100, -18.5, 18.5, 18.5, 55.5)
@@ -517,11 +532,11 @@ def main():
             env.append("  %-34s %s" % (n[:34], "; ".join(out)))
 
     # ---- fixation: what it is + coarse checks (bounding boxes vs the wheel, drive motor, carriage at pick / top)
-    fix_lines = {"saddle": ["  SADDLE_SOCLE (printed ABS, one part, %.0f g at 60 pct): deck x %.0f..%.0f over the drive wheel (tunnel R%.0f around its "
+    fix_lines = {"saddle": ["  SADDLE_SOCLE (printed ABS, one part, %.0f g at 60 pct, %.0f g before the %d lightening pockets): deck x %.0f..%.0f over the drive wheel (tunnel R%.0f around its "
                             "worst-case envelope Ø80: crown z %.0f, deck top %.0f), the drive motor (deck underside %.0f, motor top 62.5) and "
                             "the odometry module (underside %.0f); pad under the column to %.0f; heel on the column's back face (x %.0f..%.0f, "
                             "to z %.0f) with 2 x M5 into T-nuts in the back slot (z %s)"
-                            % (G.SOCLE_INFO.get("mass", 0) * 1000, SB.X0, SB.X1, C.WHEEL["r"] + SB.CLR, G.SOCLE_INFO.get("crown", 0),
+                            % (G.SOCLE_INFO.get("mass", 0) * 1000, G.SOCLE_INFO.get("mass_full", 0) * 1000, len(SB.POCKETS), SB.X0, SB.X1, C.WHEEL["r"] + SB.CLR, G.SOCLE_INFO.get("crown", 0),
                                G.SOCLE_INFO.get("deck_top", 0), SB.DECK_Z0, SB.ODO_CUT[4], G.PROF_Z0, SB.HEEL[0], SB.HEEL[1], SB.HEEL_Z1,
                                ", ".join("%.0f" % z for z in SB.HEEL_SCREWS_Z)),
                             "  legs on the free plate zones (Seif's sketch): %s" % "; ".join("x %.0f..%.0f y %.0f..%.0f" % (a[0], a[1], b[0], b[1]) for a, b in SB.LEGS),
@@ -715,7 +730,7 @@ def main():
         ""]
     if App.GuiUp:
         colour(doc)
-    C.save(doc, "FLIPPER_B330" if C.BASE == "b330" else "FLIPPER_" + G.FIX.upper(), r)
+    C.save(doc, ("FLIPPER_B330_IN_BASE" if WITH_CTX else "FLIPPER_B330") if C.BASE == "b330" else "FLIPPER_" + G.FIX.upper(), r)
 
 
 B330_PARTS = ("plate", "wheels_JS7444_nominal_PH", "wheels_JS7444_ENVELOPE", "motors_37D_PH", "hinges_PH", "odo_bracket",

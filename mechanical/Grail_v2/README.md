@@ -1,8 +1,9 @@
 # Grail v2: top grip + 180° flip onto the roof (Flipper and Flipper-S)
 
 > **Where we are (2026-11-20, Seif + Claude)**
-> - **Now placed on Ayoub's `base_330_js`** (Seif: "take base 330 js as reference"): `CAD_FC/FLIPPER_B330.FCStd`
->   (colours, everything visible, numbered groups, the real base parts loaded as reference) + `FLIPPER_B330_report.txt`.
+> - **Now placed on Ayoub's `base_330_js`** (Seif: "take base 330 js as reference"): `CAD_FC/FLIPPER_B330.FCStd` =
+>   **the Flipper alone** (colours, everything visible, numbered groups) + `FLIPPER_B330_report.txt` (fit checked against
+>   the real base parts). With the base around it: `set FLIPPER_CONTEXT=1` → `FLIPPER_B330_IN_BASE.FCStd`.
 >   The column stands on a printed **saddle** over the drive wheel + motor (section "On base_330_js").
 > - **Two versions (D-029): Flipper (rack lift, was "B") and Flipper-S (lead-screw lift, was "B2").** Same flip.
 >   Electromagnet Ø30 first. **Flipper is the priority: taken all the way to printing.**
@@ -61,7 +62,7 @@ assembly (`../base_330_js/CAD/base_330_js_assembly.FCStd`, same frame: X = wheel
 table). Right face = plate edge **x 168**: flip axis x 170.5, Grail picked at x 178–248, placed at x 93–163, y ±35,
 between the front clapets and the future **back module** (Seif: it goes in the back-right corner).
 
-**`FLIPPER_SADDLE_SOCLE`** (printed ABS, one part, ~208 g at 60 %, `print/`): a deck over the drive wheel, the drive motor
+**`FLIPPER_SADDLE_SOCLE`** (printed ABS, one part, **167 g** at 60 % after 12 lightening pockets, was 198, `print/`): a deck over the drive wheel, the drive motor
 and the odometry module, on **4 legs on the free plate zones of Seif's sketch**:
 | | |
 |---|---|
@@ -69,11 +70,17 @@ and the odometry module, on **4 legs on the free plate zones of Seif's sketch**:
 | Deck | x 25–141, y ±60 (±55 where x < 70: clapets rails at y 58), underside z 67 (drive motor top 62.5) and z 70 over the odometry module (bracket 61.2, screws 64.2), **tunnel R45 around the worst-case wheel Ø80** (5 mm): crown 82, deck top 85 |
 | Column | pad to z 88 + a **heel on its back face** (x 106–118, to z 112) with **2 × M5 into T-nuts** in the back slot's free bottom (z 96, 106); top: 2020 cross-member inward (z 260–280) + corner bracket in the back slot's top end |
 | Ribs | back and front edges (7 tall, under the NEMA / outside the carriage) |
+| Lightening | pockets **open at the bottom inside the 4 legs** (3 mm walls round the screw channels, 7 mm cap under the deck) + a grid **under the deck over the drive motor** (4 mm top skin, 3 mm ribs). The crown over the wheel, the pad, the heel and the ribs are untouched |
 | Floor | **8 × M4 × 16** from the top through Ø9 channels, nut under the plate. **Plate holes not added yet** (Seif confirms first): Ø4.4 at (88, −53.5), (120, −53.5), (88, 53.5), (120, 53.5), (33, −33), (66, −33), (33, 32), (58, 32) |
 | Clearances (real distances) | clapets rails 3.0, hinge 4.0, odometry bracket 4.2, drive motor 4.5, worst-case wheel 5.0 (nominal 7.0), X plate at the pick 4.5, carriage wheels 5.1 |
 
 Same flip and cycle as before: highest point 335.7, the Grail never enters the body, nothing in its swept zone; start
 16.8 mm past the face (perimeter 1192 + ~2), 84 mm out at flip 45° (+~50, budget 1400).
+**Polish (2026-11-20):** magnet wire hole Ø3.8 through the cup's top (beside the M4 stud); zip-tie anchor (2 slots) on
+the servo mount's base for the servo + magnet cables.
+**Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
+electronics (Seif's idea, `../concepts/electronics-column.md`).
+
 **For the back module:** the Flipper's NEMA rides at x 89–131, y −70…−11, z 110–272 (column x 118–138, y −6…14) and its
 roof spot is x 93–163, y ±35.
 
@@ -224,5 +231,6 @@ Never edit the `.FCStd` by hand: change the generator and re-run it. Colours are
 4. Bottom endstop / homing; magnet cable loop around the flip axis; sprung magnet mount (CDC D4).
 5. Back-drive of the rack (carriage drops when the NEMA is off): accept, or a brake / self-locking choice.
 6. Shorter NEMA once Seif knows what we have (motor length + pinion `HUB_L`).
-7. Clash check + motion check before printing (only when Seif asks).
+7. **Next (Seif, 2026-11-20): Seif validates the polished model → static collision check → motion check → GIF render
+   (with colours).**
 8. STEP / STL / DXF print files + a short assembly sheet.

@@ -12,7 +12,7 @@ CARRIAGE / DRIVE
   pinion: gear 5 wide must pass the slot lip (6.35): gear tip x 121.20 vs the back face x 118.0 (gear dips 3.20 into the slot)
 
 COLUMN FIXATION: SADDLE
-  SADDLE_SOCLE (printed ABS, one part, 198 g at 60 pct): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 88; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
+  SADDLE_SOCLE (printed ABS, one part, 167 g at 60 pct, 198 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 88; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
   legs on the free plate zones (Seif's sketch): x 80..128 y -60..-47; x 80..128 y 47..60; x 25..74 y -42..-24; x 25..66 y 24..40
   PLATE HOLES TO ADD (not in the plate yet, Seif will confirm): 8 x Ø4.4 for M4 at (88, -53.5), (120, -53.5), (88, 53.5), (120, 53.5), (33, -33.0), (66, -33.0), (33, 32.0), (58, 32.0); M4 x 16 from the top through a Ø9 channel + nut under the plate
   top (all variants): 2020 cross-member along x, x 40..118, z 260..280, corner bracket in the back slot's top end (z 260..280) -> the arm's lower edge above x 98..138: 285.4..339.9
