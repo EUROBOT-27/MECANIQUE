@@ -44,8 +44,8 @@ Two Trees Bluer V2 **X-axis carriage** on the real **2020**, Seif's **printed ra
 - Placement (robot frame): profile centre x 110, y 4, cut to z 78–275; plate faces the right face (+x); the servo
   bracket on the plate's front face reaches the flip axis x 152.5. **LZ 58:** pivot 138 → 254 (flip) → 248 (place)
   → 242 (stowed), 122 mm of travel; plate centre 116 → 232 (wheels on the profile: 114.9–238 allowed).
-- **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20). Its body sits at y −66…−29: **14 mm past the Grail bay**
-  (y −52) toward the back module. A shorter NEMA (once Seif knows what we have) is a quick fix: motor length + pinion hub.
+- **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20), face **5 mm past the eccentric wheel** (Seif: more
+  clearance). Its body sits at y −70…−33: **18 mm past the Grail bay** (y −52) toward the back module. A shorter NEMA (once Seif knows what we have) is a quick fix: motor length + pinion hub.
 
 Report `CAD_FC/FLIPPER_report.txt`:
 - highest actuator point 335.7; the Grail never enters the body; start 14.5 mm past the face; 84 mm out at flip 45°
@@ -60,7 +60,9 @@ Report `CAD_FC/FLIPPER_report.txt`:
 |---|---|---|
 | `FLIPPER_ARM` (12 g) | hub Ø24 × 10 + bar 14 × 10 + magnet cup (seat Ø30.3, 18 deep, magnet face 4 mm proud), one solid | round horn on the hub's −y face (4 × M2 × 6 in the horn holes at r 7.2); Ø5 × 16 steel pin pressed 8 deep from +y into the 625; magnet M4 stud + nut |
 | `FLIPPER_SERVO_MOUNT` (30 g) | base 8 thick on the X plate's front + servo plate under the ears (body cut-out) + 625 cheek joined under the pivot, one solid | **2 × M5×35** replacing the upper wheel screws (nylocs move to the base's front), **2 × M3** into the plate's 2 tapped holes (Ø2.5, 20 apart), recess for the eccentric's nyloc; servo: 2 × M3 self-tap through the ears |
-| `FLIPPER_PINION` | below | M3 insert K5 + set screw on the shaft flat |
+| `FLIPPER_MOTOR_BRACKET` (15 g) | plate 4.5 thick between the motor face and the eccentric wheel (0.5 mm off it), NEMA17 4 × M3 + Ø23 pilot, 2 bridges to the X plate's back tabs (above / below the wheel) | 4 × M3×25 into the tabs: **drill Ø2.5 + tap M3** (the tabs have no holes) |
+| `FLIPPER_RACK_197` | Seif's rack (`parts/cremaillere.STL`) cut to the profile length | sits with its V back on the slot faces (nose 1.6 mm in, computed from the real sections) |
+| `FLIPPER_PINION` | below (41.5 long) | M3 insert K5 + set screw on the shaft flat |
 
 Checks (report): no body part enters the zone the Grail sweeps (radius ≥ 58.5 from the axis, −87…143°); the servo body
 stays in the bay (y −50.4).
@@ -69,9 +71,9 @@ stays in the bay (y −50.4).
 Redo of Baha's `parts/el_pignon.STEP`. Baha's: m1 20T, teeth 5 wide at the end of a Ø10.5 × 29 hub, Ø5.1 bore, radial
 hole for an **M3 insert K 5.0** (Ø4.5 hole + Ø5.2 cone = D-025 read backwards), 2 solids. The new one:
 - **involute teeth 10 wide** (rack 10.6), one solid, **D bore** Ø5.15 / flat 4.6
-- **hub Ø16 × 27.5** (long: the motor sits past the wheel); insert 8 mm from the motor end with **6 mm of wall** for the
+- **hub Ø16 × 31.5** (long: the motor sits 5 mm past the wheel); insert 8 mm from the motor end with **6 mm of wall** for the
   4 mm insert (el pignon had 2.7 mm, so the insert reached the bore)
-- stiffness at 10 N on the teeth: steel shaft bends ~0.02 mm, hub ~0.3 MPa. Gear centre 33 mm from the motor face
+- stiffness at 10 N on the teeth: steel shaft bends ~0.02 mm, hub ~0.3 MPa. Gear centre 37 mm from the motor face
 
 ## Flipper-S: lead-screw lift (`fc/flipper_s_fc.py`, was B2; on hold, Flipper first)
 The Flipper flip on the hardware of Baha's "essai vis ecrou corrigé" (`../Grail_v1/essai vise ecrou corrigé/`).
@@ -136,9 +138,8 @@ Run (from this folder):
 Never edit the `.FCStd` by hand: change the generator and re-run it. Colours are only set when run from the FreeCAD GUI.
 
 ## To printing (Flipper)
-1. **Printed parts drawn for real:** ~~arm + magnet cup~~, ~~servo mount + 625 cheek~~ (done 2026-11-20); **motor
-   bracket** (around the profile, notch for the eccentric wheel, bolted to the X plate's back tabs), rack cut to 197 mm.
-   Fasteners from `../parts-library.md`, inserts per D-025, ABS fits from the clapets v7 coupons.
+1. ~~Printed parts drawn for real~~ (2026-11-20): arm + magnet cup, servo mount + 625 cheek, motor bracket, rack 197.
+   Still to do on them: ABS fits from the clapets v7 coupons (holes, 625 seat, servo cut-out), print orientation.
 2. ~~X plate holes~~ (sliced: Ø7.5 eccentric, 2 × Ø5.4 upper wheels, 2 × Ø2.5 tapped M3 20 apart; the back tabs have
    no holes: drill for the motor bracket).
 3. Roof slot (x ~90–151, y ±20) and how the Grail sits on both sides of it; check against layout-v1's roof.

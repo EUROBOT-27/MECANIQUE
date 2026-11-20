@@ -47,12 +47,13 @@ class G:
     # ---- rack: only its V nose enters the back-face slot, teeth towards -x. Real profile slot (measured, section at
     # mid-length): 8.9 wide at the face, 45 deg down to a 6.4 lip at 1.4 deep, cavity behind. Rack V back: 5.7 (nose)
     # -> 10.59 over 2.62 (~43 deg). The flanks meet with the nose 1.7 mm below the face (Seif: "not really inside").
-    RACK_SEAT = 1.7
+    RACK_SEAT = None                          # computed: rack pushed in until its V back touches the slot faces
     # ---- motor (standard NEMA17 40 mm for now) + pinion
-    MOTOR_FACE_GAP = 1.0                      # motor face this far past the eccentric wheel (in -y)
+    MOTOR_FACE_GAP = 5.0                      # motor face this far past the eccentric wheel (in -y): bracket 4.5 + 0.5 clear
     PIN_DZ = 10.0                             # pinion centre above the plate centre
     PIN_BOSS_GAP = 0.5                        # flipper_pinion_fc: hub face 0.5 from the motor face
-    PIN_GEAR_OFF = 0.5 + 27.5 + 5.0           # gear centre from the motor face (flipper_pinion_fc: BOSS_GAP + HUB_L + FACE_W/2)
+    PIN_GEAR_OFF = None                       # computed from print/FLIPPER_PINION.step (BOSS_GAP + length - FACE_W/2)
+    BRACKET_T = 4.5                           # motor bracket plate (between the motor face and the eccentric wheel)
     BASE_T = 8.0                              # SERVO_MOUNT base on the X plate's front face
 
 
@@ -113,17 +114,40 @@ def build(doc, groups):
     prof = load("profile_2020_X_350.step", Mp)
     cut = C.box(G.XC - 15, G.XC + 15, G.YC - 15, G.YC + 15, G.PROF_Z0, G.PROF_Z1)
     fixed["PROFILE_2020"] = prof.common(cut)
-    # rack (local: x = length 0..310, y = 0 (V tip) .. 5 (tooth tips), z = width 0..10.59)
-    rack = mesh_solid(os.path.join(PARTS, "cremaillere.STL"))
+    # rack (local: x = length 0..310, y = 0 (V nose) .. 5 (tooth tips), z = width 0..10.59). Seat = push it into the
+    # back-face slot until its V back touches the slot faces (2D sections of the real profile and the rack).
+    rack_l = mesh_solid(os.path.join(PARTS, "cremaillere.STL"))
+    zmid = (G.PROF_Z0 + G.PROF_Z1) / 2
+    psec = Part.makeFace(fixed["PROFILE_2020"].slice(Vector(0, 0, 1), zmid), "Part::FaceMakerBullseye")
+    rsec_w = rack_l.slice(Vector(1, 0, 0), 155.0)
+    rpts = [(v.Point.y, v.Point.z) for v in max(rsec_w, key=lambda w: w.BoundBox.DiagonalLength).OrderedVertexes]
+
+    def rack_face(seat):
+        pts = [Vector(G.XC - 10 + seat - y, G.YC - 10.59 / 2 + z, zmid) for y, z in rpts]
+        return Part.Face(Part.makePolygon(pts + [pts[0]]))
+
+    def overlap(seat):
+        try:
+            return psec.common(rack_face(seat)).Area
+        except Exception:
+            return 0.0
+    lo, hi = 0.0, 3.0
+    for _ in range(30):
+        mid_ = (lo + hi) / 2
+        if overlap(mid_) > 0.005:
+            hi = mid_
+        else:
+            lo = mid_
+    G.RACK_SEAT = lo
     rm = App.Matrix(0, -1, 0, G.XC - 10 + G.RACK_SEAT,
                     0, 0, 1, G.YC - 10.59 / 2,
                     1, 0, 0, G.PROF_Z0,
                     0, 0, 0, 1)
-    rack = rack.transformGeometry(rm) if False else rack
-    rack = rack.copy()
+    rack = rack_l.copy()
     rack.transformShape(rm)
     rack = rack.common(C.box(G.XC - 30, G.XC, G.YC - 10, G.YC + 10, G.PROF_Z0, G.PROF_Z1))
     fixed["RACK_m1_printed"] = rack
+    rack_print = rack_l.common(C.box(0, G.PROF_Z1 - G.PROF_Z0, -1, 6, -1, 12))      # print file: cut to the profile
     # ---------------- carriage (real X carriage)
     for nm, fn in (("X_PLATE", "x_carriage_plate.step"), ("V_WHEELS_x3", "v_wheels_X.step"),
                    ("M5x25_SCREWS", "m5x25_wheel_screws_X.step"), ("M5_NYLOC", "m5_nyloc_nuts_X.step"),
@@ -140,6 +164,9 @@ def build(doc, groups):
     pin_x = pitch_x - 10.0                                # pinion pitch radius 10
     pin_z = zc + G.PIN_DZ
     face_y = ecc_wheel_ymin - G.MOTOR_FACE_GAP
+    pin = Part.read(os.path.join(PRINT, "FLIPPER_PINION.step"))
+    pin_len = pin.BoundBox.ZLength
+    G.PIN_GEAR_OFF = G.PIN_BOSS_GAP + pin_len - 5.0
     gear_y = face_y + G.PIN_GEAR_OFF
     nm_s, d, fcen = nema_frame()
     rot = App.Rotation(d, Vector(0, 1, 0))
@@ -147,18 +174,31 @@ def build(doc, groups):
     motor = nm_s.copy()
     motor.Placement = pl.multiply(motor.Placement)
     lift["NEMA17"] = motor
-    pin = Part.read(os.path.join(PRINT, "FLIPPER_PINION.step"))
     pin = pin.copy()
     # pinion local z (motor-side face at 0) -> +y; place hub face at face_y + boss gap
     pin.Placement = App.Placement(Vector(pin_x, face_y + G.PIN_BOSS_GAP, pin_z), App.Rotation(Vector(1, 0, 0), -90))
     lift["PINION_v2"] = pin
-    # motor bracket (printed): plate in x-z at y face_y-?.. motor flange side, notch for the eccentric wheel,
-    # joined to the X plate's back face by a flange
-    mb = C.box(pin_x - 21.15, G.XC + 12.1, face_y, face_y + 4, pin_z - 21.15, pin_z + 21.15)
-    mb = mb.cut(C.cyl(11.5, 10, (pin_x, face_y - 1, pin_z), (0, 1, 0)))
-    wb = C.bb(wheels[0])
-    mb = mb.cut(C.box(wb.XMin - 1, wb.XMax + 1, face_y - 1, face_y + 5, wb.ZMin - 1, wb.ZMax + 1))
-    mb = mb.cut(C.box(G.XC - 10.5, G.XC + 10.5, face_y - 1, face_y + 5, G.PROF_Z0 - 500, G.PROF_Z1 + 500))   # profile
+    # ---------------- MOTOR_BRACKET (printed): plate in x-z between the motor face and the eccentric wheel (4.5 thick,
+    # 0.5 off the wheel), NEMA17 pattern 31 (M3) + Ø23 pilot; two bridges to the X plate's back tabs (above / below the
+    # eccentric wheel, |z - zc| >= 14), 2 x M3 each into the tabs (drill Ø2.5 + tap M3: the tabs have no holes)
+    xback = G.XC + 12.1                                  # X plate main sheet, back face
+    by0, by1 = face_y, face_y + G.BRACKET_T
+    tab_y = G.YC + 219.9 - P_Z                           # tabs: y tab_y .. tab_y + 2.7, x 105.4 .. 121.9
+    tab_x0 = G.XC + 242.3 - P_Y
+    mb = C.box(pin_x - 21.15, xback - 0.6, by0, by1, zc - 34.0, pin_z + 21.15)
+    for zz0, zz1 in ((zc + 14.0, zc + 34.0), (zc - 34.0, zc - 14.0)):
+        mb = mb.fuse(C.box(tab_x0, xback - 0.6, by1 - 0.5, tab_y, zz0, zz1))
+    mb = mb.removeSplitter()
+    mb = mb.cut(C.cyl(11.5, 20, (pin_x, by0 - 1, pin_z), (0, 1, 0)))                         # pilot Ø23
+    for dx in (-15.5, 15.5):
+        for dz in (-15.5, 15.5):
+            mb = mb.cut(C.cyl(1.7, 20, (pin_x + dx, by0 - 1, pin_z + dz), (0, 1, 0)))           # motor M3
+    tab_screws = []
+    for zz in (zc + 24.0, zc - 24.0):
+        for xx in (113.0, 119.0):
+            mb = mb.cut(C.cyl(1.7, 40, (xx, by0 - 1, zz), (0, 1, 0)))
+            mb = mb.cut(C.cyl(3.25, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                       # head counterbore
+            tab_screws.append((xx, zz))
     lift["MOTOR_BRACKET"] = mb.removeSplitter()
     # ---------------- flip head (arm + servo + cheek) + its base on the X plate's front face = one printed SERVO_MOUNT
     arm, head, hinfo = C.flip_head(G.PX, G.Z_PICK)
@@ -201,7 +241,8 @@ def build(doc, groups):
     C.add(doc, "GRAIL", g, "GRAIL_pick", groups)
     C.add(doc, "GRAIL_PLATE", plate, "GRAIL_pick", groups)
     info = dict(plate_bb=plate_bb, wheel_bb=wheel_bb, ecc_ymin=ecc_wheel_ymin, pitch_x=pitch_x, pin=(pin_x, gear_y, pin_z),
-                face_y=face_y, motor_bb=C.bb(motor), pin_bb=C.bb(pin), wheels=wheels, head=hinfo)
+                face_y=face_y, motor_bb=C.bb(motor), pin_bb=C.bb(pin), wheels=wheels, head=hinfo,
+                rack_print=rack_print, pin_len=pin_len, tab_screws=tab_screws, bracket_y=(by0, by1))
     return arm_all, lift, fixed, (g, plate), info
 
 
@@ -342,13 +383,13 @@ def main():
          "(travel uses %.1f..%.1f: %s)"
          % (wheel_lo, wheel_hi, G.PROF_Z0 - wheel_lo, G.PROF_Z1 - wheel_hi, G.ZC_PICK, zc_top,
             "OK" if G.ZC_PICK >= G.PROF_Z0 - wheel_lo - 0.1 and zc_top <= G.PROF_Z1 - wheel_hi + 0.1 else "WHEEL OFF THE PROFILE"),
-         "  rack: nose %.1f in the back-face slot; pitch line x %.2f (tips %.2f past the back face), z %.1f..%.1f; "
+         "  rack: pushed in until its V back touches the slot faces (2D sections): nose %.2f below the face; pitch line x %.2f (tips %.2f past the back face), z %.1f..%.1f; "
          "pinion centre x %.2f, z %.1f (pick) .. %.1f (flip), on the rack: %s"
          % (G.RACK_SEAT, info["pitch_x"], 5.0 - G.RACK_SEAT, rb.ZMin, rb.ZMax, pin_x, pin_z, pin_z + top,
             "OK" if rb.ZMin + 11 <= pin_z - G.REL and pin_z + top <= rb.ZMax - 11 else "OFF THE RACK"),
-         "  motor face y %.1f (eccentric wheel edge %.1f); gear centre y %.1f vs rack centre %.1f; motor body x %.1f..%.1f "
+         "  motor face y %.1f (eccentric wheel edge %.1f, gap %.1f); pinion %.1f long; gear centre y %.1f vs rack centre %.1f; motor body x %.1f..%.1f "
          "y %.1f..%.1f z %.1f..%.1f (pick)"
-         % (info["face_y"], info["ecc_ymin"], gear_y, G.YC, mbb.XMin, mbb.XMax, mbb.YMin, mbb.YMax, mbb.ZMin, mbb.ZMax),
+         % (info["face_y"], info["ecc_ymin"], info["ecc_ymin"] - info["face_y"], info["pin_len"], gear_y, G.YC, mbb.XMin, mbb.XMax, mbb.YMin, mbb.YMax, mbb.ZMin, mbb.ZMax),
          "  lift: ~%.2f kg moving -> %.1f N on the rack, %.3f N.m on the motor (NEMA17 ~0.4); the rack can be back-driven: "
          "at 100 s / e-stop the carriage drops (Grail already released at the end; mid-carry it falls)" % (m_moving, f_lift, t_pin),
          "",
@@ -379,7 +420,8 @@ def main():
     # print files of the printed parts (robot frame at the pick pose; print orientation in the assembly sheet)
     os.makedirs(PRINT, exist_ok=True)
     import MeshPart
-    for n, s_ in (("FLIPPER_ARM", arm["ARM_PRINTED"]), ("FLIPPER_SERVO_MOUNT", lift["SERVO_MOUNT"])):
+    for n, s_ in (("FLIPPER_ARM", arm["ARM_PRINTED"]), ("FLIPPER_SERVO_MOUNT", lift["SERVO_MOUNT"]),
+                  ("FLIPPER_MOTOR_BRACKET", lift["MOTOR_BRACKET"]), ("FLIPPER_RACK_%.0f" % (G.PROF_Z1 - G.PROF_Z0), info["rack_print"])):
         s_.exportStep(os.path.join(PRINT, n + ".step"))
         MeshPart.meshFromShape(Shape=s_, LinearDeflection=0.05, AngularDeflection=0.2).write(os.path.join(PRINT, n + ".stl"))
     hi = info["head"]
@@ -394,6 +436,13 @@ def main():
         % (G.BASE_T, hi["base_x"][0], hi["base_x"][1], hi["m5"][0][0], ", ".join("%.1f" % z for _, z in hi["m5"]),
            hi["m3"][0][0], ", ".join("%.1f" % z for _, z in hi["m3"]), hi["plate_y"][0], hi["plate_y"][1], hi["ear_y"][0],
            hi["ear_y"][1], len(lift["SERVO_MOUNT"].Solids), C.mass_of(lift["SERVO_MOUNT"]) * 1000),
+        "  FLIPPER_MOTOR_BRACKET: plate %.1f thick at y %.1f..%.1f (motor face side; %.1f off the eccentric wheel), "
+        "NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs, 4 x M3x25 at %s (DRILL Ø2.5 + TAP M3 in the "
+        "tabs); %d solid(s), %.0f g ABS (60 pct)" % (G.BRACKET_T, info["bracket_y"][0], info["bracket_y"][1],
+                                                    info["ecc_ymin"] - info["bracket_y"][1],
+                                                    ", ".join("(x %.0f, z %.0f)" % t_ for t_ in info["tab_screws"]),
+                                                    len(lift["MOTOR_BRACKET"].Solids), C.mass_of(lift["MOTOR_BRACKET"]) * 1000),
+        "  FLIPPER_RACK_%.0f: Seif's rack cut to %.0f (rack frame, as printed before)" % (G.PROF_Z1 - G.PROF_Z0, G.PROF_Z1 - G.PROF_Z0),
         "  servo body y %.1f..%.1f (bay from y %.0f); SERVO_MOUNT y %.1f..%.1f" % (C.bb(lift["SERVO_MG996R"]).YMin,
                                                                                C.bb(lift["SERVO_MG996R"]).YMax, BAY["y0"],
                                                                                C.bb(lift["SERVO_MOUNT"]).YMin, C.bb(lift["SERVO_MOUNT"]).YMax),

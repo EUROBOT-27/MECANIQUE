@@ -5,8 +5,8 @@ Column: real 2020 at x 110, y 4, z 78..275; plate centre z 116.0 (pick) .. 232.0
 
 CARRIAGE / DRIVE
   wheels on the profile: wheel extents -36.9..+37.0 around the plate centre -> on the profile from plate z 114.9 to 238.0 (travel uses 116.0..232.0: OK)
-  rack: nose 1.7 in the back-face slot; pitch line x 97.70 (tips 3.30 past the back face), z 78.0..275.0; pinion centre x 87.70, z 126.0 (pick) .. 242.0 (flip), on the rack: OK
-  motor face y -29.0 (eccentric wheel edge -28.0); gear centre y 4.0 vs rack centre 4.0; motor body x 66.7..108.7 y -66.0..-7.1 z 105.0..151.0 (pick)
+  rack: pushed in until its V back touches the slot faces (2D sections): nose 1.60 below the face; pitch line x 97.60 (tips 3.40 past the back face), z 78.0..275.0; pinion centre x 87.60, z 126.0 (pick) .. 242.0 (flip), on the rack: OK
+  motor face y -33.0 (eccentric wheel edge -28.0, gap 5.0); pinion 41.5 long; gear centre y 4.0 vs rack centre 4.0; motor body x 66.6..108.6 y -70.0..-11.1 z 105.0..151.0 (pick)
   lift: ~0.71 kg moving -> 6.9 N on the rack, 0.069 N.m on the motor (NEMA17 ~0.4); the rack can be back-driven: at 100 s / e-stop the carriage drops (Grail already released at the end; mid-carry it falls)
 
 CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x 150)
@@ -46,12 +46,14 @@ SUMMARY
   flip torque max 2.1 kg.cm at 60 deg (MG996R ~9.4: 4.4x)
 
 LAYOUT ENVELOPE (bounding boxes vs layout-v1: Grail bay x 66..150, y -52..40, z 78..300; right wheel; drive motor)
-  NEMA17 @pick                       y -66.0..-7.1 (bay -52..40)
-  NEMA17 @top                        y -66.0..-7.1 (bay -52..40)
+  NEMA17 @pick                       y -70.0..-11.1 (bay -52..40)
+  NEMA17 @top                        y -70.0..-11.1 (bay -52..40)
 
 PRINTED PARTS (print/)
   FLIPPER_ARM: hub Ø24 x 10 (round horn on its -y face, 4 x M2 x 6 into the horn holes at r 7.2; Ø5 x 16 pin pressed 8 deep from +y), bar 14 x 10, cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud hole + nut seat; 1.0 solid(s), 12 g ABS (60 %)
   FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 124.8..132.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 91.0, 141.0), 2 x M3 into the plate's tapped holes (y 23.7, z 106.0, 126.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 self-tap; 625 cheek; 1 solid(s), 30 g ABS (60 %)
+  FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs, 4 x M3x25 at (x 113, z 140), (x 119, z 140), (x 113, z 92), (x 119, z 92) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 15 g ABS (60 pct)
+  FLIPPER_RACK_197: Seif's rack cut to 197 (rack frame, as printed before)
   servo body y -50.4..-6.6 (bay from y -52); SERVO_MOUNT y -30.0..34.0
 
 PARTS (📦 library · 🇹🇳 local · ✈️ import)

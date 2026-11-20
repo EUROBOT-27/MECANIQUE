@@ -28,7 +28,7 @@ class G:
     BACKLASH = 0.15                       # total, taken off the tooth thickness (printed gear on a printed rack)
     FACE_W = 10.0                         # tooth width (rack is 10.6)
     HUB_D = 16.0                          # hub Ø (root Ø is 17.5): 5 mm of wall for the insert (el pignon: 2.7)
-    HUB_L = 27.5                          # long hub: the motor face must sit past the carriage's eccentric wheel
+    HUB_L = 31.5                          # long hub: the motor face sits 5 mm past the carriage's eccentric wheel
                                           # (fc/flipper_fc.py: wheel edge 32 mm from the profile centre; el pignon: 29)
     INS_Z = 8.0                           # insert axis from the motor-side face (inside the shaft's 21 mm)
     BORE_D, FLAT = 5.15, 4.6              # NEMA17 shaft Ø5, D flat at 4.5 (+0.1)
