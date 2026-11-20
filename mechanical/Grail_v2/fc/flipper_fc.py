@@ -185,6 +185,7 @@ def build(doc, groups):
     by0, by1 = face_y, face_y + G.BRACKET_T
     tab_y = G.YC + 219.9 - P_Z                           # tabs: y tab_y .. tab_y + 2.7, x 105.4 .. 121.9
     tab_x0 = G.XC + 242.3 - P_Y
+    info_wheel_x0 = C.bb(wheels[0]).XMin
     mb = C.box(pin_x - 21.15, xback - 0.6, by0, by1, zc - 34.0, pin_z + 21.15)
     for zz0, zz1 in ((zc + 14.0, zc + 34.0), (zc - 34.0, zc - 14.0)):
         mb = mb.fuse(C.box(tab_x0, xback - 0.6, by1 - 0.5, tab_y, zz0, zz1))
@@ -192,12 +193,15 @@ def build(doc, groups):
     mb = mb.cut(C.cyl(11.5, 20, (pin_x, by0 - 1, pin_z), (0, 1, 0)))                         # pilot Ø23
     for dx in (-15.5, 15.5):
         for dz in (-15.5, 15.5):
-            mb = mb.cut(C.cyl(1.7, 20, (pin_x + dx, by0 - 1, pin_z + dz), (0, 1, 0)))           # motor M3
+            mb = mb.cut(C.cyl(C.FIT["m3"] / 2, 20, (pin_x + dx, by0 - 1, pin_z + dz), (0, 1, 0)))  # motor M3
+            hx, hz = pin_x + dx, pin_z + dz
+            if hx + 2.75 > info_wheel_x0 - 1 and abs(hz - zc) < 14:                               # head next to the wheel:
+                mb = mb.cut(C.cyl(2.9, 1.9, (hx, by1 - 1.8, hz), (0, 1, 0)))                     # button head, counterbored
     tab_screws = []
     for zz in (zc + 24.0, zc - 24.0):
         for xx in (113.0, 119.0):
-            mb = mb.cut(C.cyl(1.7, 40, (xx, by0 - 1, zz), (0, 1, 0)))
-            mb = mb.cut(C.cyl(3.25, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                       # head counterbore
+            mb = mb.cut(C.cyl(C.FIT["m3"] / 2, 40, (xx, by0 - 1, zz), (0, 1, 0)))
+            mb = mb.cut(C.cyl(3.35, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                       # head counterbore
             tab_screws.append((xx, zz))
     lift["MOTOR_BRACKET"] = mb.removeSplitter()
     # ---------------- flip head (arm + servo + cheek) + its base on the X plate's front face = one printed SERVO_MOUNT
@@ -214,9 +218,9 @@ def build(doc, groups):
     web = C.box(xb1 - 1, sp_x0 + 1, sp_y0, sp_y1, max(zc - 33.0, hinfo["plate_z"][0]), min(zc + 33.0, hinfo["plate_z"][1]))
     base = base.fuse(web)
     for (y, z) in m5:
-        base = base.cut(C.cyl(2.75, 40, (xf - 1, y, z), (1, 0, 0)))
+        base = base.cut(C.cyl(C.FIT["m5"] / 2, 40, (xf - 1, y, z), (1, 0, 0)))
     for (y, z) in m3:
-        base = base.cut(C.cyl(1.7, 40, (xf - 1, y, z), (1, 0, 0))).cut(C.cyl(3.25, 4, (xb1 - 3.5, y, z), (1, 0, 0)))
+        base = base.cut(C.cyl(C.FIT["m3"] / 2, 40, (xf - 1, y, z), (1, 0, 0))).cut(C.cyl(3.35, 4, (xb1 - 3.5, y, z), (1, 0, 0)))
     base = base.cut(C.cyl(5.5, 6.5, (xf - 0.1, ecc[0], ecc[1]), (1, 0, 0)))
     head["SERVO_MOUNT"] = head["SERVO_MOUNT"].fuse(base).removeSplitter()
     # the 2 upper wheel nylocs move onto the base's front (screws M5x25 -> M5x35)
@@ -427,12 +431,14 @@ def main():
     hi = info["head"]
     r[r.index("PARTS (📦 library · 🇹🇳 local · ✈️ import)"):r.index("PARTS (📦 library · 🇹🇳 local · ✈️ import)")] = [
         "PRINTED PARTS (print/)",
-        "  FLIPPER_ARM: hub Ø24 x 10 (round horn on its -y face, 4 x M2 x 6 into the horn holes at r 7.2; Ø5 x %.0f pin pressed "
-        "8 deep from +y), bar 14 x 10, cup Ø%.1f seat %.0f deep (magnet face 4 proud), M4 stud hole + nut seat; %.1f solid(s), "
-        "%.0f g ABS (60 %%)" % (C.bb(arm["SHAFT_5"]).YLength, C.MAG_SEAT, C.MAG_L - 4, len(arm["ARM_PRINTED"].Solids), arm_mass * 1000),
+        "  FLIPPER_ARM: hub Ø24 with the round horn's disc in a Ø21.4 pocket (+ Ø9.8 boss recess), 4 x M2 x 12 from +y "
+        "into the horn holes at r 7.2 (Ø2.5, T9 coupon); Ø5 x %.0f pin pressed 6 deep from +y (pushed in LAST, through the "
+        "625); bar 14 x 10; cup Ø%.1f seat %.0f deep (magnet face 4 proud), M4 stud + nut in a pocket; %d solid(s), "
+        "%.0f g ABS (60 pct)" % (C.bb(arm["SHAFT_5"]).YLength, C.MAG_SEAT, C.MAG_L - 4, len(arm["ARM_PRINTED"].Solids), arm_mass * 1000),
         "  FLIPPER_SERVO_MOUNT: base %.0f thick on the X plate front (x %.1f..%.1f): 2 x M5x35 through the upper wheel screw "
         "holes (y %.1f, z %s), 2 x M3 into the plate's tapped holes (y %.1f, z %s), recess for the eccentric nyloc; servo "
-        "plate y %.1f..%.1f under the ears (ear plane y %.1f..%.1f), 2 x M3 self-tap; 625 cheek; %d solid(s), %.0f g ABS (60 %%)"
+        "plate y %.1f..%.1f under the ears (ear plane y %.1f..%.1f), 2 x M3 x 12 + nuts in pockets; 625 cheek (seat Ø16.2 "
+        "open on +y, lip on the arm side); %d solid(s), %.0f g ABS (60 pct)"
         % (G.BASE_T, hi["base_x"][0], hi["base_x"][1], hi["m5"][0][0], ", ".join("%.1f" % z for _, z in hi["m5"]),
            hi["m3"][0][0], ", ".join("%.1f" % z for _, z in hi["m3"]), hi["plate_y"][0], hi["plate_y"][1], hi["ear_y"][0],
            hi["ear_y"][1], len(lift["SERVO_MOUNT"].Solids), C.mass_of(lift["SERVO_MOUNT"]) * 1000),

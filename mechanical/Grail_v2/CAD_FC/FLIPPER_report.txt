@@ -50,8 +50,8 @@ LAYOUT ENVELOPE (bounding boxes vs layout-v1: Grail bay x 66..150, y -52..40, z 
   NEMA17 @top                        y -70.0..-11.1 (bay -52..40)
 
 PRINTED PARTS (print/)
-  FLIPPER_ARM: hub Ø24 x 10 (round horn on its -y face, 4 x M2 x 6 into the horn holes at r 7.2; Ø5 x 16 pin pressed 8 deep from +y), bar 14 x 10, cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud hole + nut seat; 1.0 solid(s), 12 g ABS (60 %)
-  FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 124.8..132.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 91.0, 141.0), 2 x M3 into the plate's tapped holes (y 23.7, z 106.0, 126.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 self-tap; 625 cheek; 1 solid(s), 30 g ABS (60 %)
+  FLIPPER_ARM: hub Ø24 with the round horn's disc in a Ø21.4 pocket (+ Ø9.8 boss recess), 4 x M2 x 12 from +y into the horn holes at r 7.2 (Ø2.5, T9 coupon); Ø5 x 16 pin pressed 6 deep from +y (pushed in LAST, through the 625); bar 14 x 10; cup Ø30.3 seat 18 deep (magnet face 4 proud), M4 stud + nut in a pocket; 1 solid(s), 12 g ABS (60 pct)
+  FLIPPER_SERVO_MOUNT: base 8 thick on the X plate front (x 124.8..132.8): 2 x M5x35 through the upper wheel screw holes (y 24.2, z 91.0, 141.0), 2 x M3 into the plate's tapped holes (y 23.7, z 106.0, 126.0), recess for the eccentric nyloc; servo plate y -27.1..-22.1 under the ears (ear plane y -22.1..-19.2), 2 x M3 x 12 + nuts in pockets; 625 cheek (seat Ø16.2 open on +y, lip on the arm side); 1 solid(s), 29 g ABS (60 pct)
   FLIPPER_MOTOR_BRACKET: plate 4.5 thick at y -33.0..-28.5 (motor face side; 0.5 off the eccentric wheel), NEMA17 4 x M3 + Ø23 pilot; 2 bridges to the X plate's back tabs, 4 x M3x25 at (x 113, z 140), (x 119, z 140), (x 113, z 92), (x 119, z 92) (DRILL Ø2.5 + TAP M3 in the tabs); 1 solid(s), 15 g ABS (60 pct)
   FLIPPER_RACK_197: Seif's rack cut to 197 (rack frame, as printed before)
   servo body y -50.4..-6.6 (bay from y -52); SERVO_MOUNT y -30.0..34.0

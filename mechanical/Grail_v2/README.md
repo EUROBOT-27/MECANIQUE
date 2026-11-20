@@ -58,14 +58,38 @@ Report `CAD_FC/FLIPPER_report.txt`:
 ### Printed parts so far (`print/`, robot frame at the pick pose)
 | Part | What | Fixing |
 |---|---|---|
-| `FLIPPER_ARM` (12 g) | hub Ø24 × 10 + bar 14 × 10 + magnet cup (seat Ø30.3, 18 deep, magnet face 4 mm proud), one solid | round horn on the hub's −y face (4 × M2 × 6 in the horn holes at r 7.2); Ø5 × 16 steel pin pressed 8 deep from +y into the 625; magnet M4 stud + nut |
-| `FLIPPER_SERVO_MOUNT` (30 g) | base 8 thick on the X plate's front + servo plate under the ears (body cut-out) + 625 cheek joined under the pivot, one solid | **2 × M5×35** replacing the upper wheel screws (nylocs move to the base's front), **2 × M3** into the plate's 2 tapped holes (Ø2.5, 20 apart), recess for the eccentric's nyloc; servo: 2 × M3 self-tap through the ears |
+| `FLIPPER_ARM` (12 g) | hub Ø24 + bar 14 × 10 + magnet cup (seat Ø30.3, 18 deep, magnet face 4 mm proud), one solid | round horn's disc in a Ø21.4 pocket + Ø9.8 boss recess, **4 × M2 × 12** from +y into the horn holes (Ø2.5, as the tested T9 pinion); Ø5 steel pin pressed 6 deep from +y; magnet M4 stud + nut in a pocket |
+| `FLIPPER_SERVO_MOUNT` (30 g) | base 8 thick on the X plate's front + servo plate under the ears (body cut-out) + 625 cheek joined under the pivot, one solid | **2 × M5×35** replacing the upper wheel screws (nylocs move to the base's front), **2 × M3** into the plate's 2 tapped holes (Ø2.5, 20 apart), recess for the eccentric's nyloc; servo: **2 × M3 × 12 + nuts in pockets**; **625 seat Ø16.2 open on +y**, lip on the arm side |
 | `FLIPPER_MOTOR_BRACKET` (15 g) | plate 4.5 thick between the motor face and the eccentric wheel (0.5 mm off it), NEMA17 4 × M3 + Ø23 pilot, 2 bridges to the X plate's back tabs (above / below the wheel) | 4 × M3×25 into the tabs: **drill Ø2.5 + tap M3** (the tabs have no holes) |
 | `FLIPPER_RACK_197` | Seif's rack (`parts/cremaillere.STL`) cut to the profile length | sits with its V back on the slot faces (nose 1.6 mm in, computed from the real sections) |
 | `FLIPPER_PINION` | below (41.5 long) | M3 insert K5 + set screw on the shaft flat |
 
 Checks (report): no body part enters the zone the Grail sweeps (radius ≥ 58.5 from the axis, −87…143°); the servo body
 stays in the bay (y −50.4).
+
+Fits: ABS values from the clapets v7 coupons (`common.FIT`): bearing seat +0.2, horn pocket Ø21.4, M2 Ø2.5, M3 Ø3.5,
+M4 Ø4.6, M5 Ø5.6, nut pockets M3 6.0 × 6.9 × 2.8 / M4 7.4 × 8.4 × 3.6, Ø5 pin press Ø5.0.
+
+### Print orientation (ABS, Bambu X1 Carbon, D-023)
+| Part | Bed face | Why |
+|---|---|---|
+| `FLIPPER_ARM` | the hub's −y face (horn pocket) down, arm plane on the bed | hub axis vertical: horn pocket, M2 holes and pin hole round and coaxial; bar loads along the layers. The cup seat (axis horizontal) needs supports: loose fit (Ø30.3) |
+| `FLIPPER_SERVO_MOUNT` | −y down (servo plate side) | 625 seat axis vertical (round); servo plate and cheek flat; the base is a wall, its M5/M3 holes print horizontal (teardrop OK) |
+| `FLIPPER_MOTOR_BRACKET` | the motor face (y −33) down | plate flat, motor holes + pilot vertical; bridges grow up from it |
+| `FLIPPER_PINION` | the gear face down | axis vertical (teeth, D bore, insert hole horizontal on the hub) |
+| `FLIPPER_RACK_197` | as Seif printed it | |
+(STEP/STL are in the robot frame at the pick pose: rotate in the slicer.)
+
+### Assembly order
+1. Carriage: drill Ø2.5 + tap M3 the X plate's two back tabs (2 holes each, `FLIPPER_report.txt` gives the positions).
+2. NEMA17 on `FLIPPER_MOTOR_BRACKET` (4 × M3; the one next to the wheel is a button head in its counterbore). Pinion
+   on the shaft (M3 insert + set screw on the flat). Bracket onto the tabs (4 × M3 × 25).
+3. `FLIPPER_SERVO_MOUNT` on the X plate's front: the 2 upper wheel screws become M5 × 35 through the base (nylocs on its
+   front), 2 × M3 into the plate's tapped holes. MG996R into the servo plate (2 × M3 × 12 + nuts). 625 pressed into its
+   seat from +y.
+4. Round horn screwed to `FLIPPER_ARM` (4 × M2 × 12 from +y). Arm + horn onto the servo spline (no centre screw: the pin
+   holds the arm). Then push the **Ø5 pin through the 625 into the hub** (press).
+5. Magnet into the cup (M4 nut in its pocket). Carriage onto the 2020 (eccentric to preload), rack in the back slot.
 
 ### Pinion v2 (`fc/flipper_pinion_fc.py` → `print/FLIPPER_PINION.step/.stl`)
 Redo of Baha's `parts/el_pignon.STEP`. Baha's: m1 20T, teeth 5 wide at the end of a Ø10.5 × 29 hub, Ø5.1 bore, radial

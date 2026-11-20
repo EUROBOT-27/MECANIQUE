@@ -97,6 +97,11 @@ def servo_mg996r(axis_x, axis_z, horn_face_y, body="-x"):
 
 HORN_DZ = 13.8              # round horn: bottom at model z 10.8 (just above the gearbox top 10.6), top 17.1
 SERVO_EAR = dict(z0=0.0, z1=2.9, holes_x=(-34.75, 14.75), holes_y=(-5.0, 5.0), body_x=(-30.3, 10.3), body_y=10.25)
+# ABS fits (clapets v7 coupons 2026-11-12 + design-principles): bearing seat +0.2 (608: Ø22.2), round horn pocket Ø21.4
+# (disc Ø20.8 x 2.5, boss Ø9.2 x 0.8, hub Ø9 x 3) + 4 x M2 Ø2.5 at r 7.2 (T9), nut pocket M3 6.0 x 6.9 x 2.8 / M4 7.4 x
+# 8.4 x 3.6, clearance holes +0.1..0.2 (ABS shrinks holes)
+FIT = dict(seat_625=16.2, horn_pocket=21.4, horn_boss=9.8, horn_t=2.5, horn_boss_t=0.8, m2=2.5, m3=3.5, m4=4.6, m5=5.6,
+           pin5_press=5.0, nut_m3=(6.0, 6.9, 2.8), nut_m4=(7.4, 8.4, 3.6))
 
 
 def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plate_t=5.0):
@@ -121,22 +126,29 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
     # model -> world for the servo ('-z' rows): world x = px + model y, world y = model z + dy, world z = pz + model x
     ear_y0, ear_y1 = SERVO_EAR["z0"] + dy, SERVO_EAR["z1"] + dy
     bx0, bx1 = SERVO_EAR["body_x"]
-    # ---- ARM_PRINTED
-    hub = cyl(12, arm_y, (px, -arm_y / 2, pz), (0, 1, 0))
+    # ---- ARM_PRINTED: hub from the horn disc's top face to +arm_y/2; collar around the disc with the Ø21.4 pocket
+    y_dt = horn_face_y - FIT["horn_boss_t"]              # horn disc top (the boss sits above it)
+    y_db = y_dt - FIT["horn_t"]                          # disc bottom
+    hub = cyl(12, arm_y / 2 - y_dt, (px, y_dt, pz), (0, 1, 0))
+    collar = cyl(FIT["horn_pocket"] / 2 + 2.5, y_dt - y_db + 1.0, (px, y_db - 1.0, pz), (0, 1, 0))
     cup_h = MAG_L - 4.0
     zc0 = zf + 4.0                                   # cup rim (magnet face 4 mm proud)
     cup = cyl(MAG_SEAT / 2 + 3, cup_h + 4, (X_PICK, 0, zc0), (0, 0, 1))
     ztop = zc0 + cup_h + 4
     barp = bar((px, pz), (X_PICK, ztop - 7), 14.0, -arm_y / 2, arm_y / 2)
-    armp = hub.fuse(barp).fuse(cup).removeSplitter()
+    armp = hub.fuse(collar).fuse(barp).fuse(cup).removeSplitter()
     armp = armp.cut(cyl(MAG_SEAT / 2, cup_h + 0.1, (X_PICK, 0, zc0 - 0.1), (0, 0, 1)))       # magnet seat
-    armp = armp.cut(cyl(2.2, 10, (X_PICK, 0, zc0 + cup_h - 1), (0, 0, 1)))                     # M4 stud hole
-    armp = armp.cut(cyl(3.9, 3.4, (X_PICK, 0, ztop - 3.4), (0, 0, 1)))                          # M4 nut seat (hex ~ round 7.8)
-    armp = armp.cut(cyl(2.45, 8, (px, arm_y / 2 - 8, pz), (0, 1, 0)))                          # Ø5 shaft, press (Ø4.9)
-    for (a, b) in ((0, 7.2), (7.2, 0), (0, -7.2), (-7.2, 0)):                                   # M2 into the horn holes
-        armp = armp.cut(cyl(0.8, 6, (px + a, -arm_y / 2 - 0.1, pz + b), (0, 1, 0)))
+    armp = armp.cut(cyl(FIT["m4"] / 2, 10, (X_PICK, 0, zc0 + cup_h - 1), (0, 0, 1)))           # M4 stud hole
+    nw, nl, nt = FIT["nut_m4"]
+    armp = armp.cut(box(X_PICK - nw / 2, X_PICK + nw / 2, -nl / 2 - 6, nl / 2, ztop - nt - 0.6, ztop - 0.6))  # M4 nut pocket, open -y
+    armp = armp.cut(cyl(FIT["horn_pocket"] / 2, y_dt - y_db + 1.0, (px, y_db - 1.0, pz), (0, 1, 0)))   # horn disc pocket
+    armp = armp.cut(cyl(FIT["horn_boss"] / 2, FIT["horn_boss_t"] + 0.5, (px, y_dt - 0.01, pz), (0, 1, 0)))  # boss recess
+    armp = armp.cut(cyl(FIT["pin5_press"] / 2, 6.0, (px, arm_y / 2 - 6.0, pz), (0, 1, 0)))       # Ø5 pin, press, from +y
+    for (a_, b_) in ((0, 7.2), (7.2, 0), (0, -7.2), (-7.2, 0)):                                 # 4 x M2 x 12 into the horn
+        armp = armp.cut(cyl(FIT["m2"] / 2, 30, (px + a_, y_db - 2, pz + b_), (0, 1, 0)))
+        armp = armp.cut(cyl(2.2, 1.6, (px + a_, arm_y / 2 - 1.5, pz + b_), (0, 1, 0)))         # head below the +y face
     arm["ARM_PRINTED"] = armp.removeSplitter()
-    arm["SHAFT_5"] = cyl(2.5, y625[1] - (arm_y / 2 - 8), (px, arm_y / 2 - 8, pz), (0, 1, 0))
+    arm["SHAFT_5"] = cyl(2.5, y625[1] + 2 - (arm_y / 2 - 6.0), (px, arm_y / 2 - 6.0, pz), (0, 1, 0))
     arm["MAGNET_D30"] = magnet_down(X_PICK, zf)
     # ---- SERVO_MOUNT: plate under the ears (servo side of the ears = -y of the ear flange)
     t = mount_plate_t
@@ -146,20 +158,24 @@ def flip_head(px, pz, arm_y=10.0, horn_face_y=-5.0, y625=(8.0, 13.0), mount_plat
     plate = box(sx0, sx1, sp_y0, sp_y1, sz0, sz1)
     plate = plate.cut(box(px - SERVO_EAR["body_y"] - 0.3, px + SERVO_EAR["body_y"] + 0.3, sp_y0 - 1, sp_y1 + 1,
                           pz + bx0 - 0.3, pz + bx1 + 0.3))                                       # body cut-out
+    nw, nl, nt = FIT["nut_m3"]
     for hx in SERVO_EAR["holes_x"]:
         for hy in SERVO_EAR["holes_y"]:
-            if hy < 0:                                                                            # 2 screws (one per ear)
-                plate = plate.cut(cyl(1.25, t + 2, (px + hy, sp_y0 - 1, pz + hx), (0, 1, 0)))   # M3 self-tap Ø2.5
+            if hy < 0:                                                                            # 2 M3 x 12 (one per ear)
+                plate = plate.cut(cyl(FIT["m3"] / 2, t + 2, (px + hy, sp_y0 - 1, pz + hx), (0, 1, 0)))
+                plate = plate.cut(box(px + hy - nw / 2, px + hy + nw / 2, sp_y0 - 0.1, sp_y0 + nt, pz + hx - nl / 2,
+                                      pz + hx + nl / 2))                                         # nut pocket, -y face
     # cheek with the 625 (+y), joined under the pivot to the servo plate
     zb0, zb1 = pz - 46, pz - 40
-    cheek = box(px - 12, px + 5.5, y625[0] - 1, y625[1] + 2, zb0, pz + 9).fuse(
-        cyl(10, y625[1] + 3 - y625[0], (px, y625[0] - 1, pz), (0, 1, 0)))
-    joiner = box(px - 12, px + 5.5, sp_y0, y625[1] + 2, zb0, zb1)
+    cheek = box(px - 12, px + 5.5, y625[0] - 1, y625[1], zb0, pz + 9).fuse(
+        cyl(10.5, y625[1] + 1 - y625[0], (px, y625[0] - 1, pz), (0, 1, 0)))
+    joiner = box(px - 12, px + 5.5, sp_y0, y625[1], zb0, zb1)
     down = box(px - 12, px + 5.5, sp_y0, sp_y1, zb0, sz0 + 1) if zb0 < sz0 else None
     mount = plate.fuse(cheek).fuse(joiner)
     if down is not None:
         mount = mount.fuse(down)
-    mount = mount.cut(cyl(8.0, 5.2, (px, y625[0] - 0.1, pz), (0, 1, 0)))                       # 625 seat Ø16 x 5
+    mount = mount.cut(cyl(FIT["seat_625"] / 2, 30, (px, y625[0], pz), (0, 1, 0)))              # 625 seat Ø16.2, open +y
+    mount = mount.cut(cyl(5.0, 30, (px, y625[0] - 5, pz), (0, 1, 0)))                            # lip hole Ø10 (outer ring only)
     mount = mount.cut(cyl(3.0, 30, (px, -10, pz), (0, 1, 0)))                                   # shaft clearance
     body["SERVO_MOUNT"] = mount.removeSplitter()
     body["BEARING_625"] = cyl(8, 5, (px, y625[0], pz), (0, 1, 0)).cut(cyl(2.5, 7, (px, y625[0] - 1, pz), (0, 1, 0)))
