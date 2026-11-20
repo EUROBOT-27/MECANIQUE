@@ -1,0 +1,41 @@
+FLIPPER motion collision check - fc/flipper_motion_check.py (1495 s)
+cycle: 65 poses: lift 0..86 every 4 (flip 0), flip 0..180 every 5 deg at the top, lower 6 to place, magnet off + lower 6 (pivot x 170.5, z 160.0 at the pick). The way back (no Grail) uses the same poses.
+pairs: moving (carriage + arm + their screws) vs fixed (column, rack, saddle, top fixation, base plate, Grail deck, 350 limit, base_330_js parts); arm vs carriage; Grail vs everything. Overlaps > 1.0 mm3 are clashes.
+
+CLASHES: 0
+
+closest approaches under 5 mm (real distance, smallest over the cycle):
+   0.60 mm  PINION_v2                  - PROFILE_2020               at 'lift   0.0, flip 0'
+   1.50 mm  SCR_M2x12_HORN_x4          - SERVO_MOUNT                at 'flip  70 at the top'
+   1.50 mm  CTX_GRAIL_DECK             - GRAIL                      at 'lower 6.0 to place'
+   1.80 mm  ARM_PRINTED                - SERVO_MG996R               at 'flip  70 at the top'
+   1.81 mm  SCR_M2x12_HORN_x4          - SERVO_MG996R               at 'flip  70 at the top'
+   2.00 mm  ARM_PRINTED                - SERVO_MOUNT                at 'flip  70 at the top'
+   2.00 mm  ARM_PRINTED                - CTX_GRAIL_DECK             at 'flip 160 at the top'
+   2.00 mm  CTX_GRAIL_DECK             - GRAIL_PLATE                at 'lower 4.0 to place'
+   2.09 mm  PROFILE_2020               - X_PLATE                    at 'lift   0.0, flip 0'
+   2.50 mm  SERVO_MOUNT                - SHAFT_5                    at 'flip  70 at the top'
+   2.50 mm  BEARING_625                - SCR_M2x12_HORN_x4          at 'flip  70 at the top'
+   2.65 mm  MOTOR_BRACKET              - PROFILE_2020               at 'lift   0.0, flip 0'
+   3.00 mm  ARM_PRINTED                - BEARING_625                at 'flip  70 at the top'
+   3.36 mm  SADDLE_SOCLE               - V_WHEELS_x3                at 'lift   0.0, flip 0'
+   3.67 mm  PROFILE_2020               - SCR_M3x20_TABS_x2          at 'lift   0.0, flip 0'
+   3.71 mm  MOTOR_BRACKET              - SADDLE_SOCLE               at 'lift   0.0, flip 0'
+   4.00 mm  ARM_PRINTED                - GRAIL_PLATE                at 'flip  65 at the top'
+   4.03 mm  TOP_MEMBER_2020            - X_PLATE                    at 'lift  74.3, flip 0'
+   4.61 mm  RACK_m1_printed            - V_WHEELS_x3                at 'lift   0.0, flip 0'
+   4.79 mm  PROFILE_2020               - SERVO_MOUNT                at 'lift   0.0, flip 0'
+   4.87 mm  SADDLE_SOCLE               - X_PLATE                    at 'lift   7.8, flip 0'
+   4.90 mm  TOP_MEMBER_2020            - V_WHEELS_x3                at 'lift  82.1, flip 0'
+   4.93 mm  SCR_M5_TOP_x3              - V_WHEELS_x3                at 'lift  86.0, flip 0'
+
+touching without overlap (distance 0, overlap < 1.0 mm3; a few are false zeros on imported STEPs):
+  CTX_GRAIL_DECK             - GRAIL_PLATE                first at 'lower 6.0 to place'
+  M5_SPACERS                 - SADDLE_SOCLE               first at 'lift   0.0, flip 0'
+  SADDLE_SOCLE               - SERVO_MOUNT                first at 'lift   7.8, flip 0'
+  SADDLE_SOCLE               - V_WHEELS_x3                first at 'lift   7.8, flip 0'
+  SADDLE_SOCLE               - X_PLATE                    first at 'lift   0.0, flip 0'
+
+expected overlaps seen during the cycle (largest):
+      69.5 mm3  SERVO_HORN                 x SERVO_MG996R               horn on the spline
+      24.4 mm3  PINION_v2                  x RACK_m1_printed            gear mesh: tooth phase not set in a static model (centre distance 10.0 = m1 20T)

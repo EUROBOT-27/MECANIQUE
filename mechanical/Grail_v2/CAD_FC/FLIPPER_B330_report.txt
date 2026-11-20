@@ -15,11 +15,11 @@ COLUMN FIXATION: SADDLE
   SADDLE_SOCLE (printed ABS, one part, 170 g at 60 pct, 201 g before the 12 lightening pockets): deck x 25..141 over the drive wheel (tunnel R45 around its worst-case envelope Ø80: crown z 82, deck top 85), the drive motor (deck underside 67, motor top 62.5) and the odometry module (underside 70); pad under the column to 84; heel on the column's back face (x 106..118, to z 112) with 2 x M5 into T-nuts in the back slot (z 96, 106)
   legs on the free plate zones (Seif's sketch): x 80..128 y -60..-45; x 80..128 y 45..60; x 25..74 y -42..-24; x 25..66 y 24..40
   PLATE HOLES TO ADD (not in the plate yet, Seif will confirm): 8 x Ø4.4 for M4 at (88, -53.5), (120, -53.5), (88, 53.5), (120, 53.5), (33, -33.0), (66, -33.0), (33, 32.0), (58, 32.0); M4 x 16 from the top through a Ø9 channel + nut under the plate
-  top: 2020 cross-member ON the column's top, along x 40..138, z 253..273, M5 x 30 into the column's end + inside corner bracket (back slot z 233..253 / cross-member underside) -> the arm's lower edge above x 98..138: 294.2..369.5
-  TOP_MEMBER_2020      x 40..138 y -6..14 z 253..273: clear
-  TOP_L_BRACKET        x 98..118 y -6..14 z 233..253: clear
-  SCR_M5_TOP_x3        x 102..132 y -0..8 z 239..278: X_PLATE @top (boxes meet, real gap 9.7); V_WHEELS_x3 @top (boxes meet, real gap 6.5); M5x25_SCREWS @top (boxes meet, real gap 13.8)
-  TNUT_M5_TOP_x2       x 101..122 y 0..8 z 238..258: X_PLATE @top (boxes meet, real gap 8.9); M5x25_SCREWS @top (boxes meet, real gap 11.9)
+  top: 2020 cross-member x 40..118, z 233..253, butting on the column's back face, tops flush: blind joint (M5 head in the back slot, slid in from the top; Ø5 access hole in the +x face) + printed TOP_CAP 4 thick (z 253..257) -> the arm's lower edge above x 98..138: 294.2..369.5
+  TOP_MEMBER_2020      x 40..118 y -6..14 z 233..253: clear
+  TOP_CAP              x 96..138 y -6..14 z 253..257: clear
+  SCR_M5_TOP_x3        x 101..133 y -1..9 z 238..260: X_PLATE @top (boxes meet, real gap 8.2); V_WHEELS_x3 @top (boxes meet, real gap 4.9); M5x25_SCREWS @top (boxes meet, real gap 11.8)
+  TNUT_M5_TOP_x1       x 101..111 y 0..8 z 248..251: clear
   SADDLE_SOCLE         x 25..141 y -60..60 z 16..112: X_PLATE @pick (boxes meet, real gap 0.0); V_WHEELS_x3 @pick (boxes meet, real gap 3.4); M5x25_SCREWS @pick (boxes meet, real gap 7.7); M5_SPACERS @pick (boxes meet, real gap 0.0); NEMA17 @pick (boxes meet, real gap 17.6); MOTOR_BRACKET @pick (boxes meet, real gap 3.7); SCR_M3x20_TABS_x2 @pick (boxes meet, real gap 11.7); SERVO_MOUNT @pick (boxes meet, real gap 6.2)
   SCR_M4x16_FLOOR_x8   x 30..124 y -57..57 z 10..30: clear
   NUT_M4_FLOOR_x8      x 29..124 y -57..57 z 8..12: clear
@@ -57,14 +57,12 @@ SUMMARY
   Grail entering the robot body before it lands: never
   Grail highest point in the cycle: 423.3 (only the Grail may pass 350, in the castle [G E.2])
   arm (cup + magnet) vs column / fixation / carriage at the place and stowed poses (real distances, < 3 mm listed): 
-  ARM_PRINTED    - TOP_MEMBER_2020      lower to place 240.0: 0.80 mm
   ARM_PRINTED    - SERVO_MG996R         lower to place 240.0: 1.80 mm
   ARM_PRINTED    - SERVO_MOUNT          lower to place 240.0: 2.00 mm
   ARM_PRINTED    - BEARING_625          lower to place 240.0: 3.00 mm
   SCR_M2x12_HORN_x4 - SERVO_MG996R         lower to place 240.0: 1.81 mm
   SCR_M2x12_HORN_x4 - SERVO_MOUNT          lower to place 240.0: 1.50 mm
   SHAFT_5        - SERVO_MOUNT          lower to place 240.0: 2.50 mm
-  ARM_PRINTED    - TOP_MEMBER_2020      magnet off, lower 6: 0.00 mm  CLASH
   ARM_PRINTED    - SERVO_MG996R         magnet off, lower 6: 1.80 mm
   ARM_PRINTED    - SERVO_MOUNT          magnet off, lower 6: 2.00 mm
   ARM_PRINTED    - BEARING_625          magnet off, lower 6: 3.00 mm

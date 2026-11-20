@@ -498,17 +498,24 @@ def fixation(zc):
     y0, y1 = G.YC - 10, G.YC + 10
     core_x = 40.0                                        # cross-members run inward to here (core structure, x <= 64)
     # ---- top (all variants): 2020 cross-member along x under the roof, back face of the column -> core
-    # top: the cross-member lies ON the column's top (x 40 .. the column's front face), M5 x 30 down through it into the
-    # column's end hole (tapped M5), + an inside corner bracket: vertical leg in the back slot's free top (above the rack),
-    # horizontal leg under the cross-member
+    # top: the cross-member butts on the column's back face, tops flush (motion check: on top of the column, the arm's
+    # bar cut its corner at the stowed pose). Two joints, both away from the carriage (its wheels and X plate use the
+    # column's +-y and +x faces up to ~250):
+    #   - blind joint: M5 button screw in the cross-member's tapped end, its head slid into the column's back slot from
+    #     the open top (free above the rack's top end), tightened through a Ø5 access hole in the column's +x face
+    #   - printed cap (4 thick) over both tops: M5 into the column's tapped end hole + M5 into a T-nut in the member's top slot
     z1 = G.PROF_Z1
-    out["TOP_MEMBER_2020"] = C.box(core_x, G.XC + 10.0, y0, y1, z1, z1 + 20.0)
-    out["TOP_L_BRACKET"] = C.box(xb - 3.0, xb, y0, y1, z1 - 20.0, z1).fuse(C.box(xb - 20.0, xb, y0, y1, z1 - 3.0, z1)).removeSplitter()
-    out["SCR_M5_TOP_x3"] = Part.makeCompound([C.screw(5, 30, (G.XC, G.YC, z1 + 20.0), (0, 0, -1)),
-                                              C.screw(5, 8, (xb - 3.0, G.YC, z1 - 10.0), (1, 0, 0)),
-                                              C.screw(5, 8, (xb - 12.0, G.YC, z1 - 3.0), (0, 0, 1))])
-    out["TNUT_M5_TOP_x2"] = Part.makeCompound([C.tnut((xb + 3.25, G.YC, z1 - 10.0), (1, 0, 0), (0, 0, 1)),
-                                               C.tnut((xb - 12.0, G.YC, z1 + 3.25), (0, 0, 1), (1, 0, 0))])
+    out["TOP_MEMBER_2020"] = C.box(core_x, xb, y0, y1, z1 - 20.0, z1)
+    G.CAP = (xb - 22.0, G.XC + 10.0, z1, z1 + 4.0)
+    cap = C.box(G.CAP[0], G.CAP[1], y0, y1, G.CAP[2], G.CAP[3])
+    for hx in (G.XC, xb - 12.0):
+        cap = cap.cut(C.cyl(C.FIT["m5"] / 2, 10, (hx, G.YC, z1 - 1), (0, 0, 1)))
+    cap, _, _ = C.chamfer_outer(cap.removeSplitter())
+    out["TOP_CAP"] = cap
+    out["SCR_M5_TOP_x3"] = Part.makeCompound([C.screw(5, 12, (G.XC, G.YC, z1 + 4.0), (0, 0, -1), button=True),
+                                              C.screw(5, 8, (xb - 12.0, G.YC, z1 + 4.0), (0, 0, -1), button=True),
+                                              C.screw(5, 12, (xb + 1.8, G.YC, z1 - 10.0), (-1, 0, 0), button=True)])
+    out["TNUT_M5_TOP_x1"] = C.tnut((xb - 12.0, G.YC, z1 - 3.25), (0, 0, -1), (1, 0, 0))
     if G.FIX == "slot":
         out["BOTTOM_MEMBER_2020"] = C.box(core_x, xb, y0, y1, G.PROF_Z0 - 20, G.PROF_Z0)  # above the drive motor
         out["BOTTOM_L_BRACKET"] = l_bracket(xb, G.PROF_Z0, True, h_z=G.SOCLE_INFO["deck_top"])
@@ -679,9 +686,10 @@ def main():
                  "inward": ["  column at x %.0f (over the drive motor), on a saddle z %.0f..%.0f with legs at y +-21..25 beside the drive motor; "
                             "column bolted through its end hole (M5); servo mount base -> pivot reach %.0f mm"
                             % (G.XC, G.PROF_Z0 - 3, G.PROF_Z0, G.PX - (G.XC + 14.8))]}[G.FIX]
-    fix_lines.append("  top: 2020 cross-member ON the column's top, along x 40..%.0f, z %.0f..%.0f, M5 x 30 into the column's end + "
-                     "inside corner bracket (back slot z %.0f..%.0f / cross-member underside) -> the arm's lower edge above x %.0f..%.0f: %.1f..%.1f"
-                     % (G.XC + 10, G.PROF_Z1, G.PROF_Z1 + 20, G.PROF_Z1 - 20, G.PROF_Z1, G.XC - 30, G.XC + 10,
+    fix_lines.append("  top: 2020 cross-member x 40..%.0f, z %.0f..%.0f, butting on the column's back face, tops flush: blind joint "
+                     "(M5 head in the back slot, slid in from the top; Ø5 access hole in the +x face) + printed TOP_CAP 4 thick "
+                     "(z %.0f..%.0f) -> the arm's lower edge above x %.0f..%.0f: %.1f..%.1f"
+                     % (G.XC - 10, G.PROF_Z1 - 20, G.PROF_Z1, G.CAP[2], G.CAP[3], G.XC - 30, G.XC + 10,
                         G.Z_PLACE + (G.PX - (G.XC + 10)) / (G.PX - C.X_PLACE) * (C.ROOF_TOP - G.Z_PLACE) - 7.0,
                         G.Z_PLACE + (G.PX - min(G.XC - 30, C.X_PLACE)) / (G.PX - C.X_PLACE) * (C.ROOF_TOP - G.Z_PLACE) - 7.0))
     wheel_box = App.BoundBox(C.WHEEL["x0"], -C.WHEEL["r"], 0, C.WHEEL["x1"], C.WHEEL["r"], 2 * C.WHEEL["r"])
@@ -826,6 +834,7 @@ def main():
                    ("FLIPPER_MOTOR_BRACKET", lift["MOTOR_BRACKET"]), ("FLIPPER_RACK_%.0f" % (G.RACK_Z[1] - G.RACK_Z[0]), info["rack_print"]))
                   + ((("FLIPPER_BRIDGE_SOCLE", info["fix"]["BRIDGE_SOCLE"]),) if "BRIDGE_SOCLE" in info["fix"] else ())
                   + ((("FLIPPER_SADDLE_SOCLE", info["fix"]["SADDLE_SOCLE"]),) if "SADDLE_SOCLE" in info["fix"] else ())
+                  + ((("FLIPPER_TOP_CAP", info["fix"]["TOP_CAP"]),) if "TOP_CAP" in info["fix"] else ())
                   if os.environ.get("FLIPPER_PRINT") else ()):
         s_.exportStep(os.path.join(PRINT, n + ".step"))
         MeshPart.meshFromShape(Shape=s_, LinearDeflection=0.05, AngularDeflection=0.2).write(os.path.join(PRINT, n + ".stl"))
@@ -920,7 +929,7 @@ def b330_checks(ctx, fixed, fix, parts, steps):
 COLOURS = [  # (name prefix, rgb, transparency)
     ("ARM_PRINTED", (1.0, 0.55, 0.10), 0), ("SERVO_MOUNT", (0.20, 0.45, 0.90), 0), ("MOTOR_BRACKET", (0.20, 0.70, 0.30), 0),
     ("PINION", (0.95, 0.80, 0.10), 0), ("RACK", (0.95, 0.60, 0.20), 0), ("SADDLE_SOCLE", (0.10, 0.60, 0.60), 0),
-    ("BRIDGE_SOCLE", (0.10, 0.60, 0.60), 0), ("TOP_MEMBER", (0.75, 0.75, 0.80), 0), ("TOP_L", (0.60, 0.60, 0.65), 0),
+    ("BRIDGE_SOCLE", (0.10, 0.60, 0.60), 0), ("TOP_MEMBER", (0.75, 0.75, 0.80), 0), ("TOP_CAP", (0.10, 0.60, 0.60), 0),
     ("BOTTOM_L", (0.60, 0.60, 0.65), 0), ("PROFILE", (0.80, 0.80, 0.83), 0), ("X_PLATE", (0.35, 0.35, 0.40), 0),
     ("V_WHEELS", (0.08, 0.08, 0.08), 0), ("M5", (0.50, 0.50, 0.50), 0), ("ECCENTRIC", (0.60, 0.50, 0.30), 0),
     ("BRONZE", (0.70, 0.50, 0.20), 0), ("NEMA17", (0.15, 0.15, 0.17), 0), ("SERVO_MG996R", (0.10, 0.20, 0.60), 0),
