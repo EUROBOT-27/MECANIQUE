@@ -1,12 +1,13 @@
 # Status
 
-_Last updated: 2026-11-20 (Ayoub)_
+_Last updated: 2026-11-20 (Seif)_
 
 **Phase:** Strategy partly fixed → **clapets v7 module A printed + assembled (2026-11-18)**; **module B v1 = T1 turning plate designed (2026-11-19, D-027, D-028)**, final review before printing. Hub shared by Seif, Maatoug and Ayoub (D-018, D-024).
 **Next deadline:** Strategy chosen (internal), 2026-11-08 (**11 days overdue**) · Concepts chosen + prototypes tested 2026-11-22 (2 days) · CAD freeze 2026-12-13 (23 days) · Mechanical built and assembled, 2026-12-31 (41 days)
 **Qualifier:** end of March 2027
 
 ## Where we are
+- **Grail lift = Flipper** (`mechanical/Grail_v2/`, Seif, D-029): top grip + 180° flip, Grail lands upside down on a **deck at z 320** (rest of the robot can be 350). Built from the real Two Trees carriage + 2020 + NEMA17 + printed rack, on a printed saddle over the right drive wheel of base_330_js. **Static + motion collision checks: 0 clashes**, highest point 344, 7 print files, GIF + views in `Grail_v2/sim/`. Next: confirm the 8 base-plate holes, print in ABS, workshop operations. Flipper-S (lead screw) on hold. Suction version (Grail + gate lintel) later.
 - **Module B (suction) = T1** (`mechanical/suction-v1/`, Seif, D-027, D-028):
   - What: a plate with 3 cups on the butterfly plate that turns the whole stack 90° (towers) during a lift-turn
     (peak lift 70). The stack passes 350 mid-turn: castle only (FAQ Q9 = yes).
@@ -48,6 +49,7 @@ _Last updated: 2026-11-20 (Ayoub)_
 - Earlier decisions: differential drive (D-004), LiDAR + vision (D-007), overhead station on the table (D-008), **overhead camera = Pi Camera Module 3 Wide on a Pi, Ethernet to the laptop (D-026, `vision/camera-choice.md`)**, Aerobotix principles (D-006).
 
 ## Biggest risks right now
+-1. **Flipper not printed yet**; magnet height assumed; base_330_js: clapets module A reaches z 372–380 (> 350), to fix on the base side.
 0. **Front A+B: door sheets + foam 360.8 > 350 in the lift-turn** (cut ~14 mm off the top). The doors-vs-T1 fold is solved by folding less (start 1142 / 1135, not logged yet).
 1. **Real stones not ordered.** Gripper prototypes (concepts due 2026-11-22) can't be tested without them, especially suction on cardboard.
 2. **Clapets height margin 2.3 mm** (head at the top of its 75 mm lift) + rails/top tie at 366 mm in the prototype: the
@@ -55,7 +57,7 @@ _Last updated: 2026-11-20 (Ayoub)_
 3. **Perimeter budget:** layout v1 leaves 16 mm at start with a mirrored back (88 mm with a simple back) and 48 mm deployed; side-clamp jaws and the gate protrusion compete for it. FAQ Q1 (does a carried stone count?) unconfirmed.
 
 ## Waiting on
-- Seif: buy the camera (D-026), module A test + assembly fixes (clapets v7), order stones (foam balls ordered 2026-11-18), choose front/back of the refined layout, refined
+- Seif: confirm the 8 Flipper base-plate holes, buy the camera (D-026), module A test + assembly fixes (clapets v7), order stones (foam balls ordered 2026-11-18), choose front/back of the refined layout, refined
   timeline, confirmation of the D-008 location, name of the GROSBOT 2023 club.
 - Maatoug: back up personal files before the next pull; push the generators that only exist on his PC; remove the ~470 software build files committed in `a746ea1`. (v8 tasks dropped: Seif reworks module B in suction-v1.)
 - Hamza Sammoud: PAMI size choice (4 or 6), qualifier/registration/poster dates.
