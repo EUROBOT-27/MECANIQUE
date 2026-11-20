@@ -93,6 +93,9 @@ the servo mount's base for the servo + magnet cables.
 **Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
 electronics (Seif's idea, `../concepts/electronics-column.md`).
 
+**GIF (2026-11-20):** `mechanical/simulations/grail_lift/flipper_cycle.gif` (+ stills), rendered from the FCStd by
+`fc/flipper_gif.py` (`freecad.exe fc/flipper_gif.py`, ~2 min): full cycle and the way back, 3D + side view, magnet red = ON.
+
 **Motion collision check (2026-11-20): 0 clashes** (`fc/flipper_motion_check.py` → `CAD_FC/FLIPPER_motion_check.txt`,
 ~25 min). 65 poses: lift every 4 mm, flip every 5° at the top, lower 6 to place, magnet off + lower 6 (the way back uses
 the same poses without the Grail). Real overlaps between the moving parts (carriage, arm, Grail) and everything fixed
