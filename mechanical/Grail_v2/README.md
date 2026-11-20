@@ -93,8 +93,18 @@ the servo mount's base for the servo + magnet cables.
 **Top cross-member anchor:** a centre column, or rings on the front / back modules' profiles carrying floors for the
 electronics (Seif's idea, `../concepts/electronics-column.md`).
 
-**GIF (2026-11-20):** `mechanical/simulations/grail_lift/flipper_cycle.gif` (+ stills), rendered from the FCStd by
-`fc/flipper_gif.py` (`freecad.exe fc/flipper_gif.py`, ~2 min): full cycle and the way back, 3D + side view, magnet red = ON.
+**GIF (2026-11-20):** `sim/flipper_cycle.gif` (+ stills), rendered from the FCStd by `fc/flipper_gif.py`
+(`freecad.exe fc/flipper_gif.py`, ~2 min). Three panels: 3D, side view (red line = 350 mechanism limit), close view of the
+pinion on the rack following the carriage (column and wheels hidden). Magnet red = ON, grey = OFF.
+
+**Way back (Seif, 2026-11-20): put → go down → turn back.** After the release (lower 6), the carriage lowers **14 more**
+(pivot z 220), the arm turns back 180 → 0, then the carriage lowers to the pick. The window is narrow: the cup's circle
+(r ~91 around the pivot) rises ~10 mm above its release height early in the turn back, so with less than 12 mm of drop
+the cup hits the placed Grail; with more than ~14 the arm's bar meets the column's top. To get margin at 14:
+**file a 4 × 45° chamfer on the column's +x top edge**, the top cap stops 4 short of that face with a 3 × 45° edge,
+and its column screw is a **countersunk M5 × 12, flush**. Motion check of the way back (`FLIPPER_MOTION=back`
+→ `CAD_FC/FLIPPER_motion_check_back.txt`, 43 poses, ~3 min; the carriage heights and arm angles themselves are already
+covered by the forward check): **0 clashes**; tightest: arm ↔ cap screw 2.6, arm ↔ column 3.1, magnet ↔ placed Grail 3.2.
 
 **Motion collision check (2026-11-20): 0 clashes** (`fc/flipper_motion_check.py` → `CAD_FC/FLIPPER_motion_check.txt`,
 ~25 min). 65 poses: lift every 4 mm, flip every 5° at the top, lower 6 to place, magnet off + lower 6 (the way back uses

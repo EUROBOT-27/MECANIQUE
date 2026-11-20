@@ -40,6 +40,11 @@ class G:
     Z_PICK = C.G_H + LZ
     Z_PLACE = C.ROOF_TOP - LZ
     OVER, REL = 6.0, 6.0
+    # way back (Seif 2026-11-20: put, go down, then rotate): after the release the carriage lowers BACK_DROP more, then
+    # the arm turns back 180 -> 0, then the carriage lowers to the pick. Window found in the CAD: < 12 the cup's circle
+    # rises into the placed Grail, > 14 the arm's bar meets the column's top corner (filed COL_CHAMFER x 45 deg)
+    BACK_DROP = 14.0
+    COL_CHAMFER = 4.0
     # ---- column: real 2020, profile centre (XC, YC); plate faces +x (towards the right face)
     # ---- column fixation variant (Seif 2026-11-20: see them in CAD before deciding), env FLIPPER_FIX:
     #   slot   : column x 110 over the wheel; 2020 L-brackets in the back slot's free ends (rack cut to the pinion's
@@ -130,7 +135,7 @@ def build(doc, groups):
     Mp = printer_to_robot(zc)
     prof = load("profile_2020_X_350.step", Mp)
     cut = C.box(G.XC - 15, G.XC + 15, G.YC - 15, G.YC + 15, G.PROF_Z0, G.PROF_Z1)
-    fixed["PROFILE_2020"] = prof.common(cut)
+    fixed["PROFILE_2020"] = prof.common(cut).cut(chamfer_prism(G.XC + 10.0, G.PROF_Z1, G.COL_CHAMFER))   # filed corner
     # rack (local: x = length 0..310, y = 0 (V nose) .. 5 (tooth tips), z = width 0..10.59). Seat = push it into the
     # back-face slot until its V back touches the slot faces (2D sections of the real profile and the rack).
     rack_l = mesh_solid(os.path.join(PARTS, "cremaillere.STL"))
@@ -491,6 +496,13 @@ def saddle_socle():
     return body, info
 
 
+def chamfer_prism(x1, z1, c):
+    """45 deg cut of size c on the +x top edge at (x1, z1), through all y."""
+    f = Part.Face(Part.makePolygon([Vector(x1 - c, -60, z1 + 0.01), Vector(x1 + 0.01, -60, z1 + 0.01),
+                                    Vector(x1 + 0.01, -60, z1 - c), Vector(x1 - c, -60, z1 + 0.01)]))
+    return f.extrude(Vector(0, 120, 0))
+
+
 def fixation(zc):
     """Column fixation parts for G.FIX (robot frame). Fasteners (SCR_ / NUT_ / TNUT_) in their holes."""
     out = {}
@@ -506,13 +518,15 @@ def fixation(zc):
     #   - printed cap (4 thick) over both tops: M5 into the column's tapped end hole + M5 into a T-nut in the member's top slot
     z1 = G.PROF_Z1
     out["TOP_MEMBER_2020"] = C.box(core_x, xb, y0, y1, z1 - 20.0, z1)
-    G.CAP = (xb - 22.0, G.XC + 10.0, z1, z1 + 4.0)
-    cap = C.box(G.CAP[0], G.CAP[1], y0, y1, G.CAP[2], G.CAP[3])
+    G.CAP = (xb - 22.0, G.XC + 6.0, z1, z1 + 4.0)       # stops 4 short of the column's +x face, 3 x 45 on that edge
+    cap = C.box(G.CAP[0], G.CAP[1], y0, y1, G.CAP[2], G.CAP[3]).cut(chamfer_prism(G.CAP[1], G.CAP[3], 3.0))
+    cap = cap.cut(Part.makeCone(5.2, 2.75, 2.45, Vector(G.XC, G.YC, z1 + 4.0 - 2.45 + 0.01), Vector(0, 0, 1)).mirror(
+        Vector(G.XC, G.YC, z1 + 4.0 - 1.225), Vector(0, 0, 1)))                          # countersink, column screw
     for hx in (G.XC, xb - 12.0):
         cap = cap.cut(C.cyl(C.FIT["m5"] / 2, 10, (hx, G.YC, z1 - 1), (0, 0, 1)))
     cap, _, _ = C.chamfer_outer(cap.removeSplitter())
     out["TOP_CAP"] = cap
-    out["SCR_M5_TOP_x3"] = Part.makeCompound([C.screw(5, 12, (G.XC, G.YC, z1 + 4.0), (0, 0, -1), button=True),
+    out["SCR_M5_TOP_x3"] = Part.makeCompound([C.screw(5, 12, (G.XC, G.YC, z1 + 4.0), (0, 0, -1), countersunk=True),
                                               C.screw(5, 8, (xb - 12.0, G.YC, z1 + 4.0), (0, 0, -1), button=True),
                                               C.screw(5, 12, (xb + 1.8, G.YC, z1 - 10.0), (-1, 0, 0), button=True)])
     out["TNUT_M5_TOP_x1"] = C.tnut((xb - 12.0, G.YC, z1 - 3.25), (0, 0, -1), (1, 0, 0))
@@ -768,8 +782,11 @@ def main():
          % (C.G_W, C.G_W, C.G_H, C.X_PICK, C.X_PLACE, C.ROOF_TOP, C.MAG_D, C.MAG_L),
          "Flip axis x %.1f; LZ %.0f; pivot z %.1f (pick) -> %.1f (flip) -> %.1f (place) -> %.1f (stowed); travel %.1f"
          % (G.PX, G.LZ, G.Z_PICK, G.Z_PICK + top, G.Z_PLACE, G.Z_PLACE - G.REL, top + G.REL),
-         "Column: real 2020 at x %.0f, y %.0f, z %.0f..%.0f; plate centre z %.1f (pick) .. %.1f (flip), pivot %.1f above it"
-         % (G.XC, G.YC, G.PROF_Z0, G.PROF_Z1, G.ZC_PICK, zc_top, G.H_P),
+         "Way back: magnet off, lower %.0f (stowed), lower %.0f more, turn back at pivot z %.1f (180 -> 0), lower to the pick"
+         % (G.REL, G.BACK_DROP, G.Z_PLACE - G.REL - G.BACK_DROP),
+         "Column: real 2020 at x %.0f, y %.0f, z %.0f..%.0f (file a %.0f x 45 deg chamfer on its +x top edge: the arm passes "
+         "over it on the way back); plate centre z %.1f (pick) .. %.1f (flip), pivot %.1f above it"
+         % (G.XC, G.YC, G.PROF_Z0, G.PROF_Z1, G.COL_CHAMFER, G.ZC_PICK, zc_top, G.H_P),
          "",
          "CARRIAGE / DRIVE",
          "  wheels on the profile: wheel extents %.1f..%+.1f around the plate centre -> on the profile from plate z %.1f to %.1f "

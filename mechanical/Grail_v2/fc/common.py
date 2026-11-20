@@ -241,8 +241,16 @@ def _orient(shape, c, axis):
     return shape
 
 
-def screw(d, L, c, axis, button=False):
-    """Screw whose head bears at point c, shank going along axis for L."""
+CSK = {3: (6.0, 1.7), 4: (8.0, 2.3), 5: (10.0, 2.8)}                    # countersunk (ISO 10642): head Ø, height
+
+
+def screw(d, L, c, axis, button=False, countersunk=False):
+    """Screw whose head bears at point c, shank going along axis for L (countersunk: c = the flush top of the head)."""
+    if countersunk:
+        hd, hk = CSK[d]
+        head = Part.makeCone(hd / 2, d / 2 * 0.96, hk, Vector(0, 0, 0))
+        shank = Part.makeCylinder(d / 2 * 0.96, L, Vector(0, 0, 0))
+        return _orient(head.fuse(shank).removeSplitter(), c, axis)
     hd, hk = (BHCS if button else SHCS)[d]
     head = Part.makeCylinder(hd / 2, hk, Vector(0, 0, -hk))
     shank = Part.makeCylinder(d / 2 * 0.96, L, Vector(0, 0, 0))

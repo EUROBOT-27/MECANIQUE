@@ -1,0 +1,19 @@
+FLIPPER motion collision check - fc/flipper_motion_check.py (164 s), WAY BACK ONLY (FLIPPER_MOTION=back): drop after the release, turn back 180 -> 0
+cycle: 43 poses: lift 0..86 every 4 (flip 0), flip 0..180 every 5 deg at the top, lower 6 to place, magnet off + lower 6 (pivot x 170.5, z 160.0 at the pick). Way back: FLIPPER_MOTION=back.
+pairs: moving (carriage + arm + their screws) vs fixed (column, rack, saddle, top fixation, base plate, Grail deck, 350 limit, base_330_js parts); arm vs carriage; Grail vs everything. Overlaps > 1.0 mm3 are clashes.
+
+CLASHES: 0
+
+closest approaches under 5 mm (real distance, smallest over the cycle):
+   2.62 mm  ARM_PRINTED                - SCR_M5_TOP_x3              at 'back: lower 14.0 after the release'
+   3.08 mm  ARM_PRINTED                - PROFILE_2020               at 'back: lower 14.0 after the release'
+   3.19 mm  GRAIL_PLATE                - MAGNET_D30                 at 'back: turn to 155 at pivot 220'
+   3.47 mm  GRAIL                      - MAGNET_D30                 at 'back: turn to 150 at pivot 220'
+   3.51 mm  ARM_PRINTED                - TOP_CAP                    at 'back: lower 14.0 after the release'
+   3.86 mm  ARM_PRINTED                - GRAIL_PLATE                at 'back: turn to 150 at pivot 220'
+   4.67 mm  ARM_PRINTED                - GRAIL                      at 'back: turn to 145 at pivot 220'
+   4.82 mm  ARM_PRINTED                - CTX_GRAIL_DECK             at 'back: turn to 150 at pivot 220'
+
+touching without overlap (distance 0, overlap < 1.0 mm3; a few are false zeros on imported STEPs):
+
+expected overlaps seen during the cycle (largest):
