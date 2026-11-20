@@ -39,15 +39,24 @@ class G:
     Z_PLACE = C.ROOF_TOP - LZ
     OVER, REL = 6.0, 6.0
     # ---- column: real 2020, profile centre (XC, YC); plate faces +x (towards the right face)
-    XC, YC = 110.0, 4.0
-    PROF_Z0, PROF_Z1 = 78.0, 275.0           # profile cut length (bay floor .. under the arm's path at the place)
+    # ---- column fixation variant (Seif 2026-11-20: see them in CAD before deciding), env FLIPPER_FIX:
+    #   slot   : column x 110 over the wheel; 2020 L-brackets in the back slot's free ends (rack cut to the pinion's
+    #            travel) to two 2020 cross-members running inward along x: bottom one above the drive motor, top one
+    #            under the roof
+    #   bridge : column x 110 standing on a plate that arches over the wheel (legs to the floor beside it) + top as slot
+    #   inward : column x 85, over the drive motor, on a saddle above it (column starts lower) + top as slot
+    FIX = os.environ.get("FLIPPER_FIX", "slot")
+    XC, YC = {"inward": 85.0}.get(FIX, 110.0), 4.0
+    PROF_Z0 = {"bridge": 81.0, "inward": 60.0}.get(FIX, 78.0)   # slot: bay floor (wheel top 74); bridge: on the arch
+    PROF_Z1 = {"bridge": 278.0}.get(FIX, 275.0)   # under the arm's path at the place (bridge: all 3 mm higher)
     # ---- carriage: plate centre height at the pick; pivot H_P above it
     H_P = None                                # computed: Z_PICK - ZC_PICK
-    ZC_PICK = 116.0                           # lowest plate centre (bottom wheel stays on the profile)
+    ZC_PICK = {"bridge": 119.0}.get(FIX, 116.0)   # lowest plate centre (bottom wheel stays on the profile)
     # ---- rack: only its V nose enters the back-face slot, teeth towards -x. Real profile slot (measured, section at
     # mid-length): 8.9 wide at the face, 45 deg down to a 6.4 lip at 1.4 deep, cavity behind. Rack V back: 5.7 (nose)
     # -> 10.59 over 2.62 (~43 deg). The flanks meet with the nose 1.7 mm below the face (Seif: "not really inside").
-    RACK_SEAT = None                          # computed: rack pushed in until its V back touches the slot faces
+    RACK_SEAT = None                          # computed: rack slid in from the profile's end (Seif), V back resting on
+                                              # the slot cavity's inner faces (the pinion pushes it inward)
     # ---- motor (standard NEMA17 40 mm for now) + pinion
     MOTOR_FACE_GAP = 5.0                      # motor face this far past the eccentric wheel (in -y): bracket 4.5 + 0.5 clear
     PIN_DZ = 10.0                             # pinion centre above the plate centre
@@ -131,13 +140,20 @@ def build(doc, groups):
             return psec.common(rack_face(seat)).Area
         except Exception:
             return 0.0
-    lo, hi = 0.0, 3.0
-    for _ in range(30):
+    scan = [k * 0.05 for k in range(0, 200)]
+    ok = [overlap(v) <= 0.005 for v in scan]
+    deepest = max(i for i, f in enumerate(ok) if f and i > 0 and scan[i] > 2.7)   # inside the cavity (past the lips)
+    lo, hi = scan[deepest], scan[min(deepest + 1, len(scan) - 1)]
+    for _ in range(25):
         mid_ = (lo + hi) / 2
         if overlap(mid_) > 0.005:
             hi = mid_
         else:
             lo = mid_
+    shallow = deepest
+    while shallow > 0 and ok[shallow - 1]:
+        shallow -= 1
+    G.RACK_PLAY = lo - scan[shallow]          # how far it can move between the lips and the inner faces
     G.RACK_SEAT = lo
     rm = App.Matrix(0, -1, 0, G.XC - 10 + G.RACK_SEAT,
                     0, 0, 1, G.YC - 10.59 / 2,
@@ -145,9 +161,11 @@ def build(doc, groups):
                     0, 0, 0, 1)
     rack = rack_l.copy()
     rack.transformShape(rm)
-    rack = rack.common(C.box(G.XC - 30, G.XC, G.YC - 10, G.YC + 10, G.PROF_Z0, G.PROF_Z1))
+    top_ = G.Z_PLACE + G.OVER - G.Z_PICK
+    G.RACK_Z = (zc + G.PIN_DZ - 12.0, zc + G.PIN_DZ + top_ + 12.0)     # pinion travel +- tip radius + 1
+    rack = rack.common(C.box(G.XC - 30, G.XC, G.YC - 10, G.YC + 10, G.RACK_Z[0], G.RACK_Z[1]))
     fixed["RACK_m1_printed"] = rack
-    rack_print = rack_l.common(C.box(0, G.PROF_Z1 - G.PROF_Z0, -1, 6, -1, 12))      # print file: cut to the profile
+    rack_print = rack_l.common(C.box(G.RACK_Z[0] - G.PROF_Z0, G.RACK_Z[1] - G.PROF_Z0, -1, 6, -1, 12))   # print file
     # ---------------- carriage (real X carriage)
     for nm, fn in (("X_PLATE", "x_carriage_plate.step"), ("V_WHEELS_x3", "v_wheels_X.step"),
                    ("M5x25_SCREWS", "m5x25_wheel_screws_X.step"), ("M5_NYLOC", "m5_nyloc_nuts_X.step"),
@@ -166,7 +184,7 @@ def build(doc, groups):
     face_y = ecc_wheel_ymin - G.MOTOR_FACE_GAP
     pin = Part.read(os.path.join(PRINT, "FLIPPER_PINION.step"))
     pin_len = pin.BoundBox.ZLength
-    G.PIN_GEAR_OFF = G.PIN_BOSS_GAP + pin_len - 5.0
+    G.PIN_GEAR_OFF = G.PIN_BOSS_GAP + pin_len - 2.5                 # gear 5 wide at the far end
     gear_y = face_y + G.PIN_GEAR_OFF
     nm_s, d, fcen = nema_frame()
     rot = App.Rotation(d, Vector(0, 1, 0))
@@ -199,7 +217,7 @@ def build(doc, groups):
                 mb = mb.cut(C.cyl(2.9, 1.9, (hx, by1 - 1.8, hz), (0, 1, 0)))                     # button head, counterbored
     tab_screws = []
     for zz in (zc + 24.0, zc - 24.0):
-        for xx in (113.0, 119.0):
+        for xx in (G.XC + 3.0, G.XC + 9.0):
             mb = mb.cut(C.cyl(C.FIT["m3"] / 2, 40, (xx, by0 - 1, zz), (0, 1, 0)))
             mb = mb.cut(C.cyl(3.35, 3.5, (xx, by0 - 0.1, zz), (0, 1, 0)))                       # head counterbore
             tab_screws.append((xx, zz))
@@ -235,6 +253,9 @@ def build(doc, groups):
     lift.update(head)
     arm_all.update(arm)
     hinfo.update(base_x=(xf, xb1), m5=m5, m3=m3, ecc=ecc)
+    fixp = fixation(zc)
+    for n, s in fixp.items():
+        C.add(doc, n, s, "FIXATION_" + G.FIX, groups)
     for n, s in arm_all.items():
         C.add(doc, n, s, "ARM_pick_pose", groups)
     for n, s in lift.items():
@@ -246,12 +267,47 @@ def build(doc, groups):
     C.add(doc, "GRAIL_PLATE", plate, "GRAIL_pick", groups)
     info = dict(plate_bb=plate_bb, wheel_bb=wheel_bb, ecc_ymin=ecc_wheel_ymin, pitch_x=pitch_x, pin=(pin_x, gear_y, pin_z),
                 face_y=face_y, motor_bb=C.bb(motor), pin_bb=C.bb(pin), wheels=wheels, head=hinfo,
-                rack_print=rack_print, pin_len=pin_len, tab_screws=tab_screws, bracket_y=(by0, by1))
+                rack_print=rack_print, pin_len=pin_len, tab_screws=tab_screws, bracket_y=(by0, by1), fix=fixp)
     return arm_all, lift, fixed, (g, plate), info
 
 
+def l_bracket(x_face, z0, up, inward_len=20.0, t=3.0):
+    """2020 corner bracket (20 wide, 3 thick) on the column's back face (x_face) at z0..z0+20 (up=True) or z0-20..z0,
+    its other leg running inward (-x) along the cross-member's face."""
+    y0, y1 = G.YC - 10, G.YC + 10
+    zz0, zz1 = (z0, z0 + 20) if up else (z0 - 20, z0)
+    v = C.box(x_face - t, x_face, y0, y1, zz0, zz1)
+    h = C.box(x_face - inward_len, x_face, y0, y1, (z0 - t) if up else z0, z0 if up else z0 + t)
+    return v.fuse(h).removeSplitter()
+
+
+def fixation(zc):
+    """Column fixation parts for G.FIX (robot frame)."""
+    out = {}
+    xb = G.XC - 10                                       # column back face
+    y0, y1 = G.YC - 10, G.YC + 10
+    core_x = 40.0                                        # cross-members run inward to here (core structure, x <= 64)
+    # ---- top (all variants): 2020 cross-member along x under the roof, back face of the column -> core
+    out["TOP_MEMBER_2020"] = C.box(core_x, xb, y0, y1, G.PROF_Z1 - 20, G.PROF_Z1)
+    out["TOP_L_BRACKET"] = C.box(xb - 20, xb + 20, y0, y1, G.PROF_Z1, G.PROF_Z1 + 3)      # flat joint plate on top
+    if G.FIX == "slot":
+        out["BOTTOM_MEMBER_2020"] = C.box(core_x, xb, y0, y1, G.PROF_Z0 - 20, G.PROF_Z0)  # above the drive motor
+        out["BOTTOM_L_BRACKET"] = l_bracket(xb, G.PROF_Z0, True)
+    elif G.FIX == "bridge":
+        x0, x1 = G.XC - 14, G.XC + 14
+        out["WHEEL_BRIDGE_PLATE"] = C.box(x0, x1, -45.0, 42.0, G.PROF_Z0 - 5, G.PROF_Z0)
+        out["WHEEL_BRIDGE_LEG_BACK"] = C.box(x0, x1, -45.0, -40.0, 26.0, G.PROF_Z0 - 5)
+        out["WHEEL_BRIDGE_LEG_FRONT"] = C.box(x0, x1, 38.0, 42.0, 26.0, G.PROF_Z0 - 5)
+    elif G.FIX == "inward":
+        x0, x1 = G.XC - 15, G.XC + 15
+        out["MOTOR_SADDLE_TOP"] = C.box(x0, x1, -25.0, 25.0, G.PROF_Z0 - 3, G.PROF_Z0)
+        out["MOTOR_SADDLE_LEG_BACK"] = C.box(x0, x1, -25.0, -21.0, 26.0, G.PROF_Z0 - 3)
+        out["MOTOR_SADDLE_LEG_FRONT"] = C.box(x0, x1, 21.0, 25.0, 26.0, G.PROF_Z0 - 3)
+    return out
+
+
 def main():
-    doc = App.newDocument("FLIPPER")
+    doc = App.newDocument("FLIPPER_" + G.FIX.upper())
     groups = {}
     arm, lift, fixed, gr, info = build(doc, groups)
     P = (G.PX, G.Z_PICK)
@@ -328,6 +384,41 @@ def main():
         if out:
             env.append("  %-34s %s" % (n[:34], "; ".join(out)))
 
+    # ---- fixation: what it is + coarse checks (bounding boxes vs the wheel, drive motor, carriage at pick / top)
+    fix_lines = {"slot": ["  rack cut to the pinion's travel (z %.0f..%.0f, %.0f long): the back slot is free at both ends" % (G.RACK_Z[0], G.RACK_Z[1], G.RACK_Z[1] - G.RACK_Z[0]),
+                          "  bottom: 2020 corner bracket in the back slot (z %.0f..%.0f) onto a 2020 cross-member along x, z %.0f..%.0f, "
+                          "x 40..%.0f (above the drive motor, top 55.5)" % (G.PROF_Z0, G.PROF_Z0 + 20, G.PROF_Z0 - 20, G.PROF_Z0, G.XC - 10)],
+                 "bridge": ["  plate arching over the wheel: x %.0f..%.0f, y -45..42, z %.0f..%.0f, legs to the floor at y -45..-40 and 38..42; "
+                            "column bolted through its end hole (M5)" % (G.XC - 14, G.XC + 14, G.PROF_Z0 - 5, G.PROF_Z0)],
+                 "inward": ["  column at x %.0f (over the drive motor), on a saddle z %.0f..%.0f with legs at y +-21..25 beside the drive motor; "
+                            "column bolted through its end hole (M5); servo mount base -> pivot reach %.0f mm"
+                            % (G.XC, G.PROF_Z0 - 3, G.PROF_Z0, G.PX - (G.XC + 14.8))]}[G.FIX]
+    fix_lines.append("  top (all variants): 2020 cross-member along x, x 40..%.0f, z %.0f..%.0f, joint plate on top (z %.0f..%.0f) "
+                     "-> the arm's lower edge above x %.0f..%.0f: %.1f..%.1f"
+                     % (G.XC - 10, G.PROF_Z1 - 20, G.PROF_Z1, G.PROF_Z1, G.PROF_Z1 + 3, G.XC - 30, G.XC + 10,
+                        G.Z_PLACE + (G.PX - (G.XC + 10)) / (G.PX - C.X_PLACE) * (C.ROOF_TOP - G.Z_PLACE) - 7.0,
+                        G.Z_PLACE + (G.PX - min(G.XC - 30, C.X_PLACE)) / (G.PX - C.X_PLACE) * (C.ROOF_TOP - G.Z_PLACE) - 7.0))
+    wheel_box = App.BoundBox(C.WHEEL["x0"], -C.WHEEL["r"], 0, C.WHEEL["x1"], C.WHEEL["r"], 2 * C.WHEEL["r"])
+    drive_box = App.BoundBox(32, -18.5, 18.5, 100, 18.5, 55.5)
+    for fn, fs in info["fix"].items():
+        fb = C.bb(fs)
+        hits = []
+        if fb.intersect(drive_box) and fb.ZMin < 55.5 and fb.YMin < 18.5 and fb.YMax > -18.5 and fb.XMin < 100 and fb.XMax > 32:
+            hits.append("drive motor box (fix bottom %.1f vs motor top 55.5)" % fb.ZMin)
+        if fb.intersect(wheel_box) and (fb.YMin < C.WHEEL["r"] and fb.YMax > -C.WHEEL["r"]):
+            yy = 0.0 if fb.YMin < 0 < fb.YMax else min(abs(fb.YMin), abs(fb.YMax))
+            wt = C.WHEEL["z"] + math.sqrt(max(0.0, C.WHEEL["r"] ** 2 - yy ** 2)) if yy < C.WHEEL["r"] else -1
+            if fb.ZMin < wt + 1:
+                hits.append("wheel (bottom %.1f vs wheel top %.1f)" % (fb.ZMin, wt))
+        for s_, tag in ((steps[0], "pick"), (steps[4], "top")):
+            for n_, (sh_, g_) in parts.items():
+                if g_ != "lift":
+                    continue
+                if fb.intersect(C.bb(C.moved(sh_, s_["pls"][g_]))):
+                    hits.append("%s @%s (box)" % (n_, tag))
+        fix_lines.append("  %-20s x %.0f..%.0f y %.0f..%.0f z %.0f..%.0f: %s" % (fn, fb.XMin, fb.XMax, fb.YMin, fb.YMax, fb.ZMin, fb.ZMax,
+                                                                     "; ".join(hits) if hits else "clear"))
+
     # ---- numbers
     pb = info["plate_bb"]
     zc_top = G.ZC_PICK + top
@@ -387,9 +478,9 @@ def main():
          "(travel uses %.1f..%.1f: %s)"
          % (wheel_lo, wheel_hi, G.PROF_Z0 - wheel_lo, G.PROF_Z1 - wheel_hi, G.ZC_PICK, zc_top,
             "OK" if G.ZC_PICK >= G.PROF_Z0 - wheel_lo - 0.1 and zc_top <= G.PROF_Z1 - wheel_hi + 0.1 else "WHEEL OFF THE PROFILE"),
-         "  rack: pushed in until its V back touches the slot faces (2D sections): nose %.2f below the face; pitch line x %.2f (tips %.2f past the back face), z %.1f..%.1f; "
+         "  rack: slid in from the end, V back on the cavity's inner faces (2D sections; play to the lips %.2f): nose %.2f below the face; pitch line x %.2f (tips %.2f past the back face), z %.1f..%.1f; "
          "pinion centre x %.2f, z %.1f (pick) .. %.1f (flip), on the rack: %s"
-         % (G.RACK_SEAT, info["pitch_x"], 5.0 - G.RACK_SEAT, rb.ZMin, rb.ZMax, pin_x, pin_z, pin_z + top,
+         % (G.RACK_PLAY, G.RACK_SEAT, info["pitch_x"], 5.0 - G.RACK_SEAT, rb.ZMin, rb.ZMax, pin_x, pin_z, pin_z + top,
             "OK" if rb.ZMin + 11 <= pin_z - G.REL and pin_z + top <= rb.ZMax - 11 else "OFF THE RACK"),
          "  motor face y %.1f (eccentric wheel edge %.1f, gap %.1f); pinion %.1f long; gear centre y %.1f vs rack centre %.1f; motor body x %.1f..%.1f "
          "y %.1f..%.1f z %.1f..%.1f (pick)"
@@ -397,6 +488,12 @@ def main():
          "  lift: ~%.2f kg moving -> %.1f N on the rack, %.3f N.m on the motor (NEMA17 ~0.4); the rack can be back-driven: "
          "at 100 s / e-stop the carriage drops (Grail already released at the end; mid-carry it falls)" % (m_moving, f_lift, t_pin),
          "",
+         "  pinion: gear %.0f wide must pass the slot lip (6.35): gear tip x %.2f vs the back face x %.1f (%s)"
+         % (5.0, pin_x + 11.0, G.XC - 10, "gear dips %.2f into the slot" % (pin_x + 11.0 - (G.XC - 10)) if pin_x + 11.0 > G.XC - 10 else "outside"),
+         "",
+         "COLUMN FIXATION: %s" % G.FIX.upper()]
+    r += fix_lines
+    r += ["",
          "CYCLE (bounding boxes, no clash check). act.out = actuator x past the right face (x %.0f)" % C.FACE]
     r += lines
     r += ["", "SUMMARY"] + C.summary_lines(worst, start_out)
@@ -422,10 +519,11 @@ def main():
           % (G.PROF_Z1 - G.PROF_Z0, rb.ZLength),
           "  printed ABS: motor bracket, servo bracket + 625 cheek, arm + magnet cup (~%.0f g), pinion" % (arm_mass * 1000)]
     # print files of the printed parts (robot frame at the pick pose; print orientation in the assembly sheet)
-    os.makedirs(PRINT, exist_ok=True)
+    os.makedirs(PRINT, exist_ok=True) if os.environ.get("FLIPPER_PRINT") else None
     import MeshPart
-    for n, s_ in (("FLIPPER_ARM", arm["ARM_PRINTED"]), ("FLIPPER_SERVO_MOUNT", lift["SERVO_MOUNT"]),
-                  ("FLIPPER_MOTOR_BRACKET", lift["MOTOR_BRACKET"]), ("FLIPPER_RACK_%.0f" % (G.PROF_Z1 - G.PROF_Z0), info["rack_print"])):
+    for n, s_ in ((("FLIPPER_ARM", arm["ARM_PRINTED"]), ("FLIPPER_SERVO_MOUNT", lift["SERVO_MOUNT"]),
+                   ("FLIPPER_MOTOR_BRACKET", lift["MOTOR_BRACKET"]), ("FLIPPER_RACK_%.0f" % (G.RACK_Z[1] - G.RACK_Z[0]), info["rack_print"]))
+                  if os.environ.get("FLIPPER_PRINT") else ()):
         s_.exportStep(os.path.join(PRINT, n + ".step"))
         MeshPart.meshFromShape(Shape=s_, LinearDeflection=0.05, AngularDeflection=0.2).write(os.path.join(PRINT, n + ".stl"))
     hi = info["head"]
@@ -453,7 +551,7 @@ def main():
                                                                                C.bb(lift["SERVO_MG996R"]).YMax, BAY["y0"],
                                                                                C.bb(lift["SERVO_MOUNT"]).YMin, C.bb(lift["SERVO_MOUNT"]).YMax),
         ""]
-    C.save(doc, "FLIPPER", r)
+    C.save(doc, "FLIPPER_" + G.FIX.upper(), r)
 
 
 main()

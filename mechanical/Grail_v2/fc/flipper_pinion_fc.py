@@ -1,6 +1,6 @@
 # flipper_pinion_fc.py - Flipper lift pinion v2 (m1, 20 T) for the printed rack (parts/cremaillere.STL, m1, 10.6 wide).
 # Redo of Baha's "el pignon" (parts/el_pignon.STEP):
-#   * real involute teeth (20 deg), face width FACE_W (was 5 mm),
+#   * involute teeth (20 deg), 5 mm wide like el pignon (the gear enters the profile slot),
 #   * long hub kept (the motor must sit past the carriage wheel) but Ø16 instead of Ø10.5: stiff enough (report),
 #   * hub thick enough for Seif's M3 insert (K 5.0, the one el pignon was drawn for: hole Ø4.5, cone Ø5.2 = D-025)
 #     radial, the M3 set screw bearing on the shaft's D flat (was a 2.7 mm wall: the insert would reach the bore),
@@ -26,11 +26,13 @@ PRINT = os.path.join(ROOT, "print")
 class G:
     M, Z, PA = 1.0, 20, 20.0              # module, teeth, pressure angle
     BACKLASH = 0.15                       # total, taken off the tooth thickness (printed gear on a printed rack)
-    FACE_W = 10.0                         # tooth width (rack is 10.6)
+    FACE_W = 5.0                          # tooth width: the gear dips INTO the profile slot (lip 6.35) to reach the
+                                          # rack slid inside it (tooth strip 5.7 wide) = Baha's el pignon width
     HUB_D = 16.0                          # hub Ø (root Ø is 17.5): 5 mm of wall for the insert (el pignon: 2.7)
-    HUB_L = 31.5                          # long hub: the motor face sits 5 mm past the carriage's eccentric wheel
+    HUB_L = 34.0                          # long hub: the motor face sits 5 mm past the carriage's eccentric wheel
                                           # (fc/flipper_fc.py: wheel edge 32 mm from the profile centre; el pignon: 29)
     INS_Z = 8.0                           # insert axis from the motor-side face (inside the shaft's 21 mm)
+    NECK_D, NECK_L = 12.0, 9.0            # last part of the hub before the gear: passes next to the profile's back face
     BORE_D, FLAT = 5.15, 4.6              # NEMA17 shaft Ø5, D flat at 4.5 (+0.1)
     INS_K, INS_L = 5.0, 4.0               # Seif's M3 insert (knurl Ø, length) -> D-025: hole K*0.9, cone K+0.2 over L/4
     BOSS_GAP = 0.5                        # hub face starts this far from the motor face (clears the motor boss)
@@ -104,7 +106,8 @@ def build():
     z_g0 = G.BOSS_GAP + G.HUB_L
     gear = face.extrude(Vector(0, 0, G.FACE_W))
     gear.translate(Vector(0, 0, z_g0))
-    hub = Part.makeCylinder(G.HUB_D / 2, G.HUB_L, Vector(0, 0, G.BOSS_GAP))
+    hub = Part.makeCylinder(G.HUB_D / 2, G.HUB_L - G.NECK_L, Vector(0, 0, G.BOSS_GAP)).fuse(
+        Part.makeCylinder(G.NECK_D / 2, G.NECK_L + 0.01, Vector(0, 0, G.BOSS_GAP + G.HUB_L - G.NECK_L)))
     body = hub.fuse(gear).removeSplitter()
     L = z_g0 + G.FACE_W - G.BOSS_GAP
     body = body.cut(d_bore(G.BOSS_GAP - 1, L + 2))
@@ -129,8 +132,9 @@ def main():
     r = ["FLIPPER PINION v2 - fc/flipper_pinion_fc.py",
          "m%.1f, %d teeth, pressure angle %.0f deg, backlash %.2f: tip Ø%.2f, pitch Ø%.2f, root Ø%.2f"
          % (G.M, G.Z, G.PA, G.BACKLASH, 2 * ra, G.M * G.Z, 2 * rf),
-         "teeth %.1f wide (rack 10.6); hub Ø%.1f x %.1f on the motor side; total length %.1f (NEMA17 shaft ~24 from the face)"
-         % (G.FACE_W, G.HUB_D, G.HUB_L, L),
+         "teeth %.1f wide (they enter the profile slot: lip 6.35); hub Ø%.1f x %.1f on the motor side, then a Ø%.0f x %.0f neck "
+         "next to the profile; total length %.1f (NEMA17 shaft ~24 from the face)"
+         % (G.FACE_W, G.HUB_D, G.HUB_L - G.NECK_L, G.NECK_D, G.NECK_L, L),
          "gear centre %.1f mm from the motor face (el pignon: ~31). Stiffness at 10 N on the teeth: steel shaft Ø5 "
          "bends ~0.02 mm; hub Ø16 ABS ~0.3 MPa (el pignon Ø10.5 hub, 2.7 mm wall at the insert)" % (G.BOSS_GAP + G.HUB_L + G.FACE_W / 2),
          "bore: D Ø%.2f, flat at %.2f from the axis side; M3 insert K %.1f L %.1f: hole Ø%.2f, cone Ø%.2f x %.1f; "

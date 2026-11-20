@@ -37,23 +37,34 @@ axis is halfway between them (Grail centre x 195 on the floor, x 110 on the roof
 
 ## Flipper: rack lift from real parts (`fc/flipper_fc.py`)
 Two Trees Bluer V2 **X-axis carriage** on the real **2020**, Seif's **printed rack** (m1, `parts/cremaillere.STL`),
-**NEMA17** + **pinion v2**, flip head.
+**NEMA17** + **pinion v2**, flip head from `common.flip_head` (MG996R + 625 cheek + arm + Ø30 magnet in a cup).
 - **Why it looks like Baha's:** the X plate sits 2 mm from the profile's front face and its wheels ride the two side
-  faces, so the rack goes on the **back face** (its V back sits in the V-groove). The NEMA shaft runs along y, and the
-  motor body must clear the eccentric wheel: hence a **long pinion hub** (as `el pignon`).
-- Placement (robot frame): profile centre x 110, y 4, cut to z 78–275; plate faces the right face (+x); the servo
-  bracket on the plate's front face reaches the flip axis x 152.5. **LZ 58:** pivot 138 → 254 (flip) → 248 (place)
-  → 242 (stowed), 122 mm of travel; plate centre 116 → 232 (wheels on the profile: 114.9–238 allowed).
-- **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20), face **5 mm past the eccentric wheel** (Seif: more
-  clearance). Its body sits at y −70…−33: **18 mm past the Grail bay** (y −52) toward the back module. A shorter NEMA (once Seif knows what we have) is a quick fix: motor length + pinion hub.
+  faces, so the rack goes in the **back face's slot**. The NEMA shaft runs along y, and the motor must clear the
+  eccentric wheel (5 mm, Seif): hence a **long pinion hub**.
+- **Rack slid in from the profile's end** (Seif, 2026-11-20), like a T-nut: wide part in the slot cavity, **V back on
+  the cavity's inner faces** (seat computed from the real sections: nose 6.2 below the face, 0.45 play to the lips).
+  Its teeth are then 1.2 mm below the face, so the **pinion's 5 mm gear dips 3.2 mm into the slot** (lip 6.35 wide).
+  That is exactly why Baha's rack has a 5.7 tooth strip and his pinion 5 mm teeth.
+- **Rack cut to the pinion's travel** (z 114–254, 140 long): the back slot stays free at both ends for fixations.
+- Placement (robot frame): profile centre y 4, x 110 (or 85, INWARD variant); plate faces the right face (+x); the
+  servo mount on the plate's front reaches the flip axis x 152.5. **LZ 58:** pivot 138 → 254 (flip) → 248 (place)
+  → 242 (stowed), 122 mm of travel.
+- **Motor:** standard 40 mm NEMA17 for now (Seif, 2026-11-20), face 5 mm past the eccentric wheel. Body at y −70…−33:
+  **18 mm past the Grail bay** (y −52) toward the back module. A shorter NEMA is a quick fix (motor + pinion hub).
 
-Report `CAD_FC/FLIPPER_report.txt`:
-- highest actuator point 335.7; the Grail never enters the body; start 14.5 mm past the face; 84 mm out at flip 45°
-  (perimeter +~45, budget ~67)
-- plate top at the place 263.5, 15 mm under the arm; profile top 275, 10 mm under the arm
-- flip 2.1 kg·cm (4.4× on the MG996R); lift ~0.7 kg → 7 N on the rack, 0.07 N·m on the NEMA
-- **the rack can be back-driven:** at 100 s or e-stop the carriage drops (fine at the end, the Grail is released;
-  mid-carry the Grail falls)
+### Column fixation: three variants to choose from (Seif, 2026-11-20)
+The 2020's bottom end sits right above the right wheel (x 106–150, top z 74). Run with `FLIPPER_FIX=slot|bridge|inward`
+→ `CAD_FC/FLIPPER_<VARIANT>.FCStd` + report. The top fixation is the same in all three: a **2020 cross-member along x**
+from the column's back face inward to the core (x 40), z 255–275, joint plate on top (6–7 mm under the arm's path).
+
+| | **SLOT** | **BRIDGE** | **INWARD** |
+|---|---|---|---|
+| Idea | 2020 corner brackets in the back slot's **free ends** (rack cut to the pinion travel) | a plate **arching over the wheel**, legs to the floor beside it | column **over the drive motor** (x 85), on a saddle above it |
+| Bottom | L-bracket (z 78–98) onto a 2020 cross-member along x, z 58–78, above the drive motor (top 55.5) | plate z 76–81, x 96–124, legs at y −45…−40 and 38…42; column bolted through its end hole (M5) | saddle z 57–60, legs at y ±21–25 beside the drive motor; column bolted through its end hole |
+| Moves | nothing | everything 3 mm up (column 81–278) | column, carriage, motor 25 mm inward; servo mount reaches **53 mm** to the pivot (28 now) |
+| Parts | 2 × 2020 cross-members + 2 corner brackets 📦 | printed / alu arch + top member | printed / alu saddle + top member |
+| Fits | all clear; motor 18 mm past the bay (y) | all clear; motor 18 mm past the bay (y) | all clear, but **the NEMA, pinion and motor bracket leave the bay inward (x 46–66)**, toward the back module |
+| Checks | same cycle for all: highest point 335.7, the Grail never enters the body, nothing in the Grail's swept zone | | |
 
 ### Printed parts so far (`print/`, robot frame at the pick pose)
 | Part | What | Fixing |
@@ -61,8 +72,8 @@ Report `CAD_FC/FLIPPER_report.txt`:
 | `FLIPPER_ARM` (12 g) | hub Ø24 + bar 14 × 10 + magnet cup (seat Ø30.3, 18 deep, magnet face 4 mm proud), one solid | round horn's disc in a Ø21.4 pocket + Ø9.8 boss recess, **4 × M2 × 12** from +y into the horn holes (Ø2.5, as the tested T9 pinion); Ø5 steel pin pressed 6 deep from +y; magnet M4 stud + nut in a pocket |
 | `FLIPPER_SERVO_MOUNT` (30 g) | base 8 thick on the X plate's front + servo plate under the ears (body cut-out) + 625 cheek joined under the pivot, one solid | **2 × M5×35** replacing the upper wheel screws (nylocs move to the base's front), **2 × M3** into the plate's 2 tapped holes (Ø2.5, 20 apart), recess for the eccentric's nyloc; servo: **2 × M3 × 12 + nuts in pockets**; **625 seat Ø16.2 open on +y**, lip on the arm side |
 | `FLIPPER_MOTOR_BRACKET` (15 g) | plate 4.5 thick between the motor face and the eccentric wheel (0.5 mm off it), NEMA17 4 × M3 + Ø23 pilot, 2 bridges to the X plate's back tabs (above / below the wheel) | 4 × M3×25 into the tabs: **drill Ø2.5 + tap M3** (the tabs have no holes) |
-| `FLIPPER_RACK_197` | Seif's rack (`parts/cremaillere.STL`) cut to the profile length | sits with its V back on the slot faces (nose 1.6 mm in, computed from the real sections) |
-| `FLIPPER_PINION` | below (41.5 long) | M3 insert K5 + set screw on the shaft flat |
+| `FLIPPER_RACK_140` | Seif's rack cut to the pinion's travel | slid into the back slot from the profile's end, V back on the cavity's inner faces |
+| `FLIPPER_PINION` | below (39 long, 5 mm teeth) | M3 insert K5 + set screw on the shaft flat |
 
 Checks (report): no body part enters the zone the Grail sweeps (radius ≥ 58.5 from the axis, −87…143°); the servo body
 stays in the bay (y −50.4).
@@ -92,12 +103,13 @@ M4 Ø4.6, M5 Ø5.6, nut pockets M3 6.0 × 6.9 × 2.8 / M4 7.4 × 8.4 × 3.6, Ø5
 5. Magnet into the cup (M4 nut in its pocket). Carriage onto the 2020 (eccentric to preload), rack in the back slot.
 
 ### Pinion v2 (`fc/flipper_pinion_fc.py` → `print/FLIPPER_PINION.step/.stl`)
-Redo of Baha's `parts/el_pignon.STEP`. Baha's: m1 20T, teeth 5 wide at the end of a Ø10.5 × 29 hub, Ø5.1 bore, radial
-hole for an **M3 insert K 5.0** (Ø4.5 hole + Ø5.2 cone = D-025 read backwards), 2 solids. The new one:
-- **involute teeth 10 wide** (rack 10.6), one solid, **D bore** Ø5.15 / flat 4.6
-- **hub Ø16 × 31.5** (long: the motor sits 5 mm past the wheel); insert 8 mm from the motor end with **6 mm of wall** for the
-  4 mm insert (el pignon had 2.7 mm, so the insert reached the bore)
-- stiffness at 10 N on the teeth: steel shaft bends ~0.02 mm, hub ~0.3 MPa. Gear centre 37 mm from the motor face
+Redo of Baha's `parts/el_pignon.STEP` (m1 20T, 5 mm teeth at the end of a Ø10.5 × 29 hub, Ø5.1 bore, radial hole for an
+**M3 insert K 5.0** = D-025 read backwards, 2 solids). His geometry was right for a rack inside the slot (5 mm teeth on a
+long hub); what was weak was the hub. The new one:
+- **involute teeth 5 wide** (they enter the slot: lip 6.35), one solid, **D bore** Ø5.15 / flat 4.6
+- **hub Ø16 × 25** (6 mm of wall for the 4 mm insert, 8 mm from the motor end; el pignon had 2.7 mm), then a
+  **Ø12 × 9 neck** where it passes the profile's back face; gear centre 37 mm from the motor face (motor 5 mm past the wheel)
+- stiffness at 10 N on the teeth: steel shaft ~0.02 mm, hub ~0.3 MPa; teeth ~6 MPa (ABS fine)
 
 ## Flipper-S: lead-screw lift (`fc/flipper_s_fc.py`, was B2; on hold, Flipper first)
 The Flipper flip on the hardware of Baha's "essai vis ecrou corrigé" (`../Grail_v1/essai vise ecrou corrigé/`).
@@ -148,7 +160,7 @@ In `archive/` (script + report).
 | `fc/flipper_s_fc.py` | **Flipper-S** generator (numbers in `class G`) |
 | `parts/` | inputs: `cremaillere.STL` (Seif's rack, m1, fits the profile), `el_pignon.STEP` (Baha's pinion) |
 | `print/` | print files |
-| `CAD_FC/FLIPPER.FCStd`, `FLIPPER_S.FCStd`, `FLIPPER_PINION.FCStd` | models: pick pose + ghost at the place pose + robot context (body, roof with the slot, right wheel, drive motor, Grail bay) |
+| `CAD_FC/FLIPPER_SLOT/BRIDGE/INWARD.FCStd`, `FLIPPER_S.FCStd`, `FLIPPER_PINION.FCStd` | models: pick pose + ghost at the place pose + robot context (body, roof with the slot, right wheel, drive motor, Grail bay) |
 | `CAD_FC/*_report.txt` | cycle table + summary + layout envelope + parts (📦 / 🇹🇳 / ✈️) |
 | `archive/` | A, C, B concept |
 | Real bought parts | `../resources/two-trees-bluer-v2-parts/` (X carriage, profile, NEMA17: see its `SOURCE.md`) |
@@ -156,7 +168,8 @@ In `archive/` (script + report).
 Run (from this folder):
 ```
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_pinion_fc.py     # first: flipper_fc.py reads print/FLIPPER_PINION.step
-"C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_fc.py            # ~1 min
+set FLIPPER_FIX=slot& "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_fc.py     # ~1 min; slot | bridge | inward
+set FLIPPER_PRINT=1& ...                                                                         # also write the print files
 "C:/Program Files/FreeCAD 1.1/bin/freecadcmd.exe" fc/flipper_s_fc.py
 ```
 Never edit the `.FCStd` by hand: change the generator and re-run it. Colours are only set when run from the FreeCAD GUI.
